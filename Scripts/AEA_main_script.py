@@ -32,6 +32,8 @@ for mu in mus:
     eps_sorted = np.sort(np.real(eps))
     epsilon_0.append(eps_sorted[0])
     epsilon_1.append(eps_sorted[1])
+print(epsilon_0)
+print(epsilon_1)
 
 epsilon_0 = np.array(epsilon_0)
 epsilon_1 = np.array(epsilon_1)
