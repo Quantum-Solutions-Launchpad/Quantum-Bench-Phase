@@ -17,6 +17,7 @@ from qiskit import QuantumCircuit
 from qiskit.circuit.library import XXMinusYYGate, XXPlusYYGate
 from qiskit_nature.second_q.hamiltonians import QuadraticHamiltonian
 from qiskit_nature.second_q.operators import FermionicOp
+from qiskit.result import QuasiDistribution
 
 def orbital_combinations(
     n_modes: int, threshold: Optional[int] = None
@@ -223,11 +224,152 @@ def diagonalizing_bogoliubov_transform(
         chemical_potential=chemical_potential,
     ).diagonalizing_bogoliubov_transform()
 
-n_modes = 6
-tunneling = -1.0
-superconducting = 1.0
-chemical_potential_values = [1.5] #list(np.linspace(0.0, 3.0, num=50))
-occupied_orbitals_list = list(orbital_combinations(n_modes, threshold=2))
+def evaluate_diagonal_op(operator: str, bitstring: str) -> int:
+    prod = 1
+    for op, bit in zip(operator, bitstring):
+        if op in ("0", "1"):
+            prod *= bit == op
+        elif op == "Z":
+            prod *= (-1) ** (bit == "1")
+    return prod
+
+def expval(quasi_dist: QuasiDistribution, operator: str) -> float:
+    result = 0
+    quasi_dict = quasi_dist.binary_probabilities()
+    for bitstring, quasiprob in quasi_dict.items():
+        result += quasiprob * evaluate_diagonal_op(operator, bitstring)
+    return result
+
+def covariance(
+    quasi_dist: QuasiDistribution, op1: str, op2: str
+) -> float:
+    expval1 = expval(quasi_dist, op1)
+    expval2 = expval(quasi_dist, op2)
+    cov = 0.0
+    quasi_dict = quasi_dist.binary_probabilities()
+    for bitstring, quasiprob in quasi_dict.items():
+        cov += (
+            quasiprob
+            * (evaluate_diagonal_op(op1, bitstring) - expval1)
+            * (evaluate_diagonal_op(op2, bitstring) - expval2)
+        )
+    return cov * -1.0 / quasi_dist.shots
+
+def compute_interaction_matrix(
+    quasis: dict[tuple[tuple[int, ...], str], QuasiDistribution],
+    label: str,
+) -> tuple[np.ndarray, _CovarianceDict]:
+    n = len(list(quasis.keys())[0][0])
+    mat = np.zeros((n, n))
+    cov: _CovarianceDict = defaultdict(float)
+
+    permutation = tuple(range(n))
+    if (permutation, f"{label}_even") not in quasis and (
+        permutation,
+        f"{label}_odd",
+    ) not in quasis:
+        return mat, cov
+
+    if label == "tunneling_plus":
+        sign = -1
+        symmetry = 1
+    elif label == "tunneling_minus":
+        sign = -1
+        symmetry = -1
+    elif label == "superconducting_plus":
+        sign = 1
+        symmetry = -1
+    else:  # label == "superconducting_minus"
+        sign = 1
+        symmetry = -1
+    for permutation in orbital_permutations(n):
+        even_quasis = quasis[permutation, f"{label}_even"]
+        odd_quasis = quasis[permutation, f"{label}_odd"]
+        for start_index in [0, 1]:
+            quasi_dist = odd_quasis if start_index else even_quasis
+            for i in range(start_index, n - 1, 2):
+                z0 = "I" * (n - i - 1) + "Z" + "I" * i
+                z1 = "I" * (n - i - 2) + "Z" + "I" * (i + 1)
+                z0_expval = expval(quasi_dist, z0)
+                z1_expval = expval(quasi_dist, z1)
+                val = 0.5 * (z1_expval + sign * z0_expval)
+                p, q = permutation[i], permutation[i + 1]
+                mat[p, q] = val
+                mat[q, p] = symmetry * val
+    for permutation in orbital_permutations(n):
+        even_quasis = quasis[permutation, f"{label}_even"]
+        odd_quasis = quasis[permutation, f"{label}_odd"]
+        for start_index in [0, 1]:
+            quasi_dist = odd_quasis if start_index else even_quasis
+            for i in range(start_index, n - 1, 2):
+                z0 = "I" * (n - i - 1) + "Z" + "I" * i
+                z1 = "I" * (n - i - 2) + "Z" + "I" * (i + 1)
+                p, q = permutation[i], permutation[i + 1]
+                if p > q:
+                    p, q = q, p
+                for j in range(start_index, n - 1, 2):
+                    z2 = "I" * (n - j - 1) + "Z" + "I" * j
+                    z3 = "I" * (n - j - 2) + "Z" + "I" * (j + 1)
+                    r, s = permutation[j], permutation[j + 1]
+                    if r > s:
+                        r, s = s, r
+                    cov[frozenset([(p, q), (r, s)])] = 0.25 * (
+                        covariance(quasi_dist, z0, z2)
+                        + sign * covariance(quasi_dist, z0, z3)
+                        + sign * covariance(quasi_dist, z1, z2)
+                        + covariance(quasi_dist, z1, z3)
+                    )
+    return mat, cov
+
+def compute_correlation_matrix(
+    quasis: dict[tuple[tuple[int, ...], str], QuasiDistribution]
+) -> tuple[np.ndarray, _CovarianceDict]:
+    n = len(list(quasis.keys())[0][0])
+    tunneling_plus, tunneling_plus_cov = compute_interaction_matrix(
+        quasis, "tunneling_plus"
+    )
+    tunneling_minus, tunneling_minus_cov = compute_interaction_matrix(
+        quasis, "tunneling_minus"
+    )
+    superconducting_plus, superconducting_plus_cov = compute_interaction_matrix(
+        quasis, "superconducting_plus"
+    )
+    superconducting_minus, superconducting_minus_cov = compute_interaction_matrix(
+        quasis, "superconducting_minus"
+    )
+    tunneling_mat = 0.5 * (tunneling_plus + 1j * tunneling_minus)
+    superconducting_mat = 0.5 * (superconducting_plus + 1j * superconducting_minus)
+    corr = np.block(
+        [
+            [tunneling_mat, superconducting_mat],
+            [-superconducting_mat.conj(), np.eye(n) - tunneling_mat.T],
+        ],
+    )
+    num_quasis = quasis[(tuple(range(n)), "number")]
+    for i in range(n):
+        num = "I" * (n - i - 1) + "1" + "I" * i
+        exp_val = expval(num_quasis, num)
+        corr[i, i] = exp_val
+        corr[i + n, i + n] = 1 - exp_val
+    cov: _CovarianceDict = defaultdict(float)
+    for i in range(n):
+        for j in range(i + 1, n):
+            for k in range(n):
+                for ell in range(k + 1, n):
+                    cov[frozenset([(i, j), (k, ell)])] = 0.25 * (
+                        tunneling_plus_cov[frozenset([(i, j), (k, ell)])]
+                        + tunneling_minus_cov[frozenset([(i, j), (k, ell)])]
+                    )
+                    cov[frozenset([(i, j + n), (k, ell + n)])] = 0.25 * (
+                        superconducting_plus_cov[frozenset([(i, j), (k, ell)])]
+                        + superconducting_minus_cov[frozenset([(i, j), (k, ell)])]
+                    )
+    for i in range(n):
+        z0 = "I" * (n - i - 1) + "Z" + "I" * i
+        for j in range(i, n):
+            z1 = "I" * (n - j - 1) + "Z" + "I" * j
+            cov[frozenset([(i, i), (j, j)])] = 0.25 * covariance(num_quasis, z0, z1)
+    return corr, cov
 
 def data_exact(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]]) -> dict[str, dict[tuple[int, ...], list[float]]]:
     start = chemical_potential_values[0]
