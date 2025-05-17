@@ -17,7 +17,10 @@ from qiskit import QuantumCircuit
 from qiskit.circuit.library import XXMinusYYGate, XXPlusYYGate
 from qiskit_nature.second_q.hamiltonians import QuadraticHamiltonian
 from qiskit_nature.second_q.operators import FermionicOp
+from qiskit_nature.second_q.circuit.library import FermionicGaussianState
 from qiskit.result import QuasiDistribution
+
+from qiskit_aer.primitives import SamplerV2
 
 def orbital_combinations(
     n_modes: int, threshold: Optional[int] = None
@@ -371,6 +374,41 @@ def compute_correlation_matrix(
             cov[frozenset([(i, i), (j, j)])] = 0.25 * covariance(num_quasis, z0, z1)
     return corr, cov
 
+def counts_to_quasis(counts: dict[str, int]) -> QuasiDistribution:
+    shots = sum(counts.values())
+    data = {bitstring: count / shots for bitstring, count in counts.items()}
+    return QuasiDistribution(data, shots=shots)
+
+def _all_real_rz_gates(circuit: QuantumCircuit, rtol=1e-5, atol=1e-8) -> bool:
+    for instruction in circuit.data:
+        if isinstance(instruction.operation, XXPlusYYGate):
+            _, beta = instruction.operation.params
+            if not np.isclose(
+                (beta + np.pi / 2) % np.pi, 0.0, rtol=rtol, atol=atol
+            ) and not np.isclose((beta + np.pi / 2) % np.pi, np.pi, atol=1e-8):
+                return False
+    return True
+
+def generate_circuits(n_modes: int, tunneling: float, superconducting: float, chemical_potential: int, occupied_orbitals: tuple[int]) -> dict[tuple[int, ...], QuantumCircuit]:
+    circuits = {}
+    for permutation, label in measurement_labels(n_modes):
+        hamiltonian = kitaev_hamiltonian(
+            n_modes=n_modes,
+            tunneling=tunneling,
+            superconducting=superconducting,
+            chemical_potential=chemical_potential,
+        )
+        transformation_matrix, _, _ = hamiltonian.diagonalizing_bogoliubov_transform()
+        perm = np.array(permutation)
+        full_permutation = np.concatenate([perm, perm+n_modes])
+        for i in range(n_modes):
+            transformation_matrix[i, :] = transformation_matrix[i, full_permutation]
+        base_circuit = FermionicGaussianState(transformation_matrix, occupied_orbitals)
+        if "_minus_" in label and _all_real_rz_gates(base_circuit, atol=1e-6):
+            continue
+        circuits[(tunneling, superconducting, chemical_potential, occupied_orbitals, permutation, label)] = measure_interaction_op(base_circuit, label)
+    return circuits
+
 def data_exact(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]]) -> dict[str, dict[tuple[int, ...], list[float]]]:
     start = chemical_potential_values[0]
     if start == 0:
@@ -490,3 +528,16 @@ def data_exact(n_modes: int, tunneling: float, superconducting: float, chemical_
                 ].append(exact_site_correlation)
     data["site_correlation_exact"] = {k: np.array(v) for k, v in site_correlation_exact.items()}
     return data
+
+def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]]) -> dict[str, dict[tuple[int, ...], list[float]]]:
+    for chemical_potential in chemical_potential_values:
+        for occupied_orbitals in occupied_orbitals_list:
+            circuits = generate_circuits(n_modes, tunneling, superconducting, chemical_potential, occupied_orbitals)
+            for qc in circuits:
+                sampler = SamplerV2()
+                job = sampler.run([qc], shots=2048)
+                result = job.result()
+                counts = result[0].data.meas.get_counts()
+
+                quasis = counts_to_quasis(counts)
+                corr_simulated = compute_correlation_matrix(quasis)
