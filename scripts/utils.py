@@ -635,7 +635,6 @@ def data_exact(n_modes: int, tunneling: float, superconducting: float, chemical_
 
 def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]], execute: bool = True) -> dict[str, dict[tuple[int, ...], list[float]]]:
     data = {k: {orbital: [] for orbital in occupied_orbitals_list} for k in ['energy_simulated', 'bdg_energy_simulated', 'energy_error']}
-    
     if execute:
         ####### Simulation of Circuits #######
         ### (Takes about 3 minutes to run) ###
@@ -664,7 +663,6 @@ def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemi
                 data['energy_simulated'][occupied_orbitals].append((energy, stddevs))
         with open(os.path.join(os.getcwd(), '..', 'cache/data-'+str(n_modes)+'-modes.json'), 'w') as f:
             ujson.dump(data, f)
-    
     data = ujson.load(open(os.path.join(os.getcwd(), '..', 'cache/data-'+str(n_modes)+'-modes.json')))
     data.update(data_exact(
         n_modes=n_modes,
