@@ -9,18 +9,20 @@ from typing import (
     Union,
 )
 
+import os
+import ujson
 import functools
 import math
 import numpy as np
 
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, transpile
 from qiskit.circuit.library import XXMinusYYGate, XXPlusYYGate
 from qiskit_nature.second_q.hamiltonians import QuadraticHamiltonian
 from qiskit_nature.second_q.operators import FermionicOp
 from qiskit_nature.second_q.circuit.library import FermionicGaussianState
 from qiskit.result import QuasiDistribution
 
-from qiskit_aer.primitives import SamplerV2
+from qiskit_aer import AerSimulator
 
 def orbital_combinations(
     n_modes: int, threshold: Optional[int] = None
@@ -262,7 +264,7 @@ def compute_interaction_matrix(
     quasis: dict[tuple[tuple[int, ...], str], QuasiDistribution],
     label: str,
 ) -> tuple[np.ndarray, _CovarianceDict]:
-    n = len(list(quasis.keys())[0][0])
+    n = len(next(iter(next(iter(quasis.keys())))))
     mat = np.zeros((n, n))
     cov: _CovarianceDict = defaultdict(float)
 
@@ -327,7 +329,7 @@ def compute_interaction_matrix(
 def compute_correlation_matrix(
     quasis: dict[tuple[tuple[int, ...], str], QuasiDistribution]
 ) -> tuple[np.ndarray, _CovarianceDict]:
-    n = len(list(quasis.keys())[0][0])
+    n = len(next(iter(next(iter(quasis.keys())))))
     tunneling_plus, tunneling_plus_cov = compute_interaction_matrix(
         quasis, "tunneling_plus"
     )
@@ -389,6 +391,108 @@ def _all_real_rz_gates(circuit: QuantumCircuit, rtol=1e-5, atol=1e-8) -> bool:
                 return False
     return True
 
+def expectation_from_correlation_matrix(
+    operator: Union[QuadraticHamiltonian, FermionicOp],
+    corr: np.ndarray,
+    cov: Optional[_CovarianceDict] = None,
+) -> tuple[complex, float]:
+    dim, _ = corr.shape
+    n = dim // 2
+    if isinstance(operator, QuadraticHamiltonian):
+        exp_val = (
+            np.sum(
+                operator.hermitian_part * corr[:n, :n]
+                + np.real(operator.antisymmetric_part * corr[:n, n:])
+            )
+            + operator.constant
+        )
+        var = 0 + 0j
+        if cov is not None:
+            for i in range(n):
+                for j in range(i + 1, n):
+                    for k in range(n):
+                        for ell in range(k + 1, n):
+                            var += 2 * np.real(
+                                operator.hermitian_part[i, j]
+                                * operator.hermitian_part[k, ell]
+                                * cov[frozenset([(i, j), (k, ell)])]
+                            )
+                            var += 2 * np.real(
+                                operator.hermitian_part[i, j]
+                                * operator.hermitian_part[k, ell].conjugate()
+                                * cov[frozenset([(i, j), (k, ell)])]
+                            )
+                            var += 2 * np.real(
+                                operator.antisymmetric_part[i, j]
+                                * operator.antisymmetric_part[k, ell]
+                                * cov[frozenset([(i, j + n), (k, ell + n)])]
+                            )
+                            var += 2 * np.real(
+                                operator.antisymmetric_part[i, j]
+                                * operator.antisymmetric_part[k, ell].conjugate()
+                                * cov[frozenset([(i, j + n), (k, ell + n)])]
+                            )
+            for i in range(n):
+                for j in range(i, n):
+                    var += (1 + (i != j)) * (
+                        operator.hermitian_part[i, i]
+                        * operator.hermitian_part[j, j]
+                        * cov[frozenset([(i, i), (j, j)])]
+                    )
+    else:
+        exp_val = 0.0
+        for term, coeff in operator.terms():
+            if not term:
+                exp_val += coeff
+            elif len(term) == 2:
+                (action_i, i), (action_j, j) = term
+                exp_val += (
+                    coeff * corr[i + n * (action_i == "-"), j + n * (action_j == "+")]
+                )
+            else:
+                raise ValueError(
+                    "Operator must be quadratic in the fermionic ladder operators."
+                )
+        var = 0 + 0j
+        if cov is not None:
+            for term_ij, coeff_ij in operator.terms():
+                if not term_ij:
+                    continue
+                (action_i, i), (action_j, j) = term_ij
+                sign_ij = 1
+                if i > j:
+                    i, j = j, i
+                    action_i, action_j = action_j, action_i
+                    sign_ij *= -1
+                if action_i == "-":
+                    sign_ij *= -1
+                for term_kl, coeff_kl in operator.terms():
+                    if not term_kl:
+                        continue
+                    (action_k, k), (action_l, ell) = term_kl
+                    sign_kl = 1
+                    if k > ell:
+                        k, ell = ell, k
+                        action_k, action_l = action_l, action_k
+                        sign_kl = -1
+                    if action_k == "-":
+                        sign_kl *= -1
+                    var += (
+                        coeff_ij
+                        * coeff_kl.conjugate()
+                        * sign_ij
+                        * sign_kl
+                        * cov[
+                            frozenset(
+                                [
+                                    (i, j + n * (action_i == action_j)),
+                                    (k, ell + n * (action_k == action_l)),
+                                ]
+                            )
+                        ]
+                    )
+    return exp_val, np.sqrt(np.real(var)) if np.real(var) > 0 else 0
+
 def generate_circuits(n_modes: int, tunneling: float, superconducting: float, chemical_potential: int, occupied_orbitals: tuple[int]) -> dict[tuple[int, ...], QuantumCircuit]:
     circuits = {}
     for permutation, label in measurement_labels(n_modes):
@@ -406,7 +510,7 @@ def generate_circuits(n_modes: int, tunneling: float, superconducting: float, ch
         base_circuit = FermionicGaussianState(transformation_matrix, occupied_orbitals)
         if "_minus_" in label and _all_real_rz_gates(base_circuit, atol=1e-6):
             continue
-        circuits[(tunneling, superconducting, chemical_potential, occupied_orbitals, permutation, label)] = measure_interaction_op(base_circuit, label)
+        circuits[(permutation, label)] = measure_interaction_op(base_circuit, label)
     return circuits
 
 def data_exact(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]]) -> dict[str, dict[tuple[int, ...], list[float]]]:
@@ -529,15 +633,119 @@ def data_exact(n_modes: int, tunneling: float, superconducting: float, chemical_
     data["site_correlation_exact"] = {k: np.array(v) for k, v in site_correlation_exact.items()}
     return data
 
-def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]]) -> dict[str, dict[tuple[int, ...], list[float]]]:
-    for chemical_potential in chemical_potential_values:
+def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]], execute: bool = True) -> dict[str, dict[tuple[int, ...], list[float]]]:
+    data = {k: {orbital: [] for orbital in occupied_orbitals_list} for k in ['energy_simulated', 'bdg_energy_simulated', 'energy_error']}
+    
+    if execute:
+        ####### Simulation of Circuits #######
+        ### (Takes about 3 minutes to run) ###
+        for chemical_potential in chemical_potential_values:
+            for occupied_orbitals in occupied_orbitals_list:
+                circuits = generate_circuits(n_modes, tunneling, superconducting, chemical_potential, occupied_orbitals)
+                quasis = {}
+                for key, qc in circuits.items():
+                    simulator = AerSimulator()
+                    qc = transpile(qc, simulator)
+                    result = simulator.run(qc).result()
+                    counts = result.get_counts(qc)
+                    quasis[key] = counts_to_quasis(counts)
+                corr_simulated, cov_simulated = compute_correlation_matrix(quasis)
+                hamiltonian_quad = kitaev_hamiltonian(
+                    n_modes,
+                    tunneling=tunneling,
+                    superconducting=superconducting,
+                    chemical_potential=chemical_potential,
+                )
+                energy, stddevs = np.real(
+                    expectation_from_correlation_matrix(
+                        hamiltonian_quad, corr_simulated, cov_simulated
+                    )
+                )
+                data['energy_simulated'][occupied_orbitals].append((energy, stddevs))
+        with open(os.path.join(os.getcwd(), '..', 'cache/data-'+str(n_modes)+'-modes.json'), 'w') as f:
+            ujson.dump(data, f)
+    
+    data = ujson.load(open(os.path.join(os.getcwd(), '..', 'cache/data-'+str(n_modes)+'-modes.json')))
+    data.update(data_exact(
+        n_modes=n_modes,
+        tunneling=tunneling,
+        superconducting=superconducting,
+        chemical_potential_values=chemical_potential_values,
+        occupied_orbitals_list=occupied_orbitals_list,
+    ))
+    dynamical_decoupling_sequences = [None]
+    data_error: dict[str, dict[str, tuple[np.ndarray, np.ndarray]]] = {
+        dd_sequence: {} for dd_sequence in dynamical_decoupling_sequences
+    }
+    for dd_sequence in dynamical_decoupling_sequences:
+        error = np.zeros(len(chemical_potential_values))
+        error_stddev = np.zeros(len(chemical_potential_values))
         for occupied_orbitals in occupied_orbitals_list:
-            circuits = generate_circuits(n_modes, tunneling, superconducting, chemical_potential, occupied_orbitals)
-            for qc in circuits:
-                sampler = SamplerV2()
-                job = sampler.run([qc], shots=2048)
-                result = job.result()
-                counts = result[0].data.meas.get_counts()
-
-                quasis = counts_to_quasis(counts)
-                corr_simulated = compute_correlation_matrix(quasis)
+            exact = np.array(data['energy_exact'][occupied_orbitals][0])
+            values, stddevs = data['energy_exact'][occupied_orbitals]
+            values = np.array(values)
+            error += np.abs(values - exact)
+            error_stddev += np.array(stddevs) ** 2
+        error /= len(occupied_orbitals_list)
+        error_stddev = np.sqrt(error_stddev) / len(occupied_orbitals_list)
+        data_error[dd_sequence]['energy_exact'] = error, error_stddev
+    data['energy_error'] = data_error[None]['energy_exact']
+    data['energy_simulated'] = {eval(k): [np.array([e[i] for e in v]) 
+    for i in range(len(v[0]))] for k,v in data['energy_simulated'].items()}
+    occupied_orbitals_set = set(occupied_orbitals_list)
+    combs = list(orbital_combinations(n_modes))
+    threshold = -1
+    for i in range(0, len(combs), 2):
+        if (
+            combs[i] not in occupied_orbitals_set
+            or combs[i + 1] not in occupied_orbitals_set
+        ):
+            break
+        threshold += 1
+    if threshold >= 0:
+        data_bdg: dict[str, dict[str, tuple[np.ndarray, np.ndarray]]] = {
+            dd_sequence: {} for dd_sequence in dynamical_decoupling_sequences
+        }
+        data_bdg_error: dict[str, dict[str, tuple[np.ndarray, np.ndarray]]] = {
+            dd_sequence: {} for dd_sequence in dynamical_decoupling_sequences
+        }
+        for dd_sequence in dynamical_decoupling_sequences:
+            bdg_energy = np.zeros((2 * threshold, len(chemical_potential_values)))
+            bdg_stddev = np.zeros((2 * threshold, len(chemical_potential_values)))
+            low, low_stddev = data['energy_simulated'][()]
+            high, high_stddev = data['energy_simulated'][tuple(range(n_modes))]
+            error = np.zeros((2 * threshold, len(chemical_potential_values)))
+            error_stddev = np.zeros(len(chemical_potential_values))
+            low_exact = data['energy_exact'][()]
+            high_exact = data['energy_exact'][tuple(range(n_modes))]
+            for i in range(threshold):
+                # data
+                particle, particle_stddev = data['energy_simulated'][combs[2 * i + 2]]
+                hole, hole_stddev = data['energy_simulated'][combs[2 * i + 3]]
+                # exact values
+                particle_exact = np.array(data['energy_exact'][combs[2 * i + 2]])
+                hole_exact = np.array(data['energy_exact'][combs[2 * i + 3]])
+                # energy
+                bdg_energy[i] = particle - low
+                bdg_energy[threshold + i] = hole - high
+                # stddev
+                bdg_stddev[i] = low_stddev**2 + particle_stddev**2
+                bdg_stddev[threshold + i] = high_stddev**2 + hole_stddev**2
+                # error
+                error[i] = np.abs((particle - low) - (particle_exact[0] - low_exact[0]))
+                error[threshold + i] = np.abs((hole - high) - (hole_exact[0] - high_exact[0]))
+                # error stddev
+                error_stddev += (
+                    np.array(low_stddev) ** 2
+                    + np.array(particle_stddev) ** 2
+                    + np.array(high_stddev) ** 2
+                    + np.array(hole_stddev) ** 2
+                )
+            bdg_stddev = np.sqrt(bdg_stddev)
+            error /= 2 * threshold
+            error_stddev = np.sqrt(error_stddev) / (2 * threshold)
+            data_bdg[dd_sequence]['energy_simulated'] = bdg_energy, bdg_stddev
+            data_bdg_error[dd_sequence]['energy_simulated'] = error, error_stddev
+        data['bdg_energy_simulated'] = data_bdg[None]['energy_simulated']
+        data['bdg_energy_error'] = data_bdg_error[None]['energy_simulated']
+    return data
