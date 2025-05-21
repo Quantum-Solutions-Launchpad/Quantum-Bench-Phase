@@ -2,7 +2,7 @@ from utils import orbital_combinations, data_simulated
 import matplotlib.pyplot as plt
 import os
 
-n_modes = 6
+n_modes = 7
 tunneling = -1.0
 superconducting = 1.0
 chemical_potential_values = [1.5]
@@ -19,7 +19,7 @@ data = data_simulated(
 color = ['orange', 'green']
 keys = list(set(i for i in data['site_correlation_simulated'].keys() if i[1] == () or i[1] == (0,)))
 for i in range(len(keys)):
-    plt.errorbar(range(len(data['site_correlation_simulated'][keys[i]][0])), data['site_correlation_simulated'][keys[i]][0], yerr=data['site_correlation_error'][keys[i]][0], fmt='.', color=color[i], label=str(keys[i][1]), ms=7.5)
+    plt.plot(range(len(data['site_correlation_simulated'][keys[i]][0])), data['site_correlation_simulated'][keys[i]][0], '.', color=color[i], label=str(keys[i][1]), ms=7.5)
 
 plt.title("Simulated Site Correlation for g and 1e ("+str(n_modes)+" modes, μ="+str(chemical_potential_values[0])+", Qiskit Aer Ideal)")
 plt.legend(fontsize='small', loc='upper left')

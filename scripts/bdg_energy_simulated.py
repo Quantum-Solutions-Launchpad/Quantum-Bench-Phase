@@ -20,7 +20,7 @@ data = data_simulated(
 color = ['orange', 'green']
 orbitals = [(0,), (1,)]
 for i in range(2*len(orbitals)):
-    plt.errorbar(chemical_potential_values, data['bdg_energy_simulated'][0][i], yerr=data['bdg_energy_error'][0][i], fmt='.', color=color[i%2], label=str(orbitals[i] if i < 2 else ""), ms=7.5)
+    plt.plot(chemical_potential_values, data['bdg_energy_simulated'][0][i], '.', color=color[i%2], label=str(orbitals[i] if i < 2 else ""), ms=7.5)
 
 plt.title("Simulated BdG Spectrum for 1e and 2e ("+str(n_modes)+" modes, Qiskit Aer Ideal)")
 plt.legend(fontsize='small', loc='right')
