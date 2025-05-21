@@ -15,7 +15,6 @@ data = data_simulated(
     superconducting=superconducting,
     chemical_potential_values=chemical_potential_values,
     occupied_orbitals_list=occupied_orbitals_list,
-    execute=False,
 )
  
 color = ['orange', 'green']

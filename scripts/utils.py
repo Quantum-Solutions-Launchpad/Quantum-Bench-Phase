@@ -634,10 +634,11 @@ def data_exact(n_modes: int, tunneling: float, superconducting: float, chemical_
     return data
 
 def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]], execute: bool = True) -> dict[str, dict[tuple[int, ...], list[float]]]:
-    data = {k: {orbital: [] for orbital in occupied_orbitals_list} for k in ['energy_simulated', 'bdg_energy_simulated', 'energy_error']}
+    data = {k: defaultdict(list) for k in ['energy_simulated', 'bdg_energy_simulated', 'energy_error', 'site_correlation_simulated', 'site_correlation_error']}
     if execute:
         ####### Simulation of Circuits #######
         ### (Takes about 3 minutes to run) ###
+        site_correlation_ops = [site_correlation_op(i) for i in range(1, 2 * n_modes)]
         for chemical_potential in chemical_potential_values:
             for occupied_orbitals in occupied_orbitals_list:
                 circuits = generate_circuits(n_modes, tunneling, superconducting, chemical_potential, occupied_orbitals)
@@ -655,12 +656,19 @@ def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemi
                     superconducting=superconducting,
                     chemical_potential=chemical_potential,
                 )
-                energy, stddevs = np.real(
+                energy, stddev = np.real(
                     expectation_from_correlation_matrix(
                         hamiltonian_quad, corr_simulated, cov_simulated
                     )
                 )
-                data['energy_simulated'][occupied_orbitals].append((energy, stddevs))
+                for site_correlation in site_correlation_ops:
+                    site_correlation_val, stddev = np.real(
+                        expectation_from_correlation_matrix(
+                            site_correlation, corr_simulated, cov_simulated
+                        )
+                    )
+                    data['site_correlation_simulated'][(chemical_potential, occupied_orbitals)].append((site_correlation_val, stddev))
+                data['energy_simulated'][occupied_orbitals].append((energy, stddev))
         with open(os.path.join(os.getcwd(), '..', 'cache/data-'+str(n_modes)+'-modes.json'), 'w') as f:
             ujson.dump(data, f)
     data = ujson.load(open(os.path.join(os.getcwd(), '..', 'cache/data-'+str(n_modes)+'-modes.json')))
@@ -688,8 +696,8 @@ def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemi
         error_stddev = np.sqrt(error_stddev) / len(occupied_orbitals_list)
         data_error[dd_sequence]['energy_exact'] = error, error_stddev
     data['energy_error'] = data_error[None]['energy_exact']
-    data['energy_simulated'] = {eval(k): [np.array([e[i] for e in v]) 
-    for i in range(len(v[0]))] for k,v in data['energy_simulated'].items()}
+    data['energy_simulated'] = {eval(k): [np.array([e[i] for e in v]) for i in range(len(v[0]))] for k,v in data['energy_simulated'].items()}
+    data['site_correlation_simulated'] = {eval(k): [np.array([e[i] for e in v]) for i in range(len(v[0]))] for k,v in data['site_correlation_simulated'].items()}
     occupied_orbitals_set = set(occupied_orbitals_list)
     combs = list(orbital_combinations(n_modes))
     threshold = -1
@@ -746,4 +754,5 @@ def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemi
             data_bdg_error[dd_sequence]['energy_simulated'] = error, error_stddev
         data['bdg_energy_simulated'] = data_bdg[None]['energy_simulated']
         data['bdg_energy_error'] = data_bdg_error[None]['energy_simulated']
+        data['site_correlation_error'] = {k: np.abs(data['site_correlation_exact'][k] - data['site_correlation_simulated'][k]) for k in data['site_correlation_exact'].keys()}
     return data
