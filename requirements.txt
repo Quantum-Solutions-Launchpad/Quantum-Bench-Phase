@@ -2,3 +2,4 @@ numpy >= 2.2.4
 matplotlib >= 3.10.0
 qiskit == 1.4.2
 qiskit-nature == 0.7.2
+mthree == 3.0.0

@@ -24,6 +24,7 @@ from qiskit.result import QuasiDistribution
 
 from qiskit_aer import AerSimulator
 from qiskit.providers import BackendV2
+import mthree
 
 def orbital_combinations(
     n_modes: int, threshold: Optional[int] = None
@@ -634,7 +635,7 @@ def data_exact(n_modes: int, tunneling: float, superconducting: float, chemical_
     data["site_correlation_exact"] = {k: np.array(v) for k, v in site_correlation_exact.items()}
     return data
 
-def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]], backend: BackendV2 = None, execute: bool = True) -> dict[str, dict[tuple[int, ...], list[float]]]:
+def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]], backend: BackendV2 = None, execute: bool = True, mitigation: bool = True) -> dict[str, dict[tuple[int, ...], list[float]]]:
     data = {k: defaultdict(list) for k in ['energy_simulated', 'bdg_energy_simulated', 'energy_error', 'site_correlation_simulated', 'site_correlation_error']}
     if execute:
         ####### Simulation of Circuits #######
@@ -650,6 +651,12 @@ def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemi
                     result = simulator.run(qc).result()
                     counts = result.get_counts(qc)
                     quasis[key] = counts_to_quasis(counts)
+                    if mitigation:
+                        mappings = mthree.utils.final_measurement_mapping(qc)
+                        mit = mthree.M3Mitigation(backend)
+                        mit.cals_from_system(mappings, shots=8192)
+                        corrected = dict(mit.apply_correction(counts, mappings))
+                        quasis[key] = QuasiDistribution(corrected, shots=8192)
                 corr_simulated, cov_simulated = compute_correlation_matrix(quasis)
                 hamiltonian_quad = kitaev_hamiltonian(
                     n_modes,
