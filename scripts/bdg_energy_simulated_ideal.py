@@ -25,5 +25,5 @@ for i in range(2*len(orbitals)):
 plt.title("Simulated BdG Spectrum for 1e and 2e ("+str(n_modes)+" modes, Qiskit Aer Ideal)")
 plt.legend(fontsize='small', loc='right')
 
-file_path = os.path.join(os.getcwd(), "..", "plots/"+str(n_modes)+"-modes/bdg-energy-simulated.png")
+file_path = os.path.join(os.getcwd(), "..", "plots/"+str(n_modes)+"-modes/bdg-energy-simulated-ideal.png")
 plt.savefig(file_path)

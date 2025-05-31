@@ -23,6 +23,7 @@ from qiskit_nature.second_q.circuit.library import FermionicGaussianState
 from qiskit.result import QuasiDistribution
 
 from qiskit_aer import AerSimulator
+from qiskit.providers import BackendV2
 
 def orbital_combinations(
     n_modes: int, threshold: Optional[int] = None
@@ -633,7 +634,7 @@ def data_exact(n_modes: int, tunneling: float, superconducting: float, chemical_
     data["site_correlation_exact"] = {k: np.array(v) for k, v in site_correlation_exact.items()}
     return data
 
-def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]], execute: bool = True) -> dict[str, dict[tuple[int, ...], list[float]]]:
+def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]], backend: BackendV2 = None, execute: bool = True) -> dict[str, dict[tuple[int, ...], list[float]]]:
     data = {k: defaultdict(list) for k in ['energy_simulated', 'bdg_energy_simulated', 'energy_error', 'site_correlation_simulated', 'site_correlation_error']}
     if execute:
         ####### Simulation of Circuits #######
@@ -644,7 +645,7 @@ def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemi
                 circuits = generate_circuits(n_modes, tunneling, superconducting, chemical_potential, occupied_orbitals)
                 quasis = {}
                 for key, qc in circuits.items():
-                    simulator = AerSimulator()
+                    simulator = AerSimulator.from_backend(backend) if backend else AerSimulator()
                     qc = transpile(qc, simulator)
                     result = simulator.run(qc).result()
                     counts = result.get_counts(qc)

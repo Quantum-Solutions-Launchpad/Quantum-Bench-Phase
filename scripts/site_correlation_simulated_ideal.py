@@ -24,5 +24,5 @@ for i in range(len(keys)):
 plt.title("Simulated Site Correlation for g and 1e ("+str(n_modes)+" modes, μ="+str(chemical_potential_values[0])+", Qiskit Aer Ideal)")
 plt.legend(fontsize='small', loc='upper left')
 
-file_path = os.path.join(os.getcwd(), "..", "plots/"+str(n_modes)+"-modes/site-correlation-simulated_mu-"+str(chemical_potential_values[0])+".png")
+file_path = os.path.join(os.getcwd(), "..", "plots/"+str(n_modes)+"-modes/site-correlation-simulated-ideal_mu-"+str(chemical_potential_values[0])+".png")
 plt.savefig(file_path)
