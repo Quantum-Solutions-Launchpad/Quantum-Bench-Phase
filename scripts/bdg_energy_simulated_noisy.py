@@ -2,7 +2,6 @@ from utils import orbital_combinations, data_simulated
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-
 from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
 
 n_modes = 7
