@@ -12,8 +12,8 @@ superconducting = 1.0
 chemical_potential_values = list(np.linspace(0.0, 3.0, num=10))
 occupied_orbitals_list = list(orbital_combinations(n_modes, threshold=2))
 backend = FakeSherbrooke()
-execute = False
-shots = 2048
+execute = True
+shots = 100000
 
 if execute:
     data = {
