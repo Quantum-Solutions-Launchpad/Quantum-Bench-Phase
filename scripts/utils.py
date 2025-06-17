@@ -764,3 +764,18 @@ def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemi
         data['bdg_energy_error'] = data_bdg_error[None]['energy_simulated']
         data['site_correlation_error'] = {k: np.abs(data['site_correlation_exact'][k] - data['site_correlation_simulated'][k]) for k in data['site_correlation_exact'].keys()}
     return data
+
+def circuit_depth(n_modes: int, tunneling: float, superconducting: float, chemical_potential_values: list[int], occupied_orbitals_list: list[tuple[int]], backend: BackendV2 = None) -> dict[tuple[int, ...], float]:
+    data = {}
+    for chemical_potential in chemical_potential_values:
+        for occupied_orbitals in occupied_orbitals_list:
+            circuits = generate_circuits(n_modes, tunneling, superconducting, chemical_potential, occupied_orbitals)
+            for qc in circuits.values():
+                simulator = AerSimulator.from_backend(backend) if backend else AerSimulator()
+                qc = transpile(qc, simulator)
+                key = (chemical_potential, occupied_orbitals)
+                if key not in data:
+                    data[key] = 0
+                data[key] += qc.depth(lambda x: x.operation.num_qubits == 2)
+            data[key] /= len(circuits.values())
+    return data
