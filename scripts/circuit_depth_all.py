@@ -10,21 +10,14 @@ occupied_orbitals_list = list(orbital_combinations(n_modes, threshold=2))
 backend = FakeSherbrooke()
 
 data = {
-    'exact': circuit_depth(
+    'ideal_average': circuit_depth(
         n_modes=n_modes,
         tunneling=tunneling,
         superconducting=superconducting,
         chemical_potential_values=chemical_potential_values,
         occupied_orbitals_list=occupied_orbitals_list,
     ),
-    'simulated_ideal': circuit_depth(
-        n_modes=n_modes,
-        tunneling=tunneling,
-        superconducting=superconducting,
-        chemical_potential_values=chemical_potential_values,
-        occupied_orbitals_list=occupied_orbitals_list,
-    ),
-    'simulated_noisy': circuit_depth(
+    'noisy_average': circuit_depth(
         n_modes=n_modes,
         tunneling=tunneling,
         superconducting=superconducting,
