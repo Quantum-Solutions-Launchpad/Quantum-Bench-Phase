@@ -16,14 +16,18 @@ import math
 import numpy as np
 
 from qiskit import QuantumCircuit, transpile
-from qiskit.circuit.library import XXMinusYYGate, XXPlusYYGate
+from qiskit.synthesis import SuzukiTrotter
+from qiskit.circuit.library import XXMinusYYGate, XXPlusYYGate, PauliEvolutionGate
 from qiskit_nature.second_q.hamiltonians import QuadraticHamiltonian
 from qiskit_nature.second_q.operators import FermionicOp
-from qiskit_nature.second_q.circuit.library import FermionicGaussianState
+from qiskit_nature.second_q.circuit.library import FermionicGaussianState, HartreeFock
+from qiskit_nature.second_q.mappers import QubitMapper
 from qiskit.result import QuasiDistribution
 
 from qiskit_aer import AerSimulator
+from qiskit_aer.primitives import Sampler
 from qiskit.providers import BackendV2
+from qiskit_algorithms import IterativePhaseEstimation
 import mthree
 
 def orbital_combinations(
@@ -779,3 +783,24 @@ def circuit_depth(n_modes: int, tunneling: float, superconducting: float, chemic
                 data[key] += qc.depth(lambda x: x.operation.num_qubits == 2)
             data[key] /= len(circuits.values())
     return data
+
+def haldane_iqpe(num_sites: int, t: float, N_trot: int, N_iter: int, mapper: QubitMapper) -> float: # add more params as needed
+    fermionic_hamiltonian = None # implement here
+    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
+
+    results = {}
+    for N_occ in range(1, 12):
+        st = SuzukiTrotter(reps=N_trot)
+        evolution = PauliEvolutionGate(qubit_hamiltonian, time=t)
+        evolution_circuit = st.synthesize(evolution)
+        hf_circuit = HartreeFock(num_spatial_orbitals=num_sites, num_particles=(N_occ - N_occ // 2, N_occ // 2), qubit_mapper=mapper)
+
+        backend, sampler = AerSimulator(), Sampler()
+        evolution_circuit, hf_circuit = transpile(evolution_circuit, backend=backend), transpile(hf_circuit, backend=backend)
+        iqpe = IterativePhaseEstimation(num_iterations=N_iter, sampler=sampler)
+        result = iqpe.estimate(unitary=evolution_circuit, state_preparation=hf_circuit)
+
+        energy = -2*np.pi * result.phase / t
+        results[N_occ] = energy
+    
+    return results
