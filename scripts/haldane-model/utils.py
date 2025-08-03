@@ -39,7 +39,7 @@ def band_structure_exact(t1: float, t2: float, M: float, a_vecs: list[list[float
             hz += M
             for b in b_vecs:
                 hz += 2*t2*np.sin(np.dot(k, b))
-            result[(kx, ky)] = np.sqrt(hx**2+hy**2+hz**2)
+            result[(kx, ky)] = -np.sqrt(hx**2+hy**2+hz**2)
             print("E(["+str(round(kx, 3))+", "+str(round(ky, 3))+"]) = "+str(round(result[(kx, ky)], 3)))
     return result
 
