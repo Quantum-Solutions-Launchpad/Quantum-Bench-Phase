@@ -1,4 +1,4 @@
-from utils import haldane_momentum_vqe
+from utils import band_structure_vqe
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
@@ -9,7 +9,7 @@ a_vecs = [np.array([0.0, -1.0]), np.array([np.sqrt(3)/2, 0.5]), np.array([-np.sq
 b_vecs = [a_vecs[1]-a_vecs[2], a_vecs[2]-a_vecs[0], a_vecs[0]-a_vecs[1]]
 samples = 10
 
-data = haldane_momentum_vqe(t1, t2, M, a_vecs, b_vecs, samples)
+data = band_structure_vqe(t1, t2, M, a_vecs, b_vecs, samples)
 
 x_list = np.linspace(-np.pi, np.pi, samples)
 y_list = np.linspace(-np.pi, np.pi, samples)
@@ -39,7 +39,7 @@ ax.set_zlabel('$E(k)$')
 ax.set_title("Haldane Model Band Structure (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)")
 ax.view_init(elev=20)
 
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure-vqe/simulated-ideal-"+str(samples)+"-samples-3d.png")
+file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/simulated-ideal-"+str(samples)+"-samples-3d.png")
 plt.savefig(file_path)
 
 fig, ax = plt.subplots(1, 2, figsize=(14,6))
@@ -59,5 +59,5 @@ ax[1].set_ylabel("$k_y$")
 fig.suptitle("Haldane Model Band Structure (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)", fontsize=16)
 
 plt.tight_layout()
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure-vqe/simulated-ideal-"+str(samples)+"-samples-heatmap.png")
+file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/simulated-ideal-"+str(samples)+"-samples-heatmap.png")
 plt.savefig(file_path)

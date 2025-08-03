@@ -1,17 +1,15 @@
-from utils import band_structure_vqe
+from utils import band_structure_exact
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
 import os
-from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
 
 t1, t2, M = 1.0, 0.0, 0.2
 a_vecs = [np.array([0.0, -1.0]), np.array([np.sqrt(3)/2, 0.5]), np.array([-np.sqrt(3)/2, 0.5])]
 b_vecs = [a_vecs[1]-a_vecs[2], a_vecs[2]-a_vecs[0], a_vecs[0]-a_vecs[1]]
-samples = 10
-backend = FakeSherbrooke()
+samples = 1000
 
-data = band_structure_vqe(t1, t2, M, a_vecs, b_vecs, samples, backend)
+data = band_structure_exact(t1, t2, M, a_vecs, b_vecs, samples)
 
 x_list = np.linspace(-np.pi, np.pi, samples)
 y_list = np.linspace(-np.pi, np.pi, samples)
@@ -38,10 +36,10 @@ ax.set_yticklabels([r'$-\pi$', r'$0$', r'$\pi$'])
 ax.set_xlabel('$k_x$')
 ax.set_ylabel('$k_y$')
 ax.set_zlabel('$E(k)$')
-ax.set_title("Haldane Model Band Structure (VQE, Qiskit Aer Noisy, $"+str(samples)+"^2$ samples)")
+ax.set_title("Haldane Model Band Structure (Exact)")
 ax.view_init(elev=20)
 
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/simulated-noisy-"+str(samples)+"-samples-3d.png")
+file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/exact-3d.png")
 plt.savefig(file_path)
 
 fig, ax = plt.subplots(1, 2, figsize=(14,6))
@@ -58,8 +56,8 @@ ax[1].set_title("Lower Band: $E_-(k)$")
 ax[1].set_xlabel("$k_x$")
 ax[1].set_ylabel("$k_y$")
 
-fig.suptitle("Haldane Model Band Structure (VQE, Qiskit Aer Noisy, $"+str(samples)+"^2$ samples)", fontsize=16)
+fig.suptitle("Haldane Model Band Structure (Exact)", fontsize=16)
 
 plt.tight_layout()
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/simulated-noisy-"+str(samples)+"-samples-heatmap.png")
+file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/exact-heatmap.png")
 plt.savefig(file_path)
