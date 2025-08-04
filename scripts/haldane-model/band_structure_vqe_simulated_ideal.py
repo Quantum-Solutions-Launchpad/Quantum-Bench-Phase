@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
 import os
 
-t1, t2, M = 1.0, 0.0, 0.2
+t1, t2, M = 1.0, 0.05, 0.2
 a_vecs = [np.array([0.0, -1.0]), np.array([np.sqrt(3)/2, 0.5]), np.array([-np.sqrt(3)/2, 0.5])]
 b_vecs = [a_vecs[1]-a_vecs[2], a_vecs[2]-a_vecs[0], a_vecs[0]-a_vecs[1]]
-samples = 10
+samples = 100
 
 data = band_structure_vqe(t1, t2, M, a_vecs, b_vecs, samples)
 
@@ -36,7 +36,7 @@ ax.set_yticklabels([r'$-\pi$', r'$0$', r'$\pi$'])
 ax.set_xlabel('$k_x$')
 ax.set_ylabel('$k_y$')
 ax.set_zlabel('$E(k)$')
-ax.set_title("Haldane Model Band Structure (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)")
+ax.set_title("Haldane Model Band Structure (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+"$")
 ax.view_init(elev=20)
 
 file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/simulated-ideal-"+str(samples)+"-samples-3d.png")
@@ -56,7 +56,7 @@ ax[1].set_title("Lower Band: $E_-(k)$")
 ax[1].set_xlabel("$k_x$")
 ax[1].set_ylabel("$k_y$")
 
-fig.suptitle("Haldane Model Band Structure (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)", fontsize=16)
+fig.suptitle("Haldane Model Band Structure (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+"$", fontsize=16)
 
 plt.tight_layout()
 file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/simulated-ideal-"+str(samples)+"-samples-heatmap.png")
