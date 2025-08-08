@@ -19,6 +19,7 @@ from qiskit_algorithms import IterativePhaseEstimation
 
 from qiskit_aer import AerSimulator
 from qiskit_aer.primitives import Sampler
+from qiskit_aer.noise import NoiseModel
 from qiskit.providers import BackendV2
 
 cost_history_dict = {
@@ -160,34 +161,33 @@ def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, m
     fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
     simulator = AerSimulator.from_backend(backend) if backend else AerSimulator()
-
-    ansatz = real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
-    pm = generate_preset_pass_manager(target=simulator.target, optimization_level=3)
-    ansatz_isa = pm.run(ansatz)
-    hamiltonian_isa = qubit_hamiltonian.apply_layout(layout=ansatz_isa.layout)
-    x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
-
-    cost_history_dict = {
-        "prev_vector": None,
-        "iters": 0,
-        "cost_history": [],
-    }
-    def cost_func(params):
-        if cost_history_dict["iters"] >= max_iters:
-            return cost_history_dict["cost_history"][-1]
-    
-        pub = (ansatz_isa, [hamiltonian_isa], [params])
-        result = estimator.run(pubs=[pub]).result()
-        energy = result[0].data.evs[0]
-    
-        cost_history_dict["iters"] += 1
-        cost_history_dict["prev_vector"] = params
-        cost_history_dict["cost_history"].append(energy)
-    
-        return energy
     
     with Session(backend=simulator) as session:
+        ansatz = real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
+        ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
+    
         estimator = Estimator(mode=session)
+        x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
+        
+        cost_history_dict = {
+            "prev_vector": None,
+            "iters": 0,
+            "cost_history": [],
+        }
+        def cost_func(params):
+            if cost_history_dict["iters"] >= max_iters:
+                return cost_history_dict["cost_history"][-1]
+        
+            pub = (ansatz_circuit, [qubit_hamiltonian], [params])
+            result = estimator.run(pubs=[pub]).result()
+            energy = result[0].data.evs[0]
+        
+            cost_history_dict["iters"] += 1
+            cost_history_dict["prev_vector"] = params
+            cost_history_dict["cost_history"].append(energy)
+        
+            return energy
+        
         spsa = SPSA()
         res = spsa.minimize(cost_func, x0=x0)
 
@@ -198,15 +198,22 @@ def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, m
 def real_space_iqpe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, t: float, n_trot: int, n_iters: int, backend: BackendV2 = None) -> float:
     fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
-    simulator = AerSimulator.from_backend(backend) if backend else AerSimulator()
 
     st = SuzukiTrotter(reps=n_trot)
     evolution = PauliEvolutionGate(qubit_hamiltonian, time=t)
     evolution_circuit = st.synthesize(evolution)
     initial_circuit = real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
 
-    backend, sampler = AerSimulator(), Sampler()
-    evolution_circuit, initial_circuit = transpile(evolution_circuit, backend=simulator), transpile(initial_circuit, backend=simulator)
+    if backend:
+        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
+        sampler = Sampler(
+            backend_options={
+                "noise_model": noise_model,
+                "basis_gates": noise_model.basis_gates,
+            }
+        )
+    else:
+        sampler = Sampler()
 
     # Sampler is deprecated but IQPE in Qiskit Algorithms has not been updated to use SamplerV2 yet 
     with warnings.catch_warnings():
