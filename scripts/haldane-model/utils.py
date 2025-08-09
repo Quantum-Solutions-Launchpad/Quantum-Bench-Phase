@@ -56,42 +56,41 @@ def band_structure_exact(t1: float, t2: float, M: float, a_vecs: list[list[float
             print("E(["+str(round(kx, 3))+", "+str(round(ky, 3))+"]) = "+str(round(result[(kx, ky)], 3)))
     return result
 
-def band_structure_vqe(t1: float, t2: float, M: float, a_vecs: list[list[float]], b_vecs: list[list[float]], samples: int, backend: BackendV2 = None) -> dict[list[float], float]:
-    x_list = np.linspace(-np.pi, np.pi, samples)
-    y_list = np.linspace(-np.pi, np.pi, samples)
-    result = {}
+def band_structure_vqe(kx: float, ky: float, t1: float, t2: float, M: float, a_vecs: list[list[float]], b_vecs: list[list[float]], backend: BackendV2 = None) -> float:
+    k = [kx, ky]
+    hx = hy = hz = 0
+    for a in a_vecs:
+        hx += t1*np.cos(np.dot(k, a))
+        hy -= t1*np.sin(np.dot(k, a))
+    hz += M
+    for b in b_vecs:
+        hz += 2*t2*np.sin(np.dot(k, b))
 
-    for kx in x_list:
-        for ky in y_list:
-            k = [kx, ky]
-            hx = hy = hz = 0
-            for a in a_vecs:
-                hx += t1*np.cos(np.dot(k, a))
-                hy -= t1*np.sin(np.dot(k, a))
-            hz += M
-            for b in b_vecs:
-                hz += 2*t2*np.sin(np.dot(k, b))
+    hamiltonian = SparsePauliOp(['X', 'Y', 'Z'], [hx, hy, hz])
 
-            hamiltonian = SparsePauliOp(['X', 'Y', 'Z'], [hx, hy, hz])
-            simulator = AerSimulator.from_backend(backend) if backend else AerSimulator()
+    if backend:
+        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
+        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
+    else:
+        simulator = AerSimulator()
 
-            ansatz = efficient_su2(hamiltonian.num_qubits)
-            pm = generate_preset_pass_manager(target=simulator.target, optimization_level=3)
-            ansatz_isa = pm.run(ansatz)
-            hamiltonian_isa = hamiltonian.apply_layout(layout=ansatz_isa.layout)
-            x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
+    ansatz = efficient_su2(hamiltonian.num_qubits)
+    pm = generate_preset_pass_manager(target=simulator.target, optimization_level=3)
+    ansatz_isa = pm.run(ansatz)
+    hamiltonian_isa = hamiltonian.apply_layout(layout=ansatz_isa.layout)
+    x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
 
-            with Session(backend=simulator) as session:
-                estimator = Estimator(mode=session)
-                res = minimize(
-                    band_structure_vqe_cost_func,
-                    x0,
-                    args=(ansatz_isa, hamiltonian_isa, estimator),
-                    method="cobyla",
-                )
-            result[(kx, ky)] = float(res.fun)
-            print("E(["+str(round(kx, 3))+", "+str(round(ky, 3))+"]) = "+str(round(result[(kx, ky)], 3)))
+    with Session(backend=simulator) as session:
+        estimator = Estimator(mode=session)
+        res = minimize(
+            band_structure_vqe_cost_func,
+            x0,
+            args=(ansatz_isa, hamiltonian_isa, estimator),
+            method="cobyla",
+        )
 
+    result = float(res.fun)
+    print(f"E([{round(kx, 3)}, {round(ky, 3)}]) = {result}")
     return result
 
 def real_space_slater_determinant(n_sites: int, t1: float, t2: float, phi: float, n_occ: int) -> SlaterDeterminant:
@@ -160,7 +159,12 @@ def real_space_exact(n_sites: int, t1: float, t2: float, phi: float, n_occ: int)
 def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, max_iters: int, backend: BackendV2 = None) -> float:
     fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
-    simulator = AerSimulator.from_backend(backend) if backend else AerSimulator()
+
+    if backend:
+        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
+        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
+    else:
+        simulator = AerSimulator()
 
     ansatz = real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)

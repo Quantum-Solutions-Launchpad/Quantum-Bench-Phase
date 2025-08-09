@@ -3,13 +3,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
 import os
+from itertools import product
+from joblib import Parallel, delayed
 
 t1, t2, M = 1.0, 0.05, 0.2
 a_vecs = [np.array([0.0, -1.0]), np.array([np.sqrt(3)/2, 0.5]), np.array([-np.sqrt(3)/2, 0.5])]
 b_vecs = [a_vecs[1]-a_vecs[2], a_vecs[2]-a_vecs[0], a_vecs[0]-a_vecs[1]]
 samples = 100
 
-data = band_structure_vqe(t1, t2, M, a_vecs, b_vecs, samples)
+x_list = np.linspace(-np.pi, np.pi, samples)
+y_list = np.linspace(-np.pi, np.pi, samples)
+k_points = list(product(x_list, y_list))
+
+results = Parallel(n_jobs=-1)(
+    delayed(band_structure_vqe)(kx, ky, t1, t2, M, a_vecs, b_vecs)
+    for kx, ky in k_points
+)
+data = {k: v for k, v in zip(k_points, results)}
 
 x_list = np.linspace(-np.pi, np.pi, samples)
 y_list = np.linspace(-np.pi, np.pi, samples)

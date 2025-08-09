@@ -3,8 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from qiskit_nature.second_q.mappers import JordanWignerMapper
-from qiskit_ibm_runtime.fake_provider import FakeTorino
 import warnings
+from joblib import Parallel, delayed
+from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
 
 # For real_space_iqpe function: Sampler is deprecated but IQPE in Qiskit Algorithms has not been updated to use SamplerV2 yet
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -14,18 +15,23 @@ spin = 2
 n_sites_max = 10
 mapper = JordanWignerMapper()
 max_iters = 20
-t, n_trot, n_iters = 0.2, 3, 6
-backend = FakeTorino()
+t, n_trot, n_iters = 0.2, 5, 8
+backend = FakeSherbrooke()
+
+jobs = []
+for n_sites in range(3, n_sites_max+1):
+    jobs.append(delayed(real_space_exact)(n_sites, t1, t2, phi, n_sites))
+    jobs.append(delayed(real_space_vqe)(n_sites, t1, t2, phi, n_sites, mapper, max_iters, backend))
+    jobs.append(delayed(real_space_iqpe)(n_sites, t1, t2, phi, n_sites, mapper, t, n_trot, n_iters, backend))
+
+results = Parallel(n_jobs=-1)(jobs)
+exact, vqe, iqpe = results[0::3], results[1::3], results[2::3]
 
 data = {
-    "exact": {},
-    "vqe": {},
-    "iqpe": {}
+    "exact": {i: exact[i-3] for i in range(3, n_sites_max+1)},
+    "vqe": {i: vqe[i-3] for i in range(3, n_sites_max+1)},
+    "iqpe": {i: iqpe[i-3] for i in range(3, n_sites_max+1)}
 }
-for n_sites in range(3, n_sites_max+1):
-    data["exact"][n_sites] = real_space_exact(n_sites, t1, t2, phi, n_sites)
-    data["vqe"][n_sites] = real_space_vqe(n_sites, t1, t2, phi, n_sites, mapper, max_iters, backend)
-    data["iqpe"][n_sites] = real_space_iqpe(n_sites, t1, t2, phi, n_sites, mapper, t, n_trot, n_iters, backend)
 
 plt.figure()
 plt.plot(range(3, n_sites_max+1), data["exact"].values(), 'ro-', label="Exact")
