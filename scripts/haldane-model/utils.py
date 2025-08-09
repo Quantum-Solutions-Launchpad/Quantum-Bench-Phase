@@ -161,11 +161,11 @@ def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, m
     fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
     simulator = AerSimulator.from_backend(backend) if backend else AerSimulator()
+
+    ansatz = real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
+    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
     
     with Session(backend=simulator) as session:
-        ansatz = real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
-        ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
-    
         estimator = Estimator(mode=session)
         x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
         

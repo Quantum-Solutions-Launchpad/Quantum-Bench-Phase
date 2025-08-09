@@ -12,8 +12,8 @@ t1, t2, phi = 1.0, 0.05, np.pi/4
 spin = 2
 n_sites_max = 10
 mapper = JordanWignerMapper()
-max_iters = 20
-t, n_trot, n_iters = 0.2, 3, 6
+max_iters = 100
+t, n_trot, n_iters = 0.2, 8, 8
 
 data = {
     "exact": {},
