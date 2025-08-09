@@ -38,22 +38,18 @@ def band_structure_vqe_cost_func(params, ansatz, hamiltonian, estimator):
  
     return energy
 
-def band_structure_exact(t1: float, t2: float, M: float, a_vecs: list[list[float]], b_vecs: list[list[float]], samples: int):
-    x_list = np.linspace(-np.pi, np.pi, samples)
-    y_list = np.linspace(-np.pi, np.pi, samples)
-    result = {}
-    for kx in x_list:
-        for ky in y_list:
-            k = [kx, ky]
-            hx = hy = hz = 0
-            for a in a_vecs:
-                hx += t1*np.cos(np.dot(k, a))
-                hy -= t1*np.sin(np.dot(k, a))
-            hz += M
-            for b in b_vecs:
-                hz += 2*t2*np.sin(np.dot(k, b))
-            result[(kx, ky)] = -np.sqrt(hx**2+hy**2+hz**2)
-            print("E(["+str(round(kx, 3))+", "+str(round(ky, 3))+"]) = "+str(round(result[(kx, ky)], 3)))
+def band_structure_exact(kx: float, ky: float, t1: float, t2: float, M: float, a_vecs: list[list[float]], b_vecs: list[list[float]]):
+    k = [kx, ky]
+    hx = hy = hz = 0
+    for a in a_vecs:
+        hx += t1*np.cos(np.dot(k, a))
+        hy -= t1*np.sin(np.dot(k, a))
+    hz += M
+    for b in b_vecs:
+        hz += 2*t2*np.sin(np.dot(k, b))
+    
+    result = -np.sqrt(hx**2+hy**2+hz**2)
+    print(f"E([{round(kx, 3)}, {round(ky, 3)}]) = {result}")
     return result
 
 def band_structure_vqe(kx: float, ky: float, t1: float, t2: float, M: float, a_vecs: list[list[float]], b_vecs: list[list[float]], backend: BackendV2 = None) -> float:

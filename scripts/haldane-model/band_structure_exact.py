@@ -9,10 +9,14 @@ a_vecs = [np.array([0.0, -1.0]), np.array([np.sqrt(3)/2, 0.5]), np.array([-np.sq
 b_vecs = [a_vecs[1]-a_vecs[2], a_vecs[2]-a_vecs[0], a_vecs[0]-a_vecs[1]]
 samples = 1000
 
-data = band_structure_exact(t1, t2, M, a_vecs, b_vecs, samples)
-
 x_list = np.linspace(-np.pi, np.pi, samples)
 y_list = np.linspace(-np.pi, np.pi, samples)
+
+data = {}
+for kx in x_list:
+    for ky in y_list:
+        data[(kx, ky)] = band_structure_exact(kx, ky, t1, t2, M, a_vecs, b_vecs)
+
 kx_vals, ky_vals = np.meshgrid(x_list, y_list, indexing='xy')
 E_plus = np.array([-data[key] for key in data]).reshape((samples, samples))
 E_minus = np.array([data[key] for key in data]).reshape((samples, samples))
@@ -28,10 +32,12 @@ ax = fig.add_subplot(111, projection='3d')
 ax.plot_surface(kx_vals, ky_vals, E_plus, facecolors=diverging_cmap(norm(E_plus)), edgecolor='k', linewidth=0.2, antialiased=True)
 ax.plot_surface(kx_vals, ky_vals, E_minus, facecolors=diverging_cmap(norm(E_minus)), edgecolor='k', linewidth=0.2, antialiased=True)
 
-ax.set_xticks([-np.pi, 0, np.pi])
-ax.set_yticks([-np.pi, 0, np.pi])
-ax.set_xticklabels([r'$-\pi$', r'$0$', r'$\pi$'])
-ax.set_yticklabels([r'$-\pi$', r'$0$', r'$\pi$'])
+x_ticks = np.arange(np.floor(x_list.min()/np.pi)*np.pi, np.ceil(x_list.max()/np.pi)*np.pi+0.1, np.pi)
+y_ticks = np.arange(np.floor(y_list.min()/np.pi)*np.pi, np.ceil(y_list.max()/np.pi)*np.pi+0.1, np.pi)
+ax.set_xticks(x_ticks)
+ax.set_yticks(y_ticks)
+ax.set_xticklabels([rf'${int(t/np.pi)}\pi$' if t not in (0, np.pi, -np.pi) else (r'$0$' if t==0 else (r'$-\pi$' if t<0 else r'$\pi$')) for t in x_ticks])
+ax.set_yticklabels([rf'${int(t/np.pi)}\pi$' if t not in (0, np.pi, -np.pi) else (r'$0$' if t==0 else (r'$-\pi$' if t<0 else r'$\pi$')) for t in y_ticks])
 
 ax.set_xlabel('$k_x$')
 ax.set_ylabel('$k_y$')
