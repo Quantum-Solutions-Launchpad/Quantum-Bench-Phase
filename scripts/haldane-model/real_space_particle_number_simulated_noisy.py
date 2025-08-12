@@ -2,6 +2,7 @@ from utils import real_space_exact, real_space_vqe, real_space_iqpe
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import json
 from qiskit_nature.second_q.mappers import JordanWignerMapper
 import warnings
 from joblib import Parallel, delayed
@@ -30,8 +31,14 @@ exact, vqe, iqpe = results[0::3], results[1::3], results[2::3]
 data = {
     "exact": {i: exact[i] for i in range(spin*n_sites+1)},
     "vqe": {i: vqe[i] for i in range(spin*n_sites+1)},
-    "iqpe": {i: iqpe[i] for i in range(spin*n_sites+1)}
+    "iqpe": {i: iqpe[i] for i in range(spin*n_sites+1)},
+    "vqe_error": {i: abs(vqe[i]-exact[i]) for i in range(spin*n_sites+1)},
+    "iqpe_error": {i: abs(iqpe[i]-exact[i]) for i in range(spin*n_sites+1)}
 }
+
+file_path = os.path.join(os.getcwd(), "..", "..", "cache/haldane-model/real-space/simulated-noisy-particle-number-"+str(n_sites)+"-sites.json")
+with open(file_path, "w") as f:
+    json.dump(data, f, indent=4)
 
 plt.figure()
 plt.plot(range(spin*n_sites+1), data["exact"].values(), 'ro-', label="Exact")
@@ -44,4 +51,20 @@ plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Noisy)
 plt.tight_layout()
 
 file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/simulated-noisy-particle-number-"+str(n_sites)+"-sites.png")
+plt.savefig(file_path)
+
+x = np.arange(spin*n_sites+1)
+width = 0.25
+fig, ax = plt.subplots(layout='constrained')
+
+ax.bar(x, data["vqe_error"].values(), width, label="VQE", color="firebrick")
+ax.bar(x+width, data["iqpe_error"].values(), width, label="IQPE", color="lightcoral")
+
+ax.set_xlabel("Particle Number")
+ax.set_ylabel("Absolute Error")
+ax.set_title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Noisy)", fontsize=11)
+ax.set_xticks(x+width/2, range(spin*n_sites+1))
+ax.legend()
+
+file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/simulated-noisy-particle-number-"+str(n_sites)+"-sites-error.png")
 plt.savefig(file_path)
