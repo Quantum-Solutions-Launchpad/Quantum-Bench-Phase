@@ -9,8 +9,8 @@ a_vecs = [np.array([0.0, -1.0]), np.array([np.sqrt(3)/2, 0.5]), np.array([-np.sq
 b_vecs = [a_vecs[1]-a_vecs[2], a_vecs[2]-a_vecs[0], a_vecs[0]-a_vecs[1]]
 samples = 1000
 
-x_list = np.linspace(-np.pi, np.pi, samples)
-y_list = np.linspace(-np.pi, np.pi, samples)
+x_list = [float(kx) for kx in np.linspace(-np.pi, np.pi, samples)]
+y_list = [float(ky) for ky in np.linspace(-np.pi, np.pi, samples)]
 
 data = {}
 for kx in x_list:

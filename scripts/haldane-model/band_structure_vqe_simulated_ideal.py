@@ -1,8 +1,9 @@
-from utils import band_structure_vqe
+from utils import band_structure_vqe, band_structure_exact
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
 import os
+import json
 from itertools import product
 from joblib import Parallel, delayed
 
@@ -11,8 +12,8 @@ a_vecs = [np.array([0.0, -1.0]), np.array([np.sqrt(3)/2, 0.5]), np.array([-np.sq
 b_vecs = [a_vecs[1]-a_vecs[2], a_vecs[2]-a_vecs[0], a_vecs[0]-a_vecs[1]]
 samples = 100
 
-x_list = np.linspace(-np.pi, np.pi, samples)
-y_list = np.linspace(-np.pi, np.pi, samples)
+x_list = [float(kx) for kx in np.linspace(-np.pi, np.pi, samples)]
+y_list = [float(ky) for ky in np.linspace(-np.pi, np.pi, samples)]
 k_points = list(product(x_list, y_list))
 
 results = Parallel(n_jobs=-1)(
@@ -20,6 +21,11 @@ results = Parallel(n_jobs=-1)(
     for kx, ky in k_points
 )
 data = {k: v for k, v in zip(k_points, results)}
+
+stringified_data = {str(k): v for k, v in data.items()}
+file_path = os.path.join(os.getcwd(), "..", "..", "cache/haldane-model/band-structure/simulated-ideal-"+str(samples)+"-samples.json")
+with open(file_path, "w") as f:
+    json.dump(stringified_data, f, indent=4)
 
 x_list = np.linspace(-np.pi, np.pi, samples)
 y_list = np.linspace(-np.pi, np.pi, samples)
@@ -72,4 +78,24 @@ fig.suptitle("Haldane Model Band Structure (VQE, Qiskit Aer Ideal, $"+str(sample
 
 plt.tight_layout()
 file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/simulated-ideal-"+str(samples)+"-samples-heatmap.png")
+plt.savefig(file_path)
+
+results = Parallel(n_jobs=-1)(
+    delayed(band_structure_exact)(kx, ky, t1, t2, M, a_vecs, b_vecs)
+    for kx, ky in k_points
+)
+exact = {k: v for k, v in zip(k_points, results)}
+error_data = {k: abs(data[k]-exact[k]) for k in k_points}
+error = np.array([error_data[key] for key in error_data]).reshape((samples, samples))
+
+fig, ax = plt.subplots()
+
+c = ax.imshow(error, origin='lower', cmap='Reds', extent=[kx_vals.min(), kx_vals.max(), ky_vals.min(), ky_vals.max()], aspect='auto')
+plt.colorbar(c)
+ax.set_xlabel("$k_x$")
+ax.set_ylabel("$k_y$")
+
+fig.suptitle("Haldane Model Band Structure Absolute Error (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+"$", fontsize=11)
+
+file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/simulated-ideal-"+str(samples)+"-samples-error.png")
 plt.savefig(file_path)
