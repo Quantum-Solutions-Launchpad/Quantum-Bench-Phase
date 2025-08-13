@@ -36,7 +36,7 @@ data = {
     "iqpe_error": {i: abs(iqpe[i]-exact[i]) for i in range(spin*n_sites+1)}
 }
 
-file_path = os.path.join(os.getcwd(), "..", "..", "cache/haldane-model/real-space/simulated-noisy-particle-number-"+str(n_sites)+"-sites.json")
+file_path = os.path.join(os.getcwd(), "..", "..", "cache/haldane-model/real-space/simulated-noisy-particle-number.json")
 with open(file_path, "w") as f:
     json.dump(data, f, indent=4)
 
@@ -47,10 +47,10 @@ plt.plot(range(spin*n_sites+1), data["iqpe"].values(), 'go', label=f"IQPE (t={t}
 plt.legend()
 plt.xlabel("Particle Number")
 plt.ylabel("$E$")
-plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Noisy)", fontsize=11)
+plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Noisy)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
 plt.tight_layout()
 
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/simulated-noisy-particle-number-"+str(n_sites)+"-sites.png")
+file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/simulated-noisy-particle-number.png")
 plt.savefig(file_path)
 
 x = np.arange(spin*n_sites+1)
@@ -62,9 +62,9 @@ ax.bar(x+width, data["iqpe_error"].values(), width, label="IQPE", color="lightco
 
 ax.set_xlabel("Particle Number")
 ax.set_ylabel("Absolute Error")
-ax.set_title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Noisy)", fontsize=11)
+ax.set_title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Noisy)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
 ax.set_xticks(x+width/2, range(spin*n_sites+1))
 ax.legend()
 
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/simulated-noisy-particle-number-"+str(n_sites)+"-sites-error.png")
+file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/simulated-noisy-particle-number-error.png")
 plt.savefig(file_path)

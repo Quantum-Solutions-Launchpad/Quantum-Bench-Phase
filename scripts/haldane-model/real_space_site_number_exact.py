@@ -15,7 +15,7 @@ plt.figure()
 plt.plot(range(3, n_sites_max+1), data.values(), 'ro-')
 plt.xlabel("Number of Sites")
 plt.ylabel("$E$")
-plt.title("Real Space Haldane Hamiltonian Ground State Energy (Exact)")
+plt.title("Real Space Haldane Hamiltonian Ground State Energy (Exact)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{occ}}=\\lceil N_{\\text{sites}}/2 \\rceil$")
 plt.tight_layout()
 
 file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/exact-site-number.png")

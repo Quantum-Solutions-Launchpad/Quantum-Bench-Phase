@@ -47,7 +47,7 @@ plt.plot(range(3, n_sites_max+1), data["iqpe"].values(), 'go', label=f"IQPE (t={
 plt.legend()
 plt.xlabel("Number of Sites")
 plt.ylabel("$E$")
-plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Noisy)", fontsize=11)
+plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Noisy)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{occ}}=\\lceil N_{\\text{sites}}/2 \\rceil$", fontsize=11)
 plt.tight_layout()
 
 file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/simulated-noisy-site-number.png")
@@ -62,7 +62,7 @@ ax.bar(x+width, data["iqpe_error"].values(), width, label="IQPE", color="lightco
 
 ax.set_xlabel("Number of Sites")
 ax.set_ylabel("Absolute Error")
-ax.set_title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Noisy)", fontsize=11)
+ax.set_title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Noisy)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{occ}}=\\lceil N_{\\text{sites}}/2 \\rceil$", fontsize=11)
 ax.set_xticks(x+width/2, range(3, n_sites_max+1))
 ax.legend()
 
