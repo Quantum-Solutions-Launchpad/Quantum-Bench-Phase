@@ -2,9 +2,9 @@ import numpy as np
 from scipy.optimize import minimize
 import warnings
 
-from qiskit import transpile
+from qiskit import transpile, QuantumCircuit
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
-from qiskit.circuit.library import efficient_su2, PauliEvolutionGate
+from qiskit.circuit.library import efficient_su2, excitation_preserving, PauliEvolutionGate
 from qiskit.synthesis import SuzukiTrotter
 from qiskit.quantum_info import SparsePauliOp
 from qiskit_ibm_runtime import Session, Estimator
@@ -110,6 +110,14 @@ def real_space_slater_determinant(n_sites: int, t1: float, t2: float, phi: float
     occupied_orbitals = transformation_matrix[:n_occ, :]
     return SlaterDeterminant(occupied_orbitals)
 
+def real_space_EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
+    spin = 2
+    ansatz = QuantumCircuit(n_sites*spin)
+    for i in range(n_occ):
+        ansatz.x(i)
+    ansatz.compose(excitation_preserving(n_sites*spin, "fsim", "linear", reps=n_layers), inplace=True)
+    return ansatz
+
 def real_space_fermionic_hamiltonian(n_sites: int, t1: float, t2: float, phi: float) -> FermionicOp:
     lattice = [(i, (i + 1) % n_sites, 0) for i in range(n_sites)]+[(i, (i + 2) % n_sites, 1) for i in range(n_sites)]
     spin = 2
@@ -152,7 +160,7 @@ def real_space_exact(n_sites: int, t1: float, t2: float, phi: float, n_occ: int)
     print(f"Exact (n_sites={n_sites}, n_occ={n_occ}) = {result}")
     return result
 
-def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, max_iters: int, backend: BackendV2 = None) -> float:
+def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, max_iters: int, backend: BackendV2 = None, n_layers: int = 0) -> float:
     fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
@@ -162,7 +170,7 @@ def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, m
     else:
         simulator = AerSimulator()
 
-    ansatz = real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
+    ansatz = real_space_EP_ansatz(n_sites, n_layers, n_occ) if n_layers else real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
     
     with Session(backend=simulator) as session:
@@ -188,7 +196,7 @@ def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, m
         
             return energy
         
-        spsa = SPSA()
+        spsa = SPSA(maxiter=max_iters)
         res = spsa.minimize(cost_func, x0=x0)
 
     result = float(res.fun)
