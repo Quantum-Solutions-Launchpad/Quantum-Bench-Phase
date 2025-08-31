@@ -6,8 +6,8 @@ import json
 from qiskit_nature.second_q.mappers import JordanWignerMapper
 from joblib import Parallel, delayed
 
-n_sites = 4
-t1, t2, phi = 1.0, 0.0, np.pi/4
+n_sites = 6
+t1, t2, phi = 1.0, 0.05, np.pi/4
 spin = 2
 mapper = JordanWignerMapper()
 max_iters = 20000
@@ -29,7 +29,7 @@ data = {
     "vqe3": {i: vqe3[i] for i in range(spin*n_sites+1)}
 }
 
-file_path = os.path.join(os.getcwd(), "..", "..", "cache/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-EP.json")
+file_path = os.path.join(os.getcwd(), "..", "..", "cache/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-EP-t2-"+str(t2)+".json")
 with open(file_path, "w") as f:
     json.dump(data, f, indent=4)
 
@@ -44,5 +44,5 @@ plt.ylabel("$E$")
 plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Ideal)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
 plt.tight_layout()
 
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-EP.png")
+file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-EP-t2-"+str(t2)+".png")
 plt.savefig(file_path)
