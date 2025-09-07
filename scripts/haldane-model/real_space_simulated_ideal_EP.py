@@ -6,27 +6,24 @@ import json
 from qiskit_nature.second_q.mappers import JordanWignerMapper
 from joblib import Parallel, delayed
 
-n_sites = 6
-t1, t2, phi = 1.0, 0.05, np.pi/4
+n_sites = 4
+t1, t2, phi = 1.0, 0.0, np.pi/4
 spin = 2
 mapper = JordanWignerMapper()
-max_iters = 20000
+n_iters, n_layers, n_reps = 10000, 5, 10
 
 jobs = []
 for n_occ in range(spin * n_sites + 1):
     jobs.append(delayed(real_space_exact)(n_sites, t1, t2, phi, n_occ))
-    jobs.append(delayed(real_space_vqe)(n_sites, t1, t2, phi, n_occ, mapper, max_iters // 4, n_layers=5))
-    jobs.append(delayed(real_space_vqe)(n_sites, t1, t2, phi, n_occ, mapper, max_iters // 2, n_layers=5))
-    jobs.append(delayed(real_space_vqe)(n_sites, t1, t2, phi, n_occ, mapper, max_iters, n_layers=5))
+    for _ in range(n_reps):
+        jobs.append(delayed(real_space_vqe)(n_sites, t1, t2, phi, n_occ, mapper, n_iters, n_layers=n_layers))
 
 results = Parallel(n_jobs=-1)(jobs)
-exact, vqe1, vqe2, vqe3 = results[0::4], results[1::4], results[2::4], results[3::4]
+exact, vqe = results[0::n_reps+1], [min(results[i:i+n_reps]) for i in range(1, len(results), n_reps+1)]
 
 data = {
     "exact": {i: exact[i] for i in range(spin*n_sites+1)},
-    "vqe1": {i: vqe1[i] for i in range(spin*n_sites+1)},
-    "vqe2": {i: vqe2[i] for i in range(spin*n_sites+1)},
-    "vqe3": {i: vqe3[i] for i in range(spin*n_sites+1)}
+    "vqe": {i: vqe[i] for i in range(spin*n_sites+1)}
 }
 
 file_path = os.path.join(os.getcwd(), "..", "..", "cache/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-EP-t2-"+str(t2)+".json")
@@ -35,9 +32,7 @@ with open(file_path, "w") as f:
 
 plt.figure()
 plt.plot(range(spin*n_sites+1), data["exact"].values(), 'ro-', label="Exact")
-plt.plot(range(spin*n_sites+1), data["vqe1"].values(), 'mo', label=f"VQE (max_iters={max_iters // 4})")
-plt.plot(range(spin*n_sites+1), data["vqe2"].values(), 'go', label=f"VQE (max_iters={max_iters // 2})")
-plt.plot(range(spin*n_sites+1), data["vqe3"].values(), 'bo', label=f"VQE (max_iters={max_iters})")
+plt.plot(range(spin*n_sites+1), data["vqe"].values(), 'bo', label=f"VQE (n_iters={n_iters}, n_layers={n_layers}, n_reps={n_reps})")
 plt.legend()
 plt.xlabel("Particle Number")
 plt.ylabel("$E$")
