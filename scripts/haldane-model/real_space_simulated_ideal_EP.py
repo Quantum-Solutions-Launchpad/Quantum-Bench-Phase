@@ -10,7 +10,7 @@ n_sites = 4
 t1, t2, phi = 1.0, 0.0, np.pi/4
 spin = 2
 mapper = JordanWignerMapper()
-n_iters, n_layers, n_reps = 10000, 5, 10
+n_iters, n_layers, n_reps = 5000, 5, 20
 
 jobs = []
 for n_occ in range(spin * n_sites + 1):
