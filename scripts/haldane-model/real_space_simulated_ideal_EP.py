@@ -6,8 +6,8 @@ import json
 from qiskit_nature.second_q.mappers import JordanWignerMapper
 from joblib import Parallel, delayed
 
-n_sites = 6
-t1, t2, phi = 1.0, 0.05, np.pi/4
+n_sites = 4
+t1, t2, phi = 1.0, 0.0, np.pi/4
 spin = 2
 mapper = JordanWignerMapper()
 n_iters, n_layers, n_reps = 10000, 5, 10

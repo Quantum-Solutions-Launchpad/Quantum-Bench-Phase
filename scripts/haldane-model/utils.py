@@ -181,6 +181,7 @@ def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, m
             "prev_vector": None,
             "iters": 0,
             "cost_history": [],
+            "num_queries": 0,
         }
         def cost_func(params):
             if cost_history_dict["iters"] >= max_iters:
@@ -193,6 +194,7 @@ def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, m
             cost_history_dict["iters"] += 1
             cost_history_dict["prev_vector"] = params
             cost_history_dict["cost_history"].append(energy)
+            cost_history_dict["num_queries"] += qubit_hamiltonian.size
         
             return energy
         
