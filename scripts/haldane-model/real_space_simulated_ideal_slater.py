@@ -10,7 +10,7 @@ from joblib import Parallel, delayed
 # For real_space_iqpe function: Sampler is deprecated but IQPE in Qiskit Algorithms has not been updated to use SamplerV2 yet
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-n_sites = 4
+n_sites = 6
 t1, t2, phi = 1.0, 0.05, np.pi/4
 spin = 2
 mapper = JordanWignerMapper()
@@ -52,16 +52,14 @@ file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-spac
 plt.savefig(file_path)
 
 x = np.arange(spin*n_sites+1)
-width = 0.25
 fig, ax = plt.subplots(layout='constrained')
 
-ax.bar(x, data["vqe_error"].values(), width, label="VQE", color="firebrick")
-ax.bar(x+width, data["iqpe_error"].values(), width, label="IQPE", color="lightcoral")
+ax.plot(x, data["vqe_error"].values(), 'o-', label="VQE", color="firebrick")
+ax.plot(x, data["iqpe_error"].values(), 'o-', label="IQPE", color="lightcoral")
 
 ax.set_xlabel("Particle Number")
 ax.set_ylabel("Absolute Error")
 ax.set_title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Ideal)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
-ax.set_xticks(x+width/2, range(spin*n_sites+1))
 ax.legend()
 
 file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-slater-error.png")
