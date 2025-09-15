@@ -34,7 +34,7 @@ data = {
     "iqpe_error": {i: abs(iqpe[i]-exact[i]) for i in range(spin*n_sites+1)}
 }
 
-file_path = os.path.join(os.getcwd(), "..", "..", "cache/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal.json")
+file_path = os.path.join(os.getcwd(), "..", "..", "cache/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-slater.json")
 with open(file_path, "w") as f:
     json.dump(data, f, indent=4)
 
@@ -48,7 +48,7 @@ plt.ylabel("$E$")
 plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Ideal)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
 plt.tight_layout()
 
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal.png")
+file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-slater.png")
 plt.savefig(file_path)
 
 x = np.arange(spin*n_sites+1)
@@ -64,5 +64,5 @@ ax.set_title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Ide
 ax.set_xticks(x+width/2, range(spin*n_sites+1))
 ax.legend()
 
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-error.png")
+file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-slater-error.png")
 plt.savefig(file_path)
