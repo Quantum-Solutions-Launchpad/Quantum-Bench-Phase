@@ -4,11 +4,7 @@ import matplotlib.pyplot as plt
 import os
 import json
 from qiskit_nature.second_q.mappers import JordanWignerMapper
-import warnings
 from joblib import Parallel, delayed
-
-# For real_space_iqpe function: Sampler is deprecated but IQPE in Qiskit Algorithms has not been updated to use SamplerV2 yet
-warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 n_sites = 6
 t1, t2, phi = 1.0, 0.05, np.pi/4

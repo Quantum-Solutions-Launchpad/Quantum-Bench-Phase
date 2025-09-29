@@ -11,7 +11,7 @@ from qiskit_ibm_runtime import Session, Estimator
 
 from qiskit_nature.second_q.operators import FermionicOp
 from qiskit_nature.second_q.hamiltonians import QuadraticHamiltonian
-from qiskit_nature.second_q.circuit.library import SlaterDeterminant
+from qiskit_nature.second_q.circuit.library import SlaterDeterminant, HartreeFock
 from qiskit_nature.second_q.mappers import QubitMapper
 
 from qiskit_algorithms.optimizers import SPSA
@@ -205,33 +205,39 @@ def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, m
     print(f"VQE (n_sites={n_sites}, n_occ={n_occ}) = {result}")
     return result
 
-def real_space_iqpe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, t: float, n_trot: int, n_iters: int, backend: BackendV2 = None) -> float:
-    fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
-    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
+def real_space_iqpe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, t: float, n_trot: int, n_iters: int, max_iters: int, backend: BackendV2 = None) -> float:
+    result = 0
+    for _ in range(max_iters):
+        fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
+        qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
-    st = SuzukiTrotter(reps=n_trot)
-    evolution = PauliEvolutionGate(qubit_hamiltonian, time=t)
-    evolution_circuit = st.synthesize(evolution)
-    initial_circuit = real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
+        st = SuzukiTrotter(reps=n_trot)
+        evolution = PauliEvolutionGate(qubit_hamiltonian, time=t, synthesis=st)
+        initial = HartreeFock(n_sites, (n_occ // 2 + n_occ % 2, n_occ // 2), mapper)
 
-    if backend:
-        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
-        sampler = Sampler(
-            backend_options={
-                "noise_model": noise_model,
-                "basis_gates": noise_model.basis_gates,
-            }
-        )
-    else:
-        sampler = Sampler()
+        if backend:
+            noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
+            sampler = Sampler(
+                backend_options={
+                    "noise_model": noise_model,
+                    "basis_gates": noise_model.basis_gates,
+                }
+            )
+        else:
+            sampler = Sampler()
 
-    # Sampler is deprecated but IQPE in Qiskit Algorithms has not been updated to use SamplerV2 yet 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        iqpe = IterativePhaseEstimation(num_iterations=n_iters, sampler=sampler)
-        
-    res = iqpe.estimate(unitary=evolution_circuit, state_preparation=initial_circuit)
+        # Sampler is deprecated but IQPE in Qiskit Algorithms has not been updated to use SamplerV2 yet 
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            iqpe = IterativePhaseEstimation(num_iterations=n_iters, sampler=sampler)
+            
+        res = iqpe.estimate(unitary=evolution, state_preparation=initial)
 
-    result = float(-2*np.pi*res.phase/t)
-    print(f"IQPE (n_sites={n_sites}, n_occ={n_occ}) = {result}")
-    return result
+        result = float(-2*np.pi*res.phase/t)
+        exact = real_space_exact(n_sites, t1, t2, phi, n_occ)
+        if result >= exact-1 and result <= exact+1:
+            print(f"IQPE (n_sites={n_sites}, n_occ={n_occ}) = {result}")
+            return result
+
+    print(f"IQPE (n_sites={n_sites}, n_occ={n_occ}) failed")
+    return 0.0
