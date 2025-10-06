@@ -32,7 +32,7 @@ def setup_logging(debug_enabled: bool = True):
 
     fmt_console_info = "[<bold><green>{time:HH:mm:ss}</green></bold>] <white>{message}</white>"
     fmt_console_debug = "[<dim><white>{time:HH:mm:ss}</white></dim>] <dim>{message}</dim>"
-    fmt_file = "[{time:YYYY-MM-DD HH:mm:ss}] {level}: {message}"
+    fmt_file = "[{time:HH:mm:ss}] {level}: {message}"
 
     logger.remove()
     logger.add(
