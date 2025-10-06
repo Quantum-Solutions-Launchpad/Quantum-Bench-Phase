@@ -1,8 +1,10 @@
-from utils import band_structure_exact
+from utils import band_structure_exact, setup_logging
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
 import os
+
+setup_logging()
 
 n_sites = 4
 t1, t2, M = 1.0, 0.05, 0.2

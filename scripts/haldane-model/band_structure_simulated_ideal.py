@@ -6,6 +6,7 @@ import os
 import json
 from itertools import product
 from joblib import Parallel, delayed
+import argparse
 
 n_sites = 6
 t1, t2, M = 1.0, 0.05, 0.2
@@ -19,11 +20,19 @@ b_vecs = {
 }.get(n_sites, [])
 samples = 100
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--no-debug", action="store_true", help="Suppress debug logs")
+args = parser.parse_args()
+
 x_list = [float(kx) for kx in np.linspace(-np.pi, np.pi, samples)]
 y_list = [float(ky) for ky in np.linspace(-np.pi, np.pi, samples)]
 k_points = list(product(x_list, y_list))
 
-results = Parallel(n_jobs=-1)(
+def init_worker_logging():
+    from utils import setup_logging
+    setup_logging(debug_enabled=not args.no_debug)
+
+results = Parallel(n_jobs=-1, initializer=init_worker_logging)(
     delayed(band_structure_vqe)(kx, ky, t1, t2, M, a_vecs, b_vecs)
     for kx, ky in k_points
 )

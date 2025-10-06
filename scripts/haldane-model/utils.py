@@ -1,9 +1,9 @@
 import numpy as np
 from scipy.optimize import minimize
-import warnings
 
 from qiskit import transpile, QuantumCircuit
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
+from qiskit.circuit import QuantumRegister, ClassicalRegister
 from qiskit.circuit.library import efficient_su2, excitation_preserving, PauliEvolutionGate
 from qiskit.synthesis import SuzukiTrotter
 from qiskit.quantum_info import SparsePauliOp
@@ -15,12 +15,51 @@ from qiskit_nature.second_q.circuit.library import SlaterDeterminant, HartreeFoc
 from qiskit_nature.second_q.mappers import QubitMapper
 
 from qiskit_algorithms.optimizers import SPSA
-from qiskit_algorithms import IterativePhaseEstimation
 
 from qiskit_aer import AerSimulator
 from qiskit_aer.primitives import Sampler
 from qiskit_aer.noise import NoiseModel
 from qiskit.providers import BackendV2
+
+import sys
+from pathlib import Path
+from loguru import logger
+
+def setup_logging(debug_enabled: bool = True):
+    project_root = Path(__file__).resolve().parents[2]
+    log_dir = project_root / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+
+    fmt_console_info = "[<bold><green>{time:HH:mm:ss}</green></bold>] <white>{message}</white>"
+    fmt_console_debug = "[<dim><white>{time:HH:mm:ss}</white></dim>] <dim>{message}</dim>"
+    fmt_file = "[{time:YYYY-MM-DD HH:mm:ss}] {level}: {message}"
+
+    logger.remove()
+    logger.add(
+        sys.stdout,
+        level="INFO",
+        colorize=True,
+        format=fmt_console_info,
+        filter=lambda record: record["level"].name == "INFO",
+    )
+    if debug_enabled:
+        logger.add(
+            sys.stdout,
+            level="DEBUG",
+            colorize=True,
+            format=fmt_console_debug,
+            filter=lambda record: record["level"].name == "DEBUG",
+        )
+
+    logger.add(
+        log_dir / "{time:YYYY-MM-DD}.log",
+        level="DEBUG",
+        colorize=False,
+        format=fmt_file,
+        rotation="00:00",
+        retention="14 days",
+        compression="zip",
+    )
 
 cost_history_dict = {
     "prev_vector": None,
@@ -49,7 +88,7 @@ def band_structure_exact(kx: float, ky: float, t1: float, t2: float, M: float, a
         hz += 2*t2*np.sin(np.dot(k, b))
     
     result = -np.sqrt(hx**2+hy**2+hz**2)
-    print(f"E([{round(kx, 3)}, {round(ky, 3)}]) = {result}")
+    logger.info(f"E([{round(kx, 3)}, {round(ky, 3)}]) = {result}")
     return result
 
 def band_structure_vqe(kx: float, ky: float, t1: float, t2: float, M: float, a_vecs: list[list[float]], b_vecs: list[list[float]], backend: BackendV2 = None) -> float:
@@ -86,7 +125,7 @@ def band_structure_vqe(kx: float, ky: float, t1: float, t2: float, M: float, a_v
         )
 
     result = float(res.fun)
-    print(f"E([{round(kx, 3)}, {round(ky, 3)}]) = {result}")
+    logger.info(f"E([{round(kx, 3)}, {round(ky, 3)}]) = {result}")
     return result
 
 def real_space_slater_determinant(n_sites: int, t1: float, t2: float, phi: float, n_occ: int) -> SlaterDeterminant:
@@ -117,6 +156,45 @@ def real_space_EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
         ansatz.x(i)
     ansatz.compose(excitation_preserving(n_sites*spin, "fsim", "linear", reps=n_layers), inplace=True)
     return ansatz
+
+def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, n_sites: int, n_occ: int, rep: int):
+    omega_coef = 0
+    full_circuit_depth, two_gate_circuit_depth = 0, 0
+
+    for k in range(num_iterations, 0, -1):
+        omega_coef /= 2
+
+        qc = construct_iqpe_circuit(unitary, state_preparation, k, -2*np.pi*omega_coef)
+        full_circuit_depth += qc.depth()
+        two_gate_circuit_depth += qc.depth(lambda x: x.operation.num_qubits == 2)
+
+        sampler_job = sampler.run([qc])
+        result = sampler_job.result().quasi_dists[0]
+        x = 1 if result.get(1, 0) > result.get(0, 0) else 0
+
+        omega_coef = omega_coef + x / 2
+        logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}, iteration {k}) = {omega_coef}")
+
+    return omega_coef, full_circuit_depth / num_iterations, two_gate_circuit_depth / num_iterations
+
+def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCircuit, k: int, omega: float):
+    phase_register = QuantumRegister(1, name="a")
+    eigenstate_register = QuantumRegister(unitary.num_qubits, name="q")
+
+    qc = QuantumCircuit(eigenstate_register)
+    qc.add_register(phase_register)
+    qc.append(state_preparation, eigenstate_register)
+
+    qc.h(phase_register[0])
+    qc = qc.compose(unitary.power(2 ** (k - 1)).control(), [unitary.num_qubits] + list(range(0, unitary.num_qubits)))
+    qc.p(omega, phase_register[0])
+    qc.h(phase_register[0])
+
+    c = ClassicalRegister(1, name="c")
+    qc.add_register(c)
+    qc.measure(phase_register, c)
+
+    return qc
 
 def real_space_fermionic_hamiltonian(n_sites: int, t1: float, t2: float, phi: float) -> FermionicOp:
     lattice = [(i, (i + 1) % n_sites, 0) for i in range(n_sites)]+[(i, (i + 2) % n_sites, 1) for i in range(n_sites)]
@@ -157,57 +235,72 @@ def real_space_exact(n_sites: int, t1: float, t2: float, phi: float, n_occ: int)
 
     eigvals, _ = np.linalg.eigh(H)
     result = np.sum(np.sort(eigvals)[:n_occ])
-    print(f"Exact (n_sites={n_sites}, n_occ={n_occ}) = {result}")
+    logger.info(f"Exact (n_sites={n_sites}, n_occ={n_occ}) = {result}")
     return result
 
-def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, max_iters: int, backend: BackendV2 = None, n_layers: int = 0) -> float:
-    fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
-    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
+def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, max_iters: int, n_layers: int = 0, vqe_reps: int = 1, backend: BackendV2 = None) -> float:
+    result = 0.0
 
-    if backend:
-        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
-        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
-    else:
-        simulator = AerSimulator()
+    for rep in range(1, vqe_reps+1):
+        fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
+        qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
-    ansatz = real_space_EP_ansatz(n_sites, n_layers, n_occ) if n_layers else real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
-    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
+        if backend:
+            noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
+            simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
+        else:
+            simulator = AerSimulator()
+
+        ansatz = real_space_EP_ansatz(n_sites, n_layers, n_occ) if n_layers else real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
+        ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
+        
+        with Session(backend=simulator) as session:
+            estimator = Estimator(mode=session)
+            x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
+            
+            cost_history_dict = {
+                "prev_vector": None,
+                "iters": 0,
+                "cost_history": [],
+                "num_queries": 0,
+            }
+            def cost_func(params):
+                if cost_history_dict["iters"] >= max_iters:
+                    return cost_history_dict["cost_history"][-1]
+            
+                pub = (ansatz_circuit, [qubit_hamiltonian], [params])
+                result = estimator.run(pubs=[pub]).result()
+                energy = result[0].data.evs[0]
+            
+                cost_history_dict["iters"] += 1
+                cost_history_dict["prev_vector"] = params
+                cost_history_dict["cost_history"].append(energy)
+                cost_history_dict["num_queries"] += qubit_hamiltonian.size
+            
+                logger.debug(f"VQE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}, iteration {cost_history_dict["iters"]}) = {energy}")
+                return energy
+            
+            spsa = SPSA(maxiter=max_iters)
+            res = spsa.minimize(cost_func, x0=x0)
+            
+            logger.info(f"VQE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {float(res.fun)}")
+            result = min(result, float(res.fun))
     
-    with Session(backend=simulator) as session:
-        estimator = Estimator(mode=session)
-        x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
-        
-        cost_history_dict = {
-            "prev_vector": None,
-            "iters": 0,
-            "cost_history": [],
-            "num_queries": 0,
-        }
-        def cost_func(params):
-            if cost_history_dict["iters"] >= max_iters:
-                return cost_history_dict["cost_history"][-1]
-        
-            pub = (ansatz_circuit, [qubit_hamiltonian], [params])
-            result = estimator.run(pubs=[pub]).result()
-            energy = result[0].data.evs[0]
-        
-            cost_history_dict["iters"] += 1
-            cost_history_dict["prev_vector"] = params
-            cost_history_dict["cost_history"].append(energy)
-            cost_history_dict["num_queries"] += qubit_hamiltonian.size
-        
-            return energy
-        
-        spsa = SPSA(maxiter=max_iters)
-        res = spsa.minimize(cost_func, x0=x0)
-
-    result = float(res.fun)
-    print(f"VQE (n_sites={n_sites}, n_occ={n_occ}) = {result}")
-    return result
+    num_queries = cost_history_dict["num_queries"]
+    full_circuit_depth, two_gate_circuit_depth = ansatz_circuit.depth(), ansatz_circuit.depth(lambda x: x.operation.num_qubits == 2)
+    logger.info(f"VQE (n_sites={n_sites}, n_occ={n_occ}) = {result} (num_queries={cost_history_dict["num_queries"]}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}])")
+    return {
+        "result": result, 
+        "num_queries": num_queries, 
+        "circuit_depth": (full_circuit_depth, two_gate_circuit_depth)
+    }
 
 def real_space_iqpe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, t: float, n_trot: int, n_iters: int, max_iters: int, backend: BackendV2 = None) -> float:
-    result = 0
-    for _ in range(max_iters):
+    np.seterr(all='ignore') # any floating point warnings are trivial
+
+    result = 0.0
+    total_full_circuit_depth, total_two_qubit_circuit_depth = 0, 0
+    for rep in range(max_iters):
         fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
         qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
@@ -226,18 +319,19 @@ def real_space_iqpe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, 
         else:
             sampler = Sampler()
 
-        # Sampler is deprecated but IQPE in Qiskit Algorithms has not been updated to use SamplerV2 yet 
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            iqpe = IterativePhaseEstimation(num_iterations=n_iters, sampler=sampler)
-            
-        res = iqpe.estimate(unitary=evolution, state_preparation=initial)
-
-        result = float(-2*np.pi*res.phase/t)
-        exact = real_space_exact(n_sites, t1, t2, phi, n_occ)
-        if result >= exact-1 and result <= exact+1:
-            print(f"IQPE (n_sites={n_sites}, n_occ={n_occ}) = {result}")
-            return result
-
-    print(f"IQPE (n_sites={n_sites}, n_occ={n_occ}) failed")
-    return 0.0
+        phase, full_circuit_depth, two_qubit_circuit_depth = iqpe_estimate(evolution, initial, n_iters, sampler, n_sites, n_occ, rep)
+        total_full_circuit_depth += full_circuit_depth
+        total_two_qubit_circuit_depth += two_qubit_circuit_depth
+        res = -2*np.pi*phase/t
+        logger.info(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {res}")
+        if res >= -2*n_sites-1:
+            result = min(result, res)
+    
+    num_queries = qubit_hamiltonian.size*max_iters*n_trot*n_iters
+    full_circuit_depth, two_qubit_circuit_depth = total_full_circuit_depth/max_iters, total_two_qubit_circuit_depth/max_iters
+    logger.info(f"IQPE (n_sites={n_sites}, n_occ={n_occ}) = {result} (num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_qubit_circuit_depth}])")
+    return {
+        "result": result, 
+        "num_queries": num_queries,
+        "circuit_depth": (full_circuit_depth, two_qubit_circuit_depth)
+    }

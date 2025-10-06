@@ -1,7 +1,9 @@
-from utils import real_space_exact
+from utils import real_space_exact, setup_logging
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+
+setup_logging()
 
 n_sites = 4
 t1, t2, phi = 1.0, 0.05, np.pi/4
