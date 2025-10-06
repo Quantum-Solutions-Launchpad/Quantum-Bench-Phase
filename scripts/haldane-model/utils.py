@@ -58,7 +58,7 @@ def setup_logging(debug_enabled: bool = True):
         format=fmt_file,
         rotation="00:00",
         retention="14 days",
-        compression="zip",
+        enqueue=True,
     )
 
 cost_history_dict = {
