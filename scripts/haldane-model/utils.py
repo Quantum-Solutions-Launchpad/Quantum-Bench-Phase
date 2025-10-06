@@ -173,7 +173,6 @@ def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, nu
         x = 1 if result.get(1, 0) > result.get(0, 0) else 0
 
         omega_coef = omega_coef + x / 2
-        logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}, iteration {k}) = {omega_coef}")
 
     return omega_coef, full_circuit_depth / num_iterations, two_gate_circuit_depth / num_iterations
 
@@ -276,14 +275,13 @@ def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, m
                 cost_history_dict["prev_vector"] = params
                 cost_history_dict["cost_history"].append(energy)
                 cost_history_dict["num_queries"] += qubit_hamiltonian.size
-            
-                logger.debug(f"VQE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}, iteration {cost_history_dict["iters"]}) = {energy}")
+
                 return energy
             
             spsa = SPSA(maxiter=max_iters)
             res = spsa.minimize(cost_func, x0=x0)
             
-            logger.info(f"VQE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {float(res.fun)}")
+            logger.debug(f"VQE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {float(res.fun)}")
             result = min(result, float(res.fun))
     
     num_queries = cost_history_dict["num_queries"]
@@ -323,7 +321,7 @@ def real_space_iqpe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, 
         total_full_circuit_depth += full_circuit_depth
         total_two_qubit_circuit_depth += two_qubit_circuit_depth
         res = -2*np.pi*phase/t
-        logger.info(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {res}")
+        logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {res}")
         if res >= -2*n_sites-1:
             result = min(result, res)
     
