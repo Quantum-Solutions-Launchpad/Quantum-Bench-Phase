@@ -1,0 +1,18 @@
+[[1m[32m07:41:47[0m[1m[0m] [37mExact (n_sites=4, n_occ=0) = 0.0[0m
+[[1m[32m07:41:47[0m[1m[0m] [37mExact (n_sites=4, n_occ=1) = -2.0000000000000004[0m
+[[1m[32m07:41:47[0m[1m[0m] [37mExact (n_sites=4, n_occ=2) = -4.000000000000001[0m
+[[1m[32m07:41:47[0m[1m[0m] [37mExact (n_sites=4, n_occ=3) = -4.000000000000001[0m
+[[1m[32m07:41:47[0m[1m[0m] [37mExact (n_sites=4, n_occ=4) = -4.000000000000001[0m
+[[1m[32m07:41:47[0m[1m[0m] [37mExact (n_sites=4, n_occ=5) = -4.000000000000001[0m
+[[1m[32m07:41:47[0m[1m[0m] [37mExact (n_sites=4, n_occ=6) = -4.0[0m
+[[1m[32m09:20:04[0m[1m[0m] [37mVQE (n_sites=4, n_occ=0) = -0.0322265625 (num_queries=160000, circuit_depth=[51,45])[0m
+[[1m[32m09:20:04[0m[1m[0m] [37mExact (n_sites=4, n_occ=7) = -2.0000000000000013[0m
+[[1m[32m09:22:56[0m[1m[0m] [37mVQE (n_sites=4, n_occ=1) = -1.93408203125 (num_queries=160000, circuit_depth=[52,45])[0m
+[[1m[32m09:25:18[0m[1m[0m] [37mVQE (n_sites=4, n_occ=2) = -3.72705078125 (num_queries=160000, circuit_depth=[52,45])[0m
+[[1m[32m09:25:19[0m[1m[0m] [37mExact (n_sites=4, n_occ=8) = -1.3322676295501878e-15[0m
+[[1m[32m09:27:46[0m[1m[0m] [37mVQE (n_sites=4, n_occ=3) = -3.7255859375 (num_queries=160000, circuit_depth=[52,45])[0m
+[[1m[32m09:29:46[0m[1m[0m] [37mVQE (n_sites=4, n_occ=4) = -3.708251953125 (num_queries=160000, circuit_depth=[52,45])[0m
+[[1m[32m09:32:07[0m[1m[0m] [37mVQE (n_sites=4, n_occ=5) = -3.61572265625 (num_queries=160000, circuit_depth=[52,45])[0m
+[[1m[32m09:33:15[0m[1m[0m] [37mVQE (n_sites=4, n_occ=6) = -3.15576171875 (num_queries=160000, circuit_depth=[52,45])[0m
+[[1m[32m10:46:30[0m[1m[0m] [37mVQE (n_sites=4, n_occ=7) = -1.354248046875 (num_queries=160000, circuit_depth=[52,45])[0m
+[[1m[32m10:52:07[0m[1m[0m] [37mVQE (n_sites=4, n_occ=8) = -0.05517578125 (num_queries=160000, circuit_depth=[52,45])[0m

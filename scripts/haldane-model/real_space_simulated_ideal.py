@@ -12,7 +12,7 @@ t1, t2, phi = 1.0, 0.0, np.pi/4
 spin = 2
 mapper = JordanWignerMapper()
 vqe_iters, vqe_layers, vqe_reps = 10000, 5, 10
-t, iqpe_trot, iqpe_iters, iqpe_max_iters = 0.2, 5, 8, 20
+t, iqpe_trot, iqpe_iters, iqpe_reps = 0.2, 5, 8, 20
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--no-debug", action="store_true", help="Suppress debug logs")
@@ -21,7 +21,7 @@ args = parser.parse_args()
 jobs = []
 for n_occ in range(spin * n_sites + 1):
     jobs.append(delayed(real_space_exact)(n_sites, t1, t2, phi, n_occ))
-    jobs.append(delayed(real_space_iqpe)(n_sites, t1, t2, phi, n_occ, mapper, t, iqpe_trot, iqpe_iters, iqpe_max_iters))
+    jobs.append(delayed(real_space_iqpe)(n_sites, t1, t2, phi, n_occ, mapper, t, iqpe_trot, iqpe_iters, iqpe_reps))
     jobs.append(delayed(real_space_vqe)(n_sites, t1, t2, phi, n_occ, mapper, vqe_iters, vqe_layers, vqe_reps))
 
 def init_worker_logging():
@@ -59,7 +59,7 @@ with open(file_path, "w") as f:
 
 plt.figure()
 plt.plot(range(spin*n_sites+1), data["result"]["exact"].values(), 'ro-', label="Exact")
-plt.plot(range(spin*n_sites+1), data["result"]["iqpe"].values(), 'go', label=f"IQPE (t={t}, n_trot={iqpe_trot}, n_iters={iqpe_iters}, max_iters={iqpe_max_iters})")
+plt.plot(range(spin*n_sites+1), data["result"]["iqpe"].values(), 'go', label=f"IQPE (t={t}, n_trot={iqpe_trot}, n_iters={iqpe_iters}, n_reps={iqpe_reps})")
 plt.plot(range(spin*n_sites+1), data["result"]["vqe"].values(), 'bo', label=f"VQE (n_iters={vqe_iters}, n_layers={vqe_layers}, n_reps={vqe_reps})")
 plt.legend()
 plt.xlabel("Particle Number")
