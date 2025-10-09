@@ -159,7 +159,7 @@ def real_space_EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
     ansatz.compose(excitation_preserving(n_sites*spin, "fsim", "linear", reps=n_layers), inplace=True)
     return ansatz
 
-def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler):
+def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, n_sites: int, n_occ: int, rep: int):
     omega_coef = 0
 
     for k in range(num_iterations, 0, -1):
@@ -172,6 +172,8 @@ def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, nu
         x = 1 if result.get(1, 0) > result.get(0, 0) else 0
 
         omega_coef = omega_coef + x / 2
+
+        logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}, iteration {num_iterations-k+1}) = {omega_coef}")
 
     return omega_coef
 
@@ -318,7 +320,7 @@ def real_space_iqpe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, 
     else:
         sampler = Sampler()
 
-    phase = iqpe_estimate(evolution, initial, n_iters, sampler)
+    phase = iqpe_estimate(evolution, initial, n_iters, sampler, n_sites, n_occ, rep)
     res = -2*np.pi*phase/t
 
     logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {res}")
@@ -345,8 +347,9 @@ def iqpe_other_benchmarks(n_sites: int, t1: float, t2: float, phi: float, n_occ:
         qc = transpile(qc, backend=simulator, optimization_level=3)
         full_circuit_depth += qc.depth()
         two_gate_circuit_depth += qc.depth(lambda x: x.operation.num_qubits == 2)
+        logger.debug(f"IQPE other benchmarks (n_sites={n_sites}, n_occ={n_occ}, iteration {n_iters-k+1}): circuit_depth=[{qc.depth(), qc.depth(lambda x: x.operation.num_qubits == 2)}]")
     
     num_queries = qubit_hamiltonian.size*iqpe_reps*n_trot*n_iters
 
-    logger.info(f"IQPE other benchmarks (n_sites={n_sites}, n_occ={n_occ}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}]")
-    return num_queries, (full_circuit_depth, two_gate_circuit_depth)
+    logger.info(f"IQPE other benchmarks (n_sites={n_sites}, n_occ={n_occ}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth // n_iters},{two_gate_circuit_depth // n_iters}]")
+    return num_queries, (full_circuit_depth // n_iters, two_gate_circuit_depth // n_iters)

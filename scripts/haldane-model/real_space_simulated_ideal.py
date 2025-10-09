@@ -25,6 +25,8 @@ for n_occ in range(spin * n_sites + 1):
         jobs.append(delayed(real_space_iqpe)(n_sites, t1, t2, phi, n_occ, mapper, t, iqpe_trot, iqpe_iters, rep))
     for rep in range(1, vqe_reps+1):
         jobs.append(delayed(real_space_vqe)(n_sites, t1, t2, phi, n_occ, mapper, vqe_iters, vqe_layers, vqe_reps))
+    jobs.append(delayed(iqpe_other_benchmarks)(n_sites, t1, t2, phi, n_occ, mapper, t, iqpe_trot, iqpe_iters, iqpe_reps))
+    jobs.append(delayed(vqe_other_benchmarks)(n_sites, t1, t2, phi, n_occ, mapper, vqe_iters, vqe_layers, vqe_reps))
 
 def init_worker_logging():
     from utils import setup_logging
@@ -32,17 +34,16 @@ def init_worker_logging():
 
 results = Parallel(n_jobs=-1, initializer=init_worker_logging)(jobs)
 
-exact = results[::1+iqpe_reps+vqe_reps]
-iqpe = [min(j for j in res if j >= -2*n_sites-1) for res in [results[i:i+iqpe_reps] for i in range(1, n_occ*(1+iqpe_reps+vqe_reps), 1+iqpe_reps+vqe_reps)]]
-vqe = [min(res) for res in [results[i:i+vqe_reps] for i in range(1+iqpe_reps, n_occ*(1+iqpe_reps+vqe_reps), 1+iqpe_reps+vqe_reps)]]
+exact = results[::3+iqpe_reps+vqe_reps]
+iqpe = [min(j for j in res if j >= -2*n_sites-1) for res in [results[i:i+iqpe_reps] for i in range(1, (spin*n_sites+1)*(3+iqpe_reps+vqe_reps), 3+iqpe_reps+vqe_reps)]]
+vqe = [min(res) for res in [results[i:i+vqe_reps] for i in range(1+iqpe_reps, (spin*n_sites+1)*(3+iqpe_reps+vqe_reps), 3+iqpe_reps+vqe_reps)]]
+iqpe_other_benchmarks = results[1+iqpe_reps+vqe_reps::3+iqpe_reps+vqe_reps]
+vqe_other_benchmarks = results[2+iqpe_reps+vqe_reps::3+iqpe_reps+vqe_reps]
 
 logger = setup_logging(debug_enabled=not args.no_debug)
 for i in range(spin*n_sites+1):
     logger.info(f"IQPE (n_sites={n_sites}, n_occ={n_occ}) = {iqpe[i]}")
     logger.info(f"VQE (n_sites={n_sites}, n_occ={n_occ}) = {vqe[i]}")
-
-iqpe_other_benchmarks = [iqpe_other_benchmarks(n_sites, t1, t2, phi, n_occ, mapper, t, iqpe_trot, iqpe_iters, iqpe_reps) for n_occ in range(spin*n_sites+1)]
-vqe_other_benchmarks = [vqe_other_benchmarks(n_sites, t1, t2, phi, n_occ, mapper, vqe_iters, vqe_layers, vqe_reps) for n_occ in range(spin*n_sites+1)]
 
 data = {
     "result": {
@@ -66,7 +67,7 @@ data = {
     }
 }
 
-file_path = os.path.join(os.getcwd(), "..", "..", "cache/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-t2-"+str(t2)+".json")
+file_path = os.path.join(os.getcwd(), "cache/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-t2-"+str(t2)+".json")
 with open(file_path, "w") as f:
     json.dump(data, f, indent=4)
 
@@ -80,5 +81,5 @@ plt.ylabel("$E$")
 plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Ideal)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
 plt.tight_layout()
 
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-t2-"+str(t2)+".png")
+file_path = os.path.join(os.getcwd(), "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-t2-"+str(t2)+".png")
 plt.savefig(file_path)
