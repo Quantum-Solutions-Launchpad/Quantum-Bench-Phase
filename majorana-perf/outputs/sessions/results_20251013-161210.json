@@ -1,0 +1,21 @@
+[
+  {
+    "cmd": "python scripts/real_space_main.py --n-sites 4 --t2 0.0 --phi 0.78539816339 --iqpe-reps 5 --iqpe-iters 4 --iqpe-trot 3 --iqpe-t 0.2 --vqe-reps 3 --vqe-iters 500 --vqe-layers 2 --n-jobs -1 --threads-per-job 1 --no-plot --out-root outputs/artifacts",
+    "start_time": "2025-10-13T16:12:11.029578",
+    "timeout_sec": 1200,
+    "stdout_log": "outputs/sessions/logs_20251013-161210/stdout_20251013-161211.log",
+    "stderr_log": "outputs/sessions/logs_20251013-161210/stderr_20251013-161211.log",
+    "end_time": "2025-10-13T16:12:11.104062",
+    "return_code": 1,
+    "timed_out": false,
+    "wall_time_sec": 0.074041,
+    "cpu_time_sec": null,
+    "peak_rss_mb": 0.0,
+    "max_cpu_percent_sum": 0.0,
+    "gpu_summary": null,
+    "command": "python scripts/real_space_main.py --n-sites 4 --t2 0.0 --phi 0.78539816339 --iqpe-reps 5 --iqpe-iters 4 --iqpe-trot 3 --iqpe-t 0.2 --vqe-reps 3 --vqe-iters 500 --vqe-layers 2 --n-jobs -1 --threads-per-job 1 --no-plot --out-root outputs/artifacts",
+    "run_index": 0,
+    "session_id": "20251013-161210",
+    "tag": null
+  }
+]

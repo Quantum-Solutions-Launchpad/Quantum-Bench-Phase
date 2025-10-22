@@ -1,0 +1,29 @@
+{
+  "timestamp": "2025-10-22T07:43:27.235809",
+  "platform": "Linux-6.8.0-65-generic-x86_64-with-glibc2.35",
+  "system": "Linux",
+  "machine": "x86_64",
+  "processor": "x86_64",
+  "python_version": "3.10.12",
+  "cpu_count_logical": 384,
+  "cpu_count_physical": 192,
+  "total_ram_gb": 1511.41,
+  "env_vars_of_interest": {
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "CUDA_VISIBLE_DEVICES": null
+  },
+  "python_executable": "/mnt/Data/adrian/Virtual_Environments/WISER/bin/python",
+  "working_directory": "/mnt/Data/adrian/NNL_Git/majorana-perf",
+  "numpy_version": "2.2.6",
+  "numpy_build_config": {},
+  "scipy_version": "1.15.3",
+  "gpus": null,
+  "file_hashes_sha1": {
+    "scripts/real_space_main.py": "eef34117a7b8ec14586d4dc654b74d14073c98f9",
+    "scripts/utils.py": "eef34117a7b8ec14586d4dc654b74d14073c98f9"
+  },
+  "session_tag": null
+}

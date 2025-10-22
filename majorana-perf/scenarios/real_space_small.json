@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "python scripts/real_space_main.py --n-sites 4 --t2 0.0 --phi 0.78539816339 --iqpe-reps 10 --iqpe-iters 8 --iqpe-trot 5 --iqpe-t 0.2 --vqe-reps 5 --vqe-iters 2000 --vqe-layers 3 --n-jobs -1 --threads-per-job 1 --no-plot --out-root outputs/artifacts"
+  ]
+}

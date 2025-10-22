@@ -1,0 +1,15 @@
+{
+  "topo_invariant": -1,
+  "Emin": 8.351192368846264e-18,
+  "left_edge_weight": 0.9832038399999984,
+  "right_edge_weight": 2.2083320711717275e-34,
+  "edge_overlap": 4.416664142343455e-34,
+  "ipr": 0.47058823529411775,
+  "xi_loc": 1.9576151889712134,
+  "Emin_std": 0.0,
+  "left_edge_weight_std": 0.0,
+  "right_edge_weight_std": 4.276423536147513e-50,
+  "edge_overlap_std": 8.552847072295026e-50,
+  "ipr_std": 1.6653345369377348e-16,
+  "xi_loc_std": 6.661338147750939e-16
+}

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+unset OMP_NUM_THREADS
+unset MKL_NUM_THREADS
+unset OPENBLAS_NUM_THREADS
+unset NUMEXPR_NUM_THREADS

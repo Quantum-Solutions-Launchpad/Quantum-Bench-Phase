@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/mnt/Data/adrian/NNL_Git/majorana-perf/scripts/real_space_main.py", line 10, in <module>
+    from qiskit_ibm_runtime import Session, Estimator
+ModuleNotFoundError: No module named 'qiskit_ibm_runtime'

@@ -1,0 +1,77 @@
+# Top-level Makefile for majorana-perf
+
+.ONESHELL:
+SHELL := /bin/bash
+
+# ---- Defaults (override via CLI: make RUNS=7 small) ----
+PY                ?= python
+RUNS              ?= 5
+WARMUPS           ?= 1
+TIMEOUT_SMALL     ?= 1800
+TIMEOUT_BIG       ?= 5400
+OUTDIR            ?= outputs/sessions
+SCENARIO_SMALL    ?= scenarios/real_space_small.json
+SCENARIO_BIG      ?= scenarios/real_space_big.json
+FINGERPRINTS      ?= --fingerprint scripts/real_space_main.py --fingerprint scripts/utils.py
+GPUFLAG           ?=
+THREAD_ENV        ?= env_vars/single_thread.sh
+
+# Allow local overrides without editing this file
+-include local.mk
+
+# ---- Helpers ----
+define run_bench
+	. $(THREAD_ENV)
+	$(PY) perf_runner.py \
+	  --config $(1) \
+	  --runs $(RUNS) \
+	  --warmups $(WARMUPS) \
+	  --timeout $(2) \
+	  $(GPUFLAG) \
+	  $(FINGERPRINTS) \
+	  --outdir $(OUTDIR)
+endef
+
+# ---- Targets ----
+.PHONY: help small big gpu-small gpu-big all print-env
+
+help:
+	@echo "Targets:"
+	@echo "  make small         # run small scenario (single-threaded BLAS)"
+	@echo "  make big           # run big scenario (single-threaded BLAS)"
+	@echo "  make gpu-small     # run small scenario with --gpu"
+	@echo "  make gpu-big       # run big scenario with --gpu"
+	@echo "  make print-env     # show current variable values"
+	@echo
+	@echo "Common overrides:"
+	@echo "  RUNS=7 WARMUPS=2 TIMEOUT_SMALL=2400 TIMEOUT_BIG=7200 OUTDIR=outputs/sessions"
+	@echo "  THREAD_ENV=env_vars/all_cores.sh    # to unpin threads"
+	@echo "  GPUFLAG=--gpu                       # or use gpu-* targets"
+	@echo "  SCENARIO_SMALL=... SCENARIO_BIG=... # point to your scenario files"
+
+small:
+	$(call run_bench,$(SCENARIO_SMALL),$(TIMEOUT_SMALL))
+
+big:
+	$(call run_bench,$(SCENARIO_BIG),$(TIMEOUT_BIG))
+
+gpu-small:
+	@$(MAKE) small GPUFLAG="--gpu"
+
+gpu-big:
+	@$(MAKE) big GPUFLAG="--gpu"
+
+all: small big
+
+print-env:
+	@echo "PY=$(PY)"
+	@echo "RUNS=$(RUNS)"
+	@echo "WARMUPS=$(WARMUPS)"
+	@echo "TIMEOUT_SMALL=$(TIMEOUT_SMALL)"
+	@echo "TIMEOUT_BIG=$(TIMEOUT_BIG)"
+	@echo "OUTDIR=$(OUTDIR)"
+	@echo "SCENARIO_SMALL=$(SCENARIO_SMALL)"
+	@echo "SCENARIO_BIG=$(SCENARIO_BIG)"
+	@echo "FINGERPRINTS=$(FINGERPRINTS)"
+	@echo "GPUFLAG=$(GPUFLAG)"
+	@echo "THREAD_ENV=$(THREAD_ENV)"
