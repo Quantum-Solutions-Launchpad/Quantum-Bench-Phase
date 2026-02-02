@@ -166,7 +166,6 @@ def real_space_exact(n_sites: int, t: float, U: float, n_occ: int) -> float:
     if U != 0:
         avg_double_occupancy = (n_occ / (2 * n_sites)) ** 2
         interaction_energy = U * n_sites * avg_double_occupancy
-        logger.warning(f"U={U} ≠ 0: Using mean-field approximation for interaction energy")
     else:
         interaction_energy = 0.0
 
