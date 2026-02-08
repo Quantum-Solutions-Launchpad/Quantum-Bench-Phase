@@ -20,5 +20,6 @@ plt.ylabel("$E$")
 plt.title("Real Space Haldane Hamiltonian Ground State Energy (Exact)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{sites}}="+str(n_sites)+"$")
 plt.tight_layout()
 
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/real-space/"+str(n_sites)+"-sites/exact.png")
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+file_path = os.path.join(project_root, "plots/haldane-model/real-space/"+str(n_sites)+"-sites/exact.png")
 plt.savefig(file_path)

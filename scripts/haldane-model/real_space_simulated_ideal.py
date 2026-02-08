@@ -67,7 +67,8 @@ data = {
     }
 }
 
-file_path = os.path.join(os.getcwd(), "cache/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-t2-"+str(t2)+".json")
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+file_path = os.path.join(project_root, "cache/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-t2-"+str(t2)+".json")
 with open(file_path, "w") as f:
     json.dump(data, f, indent=4)
 
@@ -81,5 +82,5 @@ plt.ylabel("$E$")
 plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Ideal)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
 plt.tight_layout()
 
-file_path = os.path.join(os.getcwd(), "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-t2-"+str(t2)+".png")
+file_path = os.path.join(project_root, "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-t2-"+str(t2)+".png")
 plt.savefig(file_path)

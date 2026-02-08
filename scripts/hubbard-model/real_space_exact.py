@@ -21,6 +21,7 @@ plt.title("Real Space Hubbard Hamiltonian Ground State Energy (Exact)\n$t="+str(
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
 
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/hubbard-model/"+str(n_sites)+"-sites/exact-U-"+str(U)+".png")
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+file_path = os.path.join(project_root, "plots/hubbard-model/"+str(n_sites)+"-sites/exact-U-"+str(U)+".png")
 os.makedirs(os.path.dirname(file_path), exist_ok=True)
 plt.savefig(file_path)

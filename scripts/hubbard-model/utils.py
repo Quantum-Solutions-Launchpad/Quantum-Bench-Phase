@@ -114,7 +114,8 @@ def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCi
     qc.append(state_preparation, eigenstate_register)
 
     qc.h(phase_register[0])
-    qc = qc.compose(unitary.power(2 ** (k - 1)).control(), [unitary.num_qubits] + list(range(0, unitary.num_qubits)))
+    for _ in range(2 ** (k - 1)):
+        qc = qc.compose(unitary.control(), [unitary.num_qubits] + list(range(0, unitary.num_qubits)))
     qc.p(omega, phase_register[0])
     qc.h(phase_register[0])
 
