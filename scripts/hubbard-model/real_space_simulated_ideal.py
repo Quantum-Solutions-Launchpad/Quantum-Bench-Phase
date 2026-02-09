@@ -7,7 +7,7 @@ from qiskit_nature.second_q.mappers import JordanWignerMapper
 from joblib import Parallel, delayed
 import argparse
 
-n_sites = 6
+n_sites = 4
 t, U = 1.0, 0.0
 spin = 2
 mapper = JordanWignerMapper()
