@@ -7,12 +7,12 @@ from qiskit_nature.second_q.mappers import JordanWignerMapper
 from joblib import Parallel, delayed
 import argparse
 
-n_sites = 4
-t1, t2, phi = 1.0, 0.0, np.pi/4
+n_sites = 6
+t1, t2, phi = 1.0, 0.5, np.pi/4
 spin = 2
 mapper = JordanWignerMapper()
 vqe_iters, vqe_layers, vqe_reps = 10000, 5, 10
-t, iqpe_trot, iqpe_iters, iqpe_reps = 0.2, 5, 8, 20
+time_param, iqpe_trot, iqpe_iters, iqpe_reps = 0.2, 5, 8, 20
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--no-debug", action="store_true", help="Suppress debug logs")
@@ -21,11 +21,11 @@ args = parser.parse_args()
 jobs = []
 for n_occ in range(spin * n_sites + 1):
     jobs.append(delayed(real_space_exact)(n_sites, t1, t2, phi, n_occ))
-    for rep in range(1, iqpe_reps+1):
-        jobs.append(delayed(real_space_iqpe)(n_sites, t1, t2, phi, n_occ, mapper, t, iqpe_trot, iqpe_iters, rep))
+    # for rep in range(1, iqpe_reps+1):
+    #     jobs.append(delayed(real_space_iqpe)(n_sites, t1, t2, phi, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, rep))
     for rep in range(1, vqe_reps+1):
         jobs.append(delayed(real_space_vqe)(n_sites, t1, t2, phi, n_occ, mapper, vqe_iters, vqe_layers, rep))
-    jobs.append(delayed(iqpe_other_benchmarks)(n_sites, t1, t2, phi, n_occ, mapper, t, iqpe_trot, iqpe_iters, iqpe_reps))
+    # jobs.append(delayed(iqpe_other_benchmarks)(n_sites, t1, t2, phi, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, iqpe_reps))
     jobs.append(delayed(vqe_other_benchmarks)(n_sites, t1, t2, phi, n_occ, mapper, vqe_iters, vqe_layers, vqe_reps))
 
 def init_worker_logging():
@@ -34,34 +34,34 @@ def init_worker_logging():
 
 results = Parallel(n_jobs=-1, initializer=init_worker_logging)(jobs)
 
-exact = results[::3+iqpe_reps+vqe_reps]
-iqpe = [min(j for j in res if j >= -2*n_sites-1) for res in [results[i:i+iqpe_reps] for i in range(1, (spin*n_sites+1)*(3+iqpe_reps+vqe_reps), 3+iqpe_reps+vqe_reps)]]
-vqe = [min(res) for res in [results[i:i+vqe_reps] for i in range(1+iqpe_reps, (spin*n_sites+1)*(3+iqpe_reps+vqe_reps), 3+iqpe_reps+vqe_reps)]]
-iqpe_other_benchmarks = results[1+iqpe_reps+vqe_reps::3+iqpe_reps+vqe_reps]
-vqe_other_benchmarks = results[2+iqpe_reps+vqe_reps::3+iqpe_reps+vqe_reps]
+exact = results[::2+vqe_reps]
+# iqpe = [min(j for j in res if j >= -2*n_sites-1) for res in [results[i:i+iqpe_reps] for i in range(1, (spin*n_sites+1)*(3+iqpe_reps+vqe_reps), 3+iqpe_reps+vqe_reps)]]
+vqe = [min(res) for res in [results[i:i+vqe_reps] for i in range(1, (spin*n_sites+1)*(2+vqe_reps), 2+vqe_reps)]]
+# iqpe_other_benchmarks = results[1+iqpe_reps+vqe_reps::3+iqpe_reps+vqe_reps]
+vqe_other_benchmarks = results[1+vqe_reps::2+vqe_reps]
 
 logger = setup_logging(debug_enabled=not args.no_debug)
 for i in range(spin*n_sites+1):
-    logger.info(f"IQPE (n_sites={n_sites}, n_occ={n_occ}) = {iqpe[i]}")
-    logger.info(f"VQE (n_sites={n_sites}, n_occ={n_occ}) = {vqe[i]}")
+    # logger.info(f"IQPE (n_sites={n_sites}, n_occ={i}) = {iqpe[i]}")
+    logger.info(f"VQE (n_sites={n_sites}, n_occ={i}) = {vqe[i]}")
 
 data = {
     "result": {
         "exact": {i: exact[i] for i in range(spin*n_sites+1)},
-        "iqpe": {i: iqpe[i] for i in range(spin*n_sites+1)},
+        # "iqpe": {i: iqpe[i] for i in range(spin*n_sites+1)},
         "vqe": {i: vqe[i] for i in range(spin*n_sites+1)}
     },
     "num_queries": {
-        "iqpe": {i: iqpe_other_benchmarks[i][0] for i in range(spin*n_sites+1)},
+        # "iqpe": {i: iqpe_other_benchmarks[i][0] for i in range(spin*n_sites+1)},
         "vqe": {i: vqe_other_benchmarks[i][0] for i in range(spin*n_sites+1)}
     },
     "circuit_depth": {
         "total": {
-            "iqpe": {i: iqpe_other_benchmarks[i][1][0] for i in range(spin*n_sites+1)},
+            # "iqpe": {i: iqpe_other_benchmarks[i][1][0] for i in range(spin*n_sites+1)},
             "vqe": {i: vqe_other_benchmarks[i][1][0] for i in range(spin*n_sites+1)}
         },
         "two_qubit": {
-            "iqpe": {i: iqpe_other_benchmarks[i][1][1] for i in range(spin*n_sites+1)},
+            # "iqpe": {i: iqpe_other_benchmarks[i][1][1] for i in range(spin*n_sites+1)},
             "vqe": {i: vqe_other_benchmarks[i][1][1] for i in range(spin*n_sites+1)}
         }
     }
@@ -74,7 +74,7 @@ with open(file_path, "w") as f:
 
 plt.figure()
 plt.plot(range(spin*n_sites+1), data["result"]["exact"].values(), 'ro-', label="Exact")
-plt.plot(range(spin*n_sites+1), data["result"]["iqpe"].values(), 'go', label=f"IQPE (t={t}, n_trot={iqpe_trot}, n_iters={iqpe_iters}, n_reps={iqpe_reps})")
+# plt.plot(range(spin*n_sites+1), data["result"]["iqpe"].values(), 'go', label=f"IQPE (t={time_param}, n_trot={iqpe_trot}, n_iters={iqpe_iters}, n_reps={iqpe_reps})")
 plt.plot(range(spin*n_sites+1), data["result"]["vqe"].values(), 'bo', label=f"VQE (n_iters={vqe_iters}, n_layers={vqe_layers}, n_reps={vqe_reps})")
 plt.legend()
 plt.xlabel("Particle Number")

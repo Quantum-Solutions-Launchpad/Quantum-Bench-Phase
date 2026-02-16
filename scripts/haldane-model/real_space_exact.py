@@ -6,7 +6,7 @@ import os
 setup_logging()
 
 n_sites = 4
-t1, t2, phi = 1.0, 0.05, np.pi/4
+t1, t2, phi = 1.0, 1.0, np.pi/4
 spin = 2
 
 data = {}
@@ -21,5 +21,5 @@ plt.title("Real Space Haldane Hamiltonian Ground State Energy (Exact)\n$t_1="+st
 plt.tight_layout()
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-file_path = os.path.join(project_root, "plots/haldane-model/real-space/"+str(n_sites)+"-sites/exact.png")
+file_path = os.path.join(project_root, "plots/haldane-model/real-space/"+str(n_sites)+"-sites/exact-t2-"+str(t2)+".png")
 plt.savefig(file_path)
