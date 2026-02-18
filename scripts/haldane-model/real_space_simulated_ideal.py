@@ -7,16 +7,26 @@ from qiskit_nature.second_q.mappers import JordanWignerMapper
 from joblib import Parallel, delayed
 import argparse
 
-n_sites = 4
-t1, t2, phi = 1.0, 0.0, np.pi/4
-spin = 2
-mapper = JordanWignerMapper()
-vqe_iters, vqe_layers, vqe_reps = 10000, 5, 10
-t, iqpe_trot, iqpe_iters, iqpe_reps = 0.2, 5, 8, 20
+# n_sites = 4
+# t1, t2, phi = 1.0, 0.0, np.pi/4
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--n-sites", type=int, required=True, help="Number of sites")
+parser.add_argument("--t2", type=float, required=True, help="Next-nearest neighbor hopping")
 parser.add_argument("--no-debug", action="store_true", help="Suppress debug logs")
 args = parser.parse_args()
+
+# spin = 2
+# mapper = JordanWignerMapper()
+# vqe_iters, vqe_layers, vqe_reps = 10000, 5, 10
+# t, iqpe_trot, iqpe_iters, iqpe_reps = 0.2, 5, 8, 20
+
+n_sites = args.n_sites
+t1, t2, phi = 1.0, args.t2, np.pi/4
+spin = 2
+mapper = JordanWignerMapper()
+vqe_iters, vqe_layers, vqe_reps = 100000, 10, 100
+t, iqpe_trot, iqpe_iters, iqpe_reps = 0.5, 10, 10, 100
 
 jobs = []
 for n_occ in range(spin * n_sites + 1):
