@@ -8,7 +8,7 @@ from joblib import Parallel, delayed
 import argparse
 
 n_sites = 6
-t1, t2, phi = 1.0, 0.5, np.pi/4
+t1, t2, phi, M = 1.0, 0.5, np.pi/4, 0.0
 spin = 2
 mapper = JordanWignerMapper()
 vqe_iters, vqe_layers, vqe_reps = 10000, 5, 10
@@ -20,13 +20,13 @@ args = parser.parse_args()
 
 jobs = []
 for n_occ in range(spin * n_sites + 1):
-    jobs.append(delayed(real_space_exact)(n_sites, t1, t2, phi, n_occ))
+    jobs.append(delayed(real_space_exact)(n_sites, t1, t2, phi, M, n_occ))
     # for rep in range(1, iqpe_reps+1):
-    #     jobs.append(delayed(real_space_iqpe)(n_sites, t1, t2, phi, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, rep))
+    #     jobs.append(delayed(real_space_iqpe)(n_sites, t1, t2, phi, M, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, rep))
     for rep in range(1, vqe_reps+1):
-        jobs.append(delayed(real_space_vqe)(n_sites, t1, t2, phi, n_occ, mapper, vqe_iters, vqe_layers, rep))
-    # jobs.append(delayed(iqpe_other_benchmarks)(n_sites, t1, t2, phi, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, iqpe_reps))
-    jobs.append(delayed(vqe_other_benchmarks)(n_sites, t1, t2, phi, n_occ, mapper, vqe_iters, vqe_layers, vqe_reps))
+        jobs.append(delayed(real_space_vqe)(n_sites, t1, t2, phi, M, n_occ, mapper, vqe_iters, vqe_layers, rep))
+    # jobs.append(delayed(iqpe_other_benchmarks)(n_sites, t1, t2, phi, M, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, iqpe_reps))
+    jobs.append(delayed(vqe_other_benchmarks)(n_sites, t1, t2, phi, M, n_occ, mapper, vqe_iters, vqe_layers, vqe_reps))
 
 def init_worker_logging():
     from utils import setup_logging
@@ -79,7 +79,7 @@ plt.plot(range(spin*n_sites+1), data["result"]["vqe"].values(), 'bo', label=f"VQ
 plt.legend()
 plt.xlabel("Particle Number")
 plt.ylabel("$E$")
-plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Ideal)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
+plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Ideal)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
 plt.tight_layout()
 
 file_path = os.path.join(project_root, "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-t2-"+str(t2)+".png")

@@ -130,10 +130,13 @@ def band_structure_vqe(kx: float, ky: float, t1: float, t2: float, M: float, a_v
     logger.info(f"E([{round(kx, 3)}, {round(ky, 3)}]) = {result}")
     return result
 
-def real_space_slater_determinant(n_sites: int, t1: float, t2: float, phi: float, n_occ: int) -> SlaterDeterminant:
+def real_space_slater_determinant(n_sites: int, t1: float, t2: float, phi: float, M: float, n_occ: int) -> SlaterDeterminant:
     lattice = [(i, (i + 1) % n_sites, 0) for i in range(n_sites)]+[(i, (i + 2) % n_sites, 1) for i in range(n_sites)]
     spin = 2
     H = 0.0 * np.zeros((n_sites*spin, n_sites*spin), dtype=complex)
+    for i in range(n_sites):
+        for s in range(spin):
+            H[i * spin + s, i * spin + s] += M if i % 2 == 0 else -M
     for i, j, order in lattice:
         for s in range(spin):
             s1 = i * spin + s
@@ -197,11 +200,15 @@ def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCi
 
     return qc
 
-def real_space_fermionic_hamiltonian(n_sites: int, t1: float, t2: float, phi: float) -> FermionicOp:
+def real_space_fermionic_hamiltonian(n_sites: int, t1: float, t2: float, phi: float, M: float) -> FermionicOp:
     lattice = [(i, (i + 1) % n_sites, 0) for i in range(n_sites)]+[(i, (i + 2) % n_sites, 1) for i in range(n_sites)]
     spin = 2
 
     hamiltonian = 0.0 * FermionicOp({})
+    for i in range(n_sites):
+        for s in range(spin):
+            idx = i * spin + s
+            hamiltonian += FermionicOp({f"+_{idx} -_{idx}": M if i % 2 == 0 else -M})
     for i, j, order in lattice:
         for s in range(spin):
             s1 = i * spin + s
@@ -219,10 +226,13 @@ def real_space_fermionic_hamiltonian(n_sites: int, t1: float, t2: float, phi: fl
     
     return hamiltonian
 
-def real_space_exact(n_sites: int, t1: float, t2: float, phi: float, n_occ: int) -> float:
+def real_space_exact(n_sites: int, t1: float, t2: float, phi: float, M: float, n_occ: int) -> float:
     lattice = [(i, (i + 1) % n_sites, 0) for i in range(n_sites)]+[(i, (i + 2) % n_sites, 1) for i in range(n_sites)]
     spin = 2
     H = 0.0 * np.zeros((n_sites*spin, n_sites*spin), dtype=complex)
+    for i in range(n_sites):
+        for s in range(spin):
+            H[i * spin + s, i * spin + s] += M if i % 2 == 0 else -M
     for i, j, order in lattice:
         for s in range(spin):
             s1 = i * spin + s
@@ -239,8 +249,8 @@ def real_space_exact(n_sites: int, t1: float, t2: float, phi: float, n_occ: int)
     logger.info(f"Exact (n_sites={n_sites}, n_occ={n_occ}) = {result}")
     return result
 
-def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, max_iters: int, n_layers: int, rep: int, backend: BackendV2 = None):
-    fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
+def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, M: float, n_occ: int, mapper: QubitMapper, max_iters: int, n_layers: int, rep: int, backend: BackendV2 = None):
+    fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi, M)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
     if backend:
@@ -249,9 +259,9 @@ def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, m
     else:
         simulator = AerSimulator()
 
-    ansatz = real_space_EP_ansatz(n_sites, n_layers, n_occ) if n_layers else real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
+    ansatz = real_space_EP_ansatz(n_sites, n_layers, n_occ) if n_layers else real_space_slater_determinant(n_sites, t1, t2, phi, M, n_occ)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
-    
+
     with Session(backend=simulator) as session:
         estimator = Estimator(mode=session)
         x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
@@ -281,17 +291,17 @@ def real_space_vqe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, m
         logger.debug(f"VQE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {float(res.fun)}")
         return float(res.fun)
 
-def vqe_other_benchmarks(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, max_iters: int, n_layers: int = 0, vqe_reps: int = 1, backend: BackendV2 = None) -> tuple[float, tuple[float]]:
+def vqe_other_benchmarks(n_sites: int, t1: float, t2: float, phi: float, M: float, n_occ: int, mapper: QubitMapper, max_iters: int, n_layers: int = 0, vqe_reps: int = 1, backend: BackendV2 = None) -> tuple[float, tuple[float]]:
     if backend:
         noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
         simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
     else:
         simulator = AerSimulator()
 
-    ansatz = real_space_EP_ansatz(n_sites, n_layers, n_occ) if n_layers else real_space_slater_determinant(n_sites, t1, t2, phi, n_occ)
+    ansatz = real_space_EP_ansatz(n_sites, n_layers, n_occ) if n_layers else real_space_slater_determinant(n_sites, t1, t2, phi, M, n_occ)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
-    fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
+    fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi, M)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
     num_queries = qubit_hamiltonian.size*max_iters*vqe_reps
@@ -300,10 +310,10 @@ def vqe_other_benchmarks(n_sites: int, t1: float, t2: float, phi: float, n_occ: 
     logger.info(f"VQE other benchmarks (n_sites={n_sites}, n_occ={n_occ}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}]")
     return num_queries, (full_circuit_depth, two_gate_circuit_depth)
 
-def real_space_iqpe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, t: float, n_trot: int, n_iters: int, rep: int, backend: BackendV2 = None) -> float:
+def real_space_iqpe(n_sites: int, t1: float, t2: float, phi: float, M: float, n_occ: int, mapper: QubitMapper, t: float, n_trot: int, n_iters: int, rep: int, backend: BackendV2 = None) -> float:
     np.seterr(all='ignore') # any floating point warnings are trivial
-    
-    fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
+
+    fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi, M)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
     st = SuzukiTrotter(reps=n_trot)
@@ -327,7 +337,7 @@ def real_space_iqpe(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, 
     logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {res}")
     return res
 
-def iqpe_other_benchmarks(n_sites: int, t1: float, t2: float, phi: float, n_occ: int, mapper: QubitMapper, t: float, n_trot: int, n_iters: int, iqpe_reps: int, backend: BackendV2 = None) -> tuple[float, tuple[float]]:
+def iqpe_other_benchmarks(n_sites: int, t1: float, t2: float, phi: float, M: float, n_occ: int, mapper: QubitMapper, t: float, n_trot: int, n_iters: int, iqpe_reps: int, backend: BackendV2 = None) -> tuple[float, tuple[float]]:
     np.seterr(all='ignore') # any floating point warnings are trivial
     if backend:
         noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
@@ -335,7 +345,7 @@ def iqpe_other_benchmarks(n_sites: int, t1: float, t2: float, phi: float, n_occ:
     else:
         simulator = AerSimulator()
 
-    fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi)
+    fermionic_hamiltonian = real_space_fermionic_hamiltonian(n_sites, t1, t2, phi, M)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
     st = SuzukiTrotter(reps=n_trot)
