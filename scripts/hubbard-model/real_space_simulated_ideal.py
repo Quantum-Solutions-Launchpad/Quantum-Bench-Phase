@@ -1,4 +1,4 @@
-from utils import real_space_exact, real_space_iqpe, real_space_vqe, iqpe_other_benchmarks, vqe_other_benchmarks, setup_logging
+from utils import hubbard_real_space_exact, hubbard_real_space_iqpe, hubbard_real_space_vqe, hubbard_iqpe_other_benchmarks, hubbard_vqe_other_benchmarks, setup_logging
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -20,13 +20,13 @@ args = parser.parse_args()
 
 jobs = []
 for n_occ in range(spin * n_sites + 1):
-    jobs.append(delayed(real_space_exact)(n_sites, t, U, n_occ))
+    jobs.append(delayed(hubbard_real_space_exact)(n_sites, t, U, n_occ))
     # for rep in range(1, iqpe_reps+1):
-    #     jobs.append(delayed(real_space_iqpe)(n_sites, t, U, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, rep))
+    #     jobs.append(delayed(hubbard_real_space_iqpe)(n_sites, t, U, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, rep))
     for rep in range(1, vqe_reps+1):
-        jobs.append(delayed(real_space_vqe)(n_sites, t, U, n_occ, mapper, vqe_iters, vqe_layers, rep))
-    # jobs.append(delayed(iqpe_other_benchmarks)(n_sites, t, U, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, iqpe_reps))
-    jobs.append(delayed(vqe_other_benchmarks)(n_sites, t, U, n_occ, mapper, vqe_iters, vqe_layers, vqe_reps))
+        jobs.append(delayed(hubbard_real_space_vqe)(n_sites, t, U, n_occ, mapper, vqe_iters, vqe_layers, rep))
+    # jobs.append(delayed(hubbard_iqpe_other_benchmarks)(n_sites, t, U, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, iqpe_reps))
+    jobs.append(delayed(hubbard_vqe_other_benchmarks)(n_sites, t, U, n_occ, mapper, vqe_iters, vqe_layers, vqe_reps))
 
 def init_worker_logging():
     from utils import setup_logging

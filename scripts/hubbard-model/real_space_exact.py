@@ -1,4 +1,4 @@
-from utils import real_space_exact, setup_logging
+from utils import hubbard_real_space_exact, setup_logging
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -11,7 +11,7 @@ spin = 2
 
 data = {}
 for n_occ in range(spin*n_sites+1):
-    data[n_occ] = real_space_exact(n_sites, t, U, n_occ)
+    data[n_occ] = hubbard_real_space_exact(n_sites, t, U, n_occ)
 
 plt.figure()
 plt.plot(range(spin*n_sites+1), data.values(), 'ro-')
