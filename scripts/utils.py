@@ -554,3 +554,229 @@ def hubbard_iqpe_other_benchmarks(n_sites: int, t: float, U: float, n_occ: int, 
 
     logger.info(f"IQPE other benchmarks (n_sites={n_sites}, n_occ={n_occ}, t={t}, U={U}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth // n_iters},{two_gate_circuit_depth // n_iters}]")
     return num_queries, (full_circuit_depth // n_iters, two_gate_circuit_depth // n_iters)
+
+# ── Haldane–Hubbard model ──
+
+def haldane_hubbard_slater_determinant(n_sites: int, t1: float, U: float, t2: float, phi: float, M: float, n_occ: int) -> SlaterDeterminant:
+    nn_lattice = [(i, (i + 1) % n_sites) for i in range(n_sites)]
+    nnn_lattice = [(i, (i + 2) % n_sites) for i in range(n_sites)]
+    spin = 2
+
+    H = np.zeros((n_sites * spin, n_sites * spin), dtype=complex)
+
+    for i in range(n_sites):
+        for s in range(spin):
+            H[i * spin + s, i * spin + s] += M if i % 2 == 0 else -M
+
+    for i, j in nn_lattice:
+        for s in range(spin):
+            s1 = i * spin + s
+            s2 = j * spin + s
+            H[s1, s2] -= t1
+            H[s2, s1] -= t1
+
+    for i, j in nnn_lattice:
+        for s in range(spin):
+            s1 = i * spin + s
+            s2 = j * spin + s
+            H[s1, s2] -= t2 * np.exp(1j * phi)
+            H[s2, s1] -= t2 * np.exp(-1j * phi)
+
+    quadratic_hamiltonian = QuadraticHamiltonian(H)
+    transformation_matrix, _, _ = quadratic_hamiltonian.diagonalizing_bogoliubov_transform()
+
+    occupied_orbitals = transformation_matrix[:n_occ, :]
+    return SlaterDeterminant(occupied_orbitals)
+
+def haldane_hubbard_fermionic_hamiltonian(n_sites: int, t1: float, U: float, t2: float, phi: float, M: float) -> FermionicOp:
+    nn_lattice = [(i, (i + 1) % n_sites) for i in range(n_sites)]
+    nnn_lattice = [(i, (i + 2) % n_sites) for i in range(n_sites)]
+    spin = 2
+
+    hamiltonian = 0.0 * FermionicOp({})
+
+    for i in range(n_sites):
+        for s in range(spin):
+            idx = i * spin + s
+            hamiltonian += FermionicOp({f"+_{idx} -_{idx}": M if i % 2 == 0 else -M})
+
+    for i, j in nn_lattice:
+        for s in range(spin):
+            s1 = i * spin + s
+            s2 = j * spin + s
+            hamiltonian -= FermionicOp({
+                f"+_{s1} -_{s2}": t1,
+                f"+_{s2} -_{s1}": t1
+            })
+
+    for i, j in nnn_lattice:
+        for s in range(spin):
+            s1 = i * spin + s
+            s2 = j * spin + s
+            hamiltonian -= FermionicOp({
+                f"+_{s1} -_{s2}": t2 * np.exp(1j * phi),
+                f"+_{s2} -_{s1}": t2 * np.exp(-1j * phi)
+            })
+
+    for i in range(n_sites):
+        spin_up = i * spin + 0
+        spin_down = i * spin + 1
+        hamiltonian += FermionicOp({
+            f"+_{spin_up} -_{spin_up} +_{spin_down} -_{spin_down}": U
+        })
+
+    return hamiltonian
+
+def haldane_hubbard_real_space_exact(n_sites: int, t1: float, U: float, t2: float, phi: float, M: float, n_occ: int) -> float:
+    nn_lattice = [(i, (i + 1) % n_sites) for i in range(n_sites)]
+    nnn_lattice = [(i, (i + 2) % n_sites) for i in range(n_sites)]
+    spin = 2
+
+    H = np.zeros((n_sites * spin, n_sites * spin), dtype=complex)
+
+    for i in range(n_sites):
+        for s in range(spin):
+            H[i * spin + s, i * spin + s] += M if i % 2 == 0 else -M
+
+    for i, j in nn_lattice:
+        for s in range(spin):
+            s1 = i * spin + s
+            s2 = j * spin + s
+            H[s1, s2] -= t1
+            H[s2, s1] -= t1
+
+    for i, j in nnn_lattice:
+        for s in range(spin):
+            s1 = i * spin + s
+            s2 = j * spin + s
+            H[s1, s2] -= t2 * np.exp(1j * phi)
+            H[s2, s1] -= t2 * np.exp(-1j * phi)
+
+    eigvals, _ = np.linalg.eigh(H)
+    kinetic_energy = np.sum(np.sort(eigvals)[:n_occ])
+
+    if U != 0:
+        avg_double_occupancy = (n_occ / (2 * n_sites)) ** 2
+        interaction_energy = U * n_sites * avg_double_occupancy
+    else:
+        interaction_energy = 0.0
+
+    result = kinetic_energy + interaction_energy
+    logger.info(f"Exact (n_sites={n_sites}, n_occ={n_occ}, t1={t1}, U={U}, t2={t2}) = {result}")
+    return result
+
+def haldane_hubbard_real_space_vqe(n_sites: int, t1: float, U: float, t2: float, phi: float, M: float, n_occ: int, mapper: QubitMapper, max_iters: int, n_layers: int, rep: int, backend: BackendV2 = None):
+    fermionic_hamiltonian = haldane_hubbard_fermionic_hamiltonian(n_sites, t1, U, t2, phi, M)
+    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
+
+    if backend:
+        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
+        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
+    else:
+        simulator = AerSimulator()
+
+    ansatz = real_space_EP_ansatz(n_sites, n_layers, n_occ) if n_layers else haldane_hubbard_slater_determinant(n_sites, t1, U, t2, phi, M, n_occ)
+    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
+
+    with Session(backend=simulator) as session:
+        estimator = Estimator(mode=session)
+        x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
+
+        cost_history_dict = {
+            "prev_vector": None,
+            "iters": 0,
+            "cost_history": [],
+        }
+        def cost_func(params):
+            if cost_history_dict["iters"] >= max_iters:
+                return cost_history_dict["cost_history"][-1]
+
+            pub = (ansatz_circuit, [qubit_hamiltonian], [params])
+            result = estimator.run(pubs=[pub]).result()
+            energy = result[0].data.evs[0]
+
+            cost_history_dict["iters"] += 1
+            cost_history_dict["prev_vector"] = params
+            cost_history_dict["cost_history"].append(energy)
+
+            return energy
+
+        spsa = SPSA(maxiter=max_iters)
+        res = spsa.minimize(cost_func, x0=x0)
+
+        logger.debug(f"VQE (n_sites={n_sites}, n_occ={n_occ}, t1={t1}, U={U}, t2={t2}, repetition {rep}) = {float(res.fun)}")
+        return float(res.fun)
+
+def haldane_hubbard_vqe_other_benchmarks(n_sites: int, t1: float, U: float, t2: float, phi: float, M: float, n_occ: int, mapper: QubitMapper, max_iters: int, n_layers: int = 0, vqe_reps: int = 1, backend: BackendV2 = None) -> tuple[float, tuple[float]]:
+    if backend:
+        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
+        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
+    else:
+        simulator = AerSimulator()
+
+    ansatz = real_space_EP_ansatz(n_sites, n_layers, n_occ) if n_layers else haldane_hubbard_slater_determinant(n_sites, t1, U, t2, phi, M, n_occ)
+    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
+
+    fermionic_hamiltonian = haldane_hubbard_fermionic_hamiltonian(n_sites, t1, U, t2, phi, M)
+    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
+
+    num_queries = qubit_hamiltonian.size * max_iters * vqe_reps
+    full_circuit_depth, two_gate_circuit_depth = ansatz_circuit.depth(), ansatz_circuit.depth(lambda x: x.operation.num_qubits == 2)
+
+    logger.info(f"VQE other benchmarks (n_sites={n_sites}, n_occ={n_occ}, t1={t1}, U={U}, t2={t2}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}]")
+    return num_queries, (full_circuit_depth, two_gate_circuit_depth)
+
+def haldane_hubbard_real_space_iqpe(n_sites: int, t1: float, U: float, t2: float, phi: float, M: float, n_occ: int, mapper: QubitMapper, time_param: float, n_trot: int, n_iters: int, rep: int, backend: BackendV2 = None) -> float:
+    np.seterr(all='ignore')
+
+    fermionic_hamiltonian = haldane_hubbard_fermionic_hamiltonian(n_sites, t1, U, t2, phi, M)
+    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
+
+    st = SuzukiTrotter(reps=n_trot)
+    evolution = PauliEvolutionGate(qubit_hamiltonian, time=time_param, synthesis=st)
+    initial = HartreeFock(n_sites, (n_occ // 2 + n_occ % 2, n_occ // 2), mapper)
+
+    if backend:
+        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
+        sampler = Sampler(
+            backend_options={
+                "noise_model": noise_model,
+                "basis_gates": noise_model.basis_gates,
+            }
+        )
+    else:
+        sampler = Sampler()
+
+    phase = iqpe_estimate(evolution, initial, n_iters, sampler, n_sites, n_occ, rep)
+    res = -2 * np.pi * phase / time_param
+
+    logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, t1={t1}, U={U}, t2={t2}, repetition {rep}) = {res}")
+    return res
+
+def haldane_hubbard_iqpe_other_benchmarks(n_sites: int, t1: float, U: float, t2: float, phi: float, M: float, n_occ: int, mapper: QubitMapper, time_param: float, n_trot: int, n_iters: int, iqpe_reps: int, backend: BackendV2 = None) -> tuple[float, tuple[float]]:
+    np.seterr(all='ignore')
+    if backend:
+        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
+        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
+    else:
+        simulator = AerSimulator()
+
+    fermionic_hamiltonian = haldane_hubbard_fermionic_hamiltonian(n_sites, t1, U, t2, phi, M)
+    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
+
+    st = SuzukiTrotter(reps=n_trot)
+    evolution = PauliEvolutionGate(qubit_hamiltonian, time=time_param, synthesis=st)
+    initial = HartreeFock(n_sites, (n_occ // 2 + n_occ % 2, n_occ // 2), mapper)
+
+    full_circuit_depth = two_gate_circuit_depth = 0
+    for k in range(n_iters, 0, -1):
+        qc = construct_iqpe_circuit(evolution, initial, k, -2*np.pi)
+        qc = transpile(qc, backend=simulator, optimization_level=3)
+        full_circuit_depth += qc.depth()
+        two_gate_circuit_depth += qc.depth(lambda x: x.operation.num_qubits == 2)
+        logger.debug(f"IQPE other benchmarks (n_sites={n_sites}, n_occ={n_occ}, iteration {n_iters-k+1}): circuit_depth=[{qc.depth(), qc.depth(lambda x: x.operation.num_qubits == 2)}]")
+
+    num_queries = qubit_hamiltonian.size * iqpe_reps * n_trot * n_iters
+
+    logger.info(f"IQPE other benchmarks (n_sites={n_sites}, n_occ={n_occ}, t1={t1}, U={U}, t2={t2}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth // n_iters},{two_gate_circuit_depth // n_iters}]")
+    return num_queries, (full_circuit_depth // n_iters, two_gate_circuit_depth // n_iters)
