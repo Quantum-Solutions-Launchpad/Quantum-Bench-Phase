@@ -1,4 +1,4 @@
-from utils import band_structure_exact, setup_logging
+from utils import haldane_band_structure_exact, setup_logging
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
@@ -24,7 +24,7 @@ y_list = [float(ky) for ky in np.linspace(-np.pi, np.pi, samples)]
 data = {}
 for kx in x_list:
     for ky in y_list:
-        data[(kx, ky)] = band_structure_exact(kx, ky, t1, t2, M, a_vecs, b_vecs)
+        data[(kx, ky)] = haldane_band_structure_exact(kx, ky, t1, t2, M, a_vecs, b_vecs)
 
 kx_vals, ky_vals = np.meshgrid(x_list, y_list, indexing='xy')
 E_plus = np.array([-data[key] for key in data]).reshape((samples, samples))

@@ -1,4 +1,4 @@
-from utils import band_structure_vqe, band_structure_exact
+from utils import haldane_band_structure_vqe, haldane_band_structure_exact
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
@@ -33,7 +33,7 @@ def init_worker_logging():
     setup_logging(debug_enabled=not args.no_debug)
 
 results = Parallel(n_jobs=-1, initializer=init_worker_logging)(
-    delayed(band_structure_vqe)(kx, ky, t1, t2, M, a_vecs, b_vecs)
+    delayed(haldane_band_structure_vqe)(kx, ky, t1, t2, M, a_vecs, b_vecs)
     for kx, ky in k_points
 )
 data = {k: v for k, v in zip(k_points, results)}
@@ -98,7 +98,7 @@ file_path = os.path.join(project_root, "plots/haldane-model/band-structure/"+str
 plt.savefig(file_path)
 
 results = Parallel(n_jobs=-1)(
-    delayed(band_structure_exact)(kx, ky, t1, t2, M, a_vecs, b_vecs)
+    delayed(haldane_band_structure_exact)(kx, ky, t1, t2, M, a_vecs, b_vecs)
     for kx, ky in k_points
 )
 exact = {k: v for k, v in zip(k_points, results)}
