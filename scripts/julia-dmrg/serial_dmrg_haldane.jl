@@ -7,9 +7,11 @@ function print_usage()
     println(
         """
         Usage:
-          julia scripts/julia-dmrg/dmrg_haldane.jl [options]
+          julia scripts/julia-dmrg/serial_dmrg_haldane.jl [options]
 
         Options:
+          --fixed-params path/to/params.json
+                                      JSON file with fixed parameters shared by all runs
           --n-sites 4,6,8              Comma-separated site counts
           --t2 0.0,0.5,1.0             Comma-separated t2 values
           --maxdims 20,50,100,200|50,100,200,400
@@ -58,6 +60,71 @@ function parse_maxdim_schedules(text::AbstractString)
     return schedules
 end
 
+function read_single_value(args::Vector{String}, i::Int)
+    i < length(args) || error("Missing value for argument $(args[i])")
+    return args[i + 1], i + 1
+end
+
+function read_list_value(args::Vector{String}, i::Int)
+    start_index = i + 1
+    start_index <= length(args) || error("Missing value for argument $(args[i])")
+
+    pieces = String[]
+    j = start_index
+    while j <= length(args) && !startswith(args[j], "--")
+        push!(pieces, args[j])
+        j += 1
+    end
+
+    isempty(pieces) && error("Missing value for argument $(args[i])")
+    return join(pieces, " "), j - 1
+end
+
+function normalize_fixed_params(raw::AbstractDict)
+    normalized = Dict{String, Any}()
+
+    for (key, value) in raw
+        key_string = String(key)
+
+        if key_string == "t1"
+            normalized["t1"] = Float64(value)
+        elseif key_string == "phi"
+            normalized["phi"] = Float64(value)
+        elseif key_string == "spin"
+            normalized["spin"] = Int(value)
+        elseif key_string == "n_occ_spec"
+            normalized["n_occ_spec"] = string(value)
+        elseif key_string == "nsweeps"
+            normalized["nsweeps"] = Int(value)
+        elseif key_string == "maxdim_schedules"
+            normalized["maxdim_schedules"] = [
+                [Int(entry) for entry in schedule] for schedule in value
+            ]
+        elseif key_string == "cutoff"
+            normalized["cutoff"] = Float64(value)
+        elseif key_string == "conserve_qns"
+            normalized["conserve_qns"] = Bool(value)
+        elseif key_string == "seeds"
+            normalized["seeds"] = [Int(seed) for seed in value]
+        elseif key_string == "output"
+            normalized["output"] = isnothing(value) ? nothing : string(value)
+        elseif key_string in ("n_sites_values", "t2_values")
+            # These sweep axes are provided separately through CLI flags.
+            continue
+        else
+            error("Unsupported fixed parameter in JSON: $key_string")
+        end
+    end
+
+    return normalized
+end
+
+function load_fixed_params(path::AbstractString)
+    raw = JSON.parsefile(path)
+    raw isa AbstractDict || error("--fixed-params must point to a JSON object.")
+    return normalize_fixed_params(raw)
+end
+
 function parse_args(args::Vector{String})
     config = Dict{String, Any}(
         "n_sites_values" => [6],
@@ -80,39 +147,42 @@ function parse_args(args::Vector{String})
         if arg in ("-h", "--help")
             print_usage()
             exit(0)
+        elseif arg == "--fixed-params"
+            value, i = read_single_value(args, i)
+            merge!(config, load_fixed_params(value))
         elseif arg == "--n-sites"
-            i += 1
-            config["n_sites_values"] = parse_int_list(args[i])
+            value, i = read_list_value(args, i)
+            config["n_sites_values"] = parse_int_list(value)
         elseif arg == "--t1"
-            i += 1
-            config["t1"] = parse(Float64, args[i])
+            value, i = read_single_value(args, i)
+            config["t1"] = parse(Float64, value)
         elseif arg == "--t2"
-            i += 1
-            config["t2_values"] = parse_float_list(args[i])
+            value, i = read_list_value(args, i)
+            config["t2_values"] = parse_float_list(value)
         elseif arg == "--phi"
-            i += 1
-            config["phi"] = parse(Float64, args[i])
+            value, i = read_single_value(args, i)
+            config["phi"] = parse(Float64, value)
         elseif arg == "--n-occ"
-            i += 1
-            config["n_occ_spec"] = args[i]
+            value, i = read_list_value(args, i)
+            config["n_occ_spec"] = value
         elseif arg == "--nsweeps"
-            i += 1
-            config["nsweeps"] = parse(Int, args[i])
+            value, i = read_single_value(args, i)
+            config["nsweeps"] = parse(Int, value)
         elseif arg == "--maxdims"
-            i += 1
-            config["maxdim_schedules"] = parse_maxdim_schedules(args[i])
+            value, i = read_list_value(args, i)
+            config["maxdim_schedules"] = parse_maxdim_schedules(value)
         elseif arg == "--cutoff"
-            i += 1
-            config["cutoff"] = parse(Float64, args[i])
+            value, i = read_single_value(args, i)
+            config["cutoff"] = parse(Float64, value)
         elseif arg == "--conserve-qns"
-            i += 1
-            config["conserve_qns"] = parse_bool(args[i])
+            value, i = read_single_value(args, i)
+            config["conserve_qns"] = parse_bool(value)
         elseif arg == "--seeds"
-            i += 1
-            config["seeds"] = parse_int_list(args[i])
+            value, i = read_list_value(args, i)
+            config["seeds"] = parse_int_list(value)
         elseif arg == "--output"
-            i += 1
-            config["output"] = args[i]
+            value, i = read_single_value(args, i)
+            config["output"] = value
         else
             error("Unknown argument: $arg")
         end
@@ -271,6 +341,16 @@ function main()
     for n_sites in config["n_sites_values"]
         n_occ_values = resolve_n_occ_values(config["n_occ_spec"], n_sites, config["spin"])
         for t2 in config["t2_values"]
+            hamiltonian = build_ring_hamiltonian_spinful(
+                n_sites;
+                t1=config["t1"],
+                t2=t2,
+                phi=config["phi"],
+                conserve_qns=config["conserve_qns"],
+            )
+            sites = hamiltonian.sites
+            H = hamiltonian.H
+
             for maxdim_schedule in config["maxdim_schedules"]
                 for seed in config["seeds"]
                     println(
@@ -278,15 +358,6 @@ function main()
                     )
 
                     run_t0 = time_ns()
-                    hamiltonian = build_ring_hamiltonian_spinful(
-                        n_sites;
-                        t1=config["t1"],
-                        t2=t2,
-                        phi=config["phi"],
-                        conserve_qns=config["conserve_qns"],
-                    )
-                    sites = hamiltonian.sites
-                    H = hamiltonian.H
 
                     sectors = Dict{String, Any}[]
                     energies = Float64[]
@@ -361,7 +432,7 @@ function main()
 
     out = Dict(
         "format" => "dmrg_haldane_sweep_v1",
-        "created_by" => "scripts/julia-dmrg/dmrg_haldane.jl",
+        "created_by" => "scripts/julia-dmrg/serial_dmrg_haldane.jl",
         "parameters" => Dict(
             "n_sites_values" => config["n_sites_values"],
             "t1" => config["t1"],
