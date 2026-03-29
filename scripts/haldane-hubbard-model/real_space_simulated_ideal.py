@@ -1,4 +1,4 @@
-from utils import haldane_real_space_exact, haldane_real_space_iqpe, haldane_real_space_vqe, haldane_iqpe_other_benchmarks, haldane_vqe_other_benchmarks, setup_logging
+from utils import haldane_hubbard_real_space_exact, haldane_hubbard_real_space_iqpe, haldane_hubbard_real_space_vqe, haldane_hubbard_iqpe_other_benchmarks, haldane_hubbard_vqe_other_benchmarks, setup_logging
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -7,36 +7,27 @@ from qiskit_nature.second_q.mappers import JordanWignerMapper
 from joblib import Parallel, delayed
 import argparse
 
-# n_sites = 4
-# t1, t2, phi, M = 1.0, 0.0, np.pi/4, 0.0
+n_sites = 4
+t1, U = 1.0, 0.0
+t2, phi, M = 1.0, np.pi/4, 0.0
+spin = 2
+mapper = JordanWignerMapper()
+vqe_iters, vqe_layers, vqe_reps = 10000, 5, 10
+time_param, iqpe_trot, iqpe_iters, iqpe_reps = 0.2, 5, 3, 5
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--n-sites", type=int, required=True, help="Number of sites")
-parser.add_argument("--t2", type=float, required=True, help="Next-nearest neighbor hopping")
 parser.add_argument("--no-debug", action="store_true", help="Suppress debug logs")
 args = parser.parse_args()
 
-# spin = 2
-# mapper = JordanWignerMapper()
-# vqe_iters, vqe_layers, vqe_reps = 10000, 5, 10
-# t, iqpe_trot, iqpe_iters, iqpe_reps = 0.2, 5, 8, 20
-
-n_sites = args.n_sites
-t1, t2, phi, M = 1.0, args.t2, np.pi/4, 0.0
-spin = 2
-mapper = JordanWignerMapper()
-vqe_iters, vqe_layers, vqe_reps = 100000, 10, 100
-t, iqpe_trot, iqpe_iters, iqpe_reps = 0.5, 10, 10, 100
-
 jobs = []
 for n_occ in range(spin * n_sites + 1):
-    jobs.append(delayed(haldane_real_space_exact)(n_sites, t1, t2, phi, M, n_occ))
+    jobs.append(delayed(haldane_hubbard_real_space_exact)(n_sites, t1, U, t2, phi, M, n_occ))
     # for rep in range(1, iqpe_reps+1):
-    #     jobs.append(delayed(haldane_real_space_iqpe)(n_sites, t1, t2, phi, M, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, rep))
+    #     jobs.append(delayed(haldane_hubbard_real_space_iqpe)(n_sites, t1, U, t2, phi, M, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, rep))
     for rep in range(1, vqe_reps+1):
-        jobs.append(delayed(haldane_real_space_vqe)(n_sites, t1, t2, phi, M, n_occ, mapper, vqe_iters, vqe_layers, rep))
-    # jobs.append(delayed(haldane_iqpe_other_benchmarks)(n_sites, t1, t2, phi, M, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, iqpe_reps))
-    jobs.append(delayed(haldane_vqe_other_benchmarks)(n_sites, t1, t2, phi, M, n_occ, mapper, vqe_iters, vqe_layers, vqe_reps))
+        jobs.append(delayed(haldane_hubbard_real_space_vqe)(n_sites, t1, U, t2, phi, M, n_occ, mapper, vqe_iters, vqe_layers, rep))
+    # jobs.append(delayed(haldane_hubbard_iqpe_other_benchmarks)(n_sites, t1, U, t2, phi, M, n_occ, mapper, time_param, iqpe_trot, iqpe_iters, iqpe_reps))
+    jobs.append(delayed(haldane_hubbard_vqe_other_benchmarks)(n_sites, t1, U, t2, phi, M, n_occ, mapper, vqe_iters, vqe_layers, vqe_reps))
 
 def init_worker_logging():
     from utils import setup_logging
@@ -78,7 +69,8 @@ data = {
 }
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-file_path = os.path.join(project_root, "cache/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-t2-"+str(t2)+".json")
+file_path = os.path.join(project_root, "cache/haldane-hubbard-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-U-"+str(U)+"-t2-"+str(t2)+".json")
+os.makedirs(os.path.dirname(file_path), exist_ok=True)
 with open(file_path, "w") as f:
     json.dump(data, f, indent=4)
 
@@ -89,8 +81,10 @@ plt.plot(range(spin*n_sites+1), data["result"]["vqe"].values(), 'bo', label=f"VQ
 plt.legend()
 plt.xlabel("Particle Number")
 plt.ylabel("$E$")
-plt.title("Real Space Haldane Hamiltonian Ground State Energy (Qiskit Aer Ideal)\n$t_1="+str(t1)+", t_2="+str(t2)+", \\phi=\\pi/"+str(int(np.pi/phi))+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
+plt.title("Real Space Haldane–Hubbard Hamiltonian Ground State Energy (Qiskit Aer Ideal)\n$t_1="+str(t1)+", U="+str(U)+", t_2="+str(t2)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
+plt.grid(True, alpha=0.3)
 plt.tight_layout()
 
-file_path = os.path.join(project_root, "plots/haldane-model/real-space/"+str(n_sites)+"-sites/simulated-ideal-t2-"+str(t2)+".png")
+file_path = os.path.join(project_root, "plots/haldane-hubbard-model/"+str(n_sites)+"-sites/simulated-ideal-U-"+str(U)+"-t2-"+str(t2)+".png")
+os.makedirs(os.path.dirname(file_path), exist_ok=True)
 plt.savefig(file_path)

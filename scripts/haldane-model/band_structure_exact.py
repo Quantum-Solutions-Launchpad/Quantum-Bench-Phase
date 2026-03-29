@@ -1,4 +1,4 @@
-from utils import band_structure_exact, setup_logging
+from utils import haldane_band_structure_exact, setup_logging
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
@@ -24,7 +24,7 @@ y_list = [float(ky) for ky in np.linspace(-np.pi, np.pi, samples)]
 data = {}
 for kx in x_list:
     for ky in y_list:
-        data[(kx, ky)] = band_structure_exact(kx, ky, t1, t2, M, a_vecs, b_vecs)
+        data[(kx, ky)] = haldane_band_structure_exact(kx, ky, t1, t2, M, a_vecs, b_vecs)
 
 kx_vals, ky_vals = np.meshgrid(x_list, y_list, indexing='xy')
 E_plus = np.array([-data[key] for key in data]).reshape((samples, samples))
@@ -54,7 +54,8 @@ ax.set_zlabel('$E(k)$')
 ax.set_title("Haldane Model Band Structure (Exact)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$")
 ax.view_init(elev=20)
 
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/"+str(n_sites)+"-sites/exact-3d.png")
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+file_path = os.path.join(project_root, "plots/haldane-model/band-structure/"+str(n_sites)+"-sites/exact-3d.png")
 plt.savefig(file_path)
 
 fig, ax = plt.subplots(1, 2, figsize=(14,6))
@@ -74,5 +75,5 @@ ax[1].set_ylabel("$k_y$")
 fig.suptitle("Haldane Model Band Structure (Exact)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=16)
 
 plt.tight_layout()
-file_path = os.path.join(os.getcwd(), "..", "..", "plots/haldane-model/band-structure/"+str(n_sites)+"-sites/exact-heatmap.png")
+file_path = os.path.join(project_root, "plots/haldane-model/band-structure/"+str(n_sites)+"-sites/exact-heatmap.png")
 plt.savefig(file_path)
