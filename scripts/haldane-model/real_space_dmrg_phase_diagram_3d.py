@@ -35,7 +35,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def default_output_dir(root: Path) -> Path:
-    return root / "plots" / "haldane-model" / "real-space" / "dmrg-phase-diagram-3d"
+    return root / "plots" / "haldane" / "dmrg" / "phase-diagram-3d"
 
 
 def finalize_figure(fig: plt.Figure, path: Path) -> None:
