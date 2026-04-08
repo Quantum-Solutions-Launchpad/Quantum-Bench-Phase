@@ -1,4 +1,6 @@
-from utils import haldane_band_structure_vqe, haldane_band_structure_exact
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from models.haldane import band_structure_vqe as haldane_band_structure_vqe, band_structure_exact as haldane_band_structure_exact
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
@@ -29,7 +31,7 @@ y_list = [float(ky) for ky in np.linspace(-np.pi, np.pi, samples)]
 k_points = list(product(x_list, y_list))
 
 def init_worker_logging():
-    from utils import setup_logging
+    from core import setup_logging
     setup_logging(debug_enabled=not args.no_debug)
 
 results = Parallel(n_jobs=-1, initializer=init_worker_logging)(
@@ -74,7 +76,7 @@ ax.set_zlabel('$E(k)$')
 ax.set_title("Haldane Model Band Structure (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$")
 ax.view_init(elev=20)
 
-file_path = os.path.join(project_root, "plots/haldane-model/band-structure/"+str(n_sites)+"-sites/simulated-ideal-"+str(samples)+"-samples-3d.png")
+file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/simulated-ideal-"+str(samples)+"-samples-3d.png")
 plt.savefig(file_path)
 
 fig, ax = plt.subplots(1, 2, figsize=(14,6))
@@ -94,7 +96,7 @@ ax[1].set_ylabel("$k_y$")
 fig.suptitle("Haldane Model Band Structure (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=16)
 
 plt.tight_layout()
-file_path = os.path.join(project_root, "plots/haldane-model/band-structure/"+str(n_sites)+"-sites/simulated-ideal-"+str(samples)+"-samples-heatmap.png")
+file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/simulated-ideal-"+str(samples)+"-samples-heatmap.png")
 plt.savefig(file_path)
 
 results = Parallel(n_jobs=-1)(
@@ -114,5 +116,5 @@ ax.set_ylabel("$k_y$")
 
 fig.suptitle("Haldane Model Band Structure Absolute Error (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
 
-file_path = os.path.join(project_root, "plots/haldane-model/band-structure/"+str(n_sites)+"-sites/simulated-ideal-"+str(samples)+"-samples-error.png")
+file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/simulated-ideal-"+str(samples)+"-samples-error.png")
 plt.savefig(file_path)
