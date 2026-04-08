@@ -1,4 +1,7 @@
-from utils import haldane_band_structure_exact, setup_logging
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from models.haldane import band_structure_exact as haldane_band_structure_exact
+from core import setup_logging
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
@@ -55,7 +58,7 @@ ax.set_title("Haldane Model Band Structure (Exact)\n$t_1="+str(t1)+", t_2="+str(
 ax.view_init(elev=20)
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-file_path = os.path.join(project_root, "plots/haldane-model/band-structure/"+str(n_sites)+"-sites/exact-3d.png")
+file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/exact-3d.png")
 plt.savefig(file_path)
 
 fig, ax = plt.subplots(1, 2, figsize=(14,6))
@@ -75,5 +78,5 @@ ax[1].set_ylabel("$k_y$")
 fig.suptitle("Haldane Model Band Structure (Exact)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=16)
 
 plt.tight_layout()
-file_path = os.path.join(project_root, "plots/haldane-model/band-structure/"+str(n_sites)+"-sites/exact-heatmap.png")
+file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/exact-heatmap.png")
 plt.savefig(file_path)
