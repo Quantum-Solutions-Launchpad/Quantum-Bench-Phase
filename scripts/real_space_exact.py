@@ -26,7 +26,10 @@ data = {}
 for n_occ in range(spin * n_sites + 1):
     data[n_occ] = model.real_space_exact(n_sites, n_occ, **model_params)
 
-param_str = ", ".join(f"${label}={model_params[k]}$" for k, label in model.PARAM_LABELS.items())
+def fmt_param(k, v):
+    return round(v, 3) if isinstance(v, float) else v
+
+param_str = ", ".join(f"${label}={fmt_param(k, model_params[k])}$" for k, label in model.PARAM_LABELS.items())
 title = f"Real Space {model.DISPLAY_NAME} Hamiltonian Ground State Energy (Exact)\n{param_str}, $N_{{\\text{{sites}}}}={n_sites}$"
 
 plt.figure()
@@ -34,7 +37,7 @@ plt.plot(range(spin * n_sites + 1), data.values(), 'ro-')
 plt.xlabel("Particle Number")
 plt.ylabel("$E$")
 plt.title(title)
-plt.grid(True)
+plt.grid(True, alpha=0.3)
 plt.tight_layout()
 
 suffix = model.file_suffix(model_params)
