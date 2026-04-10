@@ -44,8 +44,8 @@ def schedule_label(maxdim_schedule: list[int]) -> str:
 
 
 def default_paths(root: Path) -> tuple[Path, Path]:
-    input_json = root / "cache" / "haldane-model" / "real-space" / "dmrg" / "dmrg-sweep.json"
-    output_dir = root / "plots" / "haldane-model" / "real-space" / "dmrg-sweep"
+    input_json = root / "logs" / "haldane" / "dmrg" / "dmrg-sweep.json"
+    output_dir = root / "plots" / "haldane" / "dmrg"
     return input_json, output_dir
 
 

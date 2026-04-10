@@ -13,19 +13,13 @@ from qiskit_aer.primitives import Sampler
 from qiskit_aer.noise import NoiseModel
 
 import sys
-from pathlib import Path
 from loguru import logger
 
 # ── Shared utilities ──
 
 def setup_logging(debug_enabled: bool = True):
-    project_root = Path(__file__).resolve().parents[1]
-    log_dir = project_root / "logs"
-    log_dir.mkdir(parents=True, exist_ok=True)
-
     fmt_console_info = "[<bold><green>{time:HH:mm:ss}</green></bold>] <white>{message}</white>"
     fmt_console_debug = "[<dim><white>{time:HH:mm:ss}</white></dim>] <dim>{message}</dim>"
-    fmt_file = "[{time:HH:mm:ss}] {level}: {message}"
 
     logger.remove()
     logger.add(
@@ -44,16 +38,6 @@ def setup_logging(debug_enabled: bool = True):
             filter=lambda record: record["level"].name == "DEBUG",
         )
 
-    logger.add(
-        log_dir / "{time:YYYY-MM-DD}.log",
-        level="DEBUG",
-        colorize=False,
-        format=fmt_file,
-        rotation="00:00",
-        retention="14 days",
-        enqueue=True,
-    )
-
     return logger
 
 def real_space_EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
@@ -66,6 +50,7 @@ def real_space_EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
 
 def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, n_sites: int, n_occ: int, rep: int):
     omega_coef = 0
+    iteration_phases = []
 
     for k in range(num_iterations, 0, -1):
         omega_coef /= 2
@@ -77,10 +62,11 @@ def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, nu
         x = 1 if result.get(1, 0) > result.get(0, 0) else 0
 
         omega_coef = omega_coef + x / 2
+        iteration_phases.append(omega_coef)
 
         logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}, iteration {num_iterations-k+1}) = {omega_coef}")
 
-    return omega_coef
+    return omega_coef, iteration_phases
 
 def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCircuit, k: int, omega: float):
     phase_register = QuantumRegister(1, name="a")
@@ -167,11 +153,12 @@ def real_space_iqpe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapp
     else:
         sampler = Sampler()
 
-    phase = iqpe_estimate(evolution, initial, n_iters, sampler, n_sites, n_occ, rep)
-    res = -2 * np.pi * phase / time_param
+    phase, iteration_phases = iqpe_estimate(evolution, initial, n_iters, sampler, n_sites, n_occ, rep)
+    res = float(-2 * np.pi * phase / time_param)
+    iteration_energies = [float(-2 * np.pi * p / time_param) for p in iteration_phases]
 
     logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {res}")
-    return res
+    return res, iteration_energies
 
 def vqe_other_benchmarks(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
     if backend:
