@@ -680,9 +680,9 @@ def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemi
                     )
                     data['site_correlation_simulated'][(chemical_potential, occupied_orbitals)].append((site_correlation_val, stddev))
                 data['energy_simulated'][occupied_orbitals].append((energy, stddev))
-        with open(os.path.join(os.getcwd(), '..', 'cache/data-'+str(n_modes)+'-modes.json'), 'w') as f:
+        with open(os.path.join(os.getcwd(), '..', 'logs', 'kitaev-chain', 'data-'+str(n_modes)+'-modes.json'), 'w') as f:
             ujson.dump(data, f)
-    data = ujson.load(open(os.path.join(os.getcwd(), '..', 'cache/data-'+str(n_modes)+'-modes.json')))
+    data = ujson.load(open(os.path.join(os.getcwd(), '..', 'logs', 'kitaev-chain', 'data-'+str(n_modes)+'-modes.json')))
     data.update(data_exact(
         n_modes=n_modes,
         tunneling=tunneling,

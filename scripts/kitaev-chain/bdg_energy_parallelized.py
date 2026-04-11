@@ -23,7 +23,7 @@ def main():
     start_time = time.time()
     print(f"INFO: Running on {multiprocessing.cpu_count()} cores.")
 
-    cache_file = os.path.join(os.getcwd(), '..', 'cache', f'data_parallelized_{N_MODES}_modes.pkl')
+    cache_file = os.path.join(os.getcwd(), '..', 'logs', 'kitaev-chain', f'data_parallelized_{N_MODES}_modes.pkl')
     if EXECUTE:
         data = {
             'exact': data_exact(

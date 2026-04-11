@@ -34,86 +34,133 @@ mapper = JordanWignerMapper()
 vqe_iters, vqe_layers, vqe_reps = args.vqe_iters, args.vqe_layers, args.vqe_reps
 time_param, iqpe_trot, iqpe_iters, iqpe_reps = args.iqpe_time, args.iqpe_trot, args.iqpe_iters, args.iqpe_reps
 
+def tagged_job(tag, func, *args, **kwargs):
+    return tag, func(*args, **kwargs)
+
 jobs = []
-stride = 3 + iqpe_reps + vqe_reps
 for n_occ in range(spin * n_sites + 1):
-    jobs.append(delayed(model.real_space_exact)(n_sites, n_occ, **model_params))
+    jobs.append(delayed(tagged_job)(("exact", n_occ), model.real_space_exact, n_sites, n_occ, **model_params))
     for rep in range(1, iqpe_reps + 1):
-        jobs.append(delayed(real_space_iqpe)(
-            n_sites, n_occ, model_params,
-            model.fermionic_hamiltonian,
+        jobs.append(delayed(tagged_job)(
+            ("iqpe", n_occ, rep), real_space_iqpe,
+            n_sites, n_occ, model_params, model.fermionic_hamiltonian,
             mapper, time_param, iqpe_trot, iqpe_iters, rep
         ))
     for rep in range(1, vqe_reps + 1):
-        jobs.append(delayed(real_space_vqe)(
-            n_sites, n_occ, model_params,
-            model.fermionic_hamiltonian, model.get_optimizer,
+        jobs.append(delayed(tagged_job)(
+            ("vqe", n_occ, rep), real_space_vqe,
+            n_sites, n_occ, model_params, model.fermionic_hamiltonian, model.get_optimizer,
             mapper, vqe_iters, vqe_layers, rep
         ))
-    jobs.append(delayed(iqpe_other_benchmarks)(
-        n_sites, n_occ, model_params,
-        model.fermionic_hamiltonian,
+    jobs.append(delayed(tagged_job)(
+        ("iqpe_bench", n_occ), iqpe_other_benchmarks,
+        n_sites, n_occ, model_params, model.fermionic_hamiltonian,
         mapper, time_param, iqpe_trot, iqpe_iters, iqpe_reps
     ))
-    jobs.append(delayed(vqe_other_benchmarks)(
-        n_sites, n_occ, model_params,
-        model.fermionic_hamiltonian,
+    jobs.append(delayed(tagged_job)(
+        ("vqe_bench", n_occ), vqe_other_benchmarks,
+        n_sites, n_occ, model_params, model.fermionic_hamiltonian,
         mapper, vqe_iters, vqe_layers, vqe_reps
     ))
+
+suffix = model.file_suffix(model_params)
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+raw_data_path = os.path.join(project_root, f"logs/{model.NAME}/{n_sites}-sites/raw-data/simulated-ideal-{suffix}.json")
+os.makedirs(os.path.dirname(raw_data_path), exist_ok=True)
+
+n_occ_count = spin * n_sites + 1
+raw_data = {
+    "parameters": {
+        "model": model.NAME,
+        "n_sites": n_sites,
+        "simulation": "ideal",
+        "model_params": {k: float(v) for k, v in model_params.items()},
+        "vqe": {"iters": vqe_iters, "layers": vqe_layers, "reps": vqe_reps},
+        "iqpe": {"time": time_param, "trot": iqpe_trot, "iters": iqpe_iters, "reps": iqpe_reps}
+    },
+    "occupations": {
+        str(i): {
+            "exact": None,
+            "vqe": {"repetitions": [], "num_queries": None, "circuit_depth": None},
+            "iqpe": {"repetitions": [], "iteration_energies": [], "num_queries": None, "circuit_depth": None}
+        }
+        for i in range(n_occ_count)
+    }
+}
+
+with open(raw_data_path, "w") as f:
+    json.dump(raw_data, f, indent=4)
 
 def init_worker_logging():
     from core import setup_logging
     setup_logging(debug_enabled=not args.no_debug)
 
-results = Parallel(n_jobs=-1, initializer=init_worker_logging)(jobs)
-
-exact = results[::stride]
-iqpe = [min(j for j in res if j >= -2 * n_sites - 1) for res in [results[i:i + iqpe_reps] for i in range(1, (spin * n_sites + 1) * stride, stride)]]
-vqe = [min(res) for res in [results[i:i + vqe_reps] for i in range(1 + iqpe_reps, (spin * n_sites + 1) * stride, stride)]]
-iqpe_other_benchmarks_results = results[1 + iqpe_reps + vqe_reps::stride]
-vqe_other_benchmarks_results = results[2 + iqpe_reps + vqe_reps::stride]
+for tag, result in Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(jobs):
+    occ = str(tag[1])
+    if tag[0] == "exact":
+        raw_data["occupations"][occ]["exact"] = result
+    elif tag[0] == "iqpe":
+        energy, iter_energies = result
+        raw_data["occupations"][occ]["iqpe"]["repetitions"].append(energy)
+        raw_data["occupations"][occ]["iqpe"]["iteration_energies"].append(iter_energies)
+    elif tag[0] == "vqe":
+        raw_data["occupations"][occ]["vqe"]["repetitions"].append(result)
+    elif tag[0] == "iqpe_bench":
+        num_q, (total, two_q) = result
+        raw_data["occupations"][occ]["iqpe"]["num_queries"] = num_q
+        raw_data["occupations"][occ]["iqpe"]["circuit_depth"] = {"total": total, "two_qubit": two_q}
+    elif tag[0] == "vqe_bench":
+        num_q, (total, two_q) = result
+        raw_data["occupations"][occ]["vqe"]["num_queries"] = num_q
+        raw_data["occupations"][occ]["vqe"]["circuit_depth"] = {"total": total, "two_qubit": two_q}
+    with open(raw_data_path, "w") as f:
+        json.dump(raw_data, f, indent=4)
 
 logger = setup_logging(debug_enabled=not args.no_debug)
-for i in range(spin * n_sites + 1):
+
+exact = [raw_data["occupations"][str(i)]["exact"] for i in range(n_occ_count)]
+iqpe_reps_data = [raw_data["occupations"][str(i)]["iqpe"]["repetitions"] for i in range(n_occ_count)]
+iqpe = [min((e for e in reps if e >= -2 * n_sites - 1), default=min(reps)) for reps in iqpe_reps_data]
+vqe = [min(raw_data["occupations"][str(i)]["vqe"]["repetitions"]) for i in range(n_occ_count)]
+
+for i in range(n_occ_count):
     logger.info(f"IQPE (n_sites={n_sites}, n_occ={i}) = {iqpe[i]}")
     logger.info(f"VQE (n_sites={n_sites}, n_occ={i}) = {vqe[i]}")
 
 data = {
     "result": {
-        "exact": {i: exact[i] for i in range(spin * n_sites + 1)},
-        "iqpe": {i: iqpe[i] for i in range(spin * n_sites + 1)},
-        "vqe": {i: vqe[i] for i in range(spin * n_sites + 1)}
+        "exact": {i: exact[i] for i in range(n_occ_count)},
+        "iqpe": {i: iqpe[i] for i in range(n_occ_count)},
+        "vqe": {i: vqe[i] for i in range(n_occ_count)}
     },
     "num_queries": {
-        "iqpe": {i: iqpe_other_benchmarks_results[i][0] for i in range(spin * n_sites + 1)},
-        "vqe": {i: vqe_other_benchmarks_results[i][0] for i in range(spin * n_sites + 1)}
+        "iqpe": {i: raw_data["occupations"][str(i)]["iqpe"]["num_queries"] for i in range(n_occ_count)},
+        "vqe": {i: raw_data["occupations"][str(i)]["vqe"]["num_queries"] for i in range(n_occ_count)}
     },
     "circuit_depth": {
         "total": {
-            "iqpe": {i: iqpe_other_benchmarks_results[i][1][0] for i in range(spin * n_sites + 1)},
-            "vqe": {i: vqe_other_benchmarks_results[i][1][0] for i in range(spin * n_sites + 1)}
+            "iqpe": {i: raw_data["occupations"][str(i)]["iqpe"]["circuit_depth"]["total"] for i in range(n_occ_count)},
+            "vqe": {i: raw_data["occupations"][str(i)]["vqe"]["circuit_depth"]["total"] for i in range(n_occ_count)}
         },
         "two_qubit": {
-            "iqpe": {i: iqpe_other_benchmarks_results[i][1][1] for i in range(spin * n_sites + 1)},
-            "vqe": {i: vqe_other_benchmarks_results[i][1][1] for i in range(spin * n_sites + 1)}
+            "iqpe": {i: raw_data["occupations"][str(i)]["iqpe"]["circuit_depth"]["two_qubit"] for i in range(n_occ_count)},
+            "vqe": {i: raw_data["occupations"][str(i)]["vqe"]["circuit_depth"]["two_qubit"] for i in range(n_occ_count)}
         }
     }
 }
 
-suffix = model.file_suffix(model_params)
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-cache_path = os.path.join(project_root, f"cache/{model.NAME}/{n_sites}-sites/simulated-ideal-{suffix}.json")
-os.makedirs(os.path.dirname(cache_path), exist_ok=True)
-with open(cache_path, "w") as f:
+log_path = os.path.join(project_root, f"logs/{model.NAME}/{n_sites}-sites/simulated-ideal-{suffix}.json")
+os.makedirs(os.path.dirname(log_path), exist_ok=True)
+with open(log_path, "w") as f:
     json.dump(data, f, indent=4)
 
 param_str = ", ".join(f"${label}={model_params[k]}$" for k, label in model.PARAM_LABELS.items())
 title = f"Real Space {model.DISPLAY_NAME} Hamiltonian Ground State Energy (Qiskit Aer Ideal)\n{param_str}, $N_{{\\text{{sites}}}}={n_sites}$"
 
 plt.figure()
-plt.plot(range(spin * n_sites + 1), data["result"]["exact"].values(), 'ro-', label="Exact")
-plt.plot(range(spin * n_sites + 1), data["result"]["iqpe"].values(), 'go', label=f"IQPE (t={time_param}, n_trot={iqpe_trot}, n_iters={iqpe_iters}, n_reps={iqpe_reps})")
-plt.plot(range(spin * n_sites + 1), data["result"]["vqe"].values(), 'bo', label=f"VQE (n_iters={vqe_iters}, n_layers={vqe_layers}, n_reps={vqe_reps})")
+plt.plot(range(n_occ_count), data["result"]["exact"].values(), 'ro-', label="Exact")
+plt.plot(range(n_occ_count), data["result"]["iqpe"].values(), 'go', label=f"IQPE (t={time_param}, n_trot={iqpe_trot}, n_iters={iqpe_iters}, n_reps={iqpe_reps})")
+plt.plot(range(n_occ_count), data["result"]["vqe"].values(), 'bo', label=f"VQE (n_iters={vqe_iters}, n_layers={vqe_layers}, n_reps={vqe_reps})")
 plt.legend()
 plt.xlabel("Particle Number")
 plt.ylabel("$E$")
