@@ -127,7 +127,7 @@ logger = setup_logging(debug_enabled=not args.no_debug)
 
 exact = [raw_data["occupations"][str(i)]["exact"] for i in range(n_occ_count)]
 iqpe_reps_data = [raw_data["occupations"][str(i)]["iqpe"]["repetitions"] for i in range(n_occ_count)]
-iqpe = [min((e for e in reps if e >= -2 * n_sites - 1), default=min(reps)) for reps in iqpe_reps_data]
+iqpe = [min(reps) for reps in iqpe_reps_data]
 vqe = [min(raw_data["occupations"][str(i)]["vqe"]["repetitions"]) for i in range(n_occ_count)]
 
 for i in range(n_occ_count):
