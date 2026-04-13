@@ -4,7 +4,6 @@ from models.haldane import band_structure_vqe as haldane_band_structure_vqe, ban
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
-import os
 import json
 from itertools import product
 from joblib import Parallel, delayed
@@ -32,20 +31,44 @@ x_list = [float(kx) for kx in np.linspace(-np.pi, np.pi, samples)]
 y_list = [float(ky) for ky in np.linspace(-np.pi, np.pi, samples)]
 k_points = list(product(x_list, y_list))
 
+def tagged_vqe(k_point, *vqe_args, **vqe_kwargs):
+    return k_point, haldane_band_structure_vqe(*vqe_args, **vqe_kwargs)
+
 def init_worker_logging():
     from core import setup_logging
     setup_logging(debug_enabled=not args.no_debug)
 
-results = Parallel(n_jobs=-1, initializer=init_worker_logging)(
-    delayed(haldane_band_structure_vqe)(kx, ky, t1, t2, M, a_vecs, b_vecs, backend)
-    for kx, ky in k_points
-)
-data = {k: v for k, v in zip(k_points, results)}
-
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+raw_data_path = os.path.join(project_root, f"logs/haldane/band-structure/{n_sites}-sites/raw-data/simulated-noisy-{samples}-samples.json")
+os.makedirs(os.path.dirname(raw_data_path), exist_ok=True)
+
+raw_data = {
+    "parameters": {
+        "n_sites": n_sites,
+        "t1": t1, "t2": t2, "M": M,
+        "samples": samples,
+        "simulation": "noisy"
+    },
+    "k_point_energies": {}
+}
+
+with open(raw_data_path, "w") as f:
+    json.dump(raw_data, f, indent=4)
+
+for k_point, energy in Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(
+    delayed(tagged_vqe)(kpt, kpt[0], kpt[1], t1, t2, M, a_vecs, b_vecs, backend)
+    for kpt in k_points
+):
+    raw_data["k_point_energies"][str(k_point)] = energy
+    with open(raw_data_path, "w") as f:
+        json.dump(raw_data, f, indent=4)
+
+data = {kpt: raw_data["k_point_energies"][str(kpt)] for kpt in k_points}
+
 stringified_data = {str(k): v for k, v in data.items()}
-file_path = os.path.join(project_root, "cache/haldane-model/band-structure/"+str(n_sites)+"-sites/simulated-noisy-"+str(samples)+"-samples.json")
-with open(file_path, "w") as f:
+final_path = os.path.join(project_root, f"logs/haldane/band-structure/{n_sites}-sites/simulated-noisy-{samples}-samples.json")
+os.makedirs(os.path.dirname(final_path), exist_ok=True)
+with open(final_path, "w") as f:
     json.dump(stringified_data, f, indent=4)
 
 x_list = np.linspace(-np.pi, np.pi, samples)

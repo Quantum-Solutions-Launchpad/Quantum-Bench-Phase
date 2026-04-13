@@ -24,7 +24,7 @@ EXECUTE = True
 
 
 def main():
-    cache_dir = os.path.join(os.getcwd(), '../cache')
+    cache_dir = os.path.join(os.getcwd(), '../logs/kitaev-chain')
     os.makedirs(cache_dir, exist_ok=True)
     cache_file = os.path.join(cache_dir, f'data_{N_MODES}_modes_mitigated.json')
 

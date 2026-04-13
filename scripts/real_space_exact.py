@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import json
 import argparse
 
 from core import setup_logging
@@ -26,10 +27,18 @@ data = {}
 for n_occ in range(spin * n_sites + 1):
     data[n_occ] = model.real_space_exact(n_sites, n_occ, **model_params)
 
-def fmt_param(k, v):
+suffix = model.file_suffix(model_params)
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+log_path = os.path.join(project_root, f"logs/{model.NAME}/{n_sites}-sites/exact-{suffix}.json")
+os.makedirs(os.path.dirname(log_path), exist_ok=True)
+with open(log_path, "w") as f:
+    json.dump({"result": {"exact": {i: data[i] for i in range(spin * n_sites + 1)}}}, f, indent=4)
+
+def fmt_param(v):
     return round(v, 3) if isinstance(v, float) else v
 
-param_str = ", ".join(f"${label}={fmt_param(k, model_params[k])}$" for k, label in model.PARAM_LABELS.items())
+param_str = ", ".join(f"${label}={fmt_param(model_params[k])}$" for k, label in model.PARAM_LABELS.items())
 title = f"Real Space {model.DISPLAY_NAME} Hamiltonian Ground State Energy (Exact)\n{param_str}, $N_{{\\text{{sites}}}}={n_sites}$"
 
 plt.figure()
@@ -40,8 +49,6 @@ plt.title(title)
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
 
-suffix = model.file_suffix(model_params)
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 file_path = os.path.join(project_root, f"plots/{model.NAME}/{n_sites}-sites/exact-{suffix}.png")
 os.makedirs(os.path.dirname(file_path), exist_ok=True)
 plt.savefig(file_path)
