@@ -1,16 +1,15 @@
 import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from models.haldane import band_structure_vqe as haldane_band_structure_vqe, band_structure_exact as haldane_band_structure_exact
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
+from band_structure_utils import band_structure_vqe as haldane_band_structure_vqe, band_structure_exact as haldane_band_structure_exact
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm, LinearSegmentedColormap
 import json
 from itertools import product
 from joblib import Parallel, delayed
-from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
 import argparse
 
-n_sites = 4
+n_sites = 6
 t1, t2, M = 1.0, 0.05, 0.2
 a_vecs = {
     4: [np.array([0.0, -1.0]), np.array([0.0, 1.0]), np.array([1.0, 0.0]), np.array([-1.0, 0.0])],
@@ -20,8 +19,7 @@ b_vecs = {
     4: [np.array([-1.0, -1.0]), np.array([1.0, -1.0]), np.array([-1.0, 1.0]), np.array([1.0, 1.0])],
     6: [a_vecs[1]-a_vecs[2], a_vecs[2]-a_vecs[0], a_vecs[0]-a_vecs[1]]
 }.get(n_sites, [])
-samples = 25
-backend = FakeSherbrooke()
+samples = 100
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--no-debug", action="store_true", help="Suppress debug logs")
@@ -39,7 +37,7 @@ def init_worker_logging():
     setup_logging(debug_enabled=not args.no_debug)
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-raw_data_path = os.path.join(project_root, f"logs/haldane/band-structure/{n_sites}-sites/raw-data/simulated-noisy-{samples}-samples.json")
+raw_data_path = os.path.join(project_root, f"logs/haldane/band-structure/{n_sites}-sites/raw-data/simulated-ideal-{samples}-samples.json")
 os.makedirs(os.path.dirname(raw_data_path), exist_ok=True)
 
 raw_data = {
@@ -47,7 +45,7 @@ raw_data = {
         "n_sites": n_sites,
         "t1": t1, "t2": t2, "M": M,
         "samples": samples,
-        "simulation": "noisy"
+        "simulation": "ideal"
     },
     "k_point_energies": {}
 }
@@ -56,7 +54,7 @@ with open(raw_data_path, "w") as f:
     json.dump(raw_data, f, indent=4)
 
 for k_point, energy in Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(
-    delayed(tagged_vqe)(kpt, kpt[0], kpt[1], t1, t2, M, a_vecs, b_vecs, backend)
+    delayed(tagged_vqe)(kpt, kpt[0], kpt[1], t1, t2, M, a_vecs, b_vecs)
     for kpt in k_points
 ):
     raw_data["k_point_energies"][str(k_point)] = energy
@@ -66,7 +64,7 @@ for k_point, energy in Parallel(n_jobs=-1, return_as="generator_unordered", init
 data = {kpt: raw_data["k_point_energies"][str(kpt)] for kpt in k_points}
 
 stringified_data = {str(k): v for k, v in data.items()}
-final_path = os.path.join(project_root, f"logs/haldane/band-structure/{n_sites}-sites/simulated-noisy-{samples}-samples.json")
+final_path = os.path.join(project_root, f"logs/haldane/band-structure/{n_sites}-sites/simulated-ideal-{samples}-samples.json")
 os.makedirs(os.path.dirname(final_path), exist_ok=True)
 with open(final_path, "w") as f:
     json.dump(stringified_data, f, indent=4)
@@ -98,10 +96,10 @@ ax.set_yticklabels([rf'${int(t/np.pi)}\pi$' if t not in (0, np.pi, -np.pi) else 
 ax.set_xlabel('$k_x$')
 ax.set_ylabel('$k_y$')
 ax.set_zlabel('$E(k)$')
-ax.set_title("Haldane Model Band Structure (VQE, Qiskit Aer Noisy, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$")
+ax.set_title("Haldane Model Band Structure (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$")
 ax.view_init(elev=20)
 
-file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/simulated-noisy-"+str(samples)+"-samples-3d.png")
+file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/simulated-ideal-"+str(samples)+"-samples-3d.png")
 plt.savefig(file_path)
 
 fig, ax = plt.subplots(1, 2, figsize=(14,6))
@@ -118,10 +116,10 @@ ax[1].set_title("Lower Band: $E_-(k)$")
 ax[1].set_xlabel("$k_x$")
 ax[1].set_ylabel("$k_y$")
 
-fig.suptitle("Haldane Model Band Structure (VQE, Qiskit Aer Noisy, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=16)
+fig.suptitle("Haldane Model Band Structure (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=16)
 
 plt.tight_layout()
-file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/simulated-noisy-"+str(samples)+"-samples-heatmap.png")
+file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/simulated-ideal-"+str(samples)+"-samples-heatmap.png")
 plt.savefig(file_path)
 
 results = Parallel(n_jobs=-1)(
@@ -139,7 +137,7 @@ plt.colorbar(c)
 ax.set_xlabel("$k_x$")
 ax.set_ylabel("$k_y$")
 
-fig.suptitle("Haldane Model Band Structure Absolute Error (VQE, Qiskit Aer Noisy, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
+fig.suptitle("Haldane Model Band Structure Absolute Error (VQE, Qiskit Aer Ideal, $"+str(samples)+"^2$ samples)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=11)
 
-file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/simulated-noisy-"+str(samples)+"-samples-error.png")
+file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/simulated-ideal-"+str(samples)+"-samples-error.png")
 plt.savefig(file_path)

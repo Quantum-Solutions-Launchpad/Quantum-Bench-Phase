@@ -1,6 +1,6 @@
 import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from models.haldane import band_structure_exact as haldane_band_structure_exact
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
+from band_structure_utils import band_structure_exact as haldane_band_structure_exact
 from core import setup_logging
 import numpy as np
 import matplotlib.pyplot as plt
