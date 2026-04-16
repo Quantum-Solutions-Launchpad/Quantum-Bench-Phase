@@ -68,13 +68,6 @@ def fermionic_hamiltonian(n_sites, *, t1, t2, phi, M):
 
     return hamiltonian
 
-def real_space_exact(n_sites, n_occ, *, t1, t2, phi, M):
-    H = _build_H_matrix(n_sites, t1, t2, phi, M)
-    eigvals, _ = np.linalg.eigh(H)
-    result = np.sum(np.sort(eigvals)[:n_occ])
-    logger.info(f"Exact (n_sites={n_sites}, n_occ={n_occ}) = {result}")
-    return result
-
 # Band structure (Haldane-only, used by haldane-model/band_structure_*.py)
 
 LATTICE_VECTORS = {

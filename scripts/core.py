@@ -88,6 +88,20 @@ def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCi
 
     return qc
 
+# ── Generic classical reference ──
+
+def real_space_exact(model, n_sites, n_occ, model_params):
+    H = model._build_H_matrix(n_sites, **model_params)
+    eigvals, _ = np.linalg.eigh(H)
+    kinetic_energy = np.sum(np.sort(eigvals)[:n_occ])
+
+    mf_fn = getattr(model, 'mean_field_correction', None)
+    interaction_energy = mf_fn(n_sites, n_occ, **model_params) if mf_fn else 0.0
+
+    result = kinetic_energy + interaction_energy
+    logger.info(f"Exact (n_sites={n_sites}, n_occ={n_occ}) = {result}")
+    return result
+
 # ── Generic VQE/IQPE/benchmark functions ──
 
 def real_space_vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, mapper, max_iters, n_layers, rep, backend=None):

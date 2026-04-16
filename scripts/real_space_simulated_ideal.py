@@ -6,7 +6,7 @@ import argparse
 from qiskit_nature.second_q.mappers import JordanWignerMapper
 from joblib import Parallel, delayed
 
-from core import setup_logging, real_space_vqe, real_space_iqpe, vqe_other_benchmarks, iqpe_other_benchmarks
+from core import setup_logging, real_space_exact, real_space_vqe, real_space_iqpe, vqe_other_benchmarks, iqpe_other_benchmarks
 from models import get_model
 
 parser = argparse.ArgumentParser()
@@ -39,7 +39,7 @@ def tagged_job(tag, func, *args, **kwargs):
 
 jobs = []
 for n_occ in range(spin * n_sites + 1):
-    jobs.append(delayed(tagged_job)(("exact", n_occ), model.real_space_exact, n_sites, n_occ, **model_params))
+    jobs.append(delayed(tagged_job)(("exact", n_occ), real_space_exact, model, n_sites, n_occ, model_params))
     for rep in range(1, iqpe_reps + 1):
         jobs.append(delayed(tagged_job)(
             ("iqpe", n_occ, rep), real_space_iqpe,

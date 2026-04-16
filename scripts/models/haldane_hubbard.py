@@ -1,7 +1,6 @@
 import numpy as np
 from qiskit_nature.second_q.operators import FermionicOp
 from qiskit_algorithms.optimizers import SPSA
-from loguru import logger
 
 
 NAME = "haldane-hubbard"
@@ -81,17 +80,8 @@ def fermionic_hamiltonian(n_sites, *, t1, U, t2, phi, M):
 
     return hamiltonian
 
-def real_space_exact(n_sites, n_occ, *, t1, U, t2, phi, M):
-    H = _build_H_matrix(n_sites, t1, U, t2, phi, M)
-    eigvals, _ = np.linalg.eigh(H)
-    kinetic_energy = np.sum(np.sort(eigvals)[:n_occ])
-
-    if U != 0:
-        avg_double_occupancy = (n_occ / (2 * n_sites)) ** 2
-        interaction_energy = U * n_sites * avg_double_occupancy
-    else:
-        interaction_energy = 0.0
-
-    result = kinetic_energy + interaction_energy
-    logger.info(f"Exact (n_sites={n_sites}, n_occ={n_occ}, t1={t1}, U={U}, t2={t2}) = {result}")
-    return result
+def mean_field_correction(n_sites, n_occ, **params):
+    U = params['U']
+    if U == 0:
+        return 0.0
+    return U * n_sites * (n_occ / (2 * n_sites)) ** 2

@@ -4,7 +4,7 @@ import os
 import json
 import argparse
 
-from core import setup_logging
+from core import setup_logging, real_space_exact
 from models import get_model
 
 parser = argparse.ArgumentParser()
@@ -25,7 +25,7 @@ spin = 2
 
 data = {}
 for n_occ in range(spin * n_sites + 1):
-    data[n_occ] = model.real_space_exact(n_sites, n_occ, **model_params)
+    data[n_occ] = real_space_exact(model, n_sites, n_occ, model_params)
 
 suffix = model.file_suffix(model_params)
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
