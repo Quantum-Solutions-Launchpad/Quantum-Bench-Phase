@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py", line 6, in <module>
+    from qiskit_nature.second_q.mappers import JordanWignerMapper
+ModuleNotFoundError: No module named 'qiskit_nature'
+srun: error: nid007134: task 0: Exited with exit code 1
+srun: Terminating StepId=51509851.3
+Traceback (most recent call last):
+  File "/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py", line 6, in <module>
+    from qiskit_nature.second_q.mappers import JordanWignerMapper
+ModuleNotFoundError: No module named 'qiskit_nature'
+srun: error: nid007132: task 0: Exited with exit code 1
+srun: Terminating StepId=51509851.1
+Traceback (most recent call last):
+  File "/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py", line 6, in <module>
+    from qiskit_nature.second_q.mappers import JordanWignerMapper
+ModuleNotFoundError: No module named 'qiskit_nature'
+srun: error: nid007131: task 0: Exited with exit code 1
+srun: Terminating StepId=51509851.0
+Traceback (most recent call last):
+  File "/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py", line 6, in <module>
+    from qiskit_nature.second_q.mappers import JordanWignerMapper
+ModuleNotFoundError: No module named 'qiskit_nature'
+srun: error: nid007133: task 0: Exited with exit code 1
+srun: Terminating StepId=51509851.2

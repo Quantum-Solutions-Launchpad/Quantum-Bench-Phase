@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J haldane-real-simulate
+#SBATCH -J haldane-hubbard-real-simulate
 #SBATCH -C cpu
 #SBATCH -q regular
 #SBATCH -N 4
@@ -23,10 +23,10 @@ export JOBLIB_MULTIPROCESSING=0
 export MPLCONFIGDIR="/tmp/${USER}-mpl"
 
 # 4 config in parallel with 1 node each
-srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model haldane --n-sites 6 --t2 0.05 --no-debug" &
-srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model haldane --n-sites 4 --t2 0.5 --no-debug" &
-srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model haldane --n-sites 6 --t2 1.0 --no-debug" &
-srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model haldane --n-sites 6 --t2 0.5 --no-debug" &
+srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model haldane-hubbard --n-sites 4 --U 1.0 --t2 0.0 --no-debug" &
+srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model haldane-hubbard --n-sites 4 --U 1.0 --t2 0.05 --no-debug" &
+srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model haldane-hubbard --n-sites 6 --U 1.0 --t2 0.0 --no-debug" &
+srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model haldane-hubbard --n-sites 6 --U 1.0 --t2 0.05 --no-debug" &
 
 wait
 

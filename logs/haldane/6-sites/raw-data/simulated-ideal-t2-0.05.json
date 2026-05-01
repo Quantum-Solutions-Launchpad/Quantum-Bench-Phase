@@ -1,0 +1,436 @@
+{
+    "parameters": {
+        "model": "haldane",
+        "n_sites": 6,
+        "simulation": "ideal",
+        "model_params": {
+            "t1": 1.0,
+            "t2": 0.05,
+            "phi": 0.7853981633974483,
+            "M": 0.0
+        },
+        "vqe": {
+            "iters": 10000,
+            "layers": 5,
+            "reps": 10
+        },
+        "iqpe": {
+            "time": 0.2,
+            "trot": 5,
+            "iters": 8,
+            "reps": 20
+        }
+    },
+    "occupations": {
+        "0": {
+            "exact": 0.0,
+            "vqe": {
+                "repetitions": [
+                    -0.031568188686254654,
+                    0.032111984184481614,
+                    -0.013366129379953295,
+                    -0.027056538192980997,
+                    0.02057449935055727
+                ],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0,
+                    -0.0
+                ],
+                "iteration_energies": [
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ],
+                    [
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0,
+                        -0.0
+                    ]
+                ],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "1": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "2": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "3": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "4": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "5": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "6": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "7": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "8": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "9": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "10": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "11": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "12": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        }
+    }
+}
