@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import os
 import json
 import argparse
+from datetime import datetime
 from qiskit_nature.second_q.mappers import JordanWignerMapper
 from joblib import Parallel, delayed
 
@@ -19,6 +20,7 @@ parser.add_argument("--iqpe-time", type=float, default=0.2)
 parser.add_argument("--iqpe-trot", type=int, default=5)
 parser.add_argument("--iqpe-iters", type=int, default=8)
 parser.add_argument("--iqpe-reps", type=int, default=20)
+parser.add_argument("--no-progress-log", action="store_true", help="Disable append-only progress logging")
 parser.add_argument("--no-debug", action="store_true", help="Suppress debug logs")
 args, _ = parser.parse_known_args()
 
@@ -66,6 +68,7 @@ for n_occ in range(spin * n_sites + 1):
 suffix = model.file_suffix(model_params)
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 raw_data_path = os.path.join(project_root, f"logs/{model.NAME}/{n_sites}-sites/raw-data/simulated-ideal-{suffix}.json")
+progress_path = os.path.join(project_root, f"logs/{model.NAME}/{n_sites}-sites/raw-data/simulated-ideal-{suffix}.progress.jsonl")
 os.makedirs(os.path.dirname(raw_data_path), exist_ok=True)
 
 n_occ_count = spin * n_sites + 1
@@ -88,15 +91,29 @@ raw_data = {
     }
 }
 
-with open(raw_data_path, "w") as f:
-    json.dump(raw_data, f, indent=4)
-
 def init_worker_logging():
     from core import setup_logging
     setup_logging(debug_enabled=not args.no_debug)
 
+def append_progress(tag, result):
+    if args.no_progress_log:
+        return
+    record = {
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "tag": list(tag),
+        "result": result,
+    }
+    with open(progress_path, "a") as f:
+        json.dump(record, f)
+        f.write("\n")
+
+if not args.no_progress_log:
+    with open(progress_path, "w") as f:
+        pass
+
 for tag, result in Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(jobs):
     occ = str(tag[1])
+    append_progress(tag, result)
     if tag[0] == "exact":
         raw_data["occupations"][occ]["exact"] = result
     elif tag[0] == "iqpe":
@@ -113,8 +130,9 @@ for tag, result in Parallel(n_jobs=-1, return_as="generator_unordered", initiali
         num_q, (total, two_q) = result
         raw_data["occupations"][occ]["vqe"]["num_queries"] = num_q
         raw_data["occupations"][occ]["vqe"]["circuit_depth"] = {"total": total, "two_qubit": two_q}
-    with open(raw_data_path, "w") as f:
-        json.dump(raw_data, f, indent=4)
+
+with open(raw_data_path, "w") as f:
+    json.dump(raw_data, f, indent=4)
 
 logger = setup_logging(debug_enabled=not args.no_debug)
 
