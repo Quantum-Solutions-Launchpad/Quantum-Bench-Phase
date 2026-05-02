@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.lines import Line2D
+from matplotlib.legend_handler import HandlerBase
+from matplotlib.image import BboxImage
+from matplotlib.transforms import Bbox, TransformedBbox
 from mpl_toolkits.mplot3d import Axes3D
 import os
 import json
@@ -34,10 +37,12 @@ parser.add_argument("--n-occ", type=int, default=None,
                     help="Fixed particle number when neither sweep axis is n_occ (default: n_sites)")
 parser.add_argument("--show-model-params", action="store_true", default=False,
                     help="Show bottom legend with fixed model parameters")
-parser.add_argument("--show-sim-params", action="store_true", default=False,
-                    help="Show top legend with VQE/IQPE simulation parameters")
+parser.add_argument("--hide-sim-params", action="store_true", default=False,
+                    help="Hide top legend with VQE/IQPE labels")
 parser.add_argument("--replot", action="store_true", default=False,
                     help="Skip computation and regenerate plot from existing log JSON")
+parser.add_argument("--z-clip", type=float, default=None,
+                    help="Lower z-axis cutoff; points below are excluded (default: -2*(n_sites+1))")
 args, _ = parser.parse_known_args()
 
 model = get_model(args.model)
@@ -277,23 +282,45 @@ for iy, yv in enumerate(y_vals):
     color = cmap_obj(iy / max(ny - 1, 1))
     ax.plot(x_vals, [yv] * len(x_vals), Z_exact[:, iy], color=color, linewidth=1.8, alpha=0.9, zorder=4)
 
-ax.scatter(X_grid.ravel(), Y_grid.ravel(), Z_vqe.ravel(),
+z_clip = args.z_clip if args.z_clip is not None else -(2 * (n_sites + 1))
+
+vqe_flat, iqpe_flat = Z_vqe.ravel(), Z_iqpe.ravel()
+x_flat, y_flat = X_grid.ravel(), Y_grid.ravel()
+
+vqe_mask  = vqe_flat  >= z_clip
+iqpe_mask = iqpe_flat >= z_clip
+
+ax.scatter(x_flat[vqe_mask],  y_flat[vqe_mask],  vqe_flat[vqe_mask],
            color="#0072B2", marker="o", s=45, depthshade=True, zorder=6)
-ax.scatter(X_grid.ravel(), Y_grid.ravel(), Z_iqpe.ravel(),
+ax.scatter(x_flat[iqpe_mask], y_flat[iqpe_mask], iqpe_flat[iqpe_mask],
            color="#CC79A7", marker="^", s=45, depthshade=True, zorder=6)
+
+ax.set_zlim(bottom=z_clip)
 
 ax.set_xlabel(x_label, labelpad=12)
 ax.set_ylabel(y_label, labelpad=12)
 ax.set_zlabel("$E$", labelpad=10)
 
-if args.show_sim_params:
-    vqe_label_str  = f"VQE (n_iters={vqe_iters}, n_layers={vqe_layers}, n_reps={vqe_reps})"
-    iqpe_label_str = f"IQPE (t={time_param}, n_trot={iqpe_trot}, n_iters={iqpe_iters}, n_reps={iqpe_reps})"
-    exact_proxy = mpatches.Patch(color=cmap_obj(0.7), alpha=0.9, label="Exact")
-    vqe_proxy   = Line2D([0], [0], marker="o", color="w", markerfacecolor="#0072B2", markersize=10, label=vqe_label_str)
-    iqpe_proxy  = Line2D([0], [0], marker="^", color="w", markerfacecolor="#CC79A7", markersize=10, label=iqpe_label_str)
-    ax.legend(handles=[exact_proxy, vqe_proxy, iqpe_proxy], loc="upper center",
-              ncol=3, fontsize=9, bbox_to_anchor=(0.5, 1.0))
+class GradientPatchHandler(HandlerBase):
+    def __init__(self, cmap):
+        self.cmap = cmap
+        super().__init__()
+
+    def create_artists(self, _legend, _orig_handle, xdescent, ydescent, width, height, _fontsize, trans):
+        gradient = np.linspace(0, 1, 256).reshape(1, -1)
+        bbox = Bbox.from_bounds(xdescent, ydescent, width, height)
+        im = BboxImage(TransformedBbox(bbox, trans), cmap=self.cmap)
+        im.set_data(gradient)
+        im.set_alpha(0.9)
+        return [im]
+
+if not args.hide_sim_params:
+    exact_proxy = mpatches.Patch(label="Exact")
+    vqe_proxy   = Line2D([0], [0], marker="o", color="w", markerfacecolor="#0072B2", markersize=14, label="VQE")
+    iqpe_proxy  = Line2D([0], [0], marker="^", color="w", markerfacecolor="#CC79A7", markersize=14, label="IQPE")
+    fig.legend(handles=[exact_proxy, vqe_proxy, iqpe_proxy], loc="upper center",
+               ncol=3, fontsize=14, bbox_to_anchor=(0.5, 0.98),
+               handler_map={exact_proxy: GradientPatchHandler(cmap_obj)})
 
 if args.show_model_params:
     param_labels = [f"${label}={fmt_param(model_params[k])}$" for k, label in model.PARAM_LABELS.items() if k in model_params]
