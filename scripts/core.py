@@ -40,6 +40,29 @@ def setup_logging(debug_enabled: bool = True):
 
     return logger
 
+def resolve_sweep(param: str, range_args, n_sites: int, spin: int = 2):
+    """Return (values, display_label, is_n_occ) for a sweep axis.
+
+    range_args: (min, max, step) floats, or None to use the n_occ default.
+    Raises ValueError if range_args is None for a non-n_occ param.
+    """
+    if param == "n_occ":
+        if range_args is None:
+            vals = list(range(spin * n_sites + 1))
+        else:
+            lo, hi, st = range_args
+            vals = list(range(int(lo), int(hi) + 1, max(1, int(st))))
+        return vals, r"$N_{\text{occ}}$", True
+    else:
+        if range_args is None:
+            raise ValueError(
+                f"A sweep range (--x-range / --y-range) is required when the "
+                f"sweep parameter is '{param}' (not 'n_occ')."
+            )
+        lo, hi, st = range_args
+        vals = list(np.arange(lo, hi + st / 2, st))
+        return vals, param, False
+
 def real_space_EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
     spin = 2
     ansatz = QuantumCircuit(n_sites * spin)
@@ -87,6 +110,20 @@ def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCi
     qc.measure(phase_register, c)
 
     return qc
+
+# ── Generic classical reference ──
+
+def real_space_exact(model, n_sites, n_occ, model_params):
+    H = model._build_H_matrix(n_sites, **model_params)
+    eigvals, _ = np.linalg.eigh(H)
+    kinetic_energy = np.sum(np.sort(eigvals)[:n_occ])
+
+    mf_fn = getattr(model, 'mean_field_correction', None)
+    interaction_energy = mf_fn(n_sites, n_occ, **model_params) if mf_fn else 0.0
+
+    result = kinetic_energy + interaction_energy
+    logger.info(f"Exact (n_sites={n_sites}, n_occ={n_occ}) = {result}")
+    return result
 
 # ── Generic VQE/IQPE/benchmark functions ──
 
