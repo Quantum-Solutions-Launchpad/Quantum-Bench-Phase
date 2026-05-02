@@ -5,14 +5,14 @@ from qiskit_algorithms.optimizers import SPSA
 
 NAME = "hubbard"
 DISPLAY_NAME = "Hubbard"
-DEFAULT_PARAMS = {"t": 1.0, "U": 0.0}
+DEFAULT_PARAMS = {"t": 1.0}
 PARAM_LABELS = {"t": "t", "U": "U"}
+SWEEP_DEFAULTS = {
+    "y": {"param": "U", "range": (0.0, 4.0, 0.5)},
+}
 
 def get_optimizer(max_iters):
     return SPSA(maxiter=max_iters)
-
-def file_suffix(params):
-    return f"U-{params['U']}"
 
 def _build_H_matrix(n_sites, t, U):
     lattice = [(i, (i + 1) % n_sites) for i in range(n_sites)]

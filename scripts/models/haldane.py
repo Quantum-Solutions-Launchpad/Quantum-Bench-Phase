@@ -5,14 +5,14 @@ from qiskit_algorithms.optimizers import SPSA
 
 NAME = "haldane"
 DISPLAY_NAME = "Haldane"
-DEFAULT_PARAMS = {"t1": 1.0, "t2": 0.5, "phi": np.pi/4, "M": 0.0}
+DEFAULT_PARAMS = {"t1": 1.0, "phi": np.pi/4, "M": 0.0}
 PARAM_LABELS = {"t1": "t_1", "t2": "t_2", "phi": "\\phi", "M": "M"}
+SWEEP_DEFAULTS = {
+    "y": {"param": "t2", "range": (0.0, 1.0, 0.1)},
+}
 
 def get_optimizer(max_iters):
     return SPSA(maxiter=max_iters)
-
-def file_suffix(params):
-    return f"t2-{params['t2']}"
 
 def _build_H_matrix(n_sites, t1, t2, phi, M):
     lattice = [(i, (i + 1) % n_sites, 0) for i in range(n_sites)] + [(i, (i + 2) % n_sites, 1) for i in range(n_sites)]
