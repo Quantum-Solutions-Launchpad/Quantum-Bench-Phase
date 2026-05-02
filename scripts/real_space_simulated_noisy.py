@@ -7,6 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import os
 import json
 import argparse
+import subprocess
 from qiskit_nature.second_q.mappers import JordanWignerMapper
 from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
 from joblib import Parallel, delayed
@@ -311,4 +312,5 @@ plot_path = os.path.join(
     f"plots/{model.NAME}/{n_sites}-sites/simulated-noisy-{args.x_param}-vs-{args.y_param}.pdf"
 )
 os.makedirs(os.path.dirname(plot_path), exist_ok=True)
-plt.savefig(plot_path, format="pdf", bbox_inches="tight")
+plt.savefig(plot_path, format="pdf")
+subprocess.run(["pdfcrop", plot_path, plot_path], check=True, capture_output=True)

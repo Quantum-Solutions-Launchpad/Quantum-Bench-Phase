@@ -7,6 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import os
 import json
 import argparse
+import subprocess
 
 from core import setup_logging, real_space_exact, resolve_sweep
 from models import get_model
@@ -135,4 +136,5 @@ file_path = os.path.join(
     f"plots/{model.NAME}/{n_sites}-sites/exact-{args.x_param}-vs-{args.y_param}.pdf"
 )
 os.makedirs(os.path.dirname(file_path), exist_ok=True)
-plt.savefig(file_path, format="pdf", bbox_inches="tight")
+plt.savefig(file_path, format="pdf")
+subprocess.run(["pdfcrop", file_path, file_path], check=True, capture_output=True)
