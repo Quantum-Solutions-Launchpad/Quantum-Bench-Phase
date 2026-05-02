@@ -23,6 +23,10 @@ parser.add_argument("--iqpe-time", type=float, default=0.2)
 parser.add_argument("--iqpe-trot", type=int, default=5)
 parser.add_argument("--iqpe-iters", type=int, default=8)
 parser.add_argument("--iqpe-reps", type=int, default=20)
+parser.add_argument("--task-index", type=int, default=None, help="Run only this zero-based shard of the job list")
+parser.add_argument("--task-count", type=int, default=1, help="Total number of job-list shards")
+parser.add_argument("--prepare-only", action="store_true", help="Initialize output/progress files and exit")
+parser.add_argument("--aggregate-only", action="store_true", help="Build final outputs from the progress JSONL and exit")
 parser.add_argument("--no-progress-log", action="store_true", help="Disable append-only progress logging")
 parser.add_argument("--no-debug", action="store_true", help="Suppress debug logs")
 args, _ = parser.parse_known_args()
@@ -110,17 +114,15 @@ def append_progress(tag, result):
         "tag": list(tag),
         "result": result,
     }
-    with open(progress_path, "a") as f:
-        json.dump(record, f)
-        f.write("\n")
+    payload = (json.dumps(record) + "\n").encode()
+    fd = os.open(progress_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
+    try:
+        os.write(fd, payload)
+    finally:
+        os.close(fd)
 
-if not args.no_progress_log:
-    with open(progress_path, "w") as f:
-        pass
-
-for tag, result in Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(jobs):
+def apply_result(raw_data, tag, result):
     occ = str(tag[1])
-    append_progress(tag, result)
     if tag[0] == "exact":
         raw_data["occupations"][occ]["exact"] = result
     elif tag[0] == "iqpe":
@@ -138,61 +140,129 @@ for tag, result in Parallel(n_jobs=-1, return_as="generator_unordered", initiali
         raw_data["occupations"][occ]["vqe"]["num_queries"] = num_q
         raw_data["occupations"][occ]["vqe"]["circuit_depth"] = {"total": total, "two_qubit": two_q}
 
-with open(raw_data_path, "w") as f:
-    json.dump(raw_data, f, indent=4)
+def load_progress(raw_data):
+    if not os.path.exists(progress_path):
+        raise FileNotFoundError(f"Progress file does not exist: {progress_path}")
+    with open(progress_path, "r") as f:
+        for line_number, line in enumerate(f, start=1):
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            apply_result(raw_data, tuple(record["tag"]), record["result"])
+    return raw_data
 
-logger = setup_logging(debug_enabled=not args.no_debug)
+def validate_complete(raw_data):
+    missing = []
+    for i in range(n_occ_count):
+        occ = str(i)
+        entry = raw_data["occupations"][occ]
+        if entry["exact"] is None:
+            missing.append(f"exact:{i}")
+        if len(entry["iqpe"]["repetitions"]) != iqpe_reps:
+            missing.append(f"iqpe:{i} ({len(entry['iqpe']['repetitions'])}/{iqpe_reps})")
+        if len(entry["vqe"]["repetitions"]) != vqe_reps:
+            missing.append(f"vqe:{i} ({len(entry['vqe']['repetitions'])}/{vqe_reps})")
+        if entry["iqpe"]["num_queries"] is None or entry["iqpe"]["circuit_depth"] is None:
+            missing.append(f"iqpe_bench:{i}")
+        if entry["vqe"]["num_queries"] is None or entry["vqe"]["circuit_depth"] is None:
+            missing.append(f"vqe_bench:{i}")
+    if missing:
+        raise RuntimeError("Missing results before aggregation: " + ", ".join(missing[:20]))
 
-exact = [raw_data["occupations"][str(i)]["exact"] for i in range(n_occ_count)]
-iqpe_reps_data = [raw_data["occupations"][str(i)]["iqpe"]["repetitions"] for i in range(n_occ_count)]
-iqpe = [min(reps) for reps in iqpe_reps_data]
-vqe = [min(raw_data["occupations"][str(i)]["vqe"]["repetitions"]) for i in range(n_occ_count)]
+def write_outputs(raw_data):
+    validate_complete(raw_data)
 
-for i in range(n_occ_count):
-    logger.info(f"IQPE (n_sites={n_sites}, n_occ={i}) = {iqpe[i]}")
-    logger.info(f"VQE (n_sites={n_sites}, n_occ={i}) = {vqe[i]}")
+    with open(raw_data_path, "w") as f:
+        json.dump(raw_data, f, indent=4)
 
-data = {
-    "result": {
-        "exact": {i: exact[i] for i in range(n_occ_count)},
-        "iqpe": {i: iqpe[i] for i in range(n_occ_count)},
-        "vqe": {i: vqe[i] for i in range(n_occ_count)}
-    },
-    "num_queries": {
-        "iqpe": {i: raw_data["occupations"][str(i)]["iqpe"]["num_queries"] for i in range(n_occ_count)},
-        "vqe": {i: raw_data["occupations"][str(i)]["vqe"]["num_queries"] for i in range(n_occ_count)}
-    },
-    "circuit_depth": {
-        "total": {
-            "iqpe": {i: raw_data["occupations"][str(i)]["iqpe"]["circuit_depth"]["total"] for i in range(n_occ_count)},
-            "vqe": {i: raw_data["occupations"][str(i)]["vqe"]["circuit_depth"]["total"] for i in range(n_occ_count)}
+    logger = setup_logging(debug_enabled=not args.no_debug)
+
+    exact = [raw_data["occupations"][str(i)]["exact"] for i in range(n_occ_count)]
+    iqpe_reps_data = [raw_data["occupations"][str(i)]["iqpe"]["repetitions"] for i in range(n_occ_count)]
+    iqpe = [min(reps) for reps in iqpe_reps_data]
+    vqe = [min(raw_data["occupations"][str(i)]["vqe"]["repetitions"]) for i in range(n_occ_count)]
+
+    for i in range(n_occ_count):
+        logger.info(f"IQPE (n_sites={n_sites}, n_occ={i}) = {iqpe[i]}")
+        logger.info(f"VQE (n_sites={n_sites}, n_occ={i}) = {vqe[i]}")
+
+    data = {
+        "result": {
+            "exact": {i: exact[i] for i in range(n_occ_count)},
+            "iqpe": {i: iqpe[i] for i in range(n_occ_count)},
+            "vqe": {i: vqe[i] for i in range(n_occ_count)}
         },
-        "two_qubit": {
-            "iqpe": {i: raw_data["occupations"][str(i)]["iqpe"]["circuit_depth"]["two_qubit"] for i in range(n_occ_count)},
-            "vqe": {i: raw_data["occupations"][str(i)]["vqe"]["circuit_depth"]["two_qubit"] for i in range(n_occ_count)}
+        "num_queries": {
+            "iqpe": {i: raw_data["occupations"][str(i)]["iqpe"]["num_queries"] for i in range(n_occ_count)},
+            "vqe": {i: raw_data["occupations"][str(i)]["vqe"]["num_queries"] for i in range(n_occ_count)}
+        },
+        "circuit_depth": {
+            "total": {
+                "iqpe": {i: raw_data["occupations"][str(i)]["iqpe"]["circuit_depth"]["total"] for i in range(n_occ_count)},
+                "vqe": {i: raw_data["occupations"][str(i)]["vqe"]["circuit_depth"]["total"] for i in range(n_occ_count)}
+            },
+            "two_qubit": {
+                "iqpe": {i: raw_data["occupations"][str(i)]["iqpe"]["circuit_depth"]["two_qubit"] for i in range(n_occ_count)},
+                "vqe": {i: raw_data["occupations"][str(i)]["vqe"]["circuit_depth"]["two_qubit"] for i in range(n_occ_count)}
+            }
         }
     }
-}
 
-log_path = os.path.join(project_root, f"logs/{model.NAME}/{n_sites}-sites/simulated-noisy-{suffix}.json")
-os.makedirs(os.path.dirname(log_path), exist_ok=True)
-with open(log_path, "w") as f:
-    json.dump(data, f, indent=4)
+    log_path = os.path.join(project_root, f"logs/{model.NAME}/{n_sites}-sites/simulated-noisy-{suffix}.json")
+    os.makedirs(os.path.dirname(log_path), exist_ok=True)
+    with open(log_path, "w") as f:
+        json.dump(data, f, indent=4)
 
-param_str = ", ".join(f"${label}={model_params[k]}$" for k, label in model.PARAM_LABELS.items())
-title = f"Real Space {model.DISPLAY_NAME} Hamiltonian Ground State Energy (Qiskit Aer Noisy)\n{param_str}, $N_{{\\text{{sites}}}}={n_sites}$"
+    param_str = ", ".join(f"${label}={model_params[k]}$" for k, label in model.PARAM_LABELS.items())
+    title = f"Real Space {model.DISPLAY_NAME} Hamiltonian Ground State Energy (Qiskit Aer Noisy)\n{param_str}, $N_{{\\text{{sites}}}}={n_sites}$"
 
-plt.figure()
-plt.plot(range(n_occ_count), data["result"]["exact"].values(), 'ro-', label="Exact")
-plt.plot(range(n_occ_count), data["result"]["iqpe"].values(), 'go', label=f"IQPE (t={time_param}, n_trot={iqpe_trot}, n_iters={iqpe_iters}, n_reps={iqpe_reps})")
-plt.plot(range(n_occ_count), data["result"]["vqe"].values(), 'bo', label=f"VQE (n_iters={vqe_iters}, n_layers={vqe_layers}, n_reps={vqe_reps})")
-plt.legend()
-plt.xlabel("Particle Number")
-plt.ylabel("$E$")
-plt.title(title, fontsize=11)
-plt.grid(True)
-plt.tight_layout()
+    plt.figure()
+    plt.plot(range(n_occ_count), data["result"]["exact"].values(), 'ro-', label="Exact")
+    plt.plot(range(n_occ_count), data["result"]["iqpe"].values(), 'go', label=f"IQPE (t={time_param}, n_trot={iqpe_trot}, n_iters={iqpe_iters}, n_reps={iqpe_reps})")
+    plt.plot(range(n_occ_count), data["result"]["vqe"].values(), 'bo', label=f"VQE (n_iters={vqe_iters}, n_layers={vqe_layers}, n_reps={vqe_reps})")
+    plt.legend()
+    plt.xlabel("Particle Number")
+    plt.ylabel("$E$")
+    plt.title(title, fontsize=11)
+    plt.grid(True)
+    plt.tight_layout()
 
-plot_path = os.path.join(project_root, f"plots/{model.NAME}/{n_sites}-sites/simulated-noisy-{suffix}.png")
-os.makedirs(os.path.dirname(plot_path), exist_ok=True)
-plt.savefig(plot_path)
+    plot_path = os.path.join(project_root, f"plots/{model.NAME}/{n_sites}-sites/simulated-noisy-{suffix}.png")
+    os.makedirs(os.path.dirname(plot_path), exist_ok=True)
+    plt.savefig(plot_path)
+
+if args.task_count < 1:
+    raise ValueError("--task-count must be at least 1")
+if args.task_index is not None and not 0 <= args.task_index < args.task_count:
+    raise ValueError("--task-index must satisfy 0 <= task-index < task-count")
+
+if args.prepare_only:
+    if not args.no_progress_log:
+        with open(progress_path, "w") as f:
+            pass
+    with open(raw_data_path, "w") as f:
+        json.dump(raw_data, f, indent=4)
+    raise SystemExit(0)
+
+if args.aggregate_only:
+    write_outputs(load_progress(raw_data))
+    raise SystemExit(0)
+
+if args.task_index is None:
+    if not args.no_progress_log:
+        with open(progress_path, "w") as f:
+            pass
+    job_results = Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(jobs)
+else:
+    init_worker_logging()
+    shard_jobs = [job for idx, job in enumerate(jobs) if idx % args.task_count == args.task_index]
+    job_results = Parallel(n_jobs=1, return_as="generator_unordered")(shard_jobs)
+
+for tag, result in job_results:
+    append_progress(tag, result)
+    apply_result(raw_data, tag, result)
+
+if args.task_index is not None:
+    raise SystemExit(0)
+
+write_outputs(raw_data)

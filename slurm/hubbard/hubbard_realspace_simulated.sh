@@ -9,24 +9,14 @@
 #SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/logs/slurm/%x-%j.err
 
 REPO_ROOT="/pscratch/sd/m/mbao202/NNL-P7"
-cd "${REPO_ROOT}"
+source "${REPO_ROOT}/slurm/common/realspace_simulated.sh"
+setup_realspace_env
 
-module load python
-source "${REPO_ROOT}/venv/bin/activate"
-# prevents each srun task from spawning lots of internal threads and oversubscribing CPUs
-export OMP_NUM_THREADS=1 # 1 thread per process for NumPy/SciPy-enabled code
-export MKL_NUM_THREADS=1 # BLAS/LAPACK backend uses 1 thread per process
-export OPENBLAS_NUM_THREADS=1
-export NUMEXPR_NUM_THREADS=1
-# Avoid joblib loky multiprocessing issues on this Python stack
-export JOBLIB_MULTIPROCESSING=0
-export MPLCONFIGDIR="/tmp/${USER}-mpl"
-
-# 4 config in parallel with 1 node each
-srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model hubbard --n-sites 4 --U 0.0 --no-debug" &
-srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model hubbard --n-sites 4 --U 0.05 --no-debug" &
-srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model hubbard --n-sites 6 --U 0.0 --no-debug" &
-srun -N 1 -n 1 -c 128 --exclusive bash -c "python scripts/real_space_simulated_ideal.py --model hubbard --n-sites 6 --U 0.05 --no-debug" &
+# 4 configs in parallel, each split into one single-core srun task per shard
+run_sharded_config "scripts/real_space_simulated_ideal.py --model hubbard --n-sites 4 --U 2.0 --no-debug" &
+run_sharded_config "scripts/real_space_simulated_ideal.py --model hubbard --n-sites 4 --U 1.0 --no-debug" &
+run_sharded_config "scripts/real_space_simulated_ideal.py --model hubbard --n-sites 6 --U 2.0 --no-debug" &
+run_sharded_config "scripts/real_space_simulated_ideal.py --model hubbard --n-sites 6 --U 1.0 --no-debug" &
 
 wait
 
