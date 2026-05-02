@@ -1,0 +1,583 @@
+2026-05-01 04:34:00.844 | INFO     | models.haldane_hubbard:real_space_exact:96 - Exact (n_sites=4, n_occ=0, t1=1.0, U=1.0, t2=0.05) = 0.0
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:40: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+Matplotlib is building the font cache; this may take a moment.
+2026-05-01 04:34:03.036 | INFO     | models.haldane_hubbard:real_space_exact:96 - Exact (n_sites=6, n_occ=0, t1=1.0, U=1.0, t2=0.0) = 0.0
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:40: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+2026-05-01 04:34:12.157 | INFO     | models.haldane_hubbard:real_space_exact:96 - Exact (n_sites=4, n_occ=0, t1=1.0, U=1.0, t2=0.0) = 0.0
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:40: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+2026-05-01 04:34:14.079 | INFO     | models.haldane_hubbard:real_space_exact:96 - Exact (n_sites=6, n_occ=0, t1=1.0, U=1.0, t2=0.05) = 0.0
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:40: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+2026-05-01 04:38:44.347 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 1) = 0.0
+2026-05-01 04:39:55.414 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 2) = 0.0
+2026-05-01 04:40:13.800 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 3) = 0.0
+2026-05-01 04:40:18.912 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 4) = 0.0
+2026-05-01 04:40:20.455 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 5) = 0.0
+2026-05-01 04:40:21.004 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 6) = 0.0
+2026-05-01 04:40:21.254 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 7) = 0.0
+2026-05-01 04:40:21.398 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 8) = 0.0
+2026-05-01 04:40:21.398 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 1) = -0.0
+2026-05-01 04:41:29.123 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 1) = 0.0
+2026-05-01 04:43:23.573 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 2) = 0.0
+2026-05-01 04:43:53.772 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 3) = 0.0
+2026-05-01 04:44:02.062 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 4) = 0.0
+2026-05-01 04:44:04.546 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 5) = 0.0
+2026-05-01 04:44:05.378 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 6) = 0.0
+2026-05-01 04:44:05.724 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 7) = 0.0
+2026-05-01 04:44:05.912 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 1, iteration 8) = 0.0
+2026-05-01 04:44:05.912 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 1) = -0.0
+2026-05-01 04:44:10.962 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 1) = 0.0
+2026-05-01 04:44:51.358 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 1) = 0.0
+2026-05-01 04:46:01.014 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 2) = 0.0
+2026-05-01 04:46:19.910 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 3) = 0.0
+2026-05-01 04:46:24.964 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 4) = 0.0
+2026-05-01 04:46:26.521 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 5) = 0.0
+2026-05-01 04:46:27.070 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 6) = 0.0
+2026-05-01 04:46:27.320 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 7) = 0.0
+2026-05-01 04:46:27.466 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 8) = 0.0
+2026-05-01 04:46:27.467 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 2) = -0.0
+2026-05-01 04:46:51.065 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 2) = 0.0
+2026-05-01 04:47:33.062 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 3) = 0.0
+2026-05-01 04:47:44.550 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 4) = 0.0
+2026-05-01 04:47:48.027 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 5) = 0.0
+2026-05-01 04:47:49.220 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 6) = 0.0
+2026-05-01 04:47:49.718 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 7) = 0.0
+2026-05-01 04:47:49.967 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 8) = 0.0
+2026-05-01 04:47:49.967 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 1) = -0.0
+2026-05-01 04:51:00.682 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 1) = 0.0
+2026-05-01 04:51:31.797 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 1) = 0.0
+2026-05-01 04:52:11.078 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 2) = 0.0
+2026-05-01 04:52:29.504 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 3) = 0.0
+2026-05-01 04:52:34.624 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 4) = 0.0
+2026-05-01 04:52:36.162 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 5) = 0.0
+2026-05-01 04:52:36.720 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 6) = 0.0
+2026-05-01 04:52:36.971 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 7) = 0.0
+2026-05-01 04:52:37.116 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 8) = 0.0
+2026-05-01 04:52:37.116 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 3) = -0.0
+2026-05-01 04:53:27.161 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 2) = 0.0
+2026-05-01 04:53:57.308 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 3) = 0.0
+2026-05-01 04:54:05.703 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 4) = 0.0
+2026-05-01 04:54:08.151 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 5) = 0.0
+2026-05-01 04:54:08.986 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 6) = 0.0
+2026-05-01 04:54:09.334 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 7) = 0.0
+2026-05-01 04:54:09.522 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 2, iteration 8) = 0.0
+2026-05-01 04:54:09.522 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 2) = -0.0
+2026-05-01 04:57:07.586 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 1) = 0.0
+2026-05-01 04:58:01.357 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 1) = 0.0
+2026-05-01 04:58:18.308 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 2) = 0.0
+2026-05-01 04:58:36.814 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 3) = 0.0
+2026-05-01 04:58:41.880 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 4) = 0.0
+2026-05-01 04:58:43.410 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 5) = 0.0
+2026-05-01 04:58:43.961 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 6) = 0.0
+2026-05-01 04:58:44.208 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 7) = 0.0
+2026-05-01 04:58:44.352 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 8) = 0.0
+2026-05-01 04:58:44.352 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 4) = -0.0
+2026-05-01 05:00:39.472 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 2) = 0.0
+2026-05-01 05:01:20.927 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 3) = 0.0
+2026-05-01 05:01:32.417 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 4) = 0.0
+2026-05-01 05:01:35.902 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 5) = 0.0
+2026-05-01 05:01:37.096 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 6) = 0.0
+2026-05-01 05:01:37.602 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 7) = 0.0
+2026-05-01 05:01:37.767 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 1) = 0.0
+2026-05-01 05:01:37.847 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 8) = 0.0
+2026-05-01 05:01:37.847 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 2) = -0.0
+2026-05-01 05:03:17.024 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 1) = 0.0
+2026-05-01 05:03:32.187 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 2) = 0.0
+2026-05-01 05:04:02.614 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 3) = 0.0
+2026-05-01 05:04:10.930 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 4) = 0.0
+2026-05-01 05:04:13.364 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 5) = 0.0
+2026-05-01 05:04:14.205 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 6) = 0.0
+2026-05-01 05:04:14.553 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 7) = 0.0
+2026-05-01 05:04:14.743 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 3, iteration 8) = 0.0
+2026-05-01 05:04:14.744 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 3) = -0.0
+2026-05-01 05:04:26.484 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 2) = 0.0
+2026-05-01 05:04:45.347 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 3) = 0.0
+2026-05-01 05:04:50.554 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 4) = 0.0
+2026-05-01 05:04:52.121 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 5) = 0.0
+2026-05-01 05:04:52.675 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 6) = 0.0
+2026-05-01 05:04:52.926 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 7) = 0.0
+2026-05-01 05:04:53.072 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 8) = 0.0
+2026-05-01 05:04:53.072 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 5) = -0.0
+2026-05-01 05:09:27.072 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 1) = 0.0
+2026-05-01 05:10:37.744 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 2) = 0.0
+2026-05-01 05:10:56.126 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 3) = 0.0
+2026-05-01 05:11:01.284 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 4) = 0.0
+2026-05-01 05:11:02.831 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 5) = 0.0
+2026-05-01 05:11:03.383 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 6) = 0.0
+2026-05-01 05:11:03.633 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 7) = 0.0
+2026-05-01 05:11:03.778 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 8) = 0.0
+2026-05-01 05:11:03.778 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 6) = -0.0
+2026-05-01 05:11:41.330 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 1) = 0.0
+2026-05-01 05:11:52.853 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 3, iteration 1) = 0.0
+2026-05-01 05:13:37.017 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 2) = 0.0
+2026-05-01 05:14:07.151 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 3) = 0.0
+2026-05-01 05:14:15.426 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 4) = 0.0
+2026-05-01 05:14:17.900 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 5) = 0.0
+2026-05-01 05:14:18.728 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 6) = 0.0
+2026-05-01 05:14:19.077 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 7) = 0.0
+2026-05-01 05:14:19.267 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 4, iteration 8) = 0.0
+2026-05-01 05:14:19.267 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 4) = -0.0
+2026-05-01 05:14:29.438 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 3, iteration 2) = 0.0
+2026-05-01 05:15:10.935 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 3, iteration 3) = 0.0
+2026-05-01 05:15:22.633 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 3, iteration 4) = 0.0
+2026-05-01 05:15:26.148 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 3, iteration 5) = 0.0
+2026-05-01 05:15:27.368 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 3, iteration 6) = 0.0
+2026-05-01 05:15:27.874 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 3, iteration 7) = 0.0
+2026-05-01 05:15:28.129 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 3, iteration 8) = 0.0
+2026-05-01 05:15:28.129 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 3) = -0.0
+2026-05-01 05:15:35.956 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 1) = 0.0
+2026-05-01 05:16:46.611 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 2) = 0.0
+2026-05-01 05:17:04.937 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 3) = 0.0
+2026-05-01 05:17:10.020 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 4) = 0.0
+2026-05-01 05:17:11.564 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 5) = 0.0
+2026-05-01 05:17:12.117 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 6) = 0.0
+2026-05-01 05:17:12.366 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 7) = 0.0
+2026-05-01 05:17:12.513 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 8) = 0.0
+2026-05-01 05:17:12.513 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 7) = -0.0
+2026-05-01 05:21:46.873 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 1) = 0.0
+2026-05-01 05:21:48.664 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 1) = 0.0
+2026-05-01 05:22:58.052 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 2) = 0.0
+2026-05-01 05:23:16.617 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 3) = 0.0
+2026-05-01 05:23:21.744 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 4) = 0.0
+2026-05-01 05:23:23.296 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 5) = 0.0
+2026-05-01 05:23:23.854 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 6) = 0.0
+2026-05-01 05:23:24.105 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 7) = 0.0
+2026-05-01 05:23:24.252 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 8) = 0.0
+2026-05-01 05:23:24.252 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 8) = -0.0
+2026-05-01 05:23:43.650 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 2) = 0.0
+2026-05-01 05:24:14.074 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 3) = 0.0
+2026-05-01 05:24:22.451 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 4) = 0.0
+2026-05-01 05:24:24.915 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 5) = 0.0
+2026-05-01 05:24:25.745 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 6) = 0.0
+2026-05-01 05:24:26.099 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 7) = 0.0
+2026-05-01 05:24:26.290 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 5, iteration 8) = 0.0
+2026-05-01 05:24:26.290 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 5) = -0.0
+2026-05-01 05:25:45.837 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 4, iteration 1) = 0.0
+2026-05-01 05:27:55.844 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 1) = 0.0
+2026-05-01 05:28:21.276 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 4, iteration 2) = 0.0
+2026-05-01 05:29:02.719 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 4, iteration 3) = 0.0
+2026-05-01 05:29:05.561 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 2) = 0.0
+2026-05-01 05:29:14.264 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 4, iteration 4) = 0.0
+2026-05-01 05:29:17.732 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 4, iteration 5) = 0.0
+2026-05-01 05:29:18.921 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 4, iteration 6) = 0.0
+2026-05-01 05:29:19.410 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 4, iteration 7) = 0.0
+2026-05-01 05:29:19.656 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 4, iteration 8) = 0.0
+2026-05-01 05:29:19.656 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 4) = -0.0
+2026-05-01 05:29:23.918 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 3) = 0.0
+2026-05-01 05:29:29.038 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 4) = 0.0
+2026-05-01 05:29:30.582 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 5) = 0.0
+2026-05-01 05:29:31.137 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 6) = 0.0
+2026-05-01 05:29:31.389 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 7) = 0.0
+2026-05-01 05:29:31.535 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 8) = 0.0
+2026-05-01 05:29:31.535 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 9) = -0.0
+2026-05-01 05:31:55.300 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 1) = 0.0
+2026-05-01 05:33:50.146 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 2) = 0.0
+2026-05-01 05:34:06.394 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 1) = 0.0
+2026-05-01 05:34:20.559 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 3) = 0.0
+2026-05-01 05:34:28.916 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 4) = 0.0
+2026-05-01 05:34:31.379 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 5) = 0.0
+2026-05-01 05:34:32.220 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 6) = 0.0
+2026-05-01 05:34:32.570 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 7) = 0.0
+2026-05-01 05:34:32.757 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 6, iteration 8) = 0.0
+2026-05-01 05:34:32.757 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 6) = -0.0
+2026-05-01 05:35:16.225 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 2) = 0.0
+2026-05-01 05:35:34.988 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 3) = 0.0
+2026-05-01 05:35:40.065 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 4) = 0.0
+2026-05-01 05:35:41.608 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 5) = 0.0
+2026-05-01 05:35:42.168 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 6) = 0.0
+2026-05-01 05:35:42.419 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 7) = 0.0
+2026-05-01 05:35:42.565 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 8) = 0.0
+2026-05-01 05:35:42.565 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 10) = -0.0
+2026-05-01 05:39:26.848 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 5, iteration 1) = 0.0
+2026-05-01 05:40:12.733 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 1) = 0.0
+2026-05-01 05:41:22.856 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 2) = 0.0
+2026-05-01 05:41:41.289 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 3) = 0.0
+2026-05-01 05:41:46.526 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 4) = 0.0
+2026-05-01 05:41:48.102 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 5) = 0.0
+2026-05-01 05:41:48.657 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 6) = 0.0
+2026-05-01 05:41:48.906 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 7) = 0.0
+2026-05-01 05:41:49.051 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 8) = 0.0
+2026-05-01 05:41:49.051 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 11) = -0.0
+2026-05-01 05:42:01.058 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 1) = 0.0
+2026-05-01 05:42:03.873 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 5, iteration 2) = 0.0
+2026-05-01 05:42:45.466 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 5, iteration 3) = 0.0
+2026-05-01 05:42:57.004 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 5, iteration 4) = 0.0
+2026-05-01 05:43:00.537 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 5, iteration 5) = 0.0
+2026-05-01 05:43:01.751 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 5, iteration 6) = 0.0
+2026-05-01 05:43:02.256 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 5, iteration 7) = 0.0
+2026-05-01 05:43:02.511 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 5, iteration 8) = 0.0
+2026-05-01 05:43:02.511 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 5) = -0.0
+2026-05-01 05:43:55.656 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 2) = 0.0
+2026-05-01 05:44:25.922 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 3) = 0.0
+2026-05-01 05:44:34.317 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 4) = 0.0
+2026-05-01 05:44:36.804 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 5) = 0.0
+2026-05-01 05:44:37.625 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 6) = 0.0
+2026-05-01 05:44:37.967 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 7) = 0.0
+2026-05-01 05:44:38.152 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 7, iteration 8) = 0.0
+2026-05-01 05:44:38.152 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 7) = -0.0
+2026-05-01 05:46:20.907 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 1) = 0.0
+2026-05-01 05:47:31.074 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 2) = 0.0
+2026-05-01 05:47:49.469 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 3) = 0.0
+2026-05-01 05:47:54.673 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 4) = 0.0
+2026-05-01 05:47:56.229 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 5) = 0.0
+2026-05-01 05:47:56.785 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 6) = 0.0
+2026-05-01 05:47:57.035 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 7) = 0.0
+2026-05-01 05:47:57.182 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 8) = 0.0
+2026-05-01 05:47:57.182 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 12) = -0.0
+2026-05-01 05:52:03.889 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 1) = 0.0
+2026-05-01 05:52:29.606 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 1) = 0.0
+2026-05-01 05:53:11.642 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 6, iteration 1) = 0.0
+2026-05-01 05:53:39.931 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 2) = 0.0
+2026-05-01 05:53:58.737 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 3) = 0.0
+2026-05-01 05:53:59.728 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 2) = 0.0
+2026-05-01 05:54:03.915 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 4) = 0.0
+2026-05-01 05:54:05.467 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 5) = 0.0
+2026-05-01 05:54:06.023 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 6) = 0.0
+2026-05-01 05:54:06.276 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 7) = 0.0
+2026-05-01 05:54:06.422 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 8) = 0.0
+2026-05-01 05:54:06.422 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 13) = -0.0
+2026-05-01 05:54:30.048 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 3) = 0.0
+2026-05-01 05:54:38.301 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 4) = 0.0
+2026-05-01 05:54:40.742 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 5) = 0.0
+2026-05-01 05:54:41.563 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 6) = 0.0
+2026-05-01 05:54:41.905 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 7) = 0.0
+2026-05-01 05:54:42.092 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 8, iteration 8) = 0.0
+2026-05-01 05:54:42.092 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 8) = -0.0
+2026-05-01 05:55:48.065 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 6, iteration 2) = 0.0
+2026-05-01 05:56:29.225 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 6, iteration 3) = 0.0
+2026-05-01 05:56:40.841 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 6, iteration 4) = 0.0
+2026-05-01 05:56:44.380 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 6, iteration 5) = 0.0
+2026-05-01 05:56:45.571 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 6, iteration 6) = 0.0
+2026-05-01 05:56:46.064 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 6, iteration 7) = 0.0
+2026-05-01 05:56:46.311 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 6, iteration 8) = 0.0
+2026-05-01 05:56:46.311 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 6) = -0.0
+2026-05-01 05:58:40.062 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 1) = 0.0
+2026-05-01 05:59:49.758 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 2) = 0.0
+2026-05-01 06:00:08.230 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 3) = 0.0
+2026-05-01 06:00:13.361 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 4) = 0.0
+2026-05-01 06:00:14.909 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 5) = 0.0
+2026-05-01 06:00:15.467 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 6) = 0.0
+2026-05-01 06:00:15.720 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 7) = 0.0
+2026-05-01 06:00:15.866 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 8) = 0.0
+2026-05-01 06:00:15.866 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 14) = -0.0
+2026-05-01 06:02:09.773 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 1) = 0.0
+2026-05-01 06:04:04.847 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 2) = 0.0
+2026-05-01 06:04:34.834 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 3) = 0.0
+2026-05-01 06:04:43.048 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 4) = 0.0
+2026-05-01 06:04:45.471 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 5) = 0.0
+2026-05-01 06:04:46.298 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 6) = 0.0
+2026-05-01 06:04:46.436 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 1) = 0.0
+2026-05-01 06:04:46.643 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 7) = 0.0
+2026-05-01 06:04:46.829 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 9, iteration 8) = 0.0
+2026-05-01 06:04:46.829 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 9) = -0.0
+2026-05-01 06:05:56.624 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 2) = 0.0
+2026-05-01 06:06:15.029 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 3) = 0.0
+2026-05-01 06:06:20.103 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 4) = 0.0
+2026-05-01 06:06:21.631 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 5) = 0.0
+2026-05-01 06:06:22.176 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 6) = 0.0
+2026-05-01 06:06:22.423 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 7) = 0.0
+2026-05-01 06:06:22.565 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 8) = 0.0
+2026-05-01 06:06:22.566 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 15) = -0.0
+2026-05-01 06:06:54.955 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 7, iteration 1) = 0.0
+2026-05-01 06:09:31.174 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 7, iteration 2) = 0.0
+2026-05-01 06:10:13.048 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 7, iteration 3) = 0.0
+2026-05-01 06:10:24.564 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 7, iteration 4) = 0.0
+2026-05-01 06:10:28.052 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 7, iteration 5) = 0.0
+2026-05-01 06:10:29.250 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 7, iteration 6) = 0.0
+2026-05-01 06:10:29.742 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 7, iteration 7) = 0.0
+2026-05-01 06:10:29.986 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 7, iteration 8) = 0.0
+2026-05-01 06:10:29.987 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 7) = -0.0
+2026-05-01 06:10:54.887 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 1) = 0.0
+2026-05-01 06:12:06.123 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 2) = 0.0
+2026-05-01 06:12:13.417 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 1) = 0.0
+2026-05-01 06:12:24.699 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 3) = 0.0
+2026-05-01 06:12:29.772 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 4) = 0.0
+2026-05-01 06:12:31.305 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 5) = 0.0
+2026-05-01 06:12:31.854 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 6) = 0.0
+2026-05-01 06:12:32.100 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 7) = 0.0
+2026-05-01 06:12:32.242 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 8) = 0.0
+2026-05-01 06:12:32.243 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 16) = -0.0
+2026-05-01 06:14:08.120 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 2) = 0.0
+2026-05-01 06:14:38.233 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 3) = 0.0
+2026-05-01 06:14:46.433 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 4) = 0.0
+2026-05-01 06:14:48.864 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 5) = 0.0
+2026-05-01 06:14:49.696 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 6) = 0.0
+2026-05-01 06:14:50.045 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 7) = 0.0
+2026-05-01 06:14:50.236 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 10, iteration 8) = 0.0
+2026-05-01 06:14:50.236 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 10) = -0.0
+2026-05-01 06:17:06.646 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 1) = 0.0
+2026-05-01 06:18:18.431 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 2) = 0.0
+2026-05-01 06:18:37.207 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 3) = 0.0
+2026-05-01 06:18:42.357 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 4) = 0.0
+2026-05-01 06:18:43.909 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 5) = 0.0
+2026-05-01 06:18:44.463 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 6) = 0.0
+2026-05-01 06:18:44.712 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 7) = 0.0
+2026-05-01 06:18:44.853 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 8) = 0.0
+2026-05-01 06:18:44.853 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 17) = -0.0
+2026-05-01 06:20:38.464 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 8, iteration 1) = 0.0
+2026-05-01 06:22:16.894 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 1) = 0.0
+2026-05-01 06:22:37.581 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 1) = 0.0
+2026-05-01 06:23:14.408 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 1) = 0.0
+2026-05-01 06:23:15.389 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 8, iteration 2) = 0.0
+2026-05-01 06:23:57.227 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 8, iteration 3) = 0.0
+2026-05-01 06:24:08.856 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 8, iteration 4) = 0.0
+2026-05-01 06:24:12.333 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 8, iteration 5) = 0.0
+2026-05-01 06:24:13.537 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 8, iteration 6) = 0.0
+2026-05-01 06:24:13.792 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 2) = 0.0
+2026-05-01 06:24:14.033 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 8, iteration 7) = 0.0
+2026-05-01 06:24:14.280 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 8, iteration 8) = 0.0
+2026-05-01 06:24:14.280 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 8) = -0.0
+2026-05-01 06:24:24.067 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 2) = 0.0
+2026-05-01 06:24:42.496 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 3) = 0.0
+2026-05-01 06:24:44.356 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 3) = 0.0
+2026-05-01 06:24:47.684 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 4) = 0.0
+2026-05-01 06:24:49.228 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 5) = 0.0
+2026-05-01 06:24:49.771 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 6) = 0.0
+2026-05-01 06:24:50.017 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 7) = 0.0
+2026-05-01 06:24:50.158 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 8) = 0.0
+2026-05-01 06:24:50.159 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 18) = -0.0
+2026-05-01 06:24:52.710 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 4) = 0.0
+2026-05-01 06:24:55.139 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 5) = 0.0
+2026-05-01 06:24:55.962 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 6) = 0.0
+2026-05-01 06:24:56.305 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 7) = 0.0
+2026-05-01 06:24:56.491 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 11, iteration 8) = 0.0
+2026-05-01 06:24:56.491 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 11) = -0.0
+2026-05-01 06:29:21.361 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 1) = 0.0
+2026-05-01 06:30:32.084 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 2) = 0.0
+2026-05-01 06:30:50.584 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 3) = 0.0
+2026-05-01 06:30:55.815 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 4) = 0.0
+2026-05-01 06:30:57.378 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 5) = 0.0
+2026-05-01 06:30:57.941 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 6) = 0.0
+2026-05-01 06:30:58.194 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 7) = 0.0
+2026-05-01 06:30:58.337 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 8) = 0.0
+2026-05-01 06:30:58.337 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 19) = -0.0
+2026-05-01 06:32:29.649 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 1) = 0.0
+2026-05-01 06:34:22.078 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 9, iteration 1) = 0.0
+2026-05-01 06:34:24.029 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 2) = 0.0
+2026-05-01 06:34:54.869 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 3) = 0.0
+2026-05-01 06:35:03.225 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 4) = 0.0
+2026-05-01 06:35:05.692 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 5) = 0.0
+2026-05-01 06:35:06.522 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 6) = 0.0
+2026-05-01 06:35:06.866 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 7) = 0.0
+2026-05-01 06:35:07.051 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 12, iteration 8) = 0.0
+2026-05-01 06:35:07.051 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 12) = -0.0
+2026-05-01 06:35:32.710 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 1) = 0.0
+2026-05-01 06:36:42.374 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 2) = 0.0
+2026-05-01 06:36:57.659 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 9, iteration 2) = 0.0
+2026-05-01 06:37:00.719 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 3) = 0.0
+2026-05-01 06:37:05.803 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 4) = 0.0
+2026-05-01 06:37:07.335 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 5) = 0.0
+2026-05-01 06:37:07.884 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 6) = 0.0
+2026-05-01 06:37:08.128 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 7) = 0.0
+2026-05-01 06:37:08.271 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 8) = 0.0
+2026-05-01 06:37:08.271 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 20) = -0.0
+2026-05-01 06:37:39.182 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 9, iteration 3) = 0.0
+2026-05-01 06:37:50.831 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 9, iteration 4) = 0.0
+2026-05-01 06:37:54.351 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 9, iteration 5) = 0.0
+2026-05-01 06:37:55.584 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 9, iteration 6) = 0.0
+2026-05-01 06:37:56.077 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 9, iteration 7) = 0.0
+2026-05-01 06:37:56.324 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 9, iteration 8) = 0.0
+2026-05-01 06:37:56.324 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 9) = -0.0
+2026-05-01 06:42:34.736 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 1) = 0.0
+2026-05-01 06:44:30.110 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 2) = 0.0
+2026-05-01 06:45:00.435 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 3) = 0.0
+2026-05-01 06:45:08.681 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 4) = 0.0
+2026-05-01 06:45:11.119 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 5) = 0.0
+2026-05-01 06:45:11.937 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 6) = 0.0
+2026-05-01 06:45:12.279 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 7) = 0.0
+2026-05-01 06:45:12.463 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 13, iteration 8) = 0.0
+2026-05-01 06:45:12.463 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 13) = -0.0
+2026-05-01 06:48:11.000 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 10, iteration 1) = 0.0
+2026-05-01 06:49:51.713 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 2) = 0.0
+2026-05-01 06:50:50.325 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 10, iteration 2) = 0.0
+2026-05-01 06:51:31.817 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 10, iteration 3) = 0.0
+2026-05-01 06:51:43.429 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 10, iteration 4) = 0.0
+2026-05-01 06:51:46.898 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 10, iteration 5) = 0.0
+2026-05-01 06:51:48.104 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 10, iteration 6) = 0.0
+2026-05-01 06:51:48.600 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 10, iteration 7) = 0.0
+2026-05-01 06:51:48.846 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 10, iteration 8) = 0.0
+2026-05-01 06:51:48.846 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 10) = -0.0
+2026-05-01 06:52:39.832 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 1) = 0.0
+2026-05-01 06:54:34.581 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 2) = 0.0
+2026-05-01 06:55:04.812 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 3) = 0.0
+2026-05-01 06:55:13.164 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 4) = 0.0
+2026-05-01 06:55:15.620 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 5) = 0.0
+2026-05-01 06:55:16.448 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 6) = 0.0
+2026-05-01 06:55:16.792 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 7) = 0.0
+2026-05-01 06:55:16.975 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 14, iteration 8) = 0.0
+2026-05-01 06:55:16.976 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 14) = -0.0
+2026-05-01 06:56:50.289 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 3) = 0.0
+2026-05-01 06:58:38.332 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 4) = 0.0
+2026-05-01 06:59:07.352 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 5) = 0.0
+2026-05-01 06:59:15.586 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 6) = 0.0
+2026-05-01 06:59:18.171 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 7) = 0.0
+2026-05-01 06:59:19.114 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 1, iteration 8) = 0.0
+2026-05-01 06:59:19.115 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 1) = -0.0
+2026-05-01 07:01:57.657 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 11, iteration 1) = 0.0
+2026-05-01 07:02:42.670 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 1) = 0.0
+2026-05-01 07:04:35.023 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 11, iteration 2) = 0.0
+2026-05-01 07:04:37.765 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 2) = 0.0
+2026-05-01 07:05:08.119 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 3) = 0.0
+2026-05-01 07:05:16.379 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 4) = 0.0
+2026-05-01 07:05:16.570 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 11, iteration 3) = 0.0
+2026-05-01 07:05:18.817 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 5) = 0.0
+2026-05-01 07:05:19.644 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 6) = 0.0
+2026-05-01 07:05:19.986 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 7) = 0.0
+2026-05-01 07:05:20.169 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 15, iteration 8) = 0.0
+2026-05-01 07:05:20.169 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 15) = -0.0
+2026-05-01 07:05:28.114 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 11, iteration 4) = 0.0
+2026-05-01 07:05:31.625 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 11, iteration 5) = 0.0
+2026-05-01 07:05:32.826 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 11, iteration 6) = 0.0
+2026-05-01 07:05:33.323 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 11, iteration 7) = 0.0
+2026-05-01 07:05:33.571 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 11, iteration 8) = 0.0
+2026-05-01 07:05:33.571 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 11) = -0.0
+2026-05-01 07:12:46.384 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 1) = 0.0
+2026-05-01 07:14:43.062 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 2) = 0.0
+2026-05-01 07:15:13.602 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 3) = 0.0
+2026-05-01 07:15:21.974 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 4) = 0.0
+2026-05-01 07:15:24.407 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 5) = 0.0
+2026-05-01 07:15:25.235 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 6) = 0.0
+2026-05-01 07:15:25.579 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 7) = 0.0
+2026-05-01 07:15:25.763 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 16, iteration 8) = 0.0
+2026-05-01 07:15:25.763 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 16) = -0.0
+2026-05-01 07:15:43.880 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 12, iteration 1) = 0.0
+2026-05-01 07:18:22.034 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 12, iteration 2) = 0.0
+2026-05-01 07:19:03.868 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 12, iteration 3) = 0.0
+2026-05-01 07:19:15.448 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 12, iteration 4) = 0.0
+2026-05-01 07:19:18.944 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 12, iteration 5) = 0.0
+2026-05-01 07:19:20.143 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 12, iteration 6) = 0.0
+2026-05-01 07:19:20.641 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 12, iteration 7) = 0.0
+2026-05-01 07:19:20.888 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 12, iteration 8) = 0.0
+2026-05-01 07:19:20.888 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 12) = -0.0
+2026-05-01 07:22:57.023 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 1) = 0.0
+2026-05-01 07:24:52.707 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 2) = 0.0
+2026-05-01 07:25:22.769 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 3) = 0.0
+2026-05-01 07:25:31.022 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 4) = 0.0
+2026-05-01 07:25:33.462 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 5) = 0.0
+2026-05-01 07:25:34.291 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 6) = 0.0
+2026-05-01 07:25:34.635 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 7) = 0.0
+2026-05-01 07:25:34.819 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 17, iteration 8) = 0.0
+2026-05-01 07:25:34.819 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 17) = -0.0
+2026-05-01 07:29:25.516 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 13, iteration 1) = 0.0
+2026-05-01 07:32:03.347 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 13, iteration 2) = 0.0
+2026-05-01 07:32:45.380 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 13, iteration 3) = 0.0
+2026-05-01 07:32:57.009 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 13, iteration 4) = 0.0
+2026-05-01 07:33:00.527 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 13, iteration 5) = 0.0
+2026-05-01 07:33:01.724 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 13, iteration 6) = 0.0
+2026-05-01 07:33:02.233 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 13, iteration 7) = 0.0
+2026-05-01 07:33:02.479 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 13, iteration 8) = 0.0
+2026-05-01 07:33:02.479 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 13) = -0.0
+2026-05-01 07:33:05.778 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 1) = 0.0
+2026-05-01 07:35:00.366 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 2) = 0.0
+2026-05-01 07:35:30.532 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 3) = 0.0
+2026-05-01 07:35:38.818 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 4) = 0.0
+2026-05-01 07:35:41.289 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 5) = 0.0
+2026-05-01 07:35:42.121 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 6) = 0.0
+2026-05-01 07:35:42.466 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 7) = 0.0
+2026-05-01 07:35:42.653 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 18, iteration 8) = 0.0
+2026-05-01 07:35:42.653 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 18) = -0.0
+2026-05-01 07:43:12.515 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 14, iteration 1) = 0.0
+2026-05-01 07:43:13.809 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 1) = 0.0
+2026-05-01 07:45:10.756 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 2) = 0.0
+2026-05-01 07:45:40.972 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 3) = 0.0
+2026-05-01 07:45:49.226 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 4) = 0.0
+2026-05-01 07:45:51.646 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 5) = 0.0
+2026-05-01 07:45:52.472 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 6) = 0.0
+2026-05-01 07:45:52.816 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 7) = 0.0
+2026-05-01 07:45:53.004 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 19, iteration 8) = 0.0
+2026-05-01 07:45:53.004 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 19) = -0.0
+2026-05-01 07:45:53.062 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 14, iteration 2) = 0.0
+2026-05-01 07:46:34.225 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 14, iteration 3) = 0.0
+2026-05-01 07:46:45.795 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 14, iteration 4) = 0.0
+2026-05-01 07:46:49.301 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 14, iteration 5) = 0.0
+2026-05-01 07:46:50.499 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 14, iteration 6) = 0.0
+2026-05-01 07:46:50.991 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 14, iteration 7) = 0.0
+2026-05-01 07:46:51.237 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 14, iteration 8) = 0.0
+2026-05-01 07:46:51.238 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 14) = -0.0
+2026-05-01 07:53:22.252 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 1) = 0.0
+2026-05-01 07:55:16.647 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 2) = 0.0
+2026-05-01 07:55:46.735 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 3) = 0.0
+2026-05-01 07:55:54.972 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 4) = 0.0
+2026-05-01 07:55:57.386 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 5) = 0.0
+2026-05-01 07:55:58.216 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 6) = 0.0
+2026-05-01 07:55:58.572 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 7) = 0.0
+2026-05-01 07:55:58.762 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=4, n_occ=0, repetition 20, iteration 8) = 0.0
+2026-05-01 07:55:58.762 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=4, n_occ=0, repetition 20) = -0.0
+2026-05-01 07:57:09.480 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 15, iteration 1) = 0.0
+2026-05-01 07:59:46.619 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 15, iteration 2) = 0.0
+2026-05-01 08:00:28.173 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 15, iteration 3) = 0.0
+2026-05-01 08:00:39.734 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 15, iteration 4) = 0.0
+2026-05-01 08:00:43.251 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 15, iteration 5) = 0.0
+2026-05-01 08:00:44.446 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 15, iteration 6) = 0.0
+2026-05-01 08:00:44.935 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 15, iteration 7) = 0.0
+2026-05-01 08:00:45.180 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 15, iteration 8) = 0.0
+2026-05-01 08:00:45.180 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 15) = -0.0
+2026-05-01 08:10:51.101 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 16, iteration 1) = 0.0
+2026-05-01 08:11:51.706 | DEBUG    | core:real_space_vqe:132 - VQE (n_sites=4, n_occ=0, repetition 1) = 0.022705078125
+2026-05-01 08:13:27.253 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 16, iteration 2) = 0.0
+2026-05-01 08:14:08.967 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 16, iteration 3) = 0.0
+2026-05-01 08:14:20.436 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 16, iteration 4) = 0.0
+2026-05-01 08:14:23.905 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 16, iteration 5) = 0.0
+2026-05-01 08:14:25.100 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 16, iteration 6) = 0.0
+2026-05-01 08:14:25.604 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 16, iteration 7) = 0.0
+2026-05-01 08:14:25.852 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 16, iteration 8) = 0.0
+2026-05-01 08:14:25.852 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 16) = -0.0
+2026-05-01 08:24:37.625 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 17, iteration 1) = 0.0
+2026-05-01 08:27:13.914 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 17, iteration 2) = 0.0
+2026-05-01 08:27:55.504 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 17, iteration 3) = 0.0
+2026-05-01 08:28:06.975 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 17, iteration 4) = 0.0
+2026-05-01 08:28:10.511 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 17, iteration 5) = 0.0
+2026-05-01 08:28:11.709 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 17, iteration 6) = 0.0
+2026-05-01 08:28:12.205 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 17, iteration 7) = 0.0
+2026-05-01 08:28:12.451 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 17, iteration 8) = 0.0
+2026-05-01 08:28:12.451 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 17) = -0.0
+2026-05-01 08:38:19.509 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 18, iteration 1) = 0.0
+2026-05-01 08:40:56.913 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 18, iteration 2) = 0.0
+2026-05-01 08:41:38.154 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 18, iteration 3) = 0.0
+2026-05-01 08:41:49.613 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 18, iteration 4) = 0.0
+2026-05-01 08:41:53.139 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 18, iteration 5) = 0.0
+2026-05-01 08:41:54.338 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 18, iteration 6) = 0.0
+2026-05-01 08:41:54.832 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 18, iteration 7) = 0.0
+2026-05-01 08:41:55.079 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 18, iteration 8) = 0.0
+2026-05-01 08:41:55.079 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 18) = -0.0
+2026-05-01 08:47:40.927 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 1) = 0.0
+2026-05-01 08:52:01.576 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 19, iteration 1) = 0.0
+2026-05-01 08:54:38.223 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 19, iteration 2) = 0.0
+2026-05-01 08:55:19.676 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 19, iteration 3) = 0.0
+2026-05-01 08:55:31.107 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 19, iteration 4) = 0.0
+2026-05-01 08:55:34.598 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 19, iteration 5) = 0.0
+2026-05-01 08:55:35.797 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 19, iteration 6) = 0.0
+2026-05-01 08:55:36.289 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 19, iteration 7) = 0.0
+2026-05-01 08:55:36.538 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 19, iteration 8) = 0.0
+2026-05-01 08:55:36.538 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 19) = -0.0
+2026-05-01 09:05:46.327 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 20, iteration 1) = 0.0
+2026-05-01 09:08:24.513 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 20, iteration 2) = 0.0
+2026-05-01 09:09:06.164 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 20, iteration 3) = 0.0
+2026-05-01 09:09:17.611 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 20, iteration 4) = 0.0
+2026-05-01 09:09:21.094 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 20, iteration 5) = 0.0
+2026-05-01 09:09:22.287 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 20, iteration 6) = 0.0
+2026-05-01 09:09:22.784 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 20, iteration 7) = 0.0
+2026-05-01 09:09:23.030 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 20, iteration 8) = 0.0
+2026-05-01 09:09:23.030 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 20) = -0.0
+2026-05-01 09:15:01.829 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 2) = 0.0
+2026-05-01 09:21:57.137 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 3) = 0.0
+2026-05-01 09:23:45.558 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 4) = 0.0
+2026-05-01 09:24:15.203 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 5) = 0.0
+2026-05-01 09:24:23.401 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 6) = 0.0
+2026-05-01 09:24:25.956 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 7) = 0.0
+2026-05-01 09:24:26.893 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 2, iteration 8) = 0.0
+2026-05-01 09:24:26.894 | DEBUG    | core:real_space_iqpe:160 - IQPE (n_sites=6, n_occ=0, repetition 2) = -0.0
+2026-05-01 09:44:16.678 | DEBUG    | core:real_space_vqe:132 - VQE (n_sites=4, n_occ=0, repetition 1) = -0.014051581490445275
+2026-05-01 09:46:30.116 | DEBUG    | core:real_space_vqe:132 - VQE (n_sites=4, n_occ=0, repetition 2) = 0.02099609375
+2026-05-01 11:08:40.898 | DEBUG    | core:real_space_vqe:132 - VQE (n_sites=6, n_occ=0, repetition 1) = -0.05517578125
+2026-05-01 11:16:00.687 | DEBUG    | core:iqpe_estimate:67 - IQPE (n_sites=6, n_occ=0, repetition 3, iteration 1) = 0.0
+2026-05-01 11:21:22.356 | DEBUG    | core:real_space_vqe:132 - VQE (n_sites=4, n_occ=0, repetition 3) = 0.02880859375
+2026-05-01 11:32:43.386 | DEBUG    | core:real_space_vqe:132 - VQE (n_sites=4, n_occ=0, repetition 2) = 0.0103995486356101
+[2026-05-01T18:34:34.417] error: *** STEP 52301260.2 ON nid005175 CANCELLED AT 2026-05-01T18:34:34 DUE to SIGNAL Terminated ***
+[2026-05-01T18:34:34.419] error: *** STEP 52301260.3 ON nid006991 CANCELLED AT 2026-05-01T18:34:34 DUE to SIGNAL Terminated ***
+[2026-05-01T18:34:34.419] error: *** STEP 52301260.1 ON nid004945 CANCELLED AT 2026-05-01T18:34:34 DUE to SIGNAL Terminated ***
+[2026-05-01T18:34:34.422] error: *** STEP 52301260.0 ON nid004447 CANCELLED AT 2026-05-01T18:34:34 DUE to SIGNAL Terminated ***
+[2026-05-01T18:34:34.423] error: *** JOB 52301260 ON nid004447 CANCELLED AT 2026-05-01T18:34:34 DUE to SIGNAL Terminated ***
