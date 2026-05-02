@@ -12,6 +12,7 @@ import json
 import argparse
 import subprocess
 from qiskit_nature.second_q.mappers import JordanWignerMapper
+from interactive import attach_hover, lock_camera_azimuth
 from joblib import Parallel, delayed
 
 from core import setup_logging, real_space_exact, real_space_vqe, real_space_iqpe, vqe_other_benchmarks, iqpe_other_benchmarks, resolve_sweep
@@ -274,6 +275,8 @@ ax.plot_surface(X_grid, Y_grid, Z_exact, cmap=cmap_obj, alpha=0.10, edgecolor="n
 for iy, yv in enumerate(y_vals):
     color = cmap_obj(iy / max(ny - 1, 1))
     ax.plot(x_vals, [yv] * len(x_vals), Z_exact[:, iy], color=color, linewidth=1.8, alpha=0.9, zorder=4)
+    ax.scatter(x_vals, [yv] * len(x_vals), Z_exact[:, iy],
+               color=color, s=20, alpha=0.4, depthshade=False, zorder=5)
 
 z_clip = args.z_clip if args.z_clip is not None else -(2 * (n_sites + 1))
 
@@ -301,11 +304,19 @@ class GradientPatchHandler(HandlerBase):
 
     def create_artists(self, _legend, _orig_handle, xdescent, ydescent, width, height, _fontsize, trans):
         gradient = np.linspace(0, 1, 256).reshape(1, -1)
-        bbox = Bbox.from_bounds(xdescent, ydescent, width, height)
+        line_h = height * 0.18
+        line_y = ydescent + (height - line_h) / 2
+        bbox = Bbox.from_bounds(xdescent, line_y, width, line_h)
         im = BboxImage(TransformedBbox(bbox, trans), cmap=self.cmap)
         im.set_data(gradient)
         im.set_alpha(0.9)
-        return [im]
+        dot = Line2D(
+            [xdescent + width * 0.5], [ydescent + height * 0.5],
+            marker="o", markersize=7, linestyle="none",
+            markerfacecolor=self.cmap(0.5), markeredgewidth=0,
+        )
+        dot.set_transform(trans)
+        return [im, dot]
 
 if not args.hide_sim_params:
     exact_proxy = mpatches.Patch(label="Exact")
@@ -327,6 +338,12 @@ if args.show_model_params:
 else:
     plt.tight_layout()
 
+attach_hover(fig, ax, [
+    {"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z_exact.ravel(), "label": "Exact"},
+    {"xs": x_flat[vqe_mask],  "ys": y_flat[vqe_mask],  "zs": vqe_flat[vqe_mask],  "label": "VQE"},
+    {"xs": x_flat[iqpe_mask], "ys": y_flat[iqpe_mask], "zs": iqpe_flat[iqpe_mask], "label": "IQPE"},
+])
+
 plot_path = os.path.join(
     project_root,
     f"plots/{model.NAME}/{n_sites}-sites/simulated-ideal-{args.x_param}-vs-{args.y_param}.pdf"
@@ -334,3 +351,5 @@ plot_path = os.path.join(
 os.makedirs(os.path.dirname(plot_path), exist_ok=True)
 plt.savefig(plot_path, format="pdf")
 subprocess.run(["pdfcrop", plot_path, plot_path], check=True, capture_output=True)
+lock_camera_azimuth(fig, ax)
+plt.show()

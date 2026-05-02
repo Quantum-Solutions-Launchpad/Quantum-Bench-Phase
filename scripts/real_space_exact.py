@@ -10,6 +10,7 @@ import argparse
 import subprocess
 
 from core import setup_logging, real_space_exact, resolve_sweep
+from interactive import attach_hover, lock_camera_azimuth
 from models import get_model
 
 _N_OCC_DEFAULT = {"param": "n_occ", "range": None}
@@ -114,6 +115,8 @@ ax.plot_surface(X_grid, Y_grid, Z, cmap=cmap_obj, alpha=0.10, edgecolor="none",
 for iy, yv in enumerate(y_vals):
     color = cmap_obj(iy / max(ny - 1, 1))
     ax.plot(x_vals, [yv] * len(x_vals), Z[:, iy], color=color, linewidth=1.8, alpha=0.95, zorder=5)
+    ax.scatter(x_vals, [yv] * len(x_vals), Z[:, iy],
+               color=color, s=20, alpha=0.4, depthshade=False, zorder=5)
 
 ax.set_xlabel(x_label, labelpad=12)
 ax.set_ylabel(y_label, labelpad=12)
@@ -131,6 +134,10 @@ if args.show_model_params:
 else:
     plt.tight_layout()
 
+attach_hover(fig, ax, [
+    {"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z.ravel(), "label": "Exact"},
+])
+
 file_path = os.path.join(
     project_root,
     f"plots/{model.NAME}/{n_sites}-sites/exact-{args.x_param}-vs-{args.y_param}.pdf"
@@ -138,3 +145,5 @@ file_path = os.path.join(
 os.makedirs(os.path.dirname(file_path), exist_ok=True)
 plt.savefig(file_path, format="pdf")
 subprocess.run(["pdfcrop", file_path, file_path], check=True, capture_output=True)
+lock_camera_azimuth(fig, ax)
+plt.show()
