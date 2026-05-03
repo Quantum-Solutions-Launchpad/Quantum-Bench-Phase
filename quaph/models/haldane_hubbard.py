@@ -2,18 +2,12 @@ import numpy as np
 from qiskit_nature.second_q.operators import FermionicOp
 from qiskit_algorithms.optimizers import SPSA
 
+from quaph._model import Model
 
-NAME = "haldane-hubbard"
-DISPLAY_NAME = "Haldane\u2013Hubbard"
-DEFAULT_PARAMS = {"t1": 1.0, "phi": np.pi/4, "M": 0.0}
-PARAM_LABELS = {"t1": "t_1", "U": "U", "t2": "t_2", "phi": "\\phi", "M": "M"}
-SWEEP_DEFAULTS = {
-    "x": {"param": "t2", "range": (0.0, 1.5, 0.1)},
-    "y": {"param": "U",  "range": (0.0, 4.0, 0.5)},
-}
 
-def get_optimizer(max_iters):
+def _get_optimizer(max_iters):
     return SPSA(maxiter=max_iters)
+
 
 def _build_H_matrix(n_sites, t1, U, t2, phi, M):
     nn_lattice = [(i, (i + 1) % n_sites) for i in range(n_sites)]
@@ -42,7 +36,8 @@ def _build_H_matrix(n_sites, t1, U, t2, phi, M):
 
     return H
 
-def fermionic_hamiltonian(n_sites, *, t1, U, t2, phi, M):
+
+def _fermionic_hamiltonian(n_sites, *, t1, U, t2, phi, M):
     nn_lattice = [(i, (i + 1) % n_sites) for i in range(n_sites)]
     nnn_lattice = [(i, (i + 2) % n_sites) for i in range(n_sites)]
     spin = 2
@@ -81,8 +76,25 @@ def fermionic_hamiltonian(n_sites, *, t1, U, t2, phi, M):
 
     return hamiltonian
 
-def mean_field_correction(n_sites, n_occ, **params):
+
+def _mean_field_correction(n_sites, n_occ, **params):
     U = params['U']
     if U == 0:
         return 0.0
     return U * n_sites * (n_occ / (2 * n_sites)) ** 2
+
+
+model = Model(
+    name="haldane-hubbard",
+    display_name="Haldane–Hubbard",
+    default_params={"t1": 1.0, "phi": np.pi / 4, "M": 0.0},
+    param_labels={"t1": "t_1", "U": "U", "t2": "t_2", "phi": "\\phi", "M": "M"},
+    hamiltonian_matrix=_build_H_matrix,
+    fermionic_hamiltonian=_fermionic_hamiltonian,
+    get_optimizer=_get_optimizer,
+    mean_field_correction=_mean_field_correction,
+    sweep_defaults={
+        "x": {"param": "t2", "range": (0.0, 1.5, 0.1)},
+        "y": {"param": "U", "range": (0.0, 4.0, 0.5)},
+    },
+)

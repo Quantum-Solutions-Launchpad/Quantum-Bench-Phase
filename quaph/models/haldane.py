@@ -2,17 +2,12 @@ import numpy as np
 from qiskit_nature.second_q.operators import FermionicOp
 from qiskit_algorithms.optimizers import SPSA
 
+from quaph._model import Model
 
-NAME = "haldane"
-DISPLAY_NAME = "Haldane"
-DEFAULT_PARAMS = {"t1": 1.0, "phi": np.pi/4, "M": 0.0}
-PARAM_LABELS = {"t1": "t_1", "t2": "t_2", "phi": "\\phi", "M": "M"}
-SWEEP_DEFAULTS = {
-    "y": {"param": "t2", "range": (0.0, 1.0, 0.1)},
-}
 
-def get_optimizer(max_iters):
+def _get_optimizer(max_iters):
     return SPSA(maxiter=max_iters)
+
 
 def _build_H_matrix(n_sites, t1, t2, phi, M):
     lattice = [(i, (i + 1) % n_sites, 0) for i in range(n_sites)] + [(i, (i + 2) % n_sites, 1) for i in range(n_sites)]
@@ -33,7 +28,8 @@ def _build_H_matrix(n_sites, t1, t2, phi, M):
                 H[s2, s1] -= t2 * np.exp(-1j * phi)
     return H
 
-def fermionic_hamiltonian(n_sites, *, t1, t2, phi, M):
+
+def _fermionic_hamiltonian(n_sites, *, t1, t2, phi, M):
     lattice = [(i, (i + 1) % n_sites, 0) for i in range(n_sites)] + [(i, (i + 2) % n_sites, 1) for i in range(n_sites)]
     spin = 2
 
@@ -58,3 +54,15 @@ def fermionic_hamiltonian(n_sites, *, t1, t2, phi, M):
                 })
 
     return hamiltonian
+
+
+model = Model(
+    name="haldane",
+    display_name="Haldane",
+    default_params={"t1": 1.0, "phi": np.pi / 4, "M": 0.0},
+    param_labels={"t1": "t_1", "t2": "t_2", "phi": "\\phi", "M": "M"},
+    hamiltonian_matrix=_build_H_matrix,
+    fermionic_hamiltonian=_fermionic_hamiltonian,
+    get_optimizer=_get_optimizer,
+    sweep_defaults={"y": {"param": "t2", "range": (0.0, 1.0, 0.1)}},
+)

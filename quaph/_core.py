@@ -15,7 +15,6 @@ from qiskit_aer.noise import NoiseModel
 import sys
 from loguru import logger
 
-# ── Shared utilities ──
 
 def setup_logging(debug_enabled: bool = True):
     fmt_console_info = "[<bold><green>{time:HH:mm:ss}</green></bold>] <white>{message}</white>"
@@ -40,12 +39,8 @@ def setup_logging(debug_enabled: bool = True):
 
     return logger
 
-def resolve_sweep(param: str, range_args, n_sites: int, spin: int = 2):
-    """Return (values, display_label, is_n_occ) for a sweep axis.
 
-    range_args: (min, max, step) floats, or None to use the n_occ default.
-    Raises ValueError if range_args is None for a non-n_occ param.
-    """
+def resolve_sweep(param: str, range_args, n_sites: int, spin: int = 2):
     if param == "n_occ":
         if range_args is None:
             vals = list(range(spin * n_sites + 1))
@@ -56,12 +51,12 @@ def resolve_sweep(param: str, range_args, n_sites: int, spin: int = 2):
     else:
         if range_args is None:
             raise ValueError(
-                f"A sweep range (--x-range / --y-range) is required when the "
-                f"sweep parameter is '{param}' (not 'n_occ')."
+                f"A sweep range is required when the sweep parameter is '{param}' (not 'n_occ')."
             )
         lo, hi, st = range_args
         vals = list(np.arange(lo, hi + st / 2, st))
         return vals, param, False
+
 
 def EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
     spin = 2
@@ -70,6 +65,7 @@ def EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
         ansatz.x(i)
     ansatz.compose(excitation_preserving(n_sites * spin, "fsim", "linear", reps=n_layers), inplace=True)
     return ansatz
+
 
 def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, n_sites: int, n_occ: int, rep: int):
     omega_coef = 0
@@ -91,6 +87,7 @@ def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, nu
 
     return omega_coef, iteration_phases
 
+
 def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCircuit, k: int, omega: float):
     phase_register = QuantumRegister(1, name="a")
     eigenstate_register = QuantumRegister(unitary.num_qubits, name="q")
@@ -111,7 +108,6 @@ def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCi
 
     return qc
 
-# ── Generic classical reference ──
 
 def analytic(model, n_sites, n_occ, model_params):
     H = model._build_H_matrix(n_sites, **model_params)
@@ -125,7 +121,6 @@ def analytic(model, n_sites, n_occ, model_params):
     logger.info(f"Analytic (n_sites={n_sites}, n_occ={n_occ}) = {result}")
     return result
 
-# ── Generic VQE/IQPE/benchmark functions ──
 
 def vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, mapper, max_iters, n_layers, rep, backend=None):
     fermionic_hamiltonian = fermionic_hamiltonian_fn(n_sites, **model_params)
@@ -149,6 +144,7 @@ def vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn
             "iters": 0,
             "cost_history": [],
         }
+
         def cost_func(params):
             if cost_history_dict["iters"] >= max_iters:
                 return cost_history_dict["cost_history"][-1]
@@ -168,6 +164,7 @@ def vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn
 
         logger.debug(f"VQE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {float(res.fun)}")
         return float(res.fun)
+
 
 def iqpe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep, backend=None):
     np.seterr(all='ignore')
@@ -197,6 +194,7 @@ def iqpe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_pa
     logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {res}")
     return res, iteration_energies
 
+
 def vqe_other_benchmarks(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
     if backend:
         noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
@@ -211,10 +209,12 @@ def vqe_other_benchmarks(n_sites, n_occ, model_params, fermionic_hamiltonian_fn,
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
     num_queries = qubit_hamiltonian.size * max_iters * vqe_reps
-    full_circuit_depth, two_gate_circuit_depth = ansatz_circuit.depth(), ansatz_circuit.depth(lambda x: x.operation.num_qubits == 2)
+    full_circuit_depth = ansatz_circuit.depth()
+    two_gate_circuit_depth = ansatz_circuit.depth(lambda x: x.operation.num_qubits == 2)
 
     logger.info(f"VQE other benchmarks (n_sites={n_sites}, n_occ={n_occ}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}]")
     return num_queries, (full_circuit_depth, two_gate_circuit_depth)
+
 
 def iqpe_other_benchmarks(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, iqpe_reps, backend=None):
     np.seterr(all='ignore')
