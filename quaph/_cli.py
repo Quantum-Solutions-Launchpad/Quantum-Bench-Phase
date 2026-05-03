@@ -162,7 +162,7 @@ def main(argv=None):
     pre = argparse.ArgumentParser(add_help=False)
     pre.add_argument("command", nargs="?")
     pre.add_argument("subcommand", nargs="?")
-    pre.add_argument("model", nargs="?")
+    pre.add_argument("--model", default=None)
     pre_args, _ = pre.parse_known_args(argv)
 
     subcommand = pre_args.subcommand
@@ -186,7 +186,8 @@ def main(argv=None):
     sim_noisy_parser = run_sub.add_parser("simulated-noisy")
 
     for p in (analytic_parser, sim_ideal_parser, sim_noisy_parser):
-        p.add_argument("model", help="Registered model name (e.g. haldane, hubbard, haldane-hubbard)")
+        p.add_argument("--model", required=True, metavar="MODEL",
+                       help="Registered model name (e.g. haldane, hubbard, haldane-hubbard)")
         p.add_argument("--n-sites", type=int, required=True, metavar="N")
         _add_sweep_args(p)
         _add_output_args(p)

@@ -1,18 +1,20 @@
 import os
 import quaph
 
-MODEL = "hubbard"
+MODEL = "haldane-hubbard"
 N_SITES = 6
-X_PARAM = "n_occ"
+X_PARAM = "t2"
 Y_PARAM = "U"
 
-_LOG = f"logs/{MODEL}/{N_SITES}-sites/simulated-noisy-{X_PARAM}-vs-{Y_PARAM}.json"
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_LOG = os.path.join(_HERE, f"logs/{MODEL}/{N_SITES}-sites/simulated-ideal-{X_PARAM}-vs-{Y_PARAM}.json")
 
 if os.path.exists(_LOG):
+    print("Plotting from existing log...")
     result = quaph.load_result(_LOG)
     result.plot()
 else:
-    result = quaph.run_simulated_noisy(
+    result = quaph.run_simulated_ideal(
         model=MODEL,
         n_sites=N_SITES,
         x_param=X_PARAM,
@@ -24,6 +26,6 @@ else:
         iqpe_trot=5,
         iqpe_iters=8,
         iqpe_reps=20,
-        log_dir="logs",
-        plot_dir="plots",
+        log_dir=os.path.join(_HERE, "logs"),
+        plot_dir=os.path.join(_HERE, "plots"),
     )

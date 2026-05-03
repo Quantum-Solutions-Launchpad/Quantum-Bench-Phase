@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
-MODEL="haldane-hubbard"
+MODEL="hubbard"
 N_SITES=6
-X_PARAM="t2"
+X_PARAM="n_occ"
 Y_PARAM="U"
 
-LOG="logs/${MODEL}/${N_SITES}-sites/simulated-ideal-${X_PARAM}-vs-${Y_PARAM}.json"
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOG="$HERE/logs/${MODEL}/${N_SITES}-sites/simulated-noisy-${X_PARAM}-vs-${Y_PARAM}.json"
 
 if [ -f "$LOG" ]; then
+    echo "Plotting from existing log..."
     quaph plot "$LOG"
 else
-    quaph run simulated-ideal "$MODEL" \
+    quaph run simulated-noisy \
+        --model "$MODEL" \
         --n-sites "$N_SITES" \
         --x-param "$X_PARAM" \
         --y-param "$Y_PARAM" \
@@ -22,6 +24,6 @@ else
         --iqpe-trot 5 \
         --iqpe-iters 8 \
         --iqpe-reps 20 \
-        --log-dir logs \
-        --plot-dir plots
+        --log-dir "$HERE/logs" \
+        --plot-dir "$HERE/plots"
 fi
