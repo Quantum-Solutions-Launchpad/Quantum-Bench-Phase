@@ -509,7 +509,7 @@ def expectation_from_correlation_matrix(
 def generate_circuits(n_modes: int, tunneling: float, superconducting: float, chemical_potential: float,
                       occupied_orbitals: tuple[int, ...]) -> dict:
     """
-    Restored to the exact logic from the original working code.
+    Restored to the analytic logic from the original working code.
     The permutation of the fermionic modes for different measurement bases is
     a column-wise operation on the Bogoliubov transformation matrix.
     """

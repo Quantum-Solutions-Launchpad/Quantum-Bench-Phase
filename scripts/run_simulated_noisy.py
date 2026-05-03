@@ -16,7 +16,7 @@ from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
 from interactive import attach_hover, lock_camera_azimuth
 from joblib import Parallel, delayed
 
-from core import setup_logging, real_space_exact, real_space_vqe, real_space_iqpe, vqe_other_benchmarks, iqpe_other_benchmarks, resolve_sweep
+from core import setup_logging, analytic, vqe, iqpe, vqe_other_benchmarks, iqpe_other_benchmarks, resolve_sweep
 from models import get_model
 
 _N_OCC_DEFAULT = {"param": "n_occ", "range": None}
@@ -92,7 +92,7 @@ if args.replot:
     x_vals = data["x_values"]
     y_vals = data["y_values"]
     nx, ny = len(x_vals), len(y_vals)
-    Z_exact = np.array([[data["result"]["exact"][str(ix)][str(iy)] for iy in range(ny)] for ix in range(nx)])
+    Z_exact = np.array([[data["result"]["analytic"][str(ix)][str(iy)] for iy in range(ny)] for ix in range(nx)])
     Z_vqe   = np.array([[data["result"]["vqe"][str(ix)][str(iy)]   for iy in range(ny)] for ix in range(nx)])
     Z_iqpe  = np.array([[data["result"]["iqpe"][str(ix)][str(iy)]  for iy in range(ny)] for ix in range(nx)])
 else:
@@ -118,18 +118,18 @@ else:
         for iy in range(len(y_vals)):
             cp, n_occ_val = cell_params_and_nocc(ix, iy)
             jobs.append(delayed(tagged_job)(
-                ("exact", ix, iy), real_space_exact, model, n_sites, n_occ_val, cp
+                ("analytic", ix, iy), analytic, model, n_sites, n_occ_val, cp
             ))
             for rep in range(1, iqpe_reps + 1):
                 jobs.append(delayed(tagged_job)(
-                    ("iqpe", ix, iy, rep), real_space_iqpe,
+                    ("iqpe", ix, iy, rep), iqpe,
                     n_sites, n_occ_val, cp, model.fermionic_hamiltonian,
                     mapper, time_param, iqpe_trot, iqpe_iters, rep,
                     backend=backend
                 ))
             for rep in range(1, vqe_reps + 1):
                 jobs.append(delayed(tagged_job)(
-                    ("vqe", ix, iy, rep), real_space_vqe,
+                    ("vqe", ix, iy, rep), vqe,
                     n_sites, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
                     mapper, vqe_iters, vqe_layers, rep,
                     backend=backend
@@ -154,7 +154,7 @@ else:
     os.makedirs(os.path.dirname(raw_data_path), exist_ok=True)
 
     empty_cell = lambda: {
-        "exact": None,
+        "analytic": None,
         "vqe": {"repetitions": [], "num_queries": None, "circuit_depth": None},
         "iqpe": {"repetitions": [], "iteration_energies": [], "num_queries": None, "circuit_depth": None},
     }
@@ -186,8 +186,8 @@ else:
     for tag, result in Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(jobs):
         ix, iy = str(tag[1]), str(tag[2])
         cell = raw_data["grid"][ix][iy]
-        if tag[0] == "exact":
-            cell["exact"] = result
+        if tag[0] == "analytic":
+            cell["analytic"] = result
         elif tag[0] == "iqpe":
             energy, iter_energies = result
             cell["iqpe"]["repetitions"].append(energy)
@@ -215,7 +215,7 @@ else:
     for ix in range(nx):
         for iy in range(ny):
             cell = raw_data["grid"][str(ix)][str(iy)]
-            Z_exact[ix, iy] = cell["exact"]
+            Z_exact[ix, iy] = cell["analytic"]
             Z_vqe[ix, iy]   = min(cell["vqe"]["repetitions"])
             Z_iqpe[ix, iy]  = min(cell["iqpe"]["repetitions"])
             logger.info(f"IQPE ({args.x_param}={x_vals[ix]}, {args.y_param}={y_vals[iy]}) = {Z_iqpe[ix, iy]}")
@@ -225,7 +225,7 @@ else:
         "x_param": args.x_param, "y_param": args.y_param,
         "x_values": x_vals, "y_values": y_vals,
         "result": {
-            "exact": {ix: {iy: Z_exact[ix, iy] for iy in range(ny)} for ix in range(nx)},
+            "analytic": {ix: {iy: Z_exact[ix, iy] for iy in range(ny)} for ix in range(nx)},
             "iqpe":  {ix: {iy: Z_iqpe[ix, iy]  for iy in range(ny)} for ix in range(nx)},
             "vqe":   {ix: {iy: Z_vqe[ix, iy]   for iy in range(ny)} for ix in range(nx)},
         },
@@ -326,7 +326,7 @@ class GradientPatchHandler(HandlerBase):
         return [im, dot]
 
 if not args.hide_sim_params:
-    exact_proxy = mpatches.Patch(label="Exact")
+    exact_proxy = mpatches.Patch(label="Analytic")
     vqe_proxy   = Line2D([0], [0], marker="o", color="w", markerfacecolor="#0072B2", markersize=14, label="VQE")
     iqpe_proxy  = Line2D([0], [0], marker="^", color="w", markerfacecolor="#6DBF82", markersize=14, label="IQPE")
     fig.legend(handles=[exact_proxy, vqe_proxy, iqpe_proxy], loc="upper center",
@@ -346,7 +346,7 @@ else:
     plt.tight_layout()
 
 attach_hover(fig, ax, [
-    {"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z_exact.ravel(), "label": "Exact"},
+    {"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z_exact.ravel(), "label": "Analytic"},
     {"xs": x_flat[vqe_mask],  "ys": y_flat[vqe_mask],  "zs": vqe_flat[vqe_mask],  "label": "VQE"},
     {"xs": x_flat[iqpe_mask], "ys": y_flat[iqpe_mask], "zs": iqpe_flat[iqpe_mask], "label": "IQPE"},
 ])
