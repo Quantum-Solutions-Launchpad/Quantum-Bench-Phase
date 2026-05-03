@@ -293,6 +293,8 @@ ax.scatter(x_flat[iqpe_mask], y_flat[iqpe_mask], iqpe_flat[iqpe_mask],
 
 ax.set_zlim(bottom=z_clip)
 
+ax.set_zlim(bottom=z_clip)
+
 ax.set_xlabel(x_label, labelpad=12)
 ax.set_ylabel(y_label, labelpad=12)
 ax.set_zlabel("$E$", labelpad=10)
