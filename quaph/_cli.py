@@ -164,7 +164,6 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
 
-    # --- Pass 1: identify subcommand and model name ---
     pre = argparse.ArgumentParser(add_help=False)
     pre.add_argument("command", nargs="?")
     pre.add_argument("subcommand", nargs="?")
@@ -174,7 +173,6 @@ def main(argv=None):
     subcommand = pre_args.subcommand
     model_arg = pre_args.model
 
-    # --- Build the full parser ---
     parser = argparse.ArgumentParser(prog="quaph")
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -195,7 +193,6 @@ def main(argv=None):
         _add_sim_required(p)
         _add_sim_optional(p)
 
-    # --- Pass 2: add model-specific params if model is known ---
     if subcommand in ("analytic", "simulated-ideal", "simulated-noisy") and model_arg:
         try:
             model = get_model(model_arg)
