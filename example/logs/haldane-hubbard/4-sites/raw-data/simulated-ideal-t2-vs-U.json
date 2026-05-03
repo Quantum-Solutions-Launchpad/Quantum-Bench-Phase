@@ -4548,5 +4548,6 @@
                 }
             }
         }
-    }
+    },
+    "type": "simulated-ideal-raw"
 }

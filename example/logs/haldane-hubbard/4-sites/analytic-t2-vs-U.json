@@ -209,5 +209,11 @@
                 "8": -4.4852813742385695
             }
         }
+    },
+    "type": "analytic",
+    "parameters": {
+        "model": "haldane-hubbard",
+        "n_sites": 4,
+        "model_params": {}
     }
 }

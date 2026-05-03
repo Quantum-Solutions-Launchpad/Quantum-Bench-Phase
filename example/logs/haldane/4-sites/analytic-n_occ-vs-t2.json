@@ -145,5 +145,11 @@
                 "10": -2.6645352591003757e-15
             }
         }
+    },
+    "type": "analytic",
+    "parameters": {
+        "model": "haldane",
+        "n_sites": 4,
+        "model_params": {}
     }
 }

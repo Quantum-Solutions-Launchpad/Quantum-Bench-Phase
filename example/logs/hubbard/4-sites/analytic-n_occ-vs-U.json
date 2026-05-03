@@ -125,5 +125,11 @@
                 "8": 15.999999999999998
             }
         }
+    },
+    "type": "analytic",
+    "parameters": {
+        "model": "hubbard",
+        "n_sites": 4,
+        "model_params": {}
     }
 }

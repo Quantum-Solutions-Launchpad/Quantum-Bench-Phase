@@ -15,10 +15,6 @@ from matplotlib.transforms import Bbox, TransformedBbox
 from quaph._interactive import attach_hover, lock_camera_azimuth
 
 
-def _fmt_param(v):
-    return round(v, 3) if isinstance(v, float) else v
-
-
 def _apply_rcparams():
     plt.rcParams.update({
         "font.family": "sans-serif",
@@ -28,7 +24,7 @@ def _apply_rcparams():
     })
 
 
-def _save_and_show(fig, output_path, show_plot):
+def _save_and_show(fig, output_path, hide_plot):
     if output_path:
         os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
         plt.savefig(output_path, format=os.path.splitext(output_path)[1].lstrip(".") or "pdf")
@@ -37,7 +33,7 @@ def _save_and_show(fig, output_path, show_plot):
                 subprocess.run(["pdfcrop", output_path, output_path], check=True, capture_output=True)
             except Exception:
                 pass
-    if show_plot:
+    if not hide_plot:
         plt.show()
     return fig
 
@@ -65,18 +61,14 @@ class _GradientPatchHandler(HandlerBase):
 
 
 def plot_analytic(
-    model,
     x_vals,
     y_vals,
     x_label: str,
     y_label: str,
     Z: np.ndarray,
     *,
-    n_sites: int,
-    model_params: dict,
-    show_model_params: bool = False,
     output_path=None,
-    show_plot: bool = True,
+    hide_plot: bool = False,
 ):
     _apply_rcparams()
 
@@ -106,29 +98,17 @@ def plot_analytic(
     ax.set_ylabel(y_label, labelpad=12)
     ax.set_zlabel("$E$", labelpad=10)
 
-    if show_model_params:
-        param_labels = [f"${label}={_fmt_param(model_params[k])}$"
-                        for k, label in model.param_labels.items() if k in model_params]
-        param_labels.append(f"$N_{{\\text{{sites}}}}={n_sites}$")
-        param_handles = [mpatches.Patch(fill=False, edgecolor="none", linewidth=0) for _ in param_labels]
-        fig.legend(handles=param_handles, labels=param_labels, loc="lower center",
-                   ncol=len(param_labels), fontsize=14,
-                   handlelength=0, handletextpad=0,
-                   frameon=True, bbox_to_anchor=(0.5, 0.05))
-        plt.tight_layout(rect=[0, 0.1, 1, 1.0])
-    else:
-        plt.tight_layout()
+    plt.tight_layout()
 
     attach_hover(fig, ax, [
         {"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z.ravel(), "label": "Analytic"},
     ])
 
     lock_camera_azimuth(fig, ax)
-    return _save_and_show(fig, output_path, show_plot)
+    return _save_and_show(fig, output_path, hide_plot)
 
 
 def plot_simulated(
-    model,
     x_vals,
     y_vals,
     x_label: str,
@@ -138,12 +118,10 @@ def plot_simulated(
     Z_iqpe: np.ndarray,
     *,
     n_sites: int,
-    model_params: dict,
     z_clip: float | None = None,
-    show_model_params: bool = False,
-    hide_sim_params: bool = False,
+    hide_legend: bool = False,
     output_path=None,
-    show_plot: bool = True,
+    hide_plot: bool = False,
 ):
     _apply_rcparams()
 
@@ -189,7 +167,7 @@ def plot_simulated(
     ax.set_ylabel(y_label, labelpad=12)
     ax.set_zlabel("$E$", labelpad=10)
 
-    if not hide_sim_params:
+    if not hide_legend:
         exact_proxy = mpatches.Patch(label="Analytic")
         vqe_proxy = Line2D([0], [0], marker="o", color="w", markerfacecolor="#0072B2", markersize=14, label="VQE")
         iqpe_proxy = Line2D([0], [0], marker="^", color="w", markerfacecolor="#6DBF82", markersize=14, label="IQPE")
@@ -197,18 +175,7 @@ def plot_simulated(
                    ncol=3, fontsize=14, bbox_to_anchor=(0.5, 0.98),
                    handler_map={exact_proxy: _GradientPatchHandler(cmap_obj)})
 
-    if show_model_params:
-        param_labels = [f"${label}={_fmt_param(model_params[k])}$"
-                        for k, label in model.param_labels.items() if k in model_params]
-        param_labels.append(f"$N_{{\\text{{sites}}}}={n_sites}$")
-        param_handles = [mpatches.Patch(fill=False, edgecolor="none", linewidth=0) for _ in param_labels]
-        fig.legend(handles=param_handles, labels=param_labels, loc="lower center",
-                   ncol=len(param_labels), fontsize=14,
-                   handlelength=0, handletextpad=0,
-                   frameon=True, bbox_to_anchor=(0.5, 0.05))
-        plt.tight_layout(rect=[0, 0.1, 1, 1.0])
-    else:
-        plt.tight_layout()
+    plt.tight_layout()
 
     attach_hover(fig, ax, [
         {"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z_exact.ravel(), "label": "Analytic"},
@@ -217,4 +184,4 @@ def plot_simulated(
     ])
 
     lock_camera_azimuth(fig, ax)
-    return _save_and_show(fig, output_path, show_plot)
+    return _save_and_show(fig, output_path, hide_plot)

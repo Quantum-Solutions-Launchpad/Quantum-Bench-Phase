@@ -3700,5 +3700,6 @@
                 }
             }
         }
-    }
+    },
+    "type": "simulated-ideal-raw"
 }

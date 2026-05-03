@@ -63,7 +63,7 @@ class AnalyticResult:
     plot_path: str | None = None
     _model_params: dict = field(default_factory=dict, repr=False)
 
-    def plot(self, *, show_plot: bool = True, output_path=None, show_model_params: bool = False):
+    def plot(self, *, hide_plot: bool = False, output_path=None):
         from quaph._registry import get_model
         model = get_model(self.model_name)
 
@@ -71,10 +71,8 @@ class AnalyticResult:
         y_label = f"${model.param_labels.get(self.y_param, self.y_param)}$" if self.y_param != "n_occ" else r"$N_{\text{occ}}$"
 
         return plot_analytic(
-            model, self.x_values, self.y_values, x_label, y_label, self.energies,
-            n_sites=self.n_sites, model_params=self._model_params,
-            show_model_params=show_model_params,
-            output_path=output_path, show_plot=show_plot,
+            self.x_values, self.y_values, x_label, y_label, self.energies,
+            output_path=output_path, hide_plot=hide_plot,
         )
 
 
@@ -95,8 +93,8 @@ class SimulatedResult:
     plot_path: str | None = None
     _model_params: dict = field(default_factory=dict, repr=False)
 
-    def plot(self, *, show_plot: bool = True, output_path=None, z_clip=None,
-             show_model_params: bool = False, hide_sim_params: bool = False):
+    def plot(self, *, hide_plot: bool = False, output_path=None, z_clip=None,
+             hide_legend: bool = False):
         from quaph._registry import get_model
         model = get_model(self.model_name)
 
@@ -104,12 +102,11 @@ class SimulatedResult:
         y_label = f"${model.param_labels.get(self.y_param, self.y_param)}$" if self.y_param != "n_occ" else r"$N_{\text{occ}}$"
 
         return plot_simulated(
-            model, self.x_values, self.y_values, x_label, y_label,
+            self.x_values, self.y_values, x_label, y_label,
             self.analytic_energies, self.vqe_best_energies, self.iqpe_best_energies,
-            n_sites=self.n_sites, model_params=self._model_params,
-            z_clip=z_clip, show_model_params=show_model_params,
-            hide_sim_params=hide_sim_params,
-            output_path=output_path, show_plot=show_plot,
+            n_sites=self.n_sites,
+            z_clip=z_clip, hide_legend=hide_legend,
+            output_path=output_path, hide_plot=hide_plot,
         )
 
 
@@ -172,8 +169,7 @@ def run_analytic(
     model_params: dict | None = None,
     log_dir=None,
     plot_dir=None,
-    show_plot: bool = True,
-    show_model_params: bool = False,
+    hide_plot: bool = False,
 ) -> AnalyticResult:
     model = _resolve_model(model)
     _ = model._build_H_matrix
@@ -244,12 +240,10 @@ def run_analytic(
         os.makedirs(subdir, exist_ok=True)
         plot_path = os.path.join(subdir, f"analytic-{x_param}-vs-{y_param}.pdf")
 
-    if plot_path is not None or show_plot:
+    if plot_path is not None or not hide_plot:
         plot_analytic(
-            model, x_vals, y_vals, x_label, y_label, Z,
-            n_sites=n_sites, model_params=params,
-            show_model_params=show_model_params,
-            output_path=plot_path, show_plot=show_plot,
+            x_vals, y_vals, x_label, y_label, Z,
+            output_path=plot_path, hide_plot=hide_plot,
         )
 
     return AnalyticResult(
@@ -288,9 +282,8 @@ def _run_simulated(
     z_clip: float | None,
     log_dir,
     plot_dir,
-    show_plot: bool,
-    show_model_params: bool,
-    hide_sim_params: bool,
+    hide_plot: bool,
+    hide_legend: bool,
     debug: bool,
 ) -> SimulatedResult:
     _ = model.fermionic_hamiltonian
@@ -473,13 +466,12 @@ def _run_simulated(
         os.makedirs(plot_subdir, exist_ok=True)
         plot_path = os.path.join(plot_subdir, f"simulated-{simulation_tag}-{x_param}-vs-{y_param}.pdf")
 
-    if plot_path is not None or show_plot:
+    if plot_path is not None or not hide_plot:
         plot_simulated(
-            model, x_vals, y_vals, x_label, y_label, Z_exact, Z_vqe, Z_iqpe,
-            n_sites=n_sites, model_params=model_params,
-            z_clip=z_clip, show_model_params=show_model_params,
-            hide_sim_params=hide_sim_params,
-            output_path=plot_path, show_plot=show_plot,
+            x_vals, y_vals, x_label, y_label, Z_exact, Z_vqe, Z_iqpe,
+            n_sites=n_sites,
+            z_clip=z_clip, hide_legend=hide_legend,
+            output_path=plot_path, hide_plot=hide_plot,
         )
 
     return SimulatedResult(
@@ -520,9 +512,8 @@ def run_simulated_ideal(
     z_clip: float | None = None,
     log_dir=None,
     plot_dir=None,
-    show_plot: bool = True,
-    show_model_params: bool = False,
-    hide_sim_params: bool = False,
+    hide_plot: bool = False,
+    hide_legend: bool = False,
     debug: bool = True,
 ) -> SimulatedResult:
     model = _resolve_model(model)
@@ -545,8 +536,7 @@ def run_simulated_ideal(
         vqe_reps=vqe_reps, iqpe_time=iqpe_time, iqpe_trot=iqpe_trot,
         iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps, z_clip=z_clip,
         log_dir=log_dir, plot_dir=plot_dir,
-        show_plot=show_plot, show_model_params=show_model_params,
-        hide_sim_params=hide_sim_params, debug=debug,
+        hide_plot=hide_plot, hide_legend=hide_legend, debug=debug,
     )
 
 
@@ -571,9 +561,8 @@ def run_simulated_noisy(
     z_clip: float | None = None,
     log_dir=None,
     plot_dir=None,
-    show_plot: bool = True,
-    show_model_params: bool = False,
-    hide_sim_params: bool = False,
+    hide_plot: bool = False,
+    hide_legend: bool = False,
     debug: bool = True,
 ) -> SimulatedResult:
     if backend is None:
@@ -600,6 +589,5 @@ def run_simulated_noisy(
         vqe_reps=vqe_reps, iqpe_time=iqpe_time, iqpe_trot=iqpe_trot,
         iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps, z_clip=z_clip,
         log_dir=log_dir, plot_dir=plot_dir,
-        show_plot=show_plot, show_model_params=show_model_params,
-        hide_sim_params=hide_sim_params, debug=debug,
+        hide_plot=hide_plot, hide_legend=hide_legend, debug=debug,
     )

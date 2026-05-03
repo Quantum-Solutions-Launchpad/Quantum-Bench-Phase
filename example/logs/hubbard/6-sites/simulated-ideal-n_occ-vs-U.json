@@ -1341,5 +1341,12 @@
                 }
             }
         }
+    },
+    "type": "simulated-ideal",
+    "parameters": {
+        "model": "hubbard",
+        "n_sites": 6,
+        "model_params": {},
+        "simulation": "ideal"
     }
 }

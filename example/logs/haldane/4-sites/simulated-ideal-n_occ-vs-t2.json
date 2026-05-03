@@ -1105,5 +1105,12 @@
                 }
             }
         }
+    },
+    "type": "simulated-ideal",
+    "parameters": {
+        "model": "haldane",
+        "n_sites": 4,
+        "model_params": {},
+        "simulation": "ideal"
     }
 }

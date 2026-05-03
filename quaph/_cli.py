@@ -64,9 +64,7 @@ def _add_output_args(parser):
                         help="Directory for log JSON files (model/n-sites/ appended)")
     parser.add_argument("--plot-dir", default=None, metavar="PATH",
                         help="Directory for plot PDF files (model/n-sites/ appended)")
-    parser.add_argument("--no-show-plot", dest="show_plot",
-                        action="store_false", default=True)
-    parser.add_argument("--show-model-params", dest="show_model_params",
+    parser.add_argument("--hide-plot", dest="hide_plot",
                         action="store_true", default=False)
 
 
@@ -82,7 +80,7 @@ def _add_sim_optional(parser):
     parser.add_argument("--vqe-reps", type=int, default=1, metavar="N")
     parser.add_argument("--iqpe-reps", type=int, default=1, metavar="N")
     parser.add_argument("--z-clip", type=float, default=None, metavar="F")
-    parser.add_argument("--hide-sim-params", action="store_true", default=False)
+    parser.add_argument("--hide-legend", action="store_true", default=False)
     parser.add_argument("--no-debug", dest="debug", action="store_false", default=True)
 
 
@@ -99,8 +97,7 @@ def _dispatch_analytic(args, model):
         model_params=_collect_model_params(args, model, x_param, y_param),
         log_dir=args.log_dir,
         plot_dir=args.plot_dir,
-        show_plot=args.show_plot,
-        show_model_params=args.show_model_params,
+        hide_plot=args.hide_plot,
     )
 
 
@@ -125,9 +122,8 @@ def _dispatch_simulated_ideal(args, model):
         z_clip=args.z_clip,
         log_dir=args.log_dir,
         plot_dir=args.plot_dir,
-        show_plot=args.show_plot,
-        show_model_params=args.show_model_params,
-        hide_sim_params=args.hide_sim_params,
+        hide_plot=args.hide_plot,
+        hide_legend=args.hide_legend,
         debug=args.debug,
     )
 
@@ -153,9 +149,8 @@ def _dispatch_simulated_noisy(args, model):
         z_clip=args.z_clip,
         log_dir=args.log_dir,
         plot_dir=args.plot_dir,
-        show_plot=args.show_plot,
-        show_model_params=args.show_model_params,
-        hide_sim_params=args.hide_sim_params,
+        hide_plot=args.hide_plot,
+        hide_legend=args.hide_legend,
         debug=args.debug,
     )
 
@@ -175,6 +170,13 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser(prog="quaph")
     sub = parser.add_subparsers(dest="command", required=True)
+
+    plot_parser = sub.add_parser("plot")
+    plot_parser.add_argument("path", help="Path to a log JSON file")
+    plot_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
+    plot_parser.add_argument("--output", default=None, metavar="PATH", help="Output PDF path")
+    plot_parser.add_argument("--z-clip", type=float, default=None, metavar="F")
+    plot_parser.add_argument("--hide-legend", action="store_true", default=False)
 
     run_parser = sub.add_parser("run")
     run_sub = run_parser.add_subparsers(dest="subcommand", required=True)
@@ -207,6 +209,19 @@ def main(argv=None):
         _add_model_params(target, model)
 
     args = parser.parse_args(argv)
+
+    if args.command == "plot":
+        from quaph._run import load_result, SimulatedResult
+        try:
+            result = load_result(args.path)
+        except Exception as e:
+            parser.error(str(e))
+        kwargs = dict(hide_plot=args.hide_plot, output_path=args.output)
+        if isinstance(result, SimulatedResult):
+            kwargs["z_clip"] = args.z_clip
+            kwargs["hide_legend"] = args.hide_legend
+        result.plot(**kwargs)
+        return
 
     try:
         model = get_model(args.model)

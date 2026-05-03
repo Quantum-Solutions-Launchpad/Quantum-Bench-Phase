@@ -2572,5 +2572,6 @@
                 }
             }
         }
-    }
+    },
+    "type": "simulated-ideal-raw"
 }

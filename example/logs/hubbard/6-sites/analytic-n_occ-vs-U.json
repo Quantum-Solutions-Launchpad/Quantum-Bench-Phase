@@ -173,5 +173,11 @@
                 "8": 24.0
             }
         }
+    },
+    "type": "analytic",
+    "parameters": {
+        "model": "hubbard",
+        "n_sites": 6,
+        "model_params": {}
     }
 }
