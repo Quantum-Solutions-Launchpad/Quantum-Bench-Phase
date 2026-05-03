@@ -93,7 +93,7 @@ class SimulatedResult:
     plot_path: str | None = None
     _model_params: dict = field(default_factory=dict, repr=False)
 
-    def plot(self, *, hide_plot: bool = False, output_path=None, z_clip=None,
+    def plot(self, *, hide_plot: bool = False, output_path=None,
              hide_legend: bool = False):
         from quaph._registry import get_model
         model = get_model(self.model_name)
@@ -104,8 +104,7 @@ class SimulatedResult:
         return plot_simulated(
             self.x_values, self.y_values, x_label, y_label,
             self.analytic_energies, self.vqe_best_energies, self.iqpe_best_energies,
-            n_sites=self.n_sites,
-            z_clip=z_clip, hide_legend=hide_legend,
+            hide_legend=hide_legend,
             output_path=output_path, hide_plot=hide_plot,
         )
 
@@ -279,12 +278,10 @@ def _run_simulated(
     iqpe_trot: int,
     iqpe_iters: int,
     iqpe_reps: int,
-    z_clip: float | None,
     log_dir,
     plot_dir,
     hide_plot: bool,
     hide_legend: bool,
-    debug: bool,
 ) -> SimulatedResult:
     _ = model.fermionic_hamiltonian
 
@@ -387,7 +384,7 @@ def _run_simulated(
 
     def init_worker_logging():
         from quaph._core import setup_logging as _sl
-        _sl(debug_enabled=debug)
+        _sl()
 
     for tag, result in Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(jobs):
         ix, iy = str(tag[1]), str(tag[2])
@@ -412,7 +409,7 @@ def _run_simulated(
             with open(raw_data_path, "w") as f:
                 json.dump(raw_data, f, indent=4)
 
-    logger = setup_logging(debug_enabled=debug)
+    logger = setup_logging()
 
     nx, ny = len(x_vals), len(y_vals)
     Z_exact = np.full((nx, ny), np.nan)
@@ -469,8 +466,7 @@ def _run_simulated(
     if plot_path is not None or not hide_plot:
         plot_simulated(
             x_vals, y_vals, x_label, y_label, Z_exact, Z_vqe, Z_iqpe,
-            n_sites=n_sites,
-            z_clip=z_clip, hide_legend=hide_legend,
+            hide_legend=hide_legend,
             output_path=plot_path, hide_plot=hide_plot,
         )
 
@@ -509,12 +505,10 @@ def run_simulated_ideal(
     iqpe_trot: int,
     iqpe_iters: int,
     iqpe_reps: int = 1,
-    z_clip: float | None = None,
     log_dir=None,
     plot_dir=None,
     hide_plot: bool = False,
     hide_legend: bool = False,
-    debug: bool = True,
 ) -> SimulatedResult:
     model = _resolve_model(model)
     x_param, x_range, y_param, y_range = _resolve_sweep_params(model, x_param, x_range, y_param, y_range)
@@ -534,9 +528,9 @@ def run_simulated_ideal(
         y_param=y_param, y_range=y_range, n_occ=n_occ,
         model_params=params, vqe_iters=vqe_iters, vqe_layers=vqe_layers,
         vqe_reps=vqe_reps, iqpe_time=iqpe_time, iqpe_trot=iqpe_trot,
-        iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps, z_clip=z_clip,
+        iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
         log_dir=log_dir, plot_dir=plot_dir,
-        hide_plot=hide_plot, hide_legend=hide_legend, debug=debug,
+        hide_plot=hide_plot, hide_legend=hide_legend,
     )
 
 
@@ -558,12 +552,10 @@ def run_simulated_noisy(
     iqpe_trot: int,
     iqpe_iters: int,
     iqpe_reps: int = 1,
-    z_clip: float | None = None,
     log_dir=None,
     plot_dir=None,
     hide_plot: bool = False,
     hide_legend: bool = False,
-    debug: bool = True,
 ) -> SimulatedResult:
     if backend is None:
         from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
@@ -587,7 +579,7 @@ def run_simulated_noisy(
         y_param=y_param, y_range=y_range, n_occ=n_occ,
         model_params=params, vqe_iters=vqe_iters, vqe_layers=vqe_layers,
         vqe_reps=vqe_reps, iqpe_time=iqpe_time, iqpe_trot=iqpe_trot,
-        iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps, z_clip=z_clip,
+        iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
         log_dir=log_dir, plot_dir=plot_dir,
-        hide_plot=hide_plot, hide_legend=hide_legend, debug=debug,
+        hide_plot=hide_plot, hide_legend=hide_legend,
     )

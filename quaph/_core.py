@@ -16,7 +16,7 @@ import sys
 from loguru import logger
 
 
-def setup_logging(debug_enabled: bool = True):
+def setup_logging():
     fmt_console_info = "[<bold><green>{time:HH:mm:ss}</green></bold>] <white>{message}</white>"
     fmt_console_debug = "[<dim><white>{time:HH:mm:ss}</white></dim>] <dim>{message}</dim>"
 
@@ -28,14 +28,13 @@ def setup_logging(debug_enabled: bool = True):
         format=fmt_console_info,
         filter=lambda record: record["level"].name == "INFO",
     )
-    if debug_enabled:
-        logger.add(
-            sys.stdout,
-            level="DEBUG",
-            colorize=True,
-            format=fmt_console_debug,
-            filter=lambda record: record["level"].name == "DEBUG",
-        )
+    logger.add(
+        sys.stdout,
+        level="DEBUG",
+        colorize=True,
+        format=fmt_console_debug,
+        filter=lambda record: record["level"].name == "DEBUG",
+    )
 
     return logger
 

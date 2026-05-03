@@ -79,9 +79,7 @@ def _add_sim_required(parser):
 def _add_sim_optional(parser):
     parser.add_argument("--vqe-reps", type=int, default=1, metavar="N")
     parser.add_argument("--iqpe-reps", type=int, default=1, metavar="N")
-    parser.add_argument("--z-clip", type=float, default=None, metavar="F")
     parser.add_argument("--hide-legend", action="store_true", default=False)
-    parser.add_argument("--no-debug", dest="debug", action="store_false", default=True)
 
 
 def _dispatch_analytic(args, model):
@@ -119,12 +117,10 @@ def _dispatch_simulated_ideal(args, model):
         iqpe_trot=args.iqpe_trot,
         iqpe_iters=args.iqpe_iters,
         iqpe_reps=args.iqpe_reps,
-        z_clip=args.z_clip,
         log_dir=args.log_dir,
         plot_dir=args.plot_dir,
         hide_plot=args.hide_plot,
         hide_legend=args.hide_legend,
-        debug=args.debug,
     )
 
 
@@ -146,12 +142,10 @@ def _dispatch_simulated_noisy(args, model):
         iqpe_trot=args.iqpe_trot,
         iqpe_iters=args.iqpe_iters,
         iqpe_reps=args.iqpe_reps,
-        z_clip=args.z_clip,
         log_dir=args.log_dir,
         plot_dir=args.plot_dir,
         hide_plot=args.hide_plot,
         hide_legend=args.hide_legend,
-        debug=args.debug,
     )
 
 
@@ -175,7 +169,6 @@ def main(argv=None):
     plot_parser.add_argument("path", help="Path to a log JSON file")
     plot_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
     plot_parser.add_argument("--output", default=None, metavar="PATH", help="Output PDF path")
-    plot_parser.add_argument("--z-clip", type=float, default=None, metavar="F")
     plot_parser.add_argument("--hide-legend", action="store_true", default=False)
 
     run_parser = sub.add_parser("run")
@@ -219,7 +212,6 @@ def main(argv=None):
             parser.error(str(e))
         kwargs = dict(hide_plot=args.hide_plot, output_path=args.output)
         if isinstance(result, SimulatedResult):
-            kwargs["z_clip"] = args.z_clip
             kwargs["hide_legend"] = args.hide_legend
         result.plot(**kwargs)
         return

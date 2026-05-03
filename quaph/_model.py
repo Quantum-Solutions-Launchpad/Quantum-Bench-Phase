@@ -37,7 +37,7 @@ class Model:
         if self._hamiltonian_matrix_fn is None:
             raise ModelCapabilityError(
                 f"Model '{self.name}' does not provide hamiltonian_matrix; "
-                "this is required for run_analytic(). "
+                "this is required for run_analytic(), run_simulated_ideal(), and run_simulated_noisy(). "
                 "Provide hamiltonian_matrix= when constructing Model."
             )
         return self._hamiltonian_matrix_fn

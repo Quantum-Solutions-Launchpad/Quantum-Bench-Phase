@@ -117,8 +117,6 @@ def plot_simulated(
     Z_vqe: np.ndarray,
     Z_iqpe: np.ndarray,
     *,
-    n_sites: int,
-    z_clip: float | None = None,
     hide_legend: bool = False,
     output_path=None,
     hide_plot: bool = False,
@@ -147,8 +145,7 @@ def plot_simulated(
         ax.scatter(x_vals, [yv] * len(x_vals), Z_exact[:, iy],
                    color=color, s=20, alpha=0.4, depthshade=False, zorder=5)
 
-    if z_clip is None:
-        z_clip = -(2 * (n_sites + 1))
+    z_clip = float(np.nanmin(Z_exact))
 
     vqe_flat, iqpe_flat = Z_vqe.ravel(), Z_iqpe.ravel()
     x_flat, y_flat = X_grid.ravel(), Y_grid.ravel()
