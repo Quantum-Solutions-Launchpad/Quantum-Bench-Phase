@@ -296,7 +296,7 @@ iqpe_mask = iqpe_flat >= z_clip
 ax.scatter(x_flat[vqe_mask],  y_flat[vqe_mask],  vqe_flat[vqe_mask],
            color="#0072B2", marker="o", s=45, depthshade=True, zorder=6)
 ax.scatter(x_flat[iqpe_mask], y_flat[iqpe_mask], iqpe_flat[iqpe_mask],
-           color="#CC79A7", marker="^", s=45, depthshade=True, zorder=6)
+           color="#6DBF82", marker="^", s=45, depthshade=True, zorder=6)
 
 ax.set_zlim(bottom=z_clip)
 
@@ -328,7 +328,7 @@ class GradientPatchHandler(HandlerBase):
 if not args.hide_sim_params:
     exact_proxy = mpatches.Patch(label="Exact")
     vqe_proxy   = Line2D([0], [0], marker="o", color="w", markerfacecolor="#0072B2", markersize=14, label="VQE")
-    iqpe_proxy  = Line2D([0], [0], marker="^", color="w", markerfacecolor="#CC79A7", markersize=14, label="IQPE")
+    iqpe_proxy  = Line2D([0], [0], marker="^", color="w", markerfacecolor="#6DBF82", markersize=14, label="IQPE")
     fig.legend(handles=[exact_proxy, vqe_proxy, iqpe_proxy], loc="upper center",
                ncol=3, fontsize=14, bbox_to_anchor=(0.5, 0.98),
                handler_map={exact_proxy: GradientPatchHandler(cmap_obj)})

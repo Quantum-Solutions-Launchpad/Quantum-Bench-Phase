@@ -59,11 +59,9 @@ def attach_hover(fig, ax, point_sets):
 
 def lock_camera_azimuth(fig, ax):
     fixed_elev = ax.elev
+    initial_azim = ax.azim
 
-    try:
-        fig.canvas.mpl_disconnect(ax._id_drag)
-    except AttributeError:
-        pass
+    ax.disable_mouse_rotation()
 
     state = {"x": None, "button": None}
 
@@ -81,7 +79,8 @@ def lock_camera_azimuth(fig, ax):
             return
         dx = event.x - state["x"]
         state["x"] = event.x
-        ax.azim = (ax.azim - dx) % 360
+        new_azim = ax.azim - dx
+        ax.azim = max(initial_azim - 45, min(initial_azim + 45, new_azim))
         ax.elev = fixed_elev
         fig.canvas.draw_idle()
 
