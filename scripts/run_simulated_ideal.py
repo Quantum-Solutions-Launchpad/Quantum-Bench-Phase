@@ -12,15 +12,13 @@ import json
 import argparse
 import subprocess
 from qiskit_nature.second_q.mappers import JordanWignerMapper
-from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
+from interactive import attach_hover, lock_camera_azimuth
 from joblib import Parallel, delayed
 
-from core import setup_logging, real_space_exact, real_space_vqe, real_space_iqpe, vqe_other_benchmarks, iqpe_other_benchmarks, resolve_sweep
+from core import setup_logging, analytic, vqe, iqpe, vqe_other_benchmarks, iqpe_other_benchmarks, resolve_sweep
 from models import get_model
 
 _N_OCC_DEFAULT = {"param": "n_occ", "range": None}
-
-backend = FakeSherbrooke()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--model", type=str, required=True)
@@ -82,7 +80,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if args.replot:
     log_path = os.path.join(
         project_root,
-        f"logs/{model.NAME}/{n_sites}-sites/simulated-noisy-{args.x_param}-vs-{args.y_param}.json"
+        f"logs/{model.NAME}/{n_sites}-sites/simulated-ideal-{args.x_param}-vs-{args.y_param}.json"
     )
     if not os.path.exists(log_path):
         raise FileNotFoundError(f"--replot requires an existing log at {log_path}; run without --replot first")
@@ -91,7 +89,7 @@ if args.replot:
     x_vals = data["x_values"]
     y_vals = data["y_values"]
     nx, ny = len(x_vals), len(y_vals)
-    Z_exact = np.array([[data["result"]["exact"][str(ix)][str(iy)] for iy in range(ny)] for ix in range(nx)])
+    Z_exact = np.array([[data["result"]["analytic"][str(ix)][str(iy)] for iy in range(ny)] for ix in range(nx)])
     Z_vqe   = np.array([[data["result"]["vqe"][str(ix)][str(iy)]   for iy in range(ny)] for ix in range(nx)])
     Z_iqpe  = np.array([[data["result"]["iqpe"][str(ix)][str(iy)]  for iy in range(ny)] for ix in range(nx)])
 else:
@@ -117,43 +115,39 @@ else:
         for iy in range(len(y_vals)):
             cp, n_occ_val = cell_params_and_nocc(ix, iy)
             jobs.append(delayed(tagged_job)(
-                ("exact", ix, iy), real_space_exact, model, n_sites, n_occ_val, cp
+                ("analytic", ix, iy), analytic, model, n_sites, n_occ_val, cp
             ))
             for rep in range(1, iqpe_reps + 1):
                 jobs.append(delayed(tagged_job)(
-                    ("iqpe", ix, iy, rep), real_space_iqpe,
+                    ("iqpe", ix, iy, rep), iqpe,
                     n_sites, n_occ_val, cp, model.fermionic_hamiltonian,
-                    mapper, time_param, iqpe_trot, iqpe_iters, rep,
-                    backend=backend
+                    mapper, time_param, iqpe_trot, iqpe_iters, rep
                 ))
             for rep in range(1, vqe_reps + 1):
                 jobs.append(delayed(tagged_job)(
-                    ("vqe", ix, iy, rep), real_space_vqe,
+                    ("vqe", ix, iy, rep), vqe,
                     n_sites, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
-                    mapper, vqe_iters, vqe_layers, rep,
-                    backend=backend
+                    mapper, vqe_iters, vqe_layers, rep
                 ))
             jobs.append(delayed(tagged_job)(
                 ("iqpe_bench", ix, iy), iqpe_other_benchmarks,
                 n_sites, n_occ_val, cp, model.fermionic_hamiltonian,
-                mapper, time_param, iqpe_trot, iqpe_iters, iqpe_reps,
-                backend=backend
+                mapper, time_param, iqpe_trot, iqpe_iters, iqpe_reps
             ))
             jobs.append(delayed(tagged_job)(
                 ("vqe_bench", ix, iy), vqe_other_benchmarks,
                 n_sites, n_occ_val, cp, model.fermionic_hamiltonian,
-                mapper, vqe_iters, vqe_layers, vqe_reps,
-                backend=backend
+                mapper, vqe_iters, vqe_layers, vqe_reps
             ))
 
     raw_data_path = os.path.join(
         project_root,
-        f"logs/{model.NAME}/{n_sites}-sites/raw-data/simulated-noisy-{args.x_param}-vs-{args.y_param}.json"
+        f"logs/{model.NAME}/{n_sites}-sites/raw-data/simulated-ideal-{args.x_param}-vs-{args.y_param}.json"
     )
     os.makedirs(os.path.dirname(raw_data_path), exist_ok=True)
 
     empty_cell = lambda: {
-        "exact": None,
+        "analytic": None,
         "vqe": {"repetitions": [], "num_queries": None, "circuit_depth": None},
         "iqpe": {"repetitions": [], "iteration_energies": [], "num_queries": None, "circuit_depth": None},
     }
@@ -162,7 +156,7 @@ else:
         "parameters": {
             "model": model.NAME,
             "n_sites": n_sites,
-            "simulation": "noisy",
+            "simulation": "ideal",
             "model_params": {k: float(v) for k, v in model_params.items()},
             "vqe": {"iters": vqe_iters, "layers": vqe_layers, "reps": vqe_reps},
             "iqpe": {"time": time_param, "trot": iqpe_trot, "iters": iqpe_iters, "reps": iqpe_reps},
@@ -185,8 +179,8 @@ else:
     for tag, result in Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(jobs):
         ix, iy = str(tag[1]), str(tag[2])
         cell = raw_data["grid"][ix][iy]
-        if tag[0] == "exact":
-            cell["exact"] = result
+        if tag[0] == "analytic":
+            cell["analytic"] = result
         elif tag[0] == "iqpe":
             energy, iter_energies = result
             cell["iqpe"]["repetitions"].append(energy)
@@ -214,7 +208,7 @@ else:
     for ix in range(nx):
         for iy in range(ny):
             cell = raw_data["grid"][str(ix)][str(iy)]
-            Z_exact[ix, iy] = cell["exact"]
+            Z_exact[ix, iy] = cell["analytic"]
             Z_vqe[ix, iy]   = min(cell["vqe"]["repetitions"])
             Z_iqpe[ix, iy]  = min(cell["iqpe"]["repetitions"])
             logger.info(f"IQPE ({args.x_param}={x_vals[ix]}, {args.y_param}={y_vals[iy]}) = {Z_iqpe[ix, iy]}")
@@ -224,7 +218,7 @@ else:
         "x_param": args.x_param, "y_param": args.y_param,
         "x_values": x_vals, "y_values": y_vals,
         "result": {
-            "exact": {ix: {iy: Z_exact[ix, iy] for iy in range(ny)} for ix in range(nx)},
+            "analytic": {ix: {iy: Z_exact[ix, iy] for iy in range(ny)} for ix in range(nx)},
             "iqpe":  {ix: {iy: Z_iqpe[ix, iy]  for iy in range(ny)} for ix in range(nx)},
             "vqe":   {ix: {iy: Z_vqe[ix, iy]   for iy in range(ny)} for ix in range(nx)},
         },
@@ -246,7 +240,7 @@ else:
 
     log_path = os.path.join(
         project_root,
-        f"logs/{model.NAME}/{n_sites}-sites/simulated-noisy-{args.x_param}-vs-{args.y_param}.json"
+        f"logs/{model.NAME}/{n_sites}-sites/simulated-ideal-{args.x_param}-vs-{args.y_param}.json"
     )
     os.makedirs(os.path.dirname(log_path), exist_ok=True)
     with open(log_path, "w") as f:
@@ -281,6 +275,8 @@ ax.plot_surface(X_grid, Y_grid, Z_exact, cmap=cmap_obj, alpha=0.10, edgecolor="n
 for iy, yv in enumerate(y_vals):
     color = cmap_obj(iy / max(ny - 1, 1))
     ax.plot(x_vals, [yv] * len(x_vals), Z_exact[:, iy], color=color, linewidth=1.8, alpha=0.9, zorder=4)
+    ax.scatter(x_vals, [yv] * len(x_vals), Z_exact[:, iy],
+               color=color, s=20, alpha=0.4, depthshade=False, zorder=5)
 
 z_clip = args.z_clip if args.z_clip is not None else -(2 * (n_sites + 1))
 
@@ -293,7 +289,9 @@ iqpe_mask = iqpe_flat >= z_clip
 ax.scatter(x_flat[vqe_mask],  y_flat[vqe_mask],  vqe_flat[vqe_mask],
            color="#0072B2", marker="o", s=45, depthshade=True, zorder=6)
 ax.scatter(x_flat[iqpe_mask], y_flat[iqpe_mask], iqpe_flat[iqpe_mask],
-           color="#CC79A7", marker="^", s=45, depthshade=True, zorder=6)
+           color="#6DBF82", marker="^", s=45, depthshade=True, zorder=6)
+
+ax.set_zlim(bottom=z_clip)
 
 ax.set_zlim(bottom=z_clip)
 
@@ -308,16 +306,24 @@ class GradientPatchHandler(HandlerBase):
 
     def create_artists(self, _legend, _orig_handle, xdescent, ydescent, width, height, _fontsize, trans):
         gradient = np.linspace(0, 1, 256).reshape(1, -1)
-        bbox = Bbox.from_bounds(xdescent, ydescent, width, height)
+        line_h = height * 0.18
+        line_y = ydescent + (height - line_h) / 2
+        bbox = Bbox.from_bounds(xdescent, line_y, width, line_h)
         im = BboxImage(TransformedBbox(bbox, trans), cmap=self.cmap)
         im.set_data(gradient)
         im.set_alpha(0.9)
-        return [im]
+        dot = Line2D(
+            [xdescent + width * 0.5], [ydescent + height * 0.5],
+            marker="o", markersize=7, linestyle="none",
+            markerfacecolor=self.cmap(0.5), markeredgewidth=0,
+        )
+        dot.set_transform(trans)
+        return [im, dot]
 
 if not args.hide_sim_params:
-    exact_proxy = mpatches.Patch(label="Exact")
+    exact_proxy = mpatches.Patch(label="Analytic")
     vqe_proxy   = Line2D([0], [0], marker="o", color="w", markerfacecolor="#0072B2", markersize=14, label="VQE")
-    iqpe_proxy  = Line2D([0], [0], marker="^", color="w", markerfacecolor="#CC79A7", markersize=14, label="IQPE")
+    iqpe_proxy  = Line2D([0], [0], marker="^", color="w", markerfacecolor="#6DBF82", markersize=14, label="IQPE")
     fig.legend(handles=[exact_proxy, vqe_proxy, iqpe_proxy], loc="upper center",
                ncol=3, fontsize=14, bbox_to_anchor=(0.5, 0.98),
                handler_map={exact_proxy: GradientPatchHandler(cmap_obj)})
@@ -334,10 +340,18 @@ if args.show_model_params:
 else:
     plt.tight_layout()
 
+attach_hover(fig, ax, [
+    {"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z_exact.ravel(), "label": "Analytic"},
+    {"xs": x_flat[vqe_mask],  "ys": y_flat[vqe_mask],  "zs": vqe_flat[vqe_mask],  "label": "VQE"},
+    {"xs": x_flat[iqpe_mask], "ys": y_flat[iqpe_mask], "zs": iqpe_flat[iqpe_mask], "label": "IQPE"},
+])
+
 plot_path = os.path.join(
     project_root,
-    f"plots/{model.NAME}/{n_sites}-sites/simulated-noisy-{args.x_param}-vs-{args.y_param}.pdf"
+    f"plots/{model.NAME}/{n_sites}-sites/simulated-ideal-{args.x_param}-vs-{args.y_param}.pdf"
 )
 os.makedirs(os.path.dirname(plot_path), exist_ok=True)
 plt.savefig(plot_path, format="pdf")
 subprocess.run(["pdfcrop", plot_path, plot_path], check=True, capture_output=True)
+lock_camera_azimuth(fig, ax)
+plt.show()

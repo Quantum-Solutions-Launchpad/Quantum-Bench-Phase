@@ -108,7 +108,7 @@ def _run_analysis(params):
     mit_stages = ['raw', 'mem', 'ps', 'pur']
 
     for mu in params['chemical_potential_values']:
-        # ... (hamiltonian and exact correlation matrix calculation is correct) ...
+        # ... (hamiltonian and analytic correlation matrix calculation is correct) ...
         trans_mat_exact, _, _, _ = diagonalizing_bogoliubov_transform(
             n_modes, params['tunneling'], params['superconducting'], mu
         )
@@ -213,7 +213,7 @@ def plot_bdg_energy(analysis_results, params, plots_dir):
     n_modes = params['n_modes']
     chemical_potentials = params['chemical_potential_values']
 
-    # --- 1. Get Exact Data for the "Ideal" lines ---
+    # --- 1. Get Analytic Data for the "Ideal" lines ---
     exact_data = data_exact(
         n_modes=n_modes,
         tunneling=params['tunneling'],
@@ -223,9 +223,9 @@ def plot_bdg_energy(analysis_results, params, plots_dir):
     )
     bdg_exact, _ = exact_data['bdg_energy_exact']
 
-    # Plot the exact lines
+    # Plot the analytic lines
     for i in range(bdg_exact.shape[0]):
-        ax.plot(chemical_potentials, bdg_exact[i], '-', color='black', alpha=0.8, label='Exact' if i == 0 else "")
+        ax.plot(chemical_potentials, bdg_exact[i], '-', color='black', alpha=0.8, label='Analytic' if i == 0 else "")
 
     # --- 2. Process and Plot Simulated Data ---
 

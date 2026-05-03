@@ -54,11 +54,11 @@ ax.set_yticklabels([rf'${int(t/np.pi)}\pi$' if t not in (0, np.pi, -np.pi) else 
 ax.set_xlabel('$k_x$')
 ax.set_ylabel('$k_y$')
 ax.set_zlabel('$E(k)$')
-ax.set_title("Haldane Model Band Structure (Exact)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$")
+ax.set_title("Haldane Model Band Structure (Analytic)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$")
 ax.view_init(elev=20)
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/exact-3d.png")
+file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/analytic-3d.png")
 plt.savefig(file_path)
 
 fig, ax = plt.subplots(1, 2, figsize=(14,6))
@@ -75,8 +75,8 @@ ax[1].set_title("Lower Band: $E_-(k)$")
 ax[1].set_xlabel("$k_x$")
 ax[1].set_ylabel("$k_y$")
 
-fig.suptitle("Haldane Model Band Structure (Exact)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=16)
+fig.suptitle("Haldane Model Band Structure (Analytic)\n$t_1="+str(t1)+", t_2="+str(t2)+", M="+str(M)+", N_{\\text{sites}}="+str(n_sites)+"$", fontsize=16)
 
 plt.tight_layout()
-file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/exact-heatmap.png")
+file_path = os.path.join(project_root, "plots/haldane/band-structure/"+str(n_sites)+"-sites/analytic-heatmap.png")
 plt.savefig(file_path)

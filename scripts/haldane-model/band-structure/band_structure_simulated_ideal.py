@@ -126,8 +126,8 @@ results = Parallel(n_jobs=-1)(
     delayed(haldane_band_structure_exact)(kx, ky, t1, t2, M, a_vecs, b_vecs)
     for kx, ky in k_points
 )
-exact = {k: v for k, v in zip(k_points, results)}
-error_data = {k: abs(data[k]-exact[k]) for k in k_points}
+analytic = {k: v for k, v in zip(k_points, results)}
+error_data = {k: abs(data[k]-analytic[k]) for k in k_points}
 error = np.array([error_data[key] for key in error_data]).reshape((samples, samples))
 
 fig, ax = plt.subplots()

@@ -75,7 +75,7 @@ def post_select_quasis(quasis: QuasiDistribution, predicate: Callable) -> tuple[
 
 def fidelity_witness(corr: np.ndarray, corr_target: np.ndarray, cov: Optional[_CovarianceDict] = None) -> tuple[float, float]:
     """
-    how close the experimentally derived correlation matrix is to the exact target matrix.
+    how close the experimentally derived correlation matrix is to the analytic target matrix.
     """
     dim, _ = corr.shape
     witness = 1 - np.trace((corr_target - corr) @ (corr_target - 0.5 * np.eye(dim)))

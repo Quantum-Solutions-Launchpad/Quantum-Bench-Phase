@@ -9,7 +9,8 @@ import json
 import argparse
 import subprocess
 
-from core import setup_logging, real_space_exact, resolve_sweep
+from core import setup_logging, analytic, resolve_sweep
+from interactive import attach_hover, lock_camera_azimuth
 from models import get_model
 
 _N_OCC_DEFAULT = {"param": "n_occ", "range": None}
@@ -68,20 +69,20 @@ for ix, xv in enumerate(x_vals):
             n_occ_val = int(yv)
         else:
             params[args.y_param] = yv
-        Z[ix, iy] = real_space_exact(model, n_sites, n_occ_val, params)
+        Z[ix, iy] = analytic(model, n_sites, n_occ_val, params)
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 log_path = os.path.join(
     project_root,
-    f"logs/{model.NAME}/{n_sites}-sites/exact-{args.x_param}-vs-{args.y_param}.json"
+    f"logs/{model.NAME}/{n_sites}-sites/analytic-{args.x_param}-vs-{args.y_param}.json"
 )
 os.makedirs(os.path.dirname(log_path), exist_ok=True)
 with open(log_path, "w") as f:
     json.dump({
         "x_param": args.x_param, "y_param": args.y_param,
         "x_values": x_vals, "y_values": y_vals,
-        "result": {"exact": {ix: {iy: Z[ix, iy] for iy in range(len(y_vals))}
+        "result": {"analytic": {ix: {iy: Z[ix, iy] for iy in range(len(y_vals))}
                              for ix in range(len(x_vals))}},
     }, f, indent=4)
 
@@ -114,6 +115,8 @@ ax.plot_surface(X_grid, Y_grid, Z, cmap=cmap_obj, alpha=0.10, edgecolor="none",
 for iy, yv in enumerate(y_vals):
     color = cmap_obj(iy / max(ny - 1, 1))
     ax.plot(x_vals, [yv] * len(x_vals), Z[:, iy], color=color, linewidth=1.8, alpha=0.95, zorder=5)
+    ax.scatter(x_vals, [yv] * len(x_vals), Z[:, iy],
+               color=color, s=20, alpha=0.4, depthshade=False, zorder=5)
 
 ax.set_xlabel(x_label, labelpad=12)
 ax.set_ylabel(y_label, labelpad=12)
@@ -131,10 +134,16 @@ if args.show_model_params:
 else:
     plt.tight_layout()
 
+attach_hover(fig, ax, [
+    {"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z.ravel(), "label": "Analytic"},
+])
+
 file_path = os.path.join(
     project_root,
-    f"plots/{model.NAME}/{n_sites}-sites/exact-{args.x_param}-vs-{args.y_param}.pdf"
+    f"plots/{model.NAME}/{n_sites}-sites/analytic-{args.x_param}-vs-{args.y_param}.pdf"
 )
 os.makedirs(os.path.dirname(file_path), exist_ok=True)
 plt.savefig(file_path, format="pdf")
 subprocess.run(["pdfcrop", file_path, file_path], check=True, capture_output=True)
+lock_camera_azimuth(fig, ax)
+plt.show()

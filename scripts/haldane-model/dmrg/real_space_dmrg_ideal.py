@@ -27,9 +27,9 @@ def parse_args() -> argparse.Namespace:
         help="Directory where plots should be saved",
     )
     parser.add_argument(
-        "--with-exact",
+        "--with-analytic",
         action="store_true",
-        help="Also generate per-run energy-vs-particle-number plots with exact overlays",
+        help="Also generate per-run energy-vs-particle-number plots with analytic overlays",
     )
     parser.add_argument(
         "--no-show",
@@ -208,18 +208,18 @@ def plot_energy_overlays(runs: list[dict], output_dir: Path) -> list[Path]:
                 dmrg_by_n_occ[int(sector["n_occ"])].append(float(sector["energy"]))
 
         mean_dmrg = np.array([np.mean(dmrg_by_n_occ[n_occ]) for n_occ in n_occ_values], dtype=float)
-        exact = np.array(
+        analytic = np.array(
             [real_space_exact(n_sites, t1, t2, phi, n_occ) for n_occ in n_occ_values],
             dtype=float,
         )
 
         plt.figure(figsize=(7, 4.5))
-        plt.plot(n_occ_values, exact, "ro-", label="Exact")
+        plt.plot(n_occ_values, analytic, "ro-", label="Analytic")
         plt.plot(n_occ_values, mean_dmrg, "ko", label="DMRG")
         plt.xlabel("Particle number ($n_{occ}$)")
         plt.ylabel("$E$")
         plt.title(
-            "DMRG vs exact energy\n"
+            "DMRG vs analytic energy\n"
             f"N={n_sites}, t2={t2:g}, maxdim={schedule_label(list(maxdim))}"
         )
         plt.legend()

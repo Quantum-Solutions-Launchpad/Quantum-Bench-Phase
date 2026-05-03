@@ -63,7 +63,7 @@ def resolve_sweep(param: str, range_args, n_sites: int, spin: int = 2):
         vals = list(np.arange(lo, hi + st / 2, st))
         return vals, param, False
 
-def real_space_EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
+def EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
     spin = 2
     ansatz = QuantumCircuit(n_sites * spin)
     for i in range(n_occ):
@@ -113,7 +113,7 @@ def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCi
 
 # ── Generic classical reference ──
 
-def real_space_exact(model, n_sites, n_occ, model_params):
+def analytic(model, n_sites, n_occ, model_params):
     H = model._build_H_matrix(n_sites, **model_params)
     eigvals, _ = np.linalg.eigh(H)
     kinetic_energy = np.sum(np.sort(eigvals)[:n_occ])
@@ -122,12 +122,12 @@ def real_space_exact(model, n_sites, n_occ, model_params):
     interaction_energy = mf_fn(n_sites, n_occ, **model_params) if mf_fn else 0.0
 
     result = kinetic_energy + interaction_energy
-    logger.info(f"Exact (n_sites={n_sites}, n_occ={n_occ}) = {result}")
+    logger.info(f"Analytic (n_sites={n_sites}, n_occ={n_occ}) = {result}")
     return result
 
 # ── Generic VQE/IQPE/benchmark functions ──
 
-def real_space_vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, mapper, max_iters, n_layers, rep, backend=None):
+def vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, mapper, max_iters, n_layers, rep, backend=None):
     fermionic_hamiltonian = fermionic_hamiltonian_fn(n_sites, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
@@ -137,7 +137,7 @@ def real_space_vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_o
     else:
         simulator = AerSimulator()
 
-    ansatz = real_space_EP_ansatz(n_sites, n_layers, n_occ)
+    ansatz = EP_ansatz(n_sites, n_layers, n_occ)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
     with Session(backend=simulator) as session:
@@ -169,7 +169,7 @@ def real_space_vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_o
         logger.debug(f"VQE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {float(res.fun)}")
         return float(res.fun)
 
-def real_space_iqpe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep, backend=None):
+def iqpe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep, backend=None):
     np.seterr(all='ignore')
 
     fermionic_hamiltonian = fermionic_hamiltonian_fn(n_sites, **model_params)
@@ -204,7 +204,7 @@ def vqe_other_benchmarks(n_sites, n_occ, model_params, fermionic_hamiltonian_fn,
     else:
         simulator = AerSimulator()
 
-    ansatz = real_space_EP_ansatz(n_sites, n_layers, n_occ)
+    ansatz = EP_ansatz(n_sites, n_layers, n_occ)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
     fermionic_hamiltonian = fermionic_hamiltonian_fn(n_sites, **model_params)
