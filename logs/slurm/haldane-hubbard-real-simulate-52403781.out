@@ -1,0 +1,201 @@
+[[1m[32m17:58:13[0m[1m[0m] [37mExact (n_sites=4, n_occ=1, t1=1.0, U=1.0, t2=0.5) = -2.644606781186549[0m
+[[1m[32m17:58:14[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=2): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m17:58:15[0m[1m[0m] [37mExact (n_sites=4, n_occ=1, t1=1.0, U=1.0, t2=0.0) = -1.9375000000000004[0m
+[[1m[32m17:58:16[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=0): num_queries=3700000, circuit_depth=[51,45][0m
+[[1m[32m17:58:23[0m[1m[0m] [37mExact (n_sites=6, n_occ=1, t1=1.0, U=1.0, t2=1.0) = -3.3725468957064284[0m
+[[1m[32m17:58:23[0m[1m[0m] [37mExact (n_sites=6, n_occ=2, t1=1.0, U=1.0, t2=1.0) = -6.661760458079522[0m
+[[1m[32m17:58:23[0m[1m[0m] [37mExact (n_sites=4, n_occ=3, t1=1.0, U=1.0, t2=0.5) = -4.144606781186551[0m
+[[1m[32m17:58:23[0m[1m[0m] [37mExact (n_sites=4, n_occ=2, t1=1.0, U=1.0, t2=0.0) = -3.750000000000001[0m
+[[1m[32m17:58:23[0m[1m[0m] [37mExact (n_sites=4, n_occ=3, t1=1.0, U=1.0, t2=0.0) = -3.437500000000001[0m
+[[1m[32m17:58:23[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=1): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m17:58:24[0m[1m[0m] [37mExact (n_sites=4, n_occ=2, t1=1.0, U=1.0, t2=0.5) = -5.164213562373098[0m
+[[1m[32m17:58:24[0m[1m[0m] [37mExact (n_sites=4, n_occ=1, t1=1.0, U=1.0, t2=1.0) = -3.3517135623730976[0m
+[[1m[32m17:58:24[0m[1m[0m] [37mExact (n_sites=4, n_occ=3, t1=1.0, U=1.0, t2=1.0) = -5.680140687119291[0m
+[[1m[32m17:58:24[0m[1m[0m] [37mExact (n_sites=4, n_occ=0, t1=1.0, U=1.0, t2=1.0) = 0.0[0m
+[[1m[32m17:58:24[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=2): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m17:58:24[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=2): num_queries=2900000, circuit_depth=[52,45][0m
+[[1m[32m17:58:24[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=0): num_queries=9100000, circuit_depth=[63,57][0m
+[[1m[32m17:58:24[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=1): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m17:58:25[0m[1m[0m] [37mExact (n_sites=4, n_occ=0, t1=1.0, U=1.0, t2=0.0) = 0.0[0m
+[[1m[32m17:58:25[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=1): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m17:58:25[0m[1m[0m] [37mExact (n_sites=6, n_occ=0, t1=1.0, U=1.0, t2=1.0) = 0.0[0m
+[[1m[32m17:58:25[0m[1m[0m] [37mExact (n_sites=6, n_occ=3, t1=1.0, U=1.0, t2=1.0) = -7.971065214951231[0m
+[[1m[32m17:58:25[0m[1m[0m] [37mExact (n_sites=4, n_occ=2, t1=1.0, U=1.0, t2=1.0) = -6.578427124746195[0m
+[[1m[32m17:58:25[0m[1m[0m] [37mExact (n_sites=4, n_occ=0, t1=1.0, U=1.0, t2=0.5) = 0.0[0m
+[[1m[32m17:58:26[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=1): num_queries=2900000, circuit_depth=[52,45][0m
+[[1m[32m17:58:26[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=0): num_queries=2900000, circuit_depth=[51,45][0m
+[[1m[32m17:58:26[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=0): num_queries=3700000, circuit_depth=[51,45][0m
+[[1m[32m17:58:26[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=2): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m18:03:04[0m[1m[0m] [37mExact (n_sites=4, n_occ=7, t1=1.0, U=1.0, t2=0.5) = 1.7696067811865457[0m
+[[1m[32m18:03:08[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=3): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:05:34[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=2): num_queries=23200, circuit_depth=[38415,35863][0m
+[[1m[32m18:05:37[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=0): num_queries=23200, circuit_depth=[38415,35863][0m
+[[1m[32m18:05:46[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=6): num_queries=2900000, circuit_depth=[52,45][0m
+[[1m[32m18:05:46[0m[1m[0m] [37mExact (n_sites=4, n_occ=6, t1=1.0, U=1.0, t2=0.0) = -1.75[0m
+[[1m[32m18:05:48[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=3): num_queries=2900000, circuit_depth=[52,45][0m
+[[1m[32m18:05:50[0m[1m[0m] [37mExact (n_sites=4, n_occ=7, t1=1.0, U=1.0, t2=0.0) = 1.0625[0m
+[[1m[32m18:05:54[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=4): num_queries=2900000, circuit_depth=[52,45][0m
+[[1m[32m18:05:55[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=1): num_queries=23200, circuit_depth=[38415,35863][0m
+[[1m[32m18:05:55[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=5): num_queries=2900000, circuit_depth=[52,45][0m
+[[1m[32m18:05:56[0m[1m[0m] [37mExact (n_sites=4, n_occ=5, t1=1.0, U=1.0, t2=0.0) = -2.437500000000001[0m
+[[1m[32m18:06:01[0m[1m[0m] [37mExact (n_sites=4, n_occ=4, t1=1.0, U=1.0, t2=0.0) = -3.000000000000001[0m
+[[1m[32m18:06:50[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=8): num_queries=23200, circuit_depth=[38257,35705][0m
+[[1m[32m18:07:44[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=4): num_queries=29600, circuit_depth=[60569,57061][0m
+[[1m[32m18:10:50[0m[1m[0m] [37mExact (n_sites=4, n_occ=7, t1=1.0, U=1.0, t2=1.0) = 1.6482864376269[0m
+[[1m[32m18:10:50[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=3): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:10:57[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=6): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:10:58[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=0): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:10:59[0m[1m[0m] [37mExact (n_sites=4, n_occ=6, t1=1.0, U=1.0, t2=0.5) = -0.33578643762690685[0m
+[[1m[32m18:11:00[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=4): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:11:03[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=5): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:11:04[0m[1m[0m] [37mExact (n_sites=4, n_occ=5, t1=1.0, U=1.0, t2=1.0) = -2.680140687119291[0m
+[[1m[32m18:11:06[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=5): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:11:09[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=2): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:11:10[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=6): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:11:13[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=0): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:11:20[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=4): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:11:20[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=2): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:11:22[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=1): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:11:26[0m[1m[0m] [37mExact (n_sites=4, n_occ=5, t1=1.0, U=1.0, t2=0.5) = -1.7303932188134548[0m
+[[1m[32m18:11:28[0m[1m[0m] [37mExact (n_sites=4, n_occ=6, t1=1.0, U=1.0, t2=1.0) = -0.5784271247461956[0m
+[[1m[32m18:11:30[0m[1m[0m] [37mExact (n_sites=4, n_occ=4, t1=1.0, U=1.0, t2=1.0) = -4.656854249492386[0m
+[[1m[32m18:11:37[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=1): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:11:41[0m[1m[0m] [37mExact (n_sites=4, n_occ=4, t1=1.0, U=1.0, t2=0.5) = -3.0000000000000027[0m
+[[1m[32m18:12:45[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=8): num_queries=2900000, circuit_depth=[52,45][0m
+[[1m[32m18:12:49[0m[1m[0m] [37mExact (n_sites=4, n_occ=8, t1=1.0, U=1.0, t2=0.0) = 4.0[0m
+[[1m[32m18:12:56[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=7): num_queries=2900000, circuit_depth=[52,45][0m
+[[1m[32m18:12:57[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=4): num_queries=23200, circuit_depth=[38415,35863][0m
+[[1m[32m18:13:00[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=3): num_queries=23200, circuit_depth=[38415,35863][0m
+[[1m[32m18:13:09[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=6): num_queries=23200, circuit_depth=[38415,35863][0m
+[[1m[32m18:13:12[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=5): num_queries=23200, circuit_depth=[38415,35863][0m
+[[1m[32m18:19:56[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=7): num_queries=23200, circuit_depth=[38415,35863][0m
+[[1m[32m18:22:31[0m[1m[0m] [37mExact (n_sites=4, n_occ=8, t1=1.0, U=1.0, t2=0.5) = 3.9999999999999982[0m
+[[1m[32m18:22:32[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=5): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:22:41[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=5): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:22:49[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=3): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:22:50[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=7): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:22:52[0m[1m[0m] [37mExact (n_sites=4, n_occ=8, t1=1.0, U=1.0, t2=1.0) = 3.9999999999999973[0m
+[[1m[32m18:22:55[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=6): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:22:57[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=3): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:23:01[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=6): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:23:04[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=8): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:23:12[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=7): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:23:42[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=4): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:23:47[0m[1m[0m] [37mVQE other benchmarks (n_sites=4, n_occ=8): num_queries=3700000, circuit_depth=[52,45][0m
+[[1m[32m18:26:57[0m[1m[0m] [37mExact (n_sites=6, n_occ=5, t1=1.0, U=1.0, t2=1.0) = -8.339674728694648[0m
+[[1m[32m18:27:43[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=0): num_queries=72800, circuit_depth=[207832,198586][0m
+[[1m[32m18:34:20[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=8): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:34:31[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=7): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:34:46[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=8): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:35:01[0m[1m[0m] [37mIQPE other benchmarks (n_sites=4, n_occ=7): num_queries=29600, circuit_depth=[60727,57219][0m
+[[1m[32m18:51:59[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=0) = -0.0[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mVQE (n_sites=4, n_occ=0) = -0.03125[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=1) = -29.452431127404306[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mVQE (n_sites=4, n_occ=1) = -1.93359375[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=2) = -29.452431127404306[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mVQE (n_sites=4, n_occ=2) = -3.578369140625[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=3) = -28.59340188618835[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mVQE (n_sites=4, n_occ=3) = -3.25048828125[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=4) = -29.943304979527714[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mVQE (n_sites=4, n_occ=4) = -2.86669921875[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=5) = -27.61165418194154[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mVQE (n_sites=4, n_occ=5) = -2.1162109375[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=6) = -27.48893571891069[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mVQE (n_sites=4, n_occ=6) = -0.9842529296875[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=7) = -30.434178831651117[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mVQE (n_sites=4, n_occ=7) = 1.632080078125[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=8) = -27.36621725587984[0m
+[[1m[32m18:51:59[0m[1m[0m] [37mVQE (n_sites=4, n_occ=8) = 3.97265625[0m
+[[1m[32m18:53:01[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=8): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m18:55:05[0m[1m[0m] [37mExact (n_sites=6, n_occ=8, t1=1.0, U=1.0, t2=1.0) = -5.060739943645878[0m
+[[1m[32m18:55:11[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=6): num_queries=72800, circuit_depth=[200182,187748][0m
+[[1m[32m19:25:57[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=0) = -0.0[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mVQE (n_sites=4, n_occ=0) = -0.07126242015753448[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=1) = -30.67961575771282[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mVQE (n_sites=4, n_occ=1) = -2.5859861334679763[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=2) = -29.452431127404306[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mVQE (n_sites=4, n_occ=2) = -4.747824134634646[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=3) = -27.979809571034092[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mVQE (n_sites=4, n_occ=3) = -3.920767611803842[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=4) = -29.943304979527714[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mVQE (n_sites=4, n_occ=4) = -2.8789261104854447[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=5) = -28.4706834231575[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mVQE (n_sites=4, n_occ=5) = -1.5814243059580915[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=6) = -27.48893571891069[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mVQE (n_sites=4, n_occ=6) = 0.10085989076097346[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=7) = -29.697868053466014[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mVQE (n_sites=4, n_occ=7) = 1.878783756566515[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=8) = -27.36621725587984[0m
+[[1m[32m19:25:57[0m[1m[0m] [37mVQE (n_sites=4, n_occ=8) = 3.967053284309495[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=0) = -0.0[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mVQE (n_sites=4, n_occ=0) = -0.06850238926699881[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=1) = -30.925052683774528[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mVQE (n_sites=4, n_occ=1) = -3.3331899825386153[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=2) = -29.452431127404306[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mVQE (n_sites=4, n_occ=2) = -6.242262429689233[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=3) = -31.170489609836228[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mVQE (n_sites=4, n_occ=3) = -5.382379083910866[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=4) = -29.943304979527714[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mVQE (n_sites=4, n_occ=4) = -4.099957911828996[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=5) = -29.206994201342606[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mVQE (n_sites=4, n_occ=5) = -2.2206830423226123[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=6) = -27.48893571891069[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mVQE (n_sites=4, n_occ=6) = -0.7009673464517638[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=7) = -29.820586516496864[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mVQE (n_sites=4, n_occ=7) = 1.6154631749096722[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mIQPE (n_sites=4, n_occ=8) = -27.36621725587984[0m
+[[1m[32m19:26:40[0m[1m[0m] [37mVQE (n_sites=4, n_occ=8) = 3.9151486087518985[0m
+[[1m[32m20:32:23[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=4): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m20:37:41[0m[1m[0m] [37mExact (n_sites=6, n_occ=4, t1=1.0, U=1.0, t2=1.0) = -9.197036638489605[0m
+[[1m[32m20:47:12[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=2): num_queries=72800, circuit_depth=[207990,196194][0m
+[[1m[32m20:48:37[0m[1m[0m] [37mExact (n_sites=6, n_occ=7, t1=1.0, U=1.0, t2=1.0) = -6.271526381272783[0m
+[[1m[32m20:49:32[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=3): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m20:50:16[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=1): num_queries=72800, circuit_depth=[192690,179619][0m
+[[1m[32m20:51:06[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=5): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m20:51:16[0m[1m[0m] [37mExact (n_sites=6, n_occ=6, t1=1.0, U=1.0, t2=1.0) = -7.398979485566354[0m
+[[1m[32m20:52:18[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=6): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m21:47:06[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=8): num_queries=72800, circuit_depth=[220740,210857][0m
+[[1m[32m22:45:27[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=12): num_queries=72800, circuit_depth=[218190,207669][0m
+[[1m[32m23:16:38[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=4): num_queries=72800, circuit_depth=[213090,202569][0m
+[[1m[32m23:22:31[0m[1m[0m] [37mExact (n_sites=6, n_occ=10, t1=1.0, U=1.0, t2=1.0) = -1.6970366384896023[0m
+[[1m[32m23:28:19[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=3): num_queries=72800, circuit_depth=[190140,176432][0m
+[[1m[32m23:29:19[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=9): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m23:30:48[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=7): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m23:31:35[0m[1m[0m] [37mExact (n_sites=6, n_occ=11, t1=1.0, U=1.0, t2=1.0) = 2.10981501408853[0m
+[[1m[32m23:31:51[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=5): num_queries=72800, circuit_depth=[202890,192369][0m
+[[1m[32m23:42:01[0m[1m[0m] [37mExact (n_sites=6, n_occ=9, t1=1.0, U=1.0, t2=1.0) = -3.4205549577344074[0m
+[[1m[32m23:46:22[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=10): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m01:53:24[0m[1m[0m] [37mExact (n_sites=6, n_occ=12, t1=1.0, U=1.0, t2=1.0) = 6.0[0m
+[[1m[32m02:10:25[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=11): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m02:16:27[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=10): num_queries=72800, circuit_depth=[218190,208944][0m
+[[1m[32m02:16:38[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=9): num_queries=72800, circuit_depth=[205440,194282][0m
+[[1m[32m02:32:09[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=7): num_queries=72800, circuit_depth=[218190,208944][0m
+[[1m[32m02:38:35[0m[1m[0m] [37mVQE other benchmarks (n_sites=6, n_occ=12): num_queries=9100000, circuit_depth=[64,57][0m
+[[1m[32m04:07:38[0m[1m[0m] [37mIQPE other benchmarks (n_sites=6, n_occ=11): num_queries=72800, circuit_depth=[200340,189182][0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=0) = -0.0[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=0) = -0.05618370679162543[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=1) = -30.925052683774528[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=1) = -3.2837896508747613[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=2) = -30.55689729468197[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=2) = -6.079230860343219[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=3) = -29.329712664373456[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=3) = -6.916925379802759[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=4) = -26.016314162540475[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=4) = -7.455093031962891[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=5) = -31.170489609836228[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=5) = -6.253224246111832[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=6) = -29.697868053466014[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=6) = -5.468649530876188[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=7) = -29.943304979527714[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=7) = -3.827693170614559[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=8) = -30.802334220743674[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=8) = -2.1182974826589414[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=9) = -29.943304979527714[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=9) = -0.23233679352100844[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=10) = -28.838838812250053[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=10) = 1.2265010176131124[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=11) = -26.875343403756435[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=11) = 3.621319368984714[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mIQPE (n_sites=6, n_occ=12) = -25.402721847386214[0m
+[[1m[32m05:01:59[0m[1m[0m] [37mVQE (n_sites=6, n_occ=12) = 5.868763123066811[0m
+All configurations completed at Mon May  4 05:01:59 PDT 2026

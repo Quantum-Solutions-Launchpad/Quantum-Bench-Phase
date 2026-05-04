@@ -1,0 +1,1077 @@
+Matplotlib is building the font cache; this may take a moment.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+Matplotlib is building the font cache; this may take a moment.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+Traceback (most recent call last):
+  File "/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py", line 249, in <module>
+    write_outputs(load_progress(raw_data))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py", line 171, in write_outputs
+    validate_complete(raw_data)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py", line 167, in validate_complete
+    raise RuntimeError("Missing results before aggregation: " + ", ".join(missing[:20]))
+RuntimeError: Missing results before aggregation: iqpe:0 (40/20), vqe:0 (20/10), iqpe:1 (40/20), vqe:1 (20/10), iqpe:2 (40/20), vqe:2 (20/10), iqpe:3 (40/20), vqe:3 (20/10), iqpe:4 (40/20), vqe:4 (20/10), iqpe:5 (40/20), vqe:5 (20/10), iqpe:6 (40/20), vqe:6 (20/10), iqpe:7 (40/20), vqe:7 (20/10), iqpe:8 (40/20), vqe:8 (19/10)
+Traceback (most recent call last):
+  File "/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py", line 249, in <module>
+    write_outputs(load_progress(raw_data))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py", line 171, in write_outputs
+    validate_complete(raw_data)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py", line 167, in validate_complete
+    raise RuntimeError("Missing results before aggregation: " + ", ".join(missing[:20]))
+RuntimeError: Missing results before aggregation: iqpe:0 (40/20), vqe:0 (20/10), iqpe:1 (40/20), vqe:1 (20/10), iqpe:2 (40/20), vqe:2 (20/10), iqpe:3 (40/20), vqe:3 (20/10), iqpe:4 (40/20), vqe:4 (20/10), iqpe:5 (40/20), vqe:5 (20/10), iqpe:6 (40/20), vqe:6 (20/10), iqpe:7 (40/20), vqe:7 (20/10), iqpe:8 (40/20), vqe:8 (20/10)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)
+/pscratch/sd/m/mbao202/NNL-P7/scripts/real_space_simulated_ideal.py:44: DeprecationWarning: Sampler has been deprecated as of Aer 0.15, please use SamplerV2 instead.
+  return tag, func(*args, **kwargs)

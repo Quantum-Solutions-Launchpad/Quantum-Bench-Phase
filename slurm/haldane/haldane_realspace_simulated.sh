@@ -13,11 +13,9 @@ source "${REPO_ROOT}/slurm/common/realspace_simulated.sh"
 setup_realspace_env
 
 # 4 configs in parallel, each split into one single-core srun task per shard
-run_sharded_config "scripts/real_space_simulated_ideal.py --model haldane --n-sites 6 --t2 0.05 --no-debug" &
-run_sharded_config "scripts/real_space_simulated_ideal.py --model haldane --n-sites 4 --t2 0.5 --no-debug" &
-run_sharded_config "scripts/real_space_simulated_ideal.py --model haldane --n-sites 6 --t2 1.0 --no-debug" &
-run_sharded_config "scripts/real_space_simulated_ideal.py --model haldane --n-sites 6 --t2 0.5 --no-debug" &
-
+run_sharded_config "scripts/real_space_simulated_ideal.py --model haldane --n-sites 6 --t2 0.0 --no-debug" &
+run_sharded_config "scripts/real_space_simulated_ideal.py --model haldane --n-sites 4 --t2 0.0 --no-debug" &
+run_sharded_config "scripts/real_space_simulated_ideal.py --model haldane --n-sites 4 --t2 0.05 --no-debug" &
 wait
 
 echo "All configurations completed at $(date)"

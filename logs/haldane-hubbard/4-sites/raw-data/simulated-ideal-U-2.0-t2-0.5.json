@@ -1,0 +1,153 @@
+{
+    "parameters": {
+        "model": "haldane-hubbard",
+        "n_sites": 4,
+        "simulation": "ideal",
+        "model_params": {
+            "t1": 1.0,
+            "U": 2.0,
+            "t2": 0.5,
+            "phi": 0.7853981633974483,
+            "M": 0.0
+        },
+        "vqe": {
+            "iters": 10000,
+            "layers": 5,
+            "reps": 10
+        },
+        "iqpe": {
+            "time": 0.2,
+            "trot": 5,
+            "iters": 8,
+            "reps": 20
+        }
+    },
+    "occupations": {
+        "0": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "1": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "2": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "3": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "4": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "5": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "6": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "7": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        },
+        "8": {
+            "exact": null,
+            "vqe": {
+                "repetitions": [],
+                "num_queries": null,
+                "circuit_depth": null
+            },
+            "iqpe": {
+                "repetitions": [],
+                "iteration_energies": [],
+                "num_queries": null,
+                "circuit_depth": null
+            }
+        }
+    }
+}
