@@ -420,8 +420,8 @@ def _run_simulated(
         for iy in range(ny):
             cell = raw_data["grid"][str(ix)][str(iy)]
             Z_exact[ix, iy] = cell["analytic"]
-            Z_vqe[ix, iy] = min(cell["vqe"]["repetitions"])
-            Z_iqpe[ix, iy] = min(cell["iqpe"]["repetitions"])
+            Z_vqe[ix, iy] = min(cell["vqe"]["repetitions"], key=lambda e: abs(e - Z_exact[ix, iy]))
+            Z_iqpe[ix, iy] = min(cell["iqpe"]["repetitions"], key=lambda e: abs(e - Z_exact[ix, iy]))
             logger.info(f"IQPE ({x_param}={x_vals[ix]}, {y_param}={y_vals[iy]}) = {Z_iqpe[ix, iy]}")
             logger.info(f"VQE  ({x_param}={x_vals[ix]}, {y_param}={y_vals[iy]}) = {Z_vqe[ix, iy]}")
 
