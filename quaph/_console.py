@@ -7,10 +7,22 @@ from quaph._model import Model
 from quaph._registry import _MODELS, register_model, remove_model
 
 
-_BANNER = (
-    "quaph console -- type a command (without the 'quaph' prefix), 'register', "
-    "'remove <name>', 'help', or 'exit'."
-)
+_BANNER = r"""
+                                           ,-.----.
+    ,----..                                \    /  \    ,---,
+   /   /   \                               |   :    \ ,--.' |
+  /   .     :            ,--,              |   |  .\ :|  |  :
+ .   /   ;.  \         ,'_ /|              .   :  |: |:  :  :
+.   ;   /  ` ;    .--. |  | :    ,--.--.   |   |   \ ::  |  |,--.
+;   |  ; \ ; |  ,'_ /| :  . |   /       \  |   : .   /|  :  '   |
+|   :  | ; | '  |  ' | |  . .  .--.  .-. | ;   | |`-' |  |   /' :
+.   |  ' ' ' :  |  | ' |  | |   \__\/: . . |   | ;    '  :  | | |
+'   ;  \; /  |  :  | : ;  ; |   ," .--.; | :   ' |    |  |  ' | :
+ \   \  ',  . \ '  :  `--'   \ /  /  ,.  | :   : :    |  :  :_:,'
+  ;   :      ; |:  ,      .-./;  :   .'   \|   | :    |  | ,'
+   \   \ .'`--"  `--`----'    |  ,     .-./`---'.|    `--''
+    `---`                      `--`---'      `---`
+"""
 
 _HELP = """\
 Commands:
@@ -19,23 +31,71 @@ Commands:
   run simulated-noisy --model NAME --n-sites N [...]
   plot PATH
   register             Walk through registering a new custom model
-  remove NAME          Permanently remove a registered (non-builtin) model
+  remove NAME          Permanently remove a registered model
   list                 List registered models
   help                 Show this help
   exit                 Leave the console
 """
 
 
+def _quaph_version() -> str:
+    from importlib.metadata import PackageNotFoundError, version
+    try:
+        return version("quaph")
+    except PackageNotFoundError:
+        return "0.0.0"
+
+
+def _print_banner() -> None:
+    version = _quaph_version()
+    tagline = f'v{version} — type "help" if you don\'t know what to do.'
+    if not sys.stdout.isatty():
+        print(_BANNER)
+        print(tagline)
+        return
+    try:
+        from rich.console import Console
+        from rich.text import Text
+    except ImportError:
+        print(_BANNER)
+        print(tagline)
+        return
+
+    lines = _BANNER.splitlines()
+    start = (0x00, 0xD9, 0xFF)
+    end = (0xFF, 0x5F, 0xD2)
+    n = max(len(lines) - 1, 1)
+    text = Text()
+    for i, line in enumerate(lines):
+        t = i / n
+        r = round(start[0] + (end[0] - start[0]) * t)
+        g = round(start[1] + (end[1] - start[1]) * t)
+        b = round(start[2] + (end[2] - start[2]) * t)
+        text.append(line + "\n", style=f"bold #{r:02x}{g:02x}{b:02x}")
+    console = Console(color_system="truecolor", highlight=False)
+    console.print(text)
+    print(tagline)
+
+
+_PROMPT_TTY = (
+    "\x1b[38;2;0;217;255m>"
+    "\x1b[38;2;127;156;232m>"
+    "\x1b[38;2;255;95;210m>"
+    "\x1b[0m "
+)
+
+
 def run_console(initial_command: str | None = None) -> int:
     interactive = sys.stdin.isatty()
     if interactive:
-        print(_BANNER)
+        _print_banner()
+    prompt = _PROMPT_TTY if interactive else ""
     if initial_command:
         if not _handle_line(initial_command):
             return 0
     while True:
         try:
-            line = input("quaph> " if interactive else "").strip()
+            line = input(prompt).strip()
         except EOFError:
             if interactive:
                 print()
