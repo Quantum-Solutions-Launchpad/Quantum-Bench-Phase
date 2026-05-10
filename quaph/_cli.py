@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from quaph._registry import get_model
+from quaph._registry import get_model, remove_model
 from quaph._run import run_analytic, run_simulated_ideal, run_simulated_noisy
 
 
@@ -152,6 +152,25 @@ def _dispatch_simulated_noisy(args, model):
 def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
+
+    if not argv:
+        from quaph._console import run_console
+        return run_console()
+
+    if argv == ["register"]:
+        from quaph._console import run_console
+        return run_console(initial_command="register")
+
+    if argv and argv[0] == "remove":
+        if len(argv) != 2:
+            print("usage: quaph remove <model-name>", file=sys.stderr)
+            return 2
+        try:
+            remove_model(argv[1])
+        except ValueError as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 1
+        return 0
 
     pre = argparse.ArgumentParser(add_help=False)
     pre.add_argument("command", nargs="?")

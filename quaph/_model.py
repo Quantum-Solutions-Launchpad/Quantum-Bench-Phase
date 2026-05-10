@@ -12,9 +12,9 @@ class Model:
         self,
         name: str,
         display_name: str,
-        default_params: dict[str, float],
         param_labels: dict[str, str],
         *,
+        default_params: dict[str, float] | None = None,
         hamiltonian_matrix: Callable | None = None,
         fermionic_hamiltonian: Callable | None = None,
         get_optimizer: Callable | None = None,
@@ -23,7 +23,7 @@ class Model:
     ):
         self.name = name
         self.display_name = display_name
-        self.default_params = default_params
+        self.default_params = default_params or {}
         self.param_labels = param_labels
         self.sweep_defaults = sweep_defaults or {}
 

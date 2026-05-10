@@ -1,5 +1,5 @@
 from quaph._model import Model, ModelCapabilityError
-from quaph._registry import get_model, register_model
+from quaph._registry import get_model, register_model, remove_model
 from quaph._run import (
     run_analytic,
     run_simulated_ideal,
@@ -16,6 +16,7 @@ __all__ = [
     "ModelCapabilityError",
     "get_model",
     "register_model",
+    "remove_model",
     "run_analytic",
     "run_simulated_ideal",
     "run_simulated_noisy",
