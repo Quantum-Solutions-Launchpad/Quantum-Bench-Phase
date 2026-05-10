@@ -114,8 +114,8 @@ def plot_simulated(
     x_label: str,
     y_label: str,
     Z_exact: np.ndarray,
-    Z_vqe: np.ndarray,
-    Z_iqpe: np.ndarray,
+    Z_vqe: np.ndarray | None,
+    Z_iqpe: np.ndarray | None,
     *,
     hide_legend: bool = False,
     output_path=None,
@@ -146,17 +146,31 @@ def plot_simulated(
                    color=color, s=20, alpha=0.4, depthshade=False, zorder=5)
 
     z_clip = float(np.nanmin(Z_exact))
-
-    vqe_flat, iqpe_flat = Z_vqe.ravel(), Z_iqpe.ravel()
     x_flat, y_flat = X_grid.ravel(), Y_grid.ravel()
 
-    vqe_mask = vqe_flat >= z_clip
-    iqpe_mask = iqpe_flat >= z_clip
+    hover_series = [{"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z_exact.ravel(), "label": "Analytic"}]
+    legend_handles = [mpatches.Patch(label="Analytic")]
+    handler_map = {legend_handles[0]: _GradientPatchHandler(cmap_obj)}
 
-    ax.scatter(x_flat[vqe_mask], y_flat[vqe_mask], vqe_flat[vqe_mask],
-               color="#0072B2", marker="o", s=45, depthshade=True, zorder=6)
-    ax.scatter(x_flat[iqpe_mask], y_flat[iqpe_mask], iqpe_flat[iqpe_mask],
-               color="#6DBF82", marker="^", s=45, depthshade=True, zorder=6)
+    if Z_vqe is not None:
+        vqe_flat = Z_vqe.ravel()
+        vqe_mask = vqe_flat >= z_clip
+        ax.scatter(x_flat[vqe_mask], y_flat[vqe_mask], vqe_flat[vqe_mask],
+                   color="#0072B2", marker="o", s=45, depthshade=True, zorder=6)
+        legend_handles.append(Line2D([0], [0], marker="o", color="w",
+                                     markerfacecolor="#0072B2", markersize=14, label="VQE"))
+        hover_series.append({"xs": x_flat[vqe_mask], "ys": y_flat[vqe_mask],
+                             "zs": vqe_flat[vqe_mask], "label": "VQE"})
+
+    if Z_iqpe is not None:
+        iqpe_flat = Z_iqpe.ravel()
+        iqpe_mask = iqpe_flat >= z_clip
+        ax.scatter(x_flat[iqpe_mask], y_flat[iqpe_mask], iqpe_flat[iqpe_mask],
+                   color="#6DBF82", marker="^", s=45, depthshade=True, zorder=6)
+        legend_handles.append(Line2D([0], [0], marker="^", color="w",
+                                     markerfacecolor="#6DBF82", markersize=14, label="IQPE"))
+        hover_series.append({"xs": x_flat[iqpe_mask], "ys": y_flat[iqpe_mask],
+                             "zs": iqpe_flat[iqpe_mask], "label": "IQPE"})
 
     ax.set_zlim(bottom=z_clip)
 
@@ -164,21 +178,14 @@ def plot_simulated(
     ax.set_ylabel(y_label, labelpad=12)
     ax.set_zlabel("$E$", labelpad=10)
 
-    if not hide_legend:
-        exact_proxy = mpatches.Patch(label="Analytic")
-        vqe_proxy = Line2D([0], [0], marker="o", color="w", markerfacecolor="#0072B2", markersize=14, label="VQE")
-        iqpe_proxy = Line2D([0], [0], marker="^", color="w", markerfacecolor="#6DBF82", markersize=14, label="IQPE")
-        fig.legend(handles=[exact_proxy, vqe_proxy, iqpe_proxy], loc="upper center",
-                   ncol=3, fontsize=14, bbox_to_anchor=(0.5, 0.98),
-                   handler_map={exact_proxy: _GradientPatchHandler(cmap_obj)})
+    if not hide_legend and len(legend_handles) > 1:
+        fig.legend(handles=legend_handles, loc="upper center",
+                   ncol=len(legend_handles), fontsize=14, bbox_to_anchor=(0.5, 0.98),
+                   handler_map=handler_map)
 
     plt.tight_layout()
 
-    attach_hover(fig, ax, [
-        {"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z_exact.ravel(), "label": "Analytic"},
-        {"xs": x_flat[vqe_mask], "ys": y_flat[vqe_mask], "zs": vqe_flat[vqe_mask], "label": "VQE"},
-        {"xs": x_flat[iqpe_mask], "ys": y_flat[iqpe_mask], "zs": iqpe_flat[iqpe_mask], "label": "IQPE"},
-    ])
+    attach_hover(fig, ax, hover_series)
 
     lock_camera_azimuth(fig, ax)
     return _save_and_show(fig, output_path, hide_plot)

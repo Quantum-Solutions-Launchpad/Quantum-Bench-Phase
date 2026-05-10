@@ -69,16 +69,16 @@ def _add_output_args(parser):
 
 
 def _add_sim_required(parser):
-    parser.add_argument("--vqe-iters", type=int, required=True, metavar="N")
-    parser.add_argument("--vqe-layers", type=int, required=True, metavar="N")
-    parser.add_argument("--iqpe-time", type=float, required=True, metavar="F")
-    parser.add_argument("--iqpe-trot", type=int, required=True, metavar="N")
-    parser.add_argument("--iqpe-iters", type=int, required=True, metavar="N")
+    parser.add_argument("--vqe-iters", type=int, default=None, metavar="N")
+    parser.add_argument("--vqe-layers", type=int, default=None, metavar="N")
+    parser.add_argument("--iqpe-time", type=float, default=None, metavar="F")
+    parser.add_argument("--iqpe-trot", type=int, default=None, metavar="N")
+    parser.add_argument("--iqpe-iters", type=int, default=None, metavar="N")
 
 
 def _add_sim_optional(parser):
-    parser.add_argument("--vqe-reps", type=int, default=1, metavar="N")
-    parser.add_argument("--iqpe-reps", type=int, default=1, metavar="N")
+    parser.add_argument("--vqe-reps", type=int, default=None, metavar="N")
+    parser.add_argument("--iqpe-reps", type=int, default=None, metavar="N")
     parser.add_argument("--hide-legend", action="store_true", default=False)
 
 
