@@ -125,7 +125,7 @@ def plot_bdg_energy(pipeline_data, plots_dir):
         hole_exact = exact_energies[combs[2 * i + 3]]
         ax.plot(CHEMICAL_POTENTIALS, particle_exact - low_exact, '-', color='black', alpha=0.8)
         ax.plot(CHEMICAL_POTENTIALS, hole_exact - high_exact, '-', color='black', alpha=0.8,
-                label='Exact' if i == 0 else "")
+                label='Analytic' if i == 0 else "")
 
     def get_bdg_from_results(stage_data):
         bdg_energy = np.zeros((4, len(CHEMICAL_POTENTIALS)))

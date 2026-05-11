@@ -698,10 +698,10 @@ def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemi
         error = np.zeros(len(chemical_potential_values))
         error_stddev = np.zeros(len(chemical_potential_values))
         for occupied_orbitals in occupied_orbitals_list:
-            exact = np.array(data['energy_exact'][occupied_orbitals][0])
+            analytic = np.array(data['energy_exact'][occupied_orbitals][0])
             values, stddevs = data['energy_exact'][occupied_orbitals]
             values = np.array(values)
-            error += np.abs(values - exact)
+            error += np.abs(values - analytic)
             error_stddev += np.array(stddevs) ** 2
         error /= len(occupied_orbitals_list)
         error_stddev = np.sqrt(error_stddev) / len(occupied_orbitals_list)
@@ -739,7 +739,7 @@ def data_simulated(n_modes: int, tunneling: float, superconducting: float, chemi
                 # data
                 particle, particle_stddev = data['energy_simulated'][combs[2 * i + 2]]
                 hole, hole_stddev = data['energy_simulated'][combs[2 * i + 3]]
-                # exact values
+                # analytic values
                 particle_exact = np.array(data['energy_exact'][combs[2 * i + 2]])
                 hole_exact = np.array(data['energy_exact'][combs[2 * i + 3]])
                 # energy

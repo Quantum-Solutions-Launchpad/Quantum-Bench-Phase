@@ -14,7 +14,7 @@ backend = FakeSherbrooke()
 shots = 100000
 
 data = {
-    'exact': data_exact(
+    'analytic': data_exact(
         n_modes=n_modes,
         tunneling=tunneling,
         superconducting=superconducting,
@@ -58,7 +58,7 @@ for val in data.values():
     idx += 1
 
 legend_elements = [
-    Line2D([0], [0], color='orange', lw=2, label='Exact Values'),
+    Line2D([0], [0], color='orange', lw=2, label='Analytic Values'),
     Line2D([0], [0], marker='o', color='w', label='Ideal Simulated', markerfacecolor='green', markersize=5),
     Line2D([0], [0], marker='o', color='w', label='Noisy Unmitigated', markerfacecolor='blue', markersize=5),
     Line2D([0], [0], marker='o', color='w', label='Noisy Mitigated', markerfacecolor='red', markersize=5)

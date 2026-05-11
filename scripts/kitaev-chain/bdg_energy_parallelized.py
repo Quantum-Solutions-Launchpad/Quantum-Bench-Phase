@@ -26,7 +26,7 @@ def main():
     cache_file = os.path.join(os.getcwd(), '..', 'logs', 'kitaev-chain', f'data_parallelized_{N_MODES}_modes.pkl')
     if EXECUTE:
         data = {
-            'exact': data_exact(
+            'analytic': data_exact(
                 n_modes=N_MODES,
                 tunneling=TUNNELING,
                 superconducting=SUPERCONDUCTING,
@@ -75,11 +75,11 @@ def main():
 
     fig, ax = plt.subplots(figsize=(10, 6))
     colors = ['orange', 'green', 'blue', 'red']
-    labels = ['Exact', 'Ideal Simulated', 'Noisy Unmitigated', 'Noisy Mitigated']
+    labels = ['Analytic', 'Ideal Simulated', 'Noisy Unmitigated', 'Noisy Mitigated']
     styles = ['-', '.', '.', '.']
 
     for i, (key, val) in enumerate(data.items()):
-        data_key = 'bdg_energy_exact' if key == 'exact' else 'bdg_energy_simulated'
+        data_key = 'bdg_energy_exact' if key == 'analytic' else 'bdg_energy_simulated'
         if data_key not in val:
             print(f"WARN: Missing '{data_key}' in data for '{key}'. Skipping plot.")
             continue
@@ -92,7 +92,7 @@ def main():
             ax.plot(CHEMICAL_POTENTIAL_VALUES, bdg_energies[j], styles[i], color=colors[i], label=plot_label)
 
     legend_elements = [
-        Line2D([0], [0], color='orange', lw=2, label='Exact Values'),
+        Line2D([0], [0], color='orange', lw=2, label='Analytic Values'),
         Line2D([0], [0], marker='o', color='w', label='Ideal Simulated', markerfacecolor='green', markersize=8),
         Line2D([0], [0], marker='o', color='w', label='Noisy Unmitigated', markerfacecolor='blue', markersize=8),
         Line2D([0], [0], marker='o', color='w', label='Noisy Mitigated', markerfacecolor='red', markersize=8)
