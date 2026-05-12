@@ -288,7 +288,6 @@ def _run_simulated(
 ) -> SimulatedResult:
     do_vqe = vqe_reps > 0
     do_iqpe = iqpe_reps > 0
-    _ = model.fermionic_hamiltonian
 
     spin = 2
     mapper = JordanWignerMapper()

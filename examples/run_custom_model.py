@@ -1,6 +1,5 @@
 import os
 import numpy as np
-from qiskit_nature.second_q.operators import FermionicOp
 from qiskit_algorithms.optimizers import SPSA
 
 import quaph
@@ -34,28 +33,12 @@ def _ssh_H_matrix(n_sites, t1, t2):
     return H
 
 
-def _ssh_fermionic_hamiltonian(n_sites, *, t1, t2):
-    spin = 2
-    hamiltonian = 0.0 * FermionicOp({})
-    for i in range(n_sites - 1):
-        t = t1 if i % 2 == 0 else t2
-        for s in range(spin):
-            s1 = i * spin + s
-            s2 = (i + 1) * spin + s
-            hamiltonian -= FermionicOp({
-                f"+_{s1} -_{s2}": t,
-                f"+_{s2} -_{s1}": t,
-            })
-    return hamiltonian
-
-
 ssh_model = Model(
     name="ssh",
     display_name="SSH",
     default_params={"t1": 1.0},
     param_labels={"t1": "t_1", "t2": "t_2"},
     hamiltonian_matrix=_ssh_H_matrix,
-    fermionic_hamiltonian=_ssh_fermionic_hamiltonian,
     get_optimizer=_ssh_optimizer,
     sweep_defaults={"y": {"param": "t2", "range": (0.0, 2.0, 0.25)}},
 )

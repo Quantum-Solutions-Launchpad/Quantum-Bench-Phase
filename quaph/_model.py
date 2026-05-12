@@ -7,6 +7,18 @@ class ModelCapabilityError(Exception):
     pass
 
 
+def matrix_to_fermionic_op(H, tol: float = 1e-12):
+    from qiskit_nature.second_q.operators import FermionicOp
+    terms: dict[str, complex] = {}
+    N = H.shape[0]
+    for i in range(N):
+        for j in range(N):
+            c = complex(H[i, j])
+            if abs(c) > tol:
+                terms[f"+_{i} -_{j}"] = c
+    return FermionicOp(terms, num_spin_orbitals=N)
+
+
 class Model:
     def __init__(
         self,
@@ -14,13 +26,17 @@ class Model:
         display_name: str,
         param_labels: dict[str, str],
         *,
+        hamiltonian_matrix: Callable,
         default_params: dict[str, float] | None = None,
-        hamiltonian_matrix: Callable | None = None,
-        fermionic_hamiltonian: Callable | None = None,
+        interaction_hamiltonian: Callable | None = None,
         get_optimizer: Callable | None = None,
         mean_field_correction: Callable | None = None,
         sweep_defaults: dict | None = None,
     ):
+        if hamiltonian_matrix is None:
+            raise ValueError(
+                f"Model '{name}' requires hamiltonian_matrix."
+            )
         self.name = name
         self.display_name = display_name
         self.default_params = default_params or {}
@@ -28,29 +44,23 @@ class Model:
         self.sweep_defaults = sweep_defaults or {}
 
         self._hamiltonian_matrix_fn = hamiltonian_matrix
-        self._fermionic_hamiltonian_fn = fermionic_hamiltonian
+        self._interaction_hamiltonian_fn = interaction_hamiltonian
         self._get_optimizer_fn = get_optimizer
         self._mean_field_correction_fn = mean_field_correction
 
     @property
     def _build_H_matrix(self):
-        if self._hamiltonian_matrix_fn is None:
-            raise ModelCapabilityError(
-                f"Model '{self.name}' does not provide hamiltonian_matrix; "
-                "this is required for run_analytic(), run_simulated_ideal(), and run_simulated_noisy(). "
-                "Provide hamiltonian_matrix= when constructing Model."
-            )
         return self._hamiltonian_matrix_fn
 
     @property
     def fermionic_hamiltonian(self):
-        if self._fermionic_hamiltonian_fn is None:
-            raise ModelCapabilityError(
-                f"Model '{self.name}' does not provide fermionic_hamiltonian; "
-                "this is required for run_simulated_ideal() and run_simulated_noisy(). "
-                "Provide fermionic_hamiltonian= when constructing Model."
-            )
-        return self._fermionic_hamiltonian_fn
+        def _build(n_sites, **params):
+            H = self._hamiltonian_matrix_fn(n_sites, **params)
+            op = matrix_to_fermionic_op(H)
+            if self._interaction_hamiltonian_fn is not None:
+                op = op + self._interaction_hamiltonian_fn(n_sites, **params)
+            return op
+        return _build
 
     @property
     def get_optimizer(self):
@@ -84,9 +94,7 @@ class Model:
         return self.sweep_defaults
 
     def __repr__(self):
-        caps = []
-        if self._hamiltonian_matrix_fn:
-            caps.append("analytic")
-        if self._fermionic_hamiltonian_fn:
-            caps.append("simulation")
+        caps = ["analytic", "simulation"]
+        if self._interaction_hamiltonian_fn is not None:
+            caps.append("interacting")
         return f"Model(name={self.name!r}, capabilities={caps})"
