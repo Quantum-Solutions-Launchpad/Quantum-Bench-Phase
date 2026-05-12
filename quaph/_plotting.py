@@ -69,6 +69,21 @@ def plot_analytic(
     *,
     output_path=None,
     hide_plot: bool = False,
+    heatmap: bool = False,
+):
+    fn = plot_analytic_heatmap if heatmap else plot_analytic_3d
+    return fn(x_vals, y_vals, x_label, y_label, Z, output_path=output_path, hide_plot=hide_plot)
+
+
+def plot_analytic_3d(
+    x_vals,
+    y_vals,
+    x_label: str,
+    y_label: str,
+    Z: np.ndarray,
+    *,
+    output_path=None,
+    hide_plot: bool = False,
 ):
     _apply_rcparams()
 
@@ -105,6 +120,53 @@ def plot_analytic(
     ])
 
     lock_camera_azimuth(fig, ax)
+    return _save_and_show(fig, output_path, hide_plot)
+
+
+def plot_analytic_heatmap(
+    x_vals,
+    y_vals,
+    x_label: str,
+    y_label: str,
+    Z: np.ndarray,
+    *,
+    output_path=None,
+    hide_plot: bool = False,
+):
+    _apply_rcparams()
+
+    fig, ax = plt.subplots(figsize=(9, 6.5))
+
+    cmap_obj = LinearSegmentedColormap.from_list("magma_dark", plt.cm.magma(np.linspace(0.05, 0.82, 256)))
+
+    x_arr = np.asarray(x_vals, dtype=float)
+    y_arr = np.asarray(y_vals, dtype=float)
+
+    def _edges(a):
+        if len(a) == 1:
+            d = 0.5
+            return np.array([a[0] - d, a[0] + d])
+        d = np.diff(a) / 2.0
+        return np.concatenate([[a[0] - d[0]], a[:-1] + d, [a[-1] + d[-1]]])
+
+    x_edges = _edges(x_arr)
+    y_edges = _edges(y_arr)
+
+    mesh = ax.pcolormesh(x_edges, y_edges, Z.T, cmap=cmap_obj, shading="auto")
+
+    ax.set_xlabel(x_label, labelpad=8)
+    ax.set_ylabel(y_label, labelpad=8)
+    ax.set_xlim(x_edges[0], x_edges[-1])
+    ax.set_ylim(y_edges[0], y_edges[-1])
+    for spine in ax.spines.values():
+        spine.set_edgecolor("#cccccc")
+    ax.tick_params(direction="out", length=4, color="#888888")
+
+    cbar = fig.colorbar(mesh, ax=ax, pad=0.02, fraction=0.045)
+    cbar.set_label("$E$", labelpad=10)
+    cbar.outline.set_edgecolor("#cccccc")
+
+    plt.tight_layout()
     return _save_and_show(fig, output_path, hide_plot)
 
 

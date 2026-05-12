@@ -35,7 +35,7 @@ def _resolve_sweep_axes(args, model) -> tuple[str, str]:
 
 
 def _collect_model_params(args, model, x_param: str, y_param: str) -> dict:
-    params = {k: getattr(args, k) for k in model.default_params}
+    params = {k: getattr(args, k) for k in model.default_params if k not in (x_param, y_param)}
     for name in _sweep_param_names(model):
         val = getattr(args, name, None)
         if val is not None:
@@ -96,6 +96,7 @@ def _dispatch_analytic(args, model):
         log_dir=args.log_dir,
         plot_dir=args.plot_dir,
         hide_plot=args.hide_plot,
+        heatmap=args.heatmap,
     )
 
 
@@ -189,6 +190,8 @@ def main(argv=None):
     plot_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
     plot_parser.add_argument("--output", default=None, metavar="PATH", help="Output PDF path")
     plot_parser.add_argument("--hide-legend", action="store_true", default=False)
+    plot_parser.add_argument("--heatmap", action="store_true", default=False,
+                             help="Render analytic results as a 2D heatmap (analytic only)")
 
     run_parser = sub.add_parser("run")
     run_sub = run_parser.add_subparsers(dest="subcommand", required=True)
@@ -203,6 +206,9 @@ def main(argv=None):
         p.add_argument("--n-sites", type=int, required=True, metavar="N")
         _add_sweep_args(p)
         _add_output_args(p)
+
+    analytic_parser.add_argument("--heatmap", action="store_true", default=False,
+                                 help="Render results as a 2D heatmap instead of a 3D surface")
 
     for p in (sim_ideal_parser, sim_noisy_parser):
         _add_sim_required(p)
@@ -232,6 +238,8 @@ def main(argv=None):
         kwargs = dict(hide_plot=args.hide_plot, output_path=args.output)
         if isinstance(result, SimulatedResult):
             kwargs["hide_legend"] = args.hide_legend
+        else:
+            kwargs["heatmap"] = args.heatmap
         result.plot(**kwargs)
         return
 

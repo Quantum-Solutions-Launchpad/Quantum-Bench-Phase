@@ -39,6 +39,15 @@ def setup_logging():
     return logger
 
 
+def _fmt_params(n_sites, n_occ, model_params=None, **extra):
+    parts = [f"n_sites={n_sites}", f"n_occ={n_occ}"]
+    for k, v in (model_params or {}).items():
+        parts.append(f"{k}={v:g}" if isinstance(v, float) else f"{k}={v}")
+    for k, v in extra.items():
+        parts.append(f"{k}={v}")
+    return ", ".join(parts)
+
+
 def resolve_sweep(param: str, range_args, n_sites: int, spin: int = 2):
     if param == "n_occ":
         if range_args is None:
@@ -66,7 +75,7 @@ def EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
     return ansatz
 
 
-def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, n_sites: int, n_occ: int, rep: int):
+def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, n_sites: int, n_occ: int, rep: int, model_params: dict | None = None):
     omega_coef = 0
     iteration_phases = []
 
@@ -82,7 +91,7 @@ def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, nu
         omega_coef = omega_coef + x / 2
         iteration_phases.append(omega_coef)
 
-        logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}, iteration {num_iterations-k+1}) = {omega_coef}")
+        logger.debug(f"IQPE ({_fmt_params(n_sites, n_occ, model_params, repetition=rep, iteration=num_iterations-k+1)}) = {omega_coef}")
 
     return omega_coef, iteration_phases
 
@@ -117,7 +126,7 @@ def analytic(model, n_sites, n_occ, model_params):
     interaction_energy = mf_fn(n_sites, n_occ, **model_params) if mf_fn else 0.0
 
     result = kinetic_energy + interaction_energy
-    logger.info(f"Analytic (n_sites={n_sites}, n_occ={n_occ}) = {result}")
+    logger.info(f"Analytic ({_fmt_params(n_sites, n_occ, model_params)}) = {result}")
     return result
 
 
@@ -161,7 +170,7 @@ def vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn
         optimizer = get_optimizer_fn(max_iters)
         res = optimizer.minimize(cost_func, x0=x0)
 
-        logger.debug(f"VQE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {float(res.fun)}")
+        logger.debug(f"VQE ({_fmt_params(n_sites, n_occ, model_params, repetition=rep)}) = {float(res.fun)}")
         return float(res.fun)
 
 
@@ -186,11 +195,11 @@ def iqpe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_pa
     else:
         sampler = Sampler()
 
-    phase, iteration_phases = iqpe_estimate(evolution, initial, n_iters, sampler, n_sites, n_occ, rep)
+    phase, iteration_phases = iqpe_estimate(evolution, initial, n_iters, sampler, n_sites, n_occ, rep, model_params)
     res = float(-2 * np.pi * phase / time_param)
     iteration_energies = [float(-2 * np.pi * p / time_param) for p in iteration_phases]
 
-    logger.debug(f"IQPE (n_sites={n_sites}, n_occ={n_occ}, repetition {rep}) = {res}")
+    logger.debug(f"IQPE ({_fmt_params(n_sites, n_occ, model_params, repetition=rep)}) = {res}")
     return res, iteration_energies
 
 
@@ -211,7 +220,7 @@ def vqe_other_benchmarks(n_sites, n_occ, model_params, fermionic_hamiltonian_fn,
     full_circuit_depth = ansatz_circuit.depth()
     two_gate_circuit_depth = ansatz_circuit.depth(lambda x: x.operation.num_qubits == 2)
 
-    logger.info(f"VQE other benchmarks (n_sites={n_sites}, n_occ={n_occ}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}]")
+    logger.info(f"VQE other benchmarks ({_fmt_params(n_sites, n_occ, model_params)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}]")
     return num_queries, (full_circuit_depth, two_gate_circuit_depth)
 
 
@@ -236,9 +245,9 @@ def iqpe_other_benchmarks(n_sites, n_occ, model_params, fermionic_hamiltonian_fn
         qc = transpile(qc, backend=simulator, optimization_level=3)
         full_circuit_depth += qc.depth()
         two_gate_circuit_depth += qc.depth(lambda x: x.operation.num_qubits == 2)
-        logger.debug(f"IQPE other benchmarks (n_sites={n_sites}, n_occ={n_occ}, iteration {n_iters-k+1}): circuit_depth=[{qc.depth(), qc.depth(lambda x: x.operation.num_qubits == 2)}]")
+        logger.debug(f"IQPE other benchmarks ({_fmt_params(n_sites, n_occ, model_params, iteration=n_iters-k+1)}): circuit_depth=[{qc.depth(), qc.depth(lambda x: x.operation.num_qubits == 2)}]")
 
     num_queries = qubit_hamiltonian.size * iqpe_reps * n_trot * n_iters
 
-    logger.info(f"IQPE other benchmarks (n_sites={n_sites}, n_occ={n_occ}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth // n_iters},{two_gate_circuit_depth // n_iters}]")
+    logger.info(f"IQPE other benchmarks ({_fmt_params(n_sites, n_occ, model_params)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth // n_iters},{two_gate_circuit_depth // n_iters}]")
     return num_queries, (full_circuit_depth // n_iters, two_gate_circuit_depth // n_iters)

@@ -10,7 +10,7 @@ from qiskit_nature.second_q.mappers import JordanWignerMapper
 
 from quaph._model import Model
 from quaph._core import (
-    setup_logging, resolve_sweep,
+    resolve_sweep,
     analytic, vqe, iqpe,
     vqe_other_benchmarks, iqpe_other_benchmarks,
 )
@@ -63,7 +63,7 @@ class AnalyticResult:
     plot_path: str | None = None
     _model_params: dict = field(default_factory=dict, repr=False)
 
-    def plot(self, *, hide_plot: bool = False, output_path=None):
+    def plot(self, *, hide_plot: bool = False, output_path=None, heatmap: bool = False):
         from quaph._registry import get_model
         model = get_model(self.model_name)
 
@@ -72,7 +72,7 @@ class AnalyticResult:
 
         return plot_analytic(
             self.x_values, self.y_values, x_label, y_label, self.energies,
-            output_path=output_path, hide_plot=hide_plot,
+            output_path=output_path, hide_plot=hide_plot, heatmap=heatmap,
         )
 
 
@@ -171,6 +171,7 @@ def run_analytic(
     log_dir=None,
     plot_dir=None,
     hide_plot: bool = False,
+    heatmap: bool = False,
 ) -> AnalyticResult:
     model = _resolve_model(model)
     _ = model._build_H_matrix
@@ -244,7 +245,7 @@ def run_analytic(
     if plot_path is not None or not hide_plot:
         plot_analytic(
             x_vals, y_vals, x_label, y_label, Z,
-            output_path=plot_path, hide_plot=hide_plot,
+            output_path=plot_path, hide_plot=hide_plot, heatmap=heatmap,
         )
 
     return AnalyticResult(
@@ -420,7 +421,7 @@ def _run_simulated(
             with open(raw_data_path, "w") as f:
                 json.dump(raw_data, f, indent=4)
 
-    logger = setup_logging()
+    from loguru import logger
 
     nx, ny = len(x_vals), len(y_vals)
     Z_exact = np.full((nx, ny), np.nan)
