@@ -152,7 +152,7 @@ def plot_analytic_heatmap(
     x_edges = _edges(x_arr)
     y_edges = _edges(y_arr)
 
-    mesh = ax.pcolormesh(x_edges, y_edges, Z.T, cmap=cmap_obj, shading="auto")
+    mesh = ax.pcolormesh(x_edges, y_edges, Z.T, cmap=cmap_obj, shading="auto", rasterized=True)
 
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel(y_label, labelpad=8)
