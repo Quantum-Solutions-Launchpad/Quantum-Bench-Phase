@@ -2,7 +2,7 @@ import os
 import quaph
 
 MODEL = "haldane-hubbard"
-N_SITES = 6
+N_SITES = 8
 X_PARAM = "t2"
 Y_PARAM = "U"
 

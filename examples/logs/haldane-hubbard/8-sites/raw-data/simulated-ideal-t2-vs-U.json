@@ -1,0 +1,4120 @@
+{
+    "parameters": {
+        "model": "haldane-hubbard",
+        "n_sites": 8,
+        "simulation": "ideal",
+        "model_params": {
+            "t1": 1.0,
+            "phi": 0.7853981633974483,
+            "M": 0.0
+        },
+        "vqe": {
+            "iters": 50,
+            "layers": 2,
+            "reps": 1
+        },
+        "iqpe": {
+            "time": 0.2,
+            "trot": 2,
+            "iters": 1,
+            "reps": 1
+        }
+    },
+    "x_param": "t2",
+    "y_param": "U",
+    "x_values": [
+        0.0,
+        0.1,
+        0.2,
+        0.30000000000000004,
+        0.4,
+        0.5,
+        0.6000000000000001,
+        0.7000000000000001,
+        0.8,
+        0.9,
+        1.0,
+        1.1,
+        1.2000000000000002,
+        1.3,
+        1.4000000000000001,
+        1.5
+    ],
+    "y_values": [
+        0.0,
+        0.5,
+        1.0,
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        3.5,
+        4.0
+    ],
+    "grid": {
+        "0": {
+            "0": {
+                "analytic": -12.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        0.295654296875
+                    ],
+                    "num_queries": 2400,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 96,
+                    "circuit_depth": {
+                        "total": 1864,
+                        "two_qubit": 1770
+                    }
+                }
+            },
+            "1": {
+                "analytic": -11.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        1.7911376953125
+                    ],
+                    "num_queries": 3650,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 146,
+                    "circuit_depth": {
+                        "total": 1991,
+                        "two_qubit": 1897
+                    }
+                }
+            },
+            "2": {
+                "analytic": -10.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        3.5958251953125
+                    ],
+                    "num_queries": 3650,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 146,
+                    "circuit_depth": {
+                        "total": 1992,
+                        "two_qubit": 1898
+                    }
+                }
+            },
+            "3": {
+                "analytic": -9.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        5.15411376953125
+                    ],
+                    "num_queries": 3650,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 146,
+                    "circuit_depth": {
+                        "total": 1992,
+                        "two_qubit": 1898
+                    }
+                }
+            },
+            "4": {
+                "analytic": -8.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        6.22509765625
+                    ],
+                    "num_queries": 3650,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 146,
+                    "circuit_depth": {
+                        "total": 1991,
+                        "two_qubit": 1897
+                    }
+                }
+            },
+            "5": {
+                "analytic": -7.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        8.2022705078125
+                    ],
+                    "num_queries": 3650,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 146,
+                    "circuit_depth": {
+                        "total": 1992,
+                        "two_qubit": 1898
+                    }
+                }
+            },
+            "6": {
+                "analytic": -6.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        10.3148193359375
+                    ],
+                    "num_queries": 3650,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 146,
+                    "circuit_depth": {
+                        "total": 1991,
+                        "two_qubit": 1897
+                    }
+                }
+            },
+            "7": {
+                "analytic": -5.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        10.900634765625
+                    ],
+                    "num_queries": 3650,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 146,
+                    "circuit_depth": {
+                        "total": 1992,
+                        "two_qubit": 1898
+                    }
+                }
+            },
+            "8": {
+                "analytic": -4.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        15.150146484375
+                    ],
+                    "num_queries": 3650,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 146,
+                    "circuit_depth": {
+                        "total": 1992,
+                        "two_qubit": 1898
+                    }
+                }
+            }
+        },
+        "1": {
+            "0": {
+                "analytic": -12.0,
+                "vqe": {
+                    "repetitions": [
+                        -0.20276149817550426
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -11.0,
+                "vqe": {
+                    "repetitions": [
+                        1.9859995920245481
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -10.0,
+                "vqe": {
+                    "repetitions": [
+                        4.038028897411792
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "3": {
+                "analytic": -9.0,
+                "vqe": {
+                    "repetitions": [
+                        4.524131412501587
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -8.0,
+                "vqe": {
+                    "repetitions": [
+                        5.663978201036868
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -7.0,
+                "vqe": {
+                    "repetitions": [
+                        7.224203863774912
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "6": {
+                "analytic": -6.0,
+                "vqe": {
+                    "repetitions": [
+                        10.76611739780963
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "7": {
+                "analytic": -5.0,
+                "vqe": {
+                    "repetitions": [
+                        13.081760775298763
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "8": {
+                "analytic": -4.0,
+                "vqe": {
+                    "repetitions": [
+                        11.7128976498402
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        },
+        "2": {
+            "0": {
+                "analytic": -11.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        -0.6440056147655228
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -10.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        1.7526414077150854
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -9.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        3.7668555180725942
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "3": {
+                "analytic": -8.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        4.872919146796728
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "4": {
+                "analytic": -7.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        6.281559357623931
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "5": {
+                "analytic": -6.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        9.068956100003085
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "6": {
+                "analytic": -5.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        9.464269737554389
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "7": {
+                "analytic": -4.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        13.948076781334672
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -3.9999999999999982,
+                "vqe": {
+                    "repetitions": [
+                        12.36483933575217
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        },
+        "3": {
+            "0": {
+                "analytic": -12.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        -0.15425863671403442
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -11.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        1.646166257793258
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -10.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        3.150374856288331
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "3": {
+                "analytic": -9.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        4.818931731259711
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -8.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        7.567754709432542
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -7.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        7.247996672977351
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "6": {
+                "analytic": -6.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        9.954951520762986
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "7": {
+                "analytic": -5.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        13.591706569382668
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -4.000000000000002,
+                "vqe": {
+                    "repetitions": [
+                        14.530861811210656
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            }
+        },
+        "4": {
+            "0": {
+                "analytic": -11.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        -0.7311787023007029
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -10.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        1.817600516586932
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -9.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        2.7810553076622617
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "3": {
+                "analytic": -8.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        4.7247621761103265
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -7.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        6.405839005265859
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -6.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        7.551809406257938
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "6": {
+                "analytic": -5.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        10.528456650690224
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "7": {
+                "analytic": -4.999999999999998,
+                "vqe": {
+                    "repetitions": [
+                        12.84474404692452
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -3.9999999999999982,
+                "vqe": {
+                    "repetitions": [
+                        13.373598816206439
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        },
+        "5": {
+            "0": {
+                "analytic": -11.999999999999996,
+                "vqe": {
+                    "repetitions": [
+                        -0.02729082647141977
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4479,
+                        "two_qubit": 4289
+                    }
+                }
+            },
+            "1": {
+                "analytic": -10.999999999999996,
+                "vqe": {
+                    "repetitions": [
+                        2.389377231411549
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -9.999999999999996,
+                "vqe": {
+                    "repetitions": [
+                        3.052506351850093
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "3": {
+                "analytic": -8.999999999999996,
+                "vqe": {
+                    "repetitions": [
+                        5.700205625806881
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -7.9999999999999964,
+                "vqe": {
+                    "repetitions": [
+                        7.708985035348073
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -6.9999999999999964,
+                "vqe": {
+                    "repetitions": [
+                        8.128717128802542
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "6": {
+                "analytic": -5.9999999999999964,
+                "vqe": {
+                    "repetitions": [
+                        9.17455756999296
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "7": {
+                "analytic": -4.9999999999999964,
+                "vqe": {
+                    "repetitions": [
+                        13.717170730628578
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -3.9999999999999964,
+                "vqe": {
+                    "repetitions": [
+                        14.907627941454106
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        },
+        "6": {
+            "0": {
+                "analytic": -11.999999999999996,
+                "vqe": {
+                    "repetitions": [
+                        0.15120258796019262
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -10.999999999999996,
+                "vqe": {
+                    "repetitions": [
+                        1.60826998366561
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -9.999999999999996,
+                "vqe": {
+                    "repetitions": [
+                        3.8671247739167516
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "3": {
+                "analytic": -8.999999999999996,
+                "vqe": {
+                    "repetitions": [
+                        5.288589775901175
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "4": {
+                "analytic": -7.9999999999999964,
+                "vqe": {
+                    "repetitions": [
+                        7.100615307985233
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -6.9999999999999964,
+                "vqe": {
+                    "repetitions": [
+                        8.00520313382363
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "6": {
+                "analytic": -5.9999999999999964,
+                "vqe": {
+                    "repetitions": [
+                        11.322581665337536
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "7": {
+                "analytic": -4.9999999999999964,
+                "vqe": {
+                    "repetitions": [
+                        12.866563123542951
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -3.9999999999999964,
+                "vqe": {
+                    "repetitions": [
+                        11.0635053841735
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        },
+        "7": {
+            "0": {
+                "analytic": -11.999999999999991,
+                "vqe": {
+                    "repetitions": [
+                        0.38775538567878526
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4479,
+                        "two_qubit": 4289
+                    }
+                }
+            },
+            "1": {
+                "analytic": -10.999999999999991,
+                "vqe": {
+                    "repetitions": [
+                        2.146859697602153
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "2": {
+                "analytic": -9.999999999999991,
+                "vqe": {
+                    "repetitions": [
+                        3.733105234529944
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "3": {
+                "analytic": -8.999999999999991,
+                "vqe": {
+                    "repetitions": [
+                        5.041319309021815
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -7.999999999999991,
+                "vqe": {
+                    "repetitions": [
+                        6.399856893849197
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -6.999999999999991,
+                "vqe": {
+                    "repetitions": [
+                        8.076029163243131
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "6": {
+                "analytic": -5.999999999999991,
+                "vqe": {
+                    "repetitions": [
+                        10.073220670828658
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "7": {
+                "analytic": -4.999999999999991,
+                "vqe": {
+                    "repetitions": [
+                        10.496718552896446
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -3.999999999999991,
+                "vqe": {
+                    "repetitions": [
+                        15.536807552968487
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        },
+        "8": {
+            "0": {
+                "analytic": -13.050966799187812,
+                "vqe": {
+                    "repetitions": [
+                        -0.20206359060587764
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -12.050966799187812,
+                "vqe": {
+                    "repetitions": [
+                        1.541616538482599
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -11.050966799187812,
+                "vqe": {
+                    "repetitions": [
+                        3.9548598490769598
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "3": {
+                "analytic": -10.050966799187812,
+                "vqe": {
+                    "repetitions": [
+                        5.270984834176998
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -9.050966799187812,
+                "vqe": {
+                    "repetitions": [
+                        7.56123006014823
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "5": {
+                "analytic": -8.050966799187812,
+                "vqe": {
+                    "repetitions": [
+                        9.655307877447811
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "6": {
+                "analytic": -7.050966799187812,
+                "vqe": {
+                    "repetitions": [
+                        8.872112461541201
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "7": {
+                "analytic": -6.050966799187812,
+                "vqe": {
+                    "repetitions": [
+                        11.778243402851839
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -5.050966799187812,
+                "vqe": {
+                    "repetitions": [
+                        12.442361139595963
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        },
+        "9": {
+            "0": {
+                "analytic": -14.182337649086286,
+                "vqe": {
+                    "repetitions": [
+                        -0.42663228597593966
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -13.182337649086286,
+                "vqe": {
+                    "repetitions": [
+                        1.297189878311768
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -12.182337649086286,
+                "vqe": {
+                    "repetitions": [
+                        3.0977493242572876
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "3": {
+                "analytic": -11.182337649086286,
+                "vqe": {
+                    "repetitions": [
+                        4.438129962427936
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -10.182337649086286,
+                "vqe": {
+                    "repetitions": [
+                        6.354136408042549
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -9.182337649086286,
+                "vqe": {
+                    "repetitions": [
+                        9.152930289824631
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "6": {
+                "analytic": -8.182337649086286,
+                "vqe": {
+                    "repetitions": [
+                        8.21139352063322
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "7": {
+                "analytic": -7.182337649086286,
+                "vqe": {
+                    "repetitions": [
+                        13.223418745643166
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -6.182337649086286,
+                "vqe": {
+                    "repetitions": [
+                        15.23983198693439
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            }
+        },
+        "10": {
+            "0": {
+                "analytic": -15.313708498984758,
+                "vqe": {
+                    "repetitions": [
+                        0.06060364731917789
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4479,
+                        "two_qubit": 4289
+                    }
+                }
+            },
+            "1": {
+                "analytic": -14.313708498984758,
+                "vqe": {
+                    "repetitions": [
+                        0.9932007899967723
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -13.313708498984758,
+                "vqe": {
+                    "repetitions": [
+                        3.2260071769395564
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "3": {
+                "analytic": -12.313708498984758,
+                "vqe": {
+                    "repetitions": [
+                        4.203542346833345
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -11.313708498984758,
+                "vqe": {
+                    "repetitions": [
+                        8.065156587998564
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -10.313708498984758,
+                "vqe": {
+                    "repetitions": [
+                        9.761377269842963
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "6": {
+                "analytic": -9.313708498984758,
+                "vqe": {
+                    "repetitions": [
+                        10.854211707758116
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "7": {
+                "analytic": -8.313708498984758,
+                "vqe": {
+                    "repetitions": [
+                        10.922377126006744
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -7.313708498984758,
+                "vqe": {
+                    "repetitions": [
+                        11.253270569273601
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        },
+        "11": {
+            "0": {
+                "analytic": -16.44507934888324,
+                "vqe": {
+                    "repetitions": [
+                        0.6884077959021909
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -15.44507934888324,
+                "vqe": {
+                    "repetitions": [
+                        1.3427322437994362
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -14.44507934888324,
+                "vqe": {
+                    "repetitions": [
+                        3.8273184056941076
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "3": {
+                "analytic": -13.44507934888324,
+                "vqe": {
+                    "repetitions": [
+                        5.287157583585517
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -12.44507934888324,
+                "vqe": {
+                    "repetitions": [
+                        5.554136266951851
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "5": {
+                "analytic": -11.44507934888324,
+                "vqe": {
+                    "repetitions": [
+                        8.206898929225991
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "6": {
+                "analytic": -10.44507934888324,
+                "vqe": {
+                    "repetitions": [
+                        9.768992493202221
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "7": {
+                "analytic": -9.44507934888324,
+                "vqe": {
+                    "repetitions": [
+                        10.797295638618445
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "8": {
+                "analytic": -8.44507934888324,
+                "vqe": {
+                    "repetitions": [
+                        13.582349077970278
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        },
+        "12": {
+            "0": {
+                "analytic": -17.57645019878171,
+                "vqe": {
+                    "repetitions": [
+                        0.4362000301956718
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -16.57645019878171,
+                "vqe": {
+                    "repetitions": [
+                        1.6833214538056633
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -15.57645019878171,
+                "vqe": {
+                    "repetitions": [
+                        3.0926661210315785
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "3": {
+                "analytic": -14.57645019878171,
+                "vqe": {
+                    "repetitions": [
+                        5.925733034777653
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -13.57645019878171,
+                "vqe": {
+                    "repetitions": [
+                        6.269415563209388
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -12.57645019878171,
+                "vqe": {
+                    "repetitions": [
+                        9.68019728884683
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "6": {
+                "analytic": -11.57645019878171,
+                "vqe": {
+                    "repetitions": [
+                        10.986324425805263
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "7": {
+                "analytic": -10.57645019878171,
+                "vqe": {
+                    "repetitions": [
+                        12.42986405332124
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -9.57645019878171,
+                "vqe": {
+                    "repetitions": [
+                        13.812104387154589
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        },
+        "13": {
+            "0": {
+                "analytic": -18.70782104868022,
+                "vqe": {
+                    "repetitions": [
+                        1.0660348018550363
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -17.70782104868022,
+                "vqe": {
+                    "repetitions": [
+                        2.23045899457936
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "2": {
+                "analytic": -16.70782104868022,
+                "vqe": {
+                    "repetitions": [
+                        3.411801181839519
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "3": {
+                "analytic": -15.70782104868022,
+                "vqe": {
+                    "repetitions": [
+                        4.870090588973148
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "4": {
+                "analytic": -14.70782104868022,
+                "vqe": {
+                    "repetitions": [
+                        6.800210937629872
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -13.70782104868022,
+                "vqe": {
+                    "repetitions": [
+                        8.2638644490906
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "6": {
+                "analytic": -12.70782104868022,
+                "vqe": {
+                    "repetitions": [
+                        9.480973540423397
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "7": {
+                "analytic": -11.70782104868022,
+                "vqe": {
+                    "repetitions": [
+                        12.194832936954876
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -10.70782104868022,
+                "vqe": {
+                    "repetitions": [
+                        12.266759747095234
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        },
+        "14": {
+            "0": {
+                "analytic": -19.839191898578676,
+                "vqe": {
+                    "repetitions": [
+                        -0.09739985308343109
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -18.839191898578676,
+                "vqe": {
+                    "repetitions": [
+                        1.3716194910147235
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -17.839191898578676,
+                "vqe": {
+                    "repetitions": [
+                        4.45629377193608
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "3": {
+                "analytic": -16.839191898578676,
+                "vqe": {
+                    "repetitions": [
+                        5.649230636372092
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -15.839191898578676,
+                "vqe": {
+                    "repetitions": [
+                        6.204641508547076
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -14.839191898578676,
+                "vqe": {
+                    "repetitions": [
+                        6.819965647870246
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "6": {
+                "analytic": -13.839191898578676,
+                "vqe": {
+                    "repetitions": [
+                        9.819692925236508
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            },
+            "7": {
+                "analytic": -12.839191898578676,
+                "vqe": {
+                    "repetitions": [
+                        13.075214967181054
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -11.839191898578676,
+                "vqe": {
+                    "repetitions": [
+                        13.0666810685327
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4607,
+                        "two_qubit": 4417
+                    }
+                }
+            }
+        },
+        "15": {
+            "0": {
+                "analytic": -20.970562748477146,
+                "vqe": {
+                    "repetitions": [
+                        -1.073267024060709
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 192,
+                    "circuit_depth": {
+                        "total": 4480,
+                        "two_qubit": 4290
+                    }
+                }
+            },
+            "1": {
+                "analytic": -19.970562748477146,
+                "vqe": {
+                    "repetitions": [
+                        1.8500909454321244
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "2": {
+                "analytic": -18.970562748477146,
+                "vqe": {
+                    "repetitions": [
+                        2.7853284966685585
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "3": {
+                "analytic": -17.970562748477146,
+                "vqe": {
+                    "repetitions": [
+                        6.5639732182713475
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "4": {
+                "analytic": -16.970562748477146,
+                "vqe": {
+                    "repetitions": [
+                        6.5804115720860805
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "5": {
+                "analytic": -15.970562748477146,
+                "vqe": {
+                    "repetitions": [
+                        7.57430216466164
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "6": {
+                "analytic": -14.970562748477146,
+                "vqe": {
+                    "repetitions": [
+                        8.5772285504213
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "7": {
+                "analytic": -13.970562748477146,
+                "vqe": {
+                    "repetitions": [
+                        12.973660317676527
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            },
+            "8": {
+                "analytic": -12.970562748477146,
+                "vqe": {
+                    "repetitions": [
+                        14.011876648677188
+                    ],
+                    "num_queries": 6050,
+                    "circuit_depth": {
+                        "total": 55,
+                        "two_qubit": 51
+                    }
+                },
+                "iqpe": {
+                    "repetitions": [
+                        -15.707963267948966
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966
+                        ]
+                    ],
+                    "num_queries": 242,
+                    "circuit_depth": {
+                        "total": 4608,
+                        "two_qubit": 4418
+                    }
+                }
+            }
+        }
+    }
+}
