@@ -5,14 +5,14 @@
 #SBATCH -N 1
 #SBATCH -t 48:00:00
 #SBATCH -A m5027
-#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.out
-#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.err
+#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/logs/slurm/%x-%j.out
+#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/logs/slurm/%x-%j.err
 
 REPO_ROOT="${REPO_ROOT:-/pscratch/sd/m/mbao202/NNL-P7}"
-source "${REPO_ROOT}/scripts/slurm/realspace_simulated.sh"
+source "${REPO_ROOT}/scripts/slurm/common/realspace_simulated.sh"
 setup_realspace_env
 
-CMD="real-space-simulated-ideal --model haldane --n-sites 4 --t2 1.0 --no-debug"
+CMD="scripts/real_space_simulated_ideal.py --model haldane --n-sites 4 --t2 1.0 --no-debug"
 run_single_config "${CMD}"
 
 echo "Configuration completed at $(date)"

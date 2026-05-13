@@ -34,21 +34,8 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def infer_n_sites_step(records: list[dict]) -> int:
-    n_sites_values = sorted({int(record["n_sites"]) for record in records})
-    if len(n_sites_values) < 2:
-        return 1
-
-    steps = [curr - prev for prev, curr in zip(n_sites_values, n_sites_values[1:])]
-    positive_steps = [step for step in steps if step > 0]
-    return min(positive_steps) if positive_steps else 1
-
-
-def default_output_dir(root: Path, records: list[dict]) -> Path:
-    max_sites = max(int(record["n_sites"]) for record in records)
-    step = infer_n_sites_step(records)
-    folder_name = f"phase-diagram-3d_n_sites{max_sites}_step{step}"
-    return root / "plots" / "haldane" / "dmrg" / folder_name
+def default_output_dir(root: Path) -> Path:
+    return root / "plots" / "haldane" / "dmrg" / "phase-diagram-3d"
 
 
 def finalize_figure(fig: plt.Figure, path: Path) -> None:
@@ -173,11 +160,12 @@ def main() -> None:
     logger = logging.getLogger(__name__)
 
     root = Path(__file__).resolve().parents[2]
+    output_dir = args.output_dir or default_output_dir(root)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     records = load_jsonl(args.input_jsonl)
     if not records:
         raise ValueError(f"No valid records found in {args.input_jsonl}.")
-    output_dir = args.output_dir or default_output_dir(root, records)
-    output_dir.mkdir(parents=True, exist_ok=True)
     parameter_text = describe_parameters(records)
 
     saved_paths: list[Path] = []

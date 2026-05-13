@@ -7,8 +7,8 @@
 #SBATCH -c 16
 #SBATCH -t 04:00:00
 #SBATCH -J single_haldane_dmrg
-#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/%x/%j.out
-#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/%x/%j.err
+#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/logs/%x/%j.out
+#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/logs/%x/%j.err
 
 
 PROJECT_DIR="${PROJECT_DIR:-/pscratch/sd/m/mbao202/NNL-P7}"
