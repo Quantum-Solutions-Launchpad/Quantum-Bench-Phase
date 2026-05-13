@@ -7,8 +7,8 @@
 #SBATCH -c 16
 #SBATCH -t 48:00:00
 #SBATCH -J cpu_haldane_phase
-#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/logs/%x/%j.out
-#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/logs/%x/%j.err
+#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/%x/%j.out
+#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/%x/%j.err
 
 ROOT="/pscratch/sd/m/mbao202/NNL-P7"
 JULIA_PROJECT_DIR="${ROOT}/scripts/julia-dmrg"

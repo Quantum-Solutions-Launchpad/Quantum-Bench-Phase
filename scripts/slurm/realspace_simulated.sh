@@ -13,18 +13,18 @@ setup_realspace_env() {
     export NUMEXPR_NUM_THREADS=1
     export MPLCONFIGDIR="${MPLCONFIGDIR:-/tmp/${USER}-mpl}"
 
-    SHARDS="${SHARDS:-128}"
+    SHARDS="${SHARDS:-${SLURM_CPUS_ON_NODE:-128}}"
 }
 
 run_sharded_config() {
     local cmd="$1"
 
-    python ${cmd} --prepare-only
+    quaph run ${cmd} --prepare-only
     for shard in $(seq 0 $((SHARDS - 1))); do
-        srun -N 1 -n 1 -c 1 --exact bash -c "python ${cmd} --task-index ${shard} --task-count ${SHARDS}" &
+        srun -N 1 -n 1 -c 1 --exact bash -c "quaph run ${cmd} --task-index ${shard} --task-count ${SHARDS}" &
     done
     wait
-    python ${cmd} --aggregate-only
+    quaph run ${cmd} --aggregate-only
 }
 
 run_single_config() {

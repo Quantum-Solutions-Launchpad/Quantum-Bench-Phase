@@ -10,6 +10,7 @@ from qiskit_nature.second_q.mappers import JordanWignerMapper
 
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+OUTPUT_ROOT = os.environ.get("QUAPH_OUTPUT_ROOT", os.path.join(REPO_ROOT, "scripts"))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
@@ -38,7 +39,7 @@ def _file_suffix(model_name, params):
     return "-".join(parts)
 
 
-def main(simulation_tag, backend=None):
+def main(simulation_tag, backend=None, argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, required=True)
     parser.add_argument("--n-sites", type=int, default=6)
@@ -55,13 +56,13 @@ def main(simulation_tag, backend=None):
     parser.add_argument("--aggregate-only", action="store_true")
     parser.add_argument("--no-progress-log", action="store_true")
     parser.add_argument("--no-debug", action="store_true")
-    args, _ = parser.parse_known_args()
+    args, _ = parser.parse_known_args(argv)
 
     model = get_model(args.model)
     for param_name in _model_param_names(model):
         default_val = model.DEFAULT_PARAMS.get(param_name, 0.0)
         parser.add_argument(f"--{param_name}", type=type(default_val), default=default_val)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     model_params = {k: getattr(args, k) for k in _model_param_names(model)}
     n_sites = args.n_sites
@@ -109,8 +110,8 @@ def main(simulation_tag, backend=None):
         ))
 
     suffix = _file_suffix(model.NAME, model_params)
-    raw_data_path = os.path.join(REPO_ROOT, f"logs/{model.NAME}/{n_sites}-sites/raw-data/simulated-{simulation_tag}-{suffix}.json")
-    progress_path = os.path.join(REPO_ROOT, f"logs/{model.NAME}/{n_sites}-sites/raw-data/simulated-{simulation_tag}-{suffix}.progress.jsonl")
+    raw_data_path = os.path.join(OUTPUT_ROOT, f"logs/{model.NAME}/{n_sites}-sites/raw-data/simulated-{simulation_tag}-{suffix}.json")
+    progress_path = os.path.join(OUTPUT_ROOT, f"logs/{model.NAME}/{n_sites}-sites/raw-data/simulated-{simulation_tag}-{suffix}.progress.jsonl")
     os.makedirs(os.path.dirname(raw_data_path), exist_ok=True)
 
     n_occ_count = spin * n_sites + 1
@@ -236,7 +237,7 @@ def main(simulation_tag, backend=None):
             },
         }
 
-        log_path = os.path.join(REPO_ROOT, f"logs/{model.NAME}/{n_sites}-sites/simulated-{simulation_tag}-{suffix}.json")
+        log_path = os.path.join(OUTPUT_ROOT, f"logs/{model.NAME}/{n_sites}-sites/simulated-{simulation_tag}-{suffix}.json")
         os.makedirs(os.path.dirname(log_path), exist_ok=True)
         with open(log_path, "w") as f:
             json.dump(data, f, indent=4)
@@ -256,7 +257,7 @@ def main(simulation_tag, backend=None):
         plt.grid(True)
         plt.tight_layout()
 
-        plot_path = os.path.join(REPO_ROOT, f"plots/{model.NAME}/{n_sites}-sites/simulated-{simulation_tag}-{suffix}.png")
+        plot_path = os.path.join(OUTPUT_ROOT, f"plots/{model.NAME}/{n_sites}-sites/simulated-{simulation_tag}-{suffix}.png")
         os.makedirs(os.path.dirname(plot_path), exist_ok=True)
         plt.savefig(plot_path)
 

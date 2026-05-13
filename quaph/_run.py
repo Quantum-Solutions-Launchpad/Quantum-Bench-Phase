@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from datetime import datetime
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -284,6 +285,11 @@ def _run_simulated(
     plot_dir,
     hide_plot: bool,
     hide_legend: bool,
+    task_index: int | None = None,
+    task_count: int = 1,
+    prepare_only: bool = False,
+    aggregate_only: bool = False,
+    no_progress_log: bool = False,
 ) -> SimulatedResult:
     do_vqe = vqe_reps > 0
     do_iqpe = iqpe_reps > 0
@@ -354,11 +360,18 @@ def _run_simulated(
                     backend=backend
                 ))
 
+    if task_count < 1:
+        raise ValueError("task_count must be at least 1")
+    if task_index is not None and not 0 <= task_index < task_count:
+        raise ValueError("task_index must satisfy 0 <= task_index < task_count")
+
     raw_data_path = None
+    progress_path = None
     if log_dir is not None:
         log_subdir = _log_subdir(log_dir, model.name, n_sites)
         os.makedirs(os.path.join(log_subdir, "raw-data"), exist_ok=True)
         raw_data_path = os.path.join(log_subdir, "raw-data", f"simulated-{simulation_tag}-{x_param}-vs-{y_param}.json")
+        progress_path = os.path.join(log_subdir, "raw-data", f"simulated-{simulation_tag}-{x_param}-vs-{y_param}.progress.jsonl")
 
     def empty_cell():
         cell = {"analytic": None}
@@ -390,14 +403,48 @@ def _run_simulated(
     }
 
     if raw_data_path is not None:
+        if not no_progress_log and progress_path is not None and (prepare_only or (task_index is None and not aggregate_only)):
+            with open(progress_path, "w") as f:
+                f.write("")
         with open(raw_data_path, "w") as f:
             json.dump(raw_data, f, indent=4)
+
+    if prepare_only:
+        return SimulatedResult(
+            model_name=model.name,
+            n_sites=n_sites,
+            x_param=x_param,
+            y_param=y_param,
+            x_values=x_vals,
+            y_values=y_vals,
+            analytic_energies=np.full((len(x_vals), len(y_vals)), np.nan),
+            vqe_best_energies=None,
+            iqpe_best_energies=None,
+            raw=raw_data,
+            raw_log_path=raw_data_path,
+            _model_params=model_params,
+        )
 
     def init_worker_logging():
         from quaph._core import setup_logging as _sl
         _sl()
 
-    for tag, result in Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(jobs):
+    def append_progress(tag, result):
+        if no_progress_log or progress_path is None:
+            return
+        record = {
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "tag": list(tag),
+            "result": result,
+        }
+        payload = (json.dumps(record) + "\n").encode()
+        fd = os.open(progress_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
+        try:
+            os.write(fd, payload)
+        finally:
+            os.close(fd)
+
+    def apply_result(tag, result):
         ix, iy = str(tag[1]), str(tag[2])
         cell = raw_data["grid"][ix][iy]
         if tag[0] == "analytic":
@@ -416,9 +463,81 @@ def _run_simulated(
             num_q, (total, two_q) = result
             cell["vqe"]["num_queries"] = num_q
             cell["vqe"]["circuit_depth"] = {"total": total, "two_qubit": two_q}
-        if raw_data_path is not None:
-            with open(raw_data_path, "w") as f:
-                json.dump(raw_data, f, indent=4)
+
+    def load_progress():
+        if progress_path is None:
+            raise ValueError("log_dir is required for aggregate_only")
+        if not os.path.exists(progress_path):
+            raise FileNotFoundError(f"Progress file does not exist: {progress_path}")
+        with open(progress_path) as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                record = json.loads(line)
+                apply_result(tuple(record["tag"]), record["result"])
+
+    def validate_complete():
+        missing = []
+        for ix in range(len(x_vals)):
+            for iy in range(len(y_vals)):
+                cell = raw_data["grid"][str(ix)][str(iy)]
+                label = f"{ix},{iy}"
+                if cell["analytic"] is None:
+                    missing.append(f"analytic:{label}")
+                if do_iqpe:
+                    if len(cell["iqpe"]["repetitions"]) != iqpe_reps:
+                        missing.append(f"iqpe:{label} ({len(cell['iqpe']['repetitions'])}/{iqpe_reps})")
+                    if cell["iqpe"]["num_queries"] is None or cell["iqpe"]["circuit_depth"] is None:
+                        missing.append(f"iqpe_bench:{label}")
+                if do_vqe:
+                    if len(cell["vqe"]["repetitions"]) != vqe_reps:
+                        missing.append(f"vqe:{label} ({len(cell['vqe']['repetitions'])}/{vqe_reps})")
+                    if cell["vqe"]["num_queries"] is None or cell["vqe"]["circuit_depth"] is None:
+                        missing.append(f"vqe_bench:{label}")
+        if missing:
+            raise RuntimeError("Missing results before aggregation: " + ", ".join(missing[:20]))
+
+    if aggregate_only:
+        load_progress()
+    else:
+        if task_index is None:
+            selected_jobs = jobs
+            n_jobs = -1
+            initializer = init_worker_logging
+        else:
+            init_worker_logging()
+            selected_jobs = [job for idx, job in enumerate(jobs) if idx % task_count == task_index]
+            n_jobs = 1
+            initializer = None
+
+        for tag, result in Parallel(n_jobs=n_jobs, return_as="generator_unordered", initializer=initializer)(selected_jobs):
+            append_progress(tag, result)
+            apply_result(tag, result)
+            if raw_data_path is not None and task_index is None:
+                with open(raw_data_path, "w") as f:
+                    json.dump(raw_data, f, indent=4)
+
+        if task_index is not None:
+            return SimulatedResult(
+                model_name=model.name,
+                n_sites=n_sites,
+                x_param=x_param,
+                y_param=y_param,
+                x_values=x_vals,
+                y_values=y_vals,
+                analytic_energies=np.full((len(x_vals), len(y_vals)), np.nan),
+                vqe_best_energies=None,
+                iqpe_best_energies=None,
+                raw=raw_data,
+                raw_log_path=raw_data_path,
+                _model_params=model_params,
+            )
+
+    if raw_data_path is not None:
+        with open(raw_data_path, "w") as f:
+            json.dump(raw_data, f, indent=4)
+
+    validate_complete()
 
     logger = setup_logging()
 
@@ -531,6 +650,11 @@ def run_simulated_ideal(
     plot_dir=None,
     hide_plot: bool = False,
     hide_legend: bool = False,
+    task_index: int | None = None,
+    task_count: int = 1,
+    prepare_only: bool = False,
+    aggregate_only: bool = False,
+    no_progress_log: bool = False,
 ) -> SimulatedResult:
     model = _resolve_model(model)
     vqe_reps = _resolve_method_reps("vqe", vqe_reps, vqe_iters, vqe_layers)
@@ -555,6 +679,9 @@ def run_simulated_ideal(
         iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
         log_dir=log_dir, plot_dir=plot_dir,
         hide_plot=hide_plot, hide_legend=hide_legend,
+        task_index=task_index, task_count=task_count,
+        prepare_only=prepare_only, aggregate_only=aggregate_only,
+        no_progress_log=no_progress_log,
     )
 
 
@@ -580,6 +707,11 @@ def run_simulated_noisy(
     plot_dir=None,
     hide_plot: bool = False,
     hide_legend: bool = False,
+    task_index: int | None = None,
+    task_count: int = 1,
+    prepare_only: bool = False,
+    aggregate_only: bool = False,
+    no_progress_log: bool = False,
 ) -> SimulatedResult:
     if backend is None:
         from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
@@ -608,4 +740,7 @@ def run_simulated_noisy(
         iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
         log_dir=log_dir, plot_dir=plot_dir,
         hide_plot=hide_plot, hide_legend=hide_legend,
+        task_index=task_index, task_count=task_count,
+        prepare_only=prepare_only, aggregate_only=aggregate_only,
+        no_progress_log=no_progress_log,
     )
