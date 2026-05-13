@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
 from quaph._registry import get_model, remove_model
@@ -80,6 +81,11 @@ def _add_sim_optional(parser):
     parser.add_argument("--vqe-reps", type=int, default=None, metavar="N")
     parser.add_argument("--iqpe-reps", type=int, default=None, metavar="N")
     parser.add_argument("--hide-legend", action="store_true", default=False)
+    parser.add_argument("--task-index", type=int, default=None, metavar="N")
+    parser.add_argument("--task-count", type=int, default=1, metavar="N")
+    parser.add_argument("--prepare-only", action="store_true", default=False)
+    parser.add_argument("--aggregate-only", action="store_true", default=False)
+    parser.add_argument("--no-progress-log", action="store_true", default=False)
 
 
 def _dispatch_analytic(args, model):
@@ -121,6 +127,11 @@ def _dispatch_simulated_ideal(args, model):
         plot_dir=args.plot_dir,
         hide_plot=args.hide_plot,
         hide_legend=args.hide_legend,
+        task_index=args.task_index,
+        task_count=args.task_count,
+        prepare_only=args.prepare_only,
+        aggregate_only=args.aggregate_only,
+        no_progress_log=args.no_progress_log,
     )
 
 
@@ -146,6 +157,11 @@ def _dispatch_simulated_noisy(args, model):
         plot_dir=args.plot_dir,
         hide_plot=args.hide_plot,
         hide_legend=args.hide_legend,
+        task_index=args.task_index,
+        task_count=args.task_count,
+        prepare_only=args.prepare_only,
+        aggregate_only=args.aggregate_only,
+        no_progress_log=args.no_progress_log,
     )
 
 
@@ -171,6 +187,18 @@ def main(argv=None):
             print(f"error: {e}", file=sys.stderr)
             return 1
         return 0
+
+    if len(argv) >= 2 and argv[0] == "run" and argv[1] in (
+        "real-space-simulated-ideal",
+        "real-space-simulated-noisy",
+    ):
+        scripts_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scripts")
+        if scripts_dir not in sys.path:
+            sys.path.insert(0, scripts_dir)
+        from _real_space_simulated_common import main as run_real_space_simulated
+
+        simulation_tag = "ideal" if argv[1] == "real-space-simulated-ideal" else "noisy"
+        return run_real_space_simulated(simulation_tag, argv=argv[2:])
 
     pre = argparse.ArgumentParser(add_help=False)
     pre.add_argument("command", nargs="?")
@@ -249,3 +277,7 @@ def main(argv=None):
             _dispatch_simulated_noisy(args, model)
     except ValueError as e:
         parser.error(str(e))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

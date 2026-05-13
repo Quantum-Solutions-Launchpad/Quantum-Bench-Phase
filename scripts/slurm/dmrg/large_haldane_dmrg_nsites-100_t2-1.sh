@@ -7,8 +7,8 @@
 #SBATCH -c 16
 #SBATCH -t 48:00:00
 #SBATCH -J haldane_n100_t2_1
-#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/logs/%x/%j.out
-#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/logs/%x/%j.err
+#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/%x/%j.out
+#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/%x/%j.err
 
 PROJECT_DIR="/pscratch/sd/m/mbao202/NNL-P7"
 JULIA_PROJECT_DIR="${PROJECT_DIR}/scripts/julia-dmrg"
