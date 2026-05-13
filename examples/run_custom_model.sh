@@ -6,7 +6,7 @@ X_PARAM="n_occ"
 Y_PARAM="t2"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG="$HERE/logs/${MODEL}/${N_SITES}-sites/simulated-ideal-${X_PARAM}-vs-${Y_PARAM}.json"
+LOG="$HERE/logs/${MODEL}/${N_SITES}-sites/simulated-ideal-3d-${X_PARAM}-vs-${Y_PARAM}.json"
 
 if [ -f "$LOG" ]; then
     echo "Plotting from existing log..."
@@ -19,9 +19,6 @@ if ! printf 'list\nexit\n' | quaph 2>/dev/null | grep -qE "^[[:space:]]+${MODEL}
 register
 ssh
 SSH
-t1
-1.0
-
 t1
 t_1
 t2
@@ -62,11 +59,6 @@ END
 skip
 skip
 y
-t2
-0.0
-2.0
-0.25
-y
 exit
 QUAPH
 fi
@@ -76,12 +68,14 @@ quaph run simulated-ideal \
     --n-sites "$N_SITES" \
     --x-param "$X_PARAM" \
     --y-param "$Y_PARAM" \
-    --vqe-iters 500 \
+    --y-range 0.0 2.0 0.5 \
+    --t1 1.0 \
+    --vqe-iters 200 \
     --vqe-layers 2 \
     --vqe-reps 1 \
     --iqpe-time 0.3 \
     --iqpe-trot 2 \
-    --iqpe-iters 4 \
+    --iqpe-iters 2 \
     --iqpe-reps 1 \
     --log-dir "$HERE/logs" \
     --plot-dir "$HERE/plots"

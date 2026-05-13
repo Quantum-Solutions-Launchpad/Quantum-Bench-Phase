@@ -78,9 +78,10 @@ def remove_model(name: str) -> None:
 
 _CALLABLE_FIELDS = (
     ("hamiltonian_matrix", "_hamiltonian_matrix_fn"),
-    ("fermionic_hamiltonian", "_fermionic_hamiltonian_fn"),
+    ("interaction_hamiltonian", "_interaction_hamiltonian_fn"),
     ("get_optimizer", "_get_optimizer_fn"),
     ("mean_field_correction", "_mean_field_correction_fn"),
+    ("bloch_hamiltonian", "_bloch_hamiltonian_fn"),
 )
 
 
@@ -95,7 +96,7 @@ def _write_model_file(path: Path, model: Model, source_blocks: dict[str, str]) -
     callable_var_names: dict[str, str] = {}
 
     for field_name, attr_name in _CALLABLE_FIELDS:
-        fn = getattr(model, attr_name)
+        fn = getattr(model, attr_name, None)
         if fn is None:
             continue
         if field_name in source_blocks:
@@ -129,13 +130,10 @@ def _write_model_file(path: Path, model: Model, source_blocks: dict[str, str]) -
     lines.append("model = Model(")
     lines.append(f"    name={model.name!r},")
     lines.append(f"    display_name={model.display_name!r},")
-    lines.append(f"    default_params={model.default_params!r},")
     lines.append(f"    param_labels={model.param_labels!r},")
     for field_name, _ in _CALLABLE_FIELDS:
         if field_name in callable_var_names:
             lines.append(f"    {field_name}={callable_var_names[field_name]},")
-    if model.sweep_defaults:
-        lines.append(f"    sweep_defaults={model.sweep_defaults!r},")
     lines.append(")")
     lines.append("")
 

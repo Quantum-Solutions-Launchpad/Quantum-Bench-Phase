@@ -36,11 +36,9 @@ def _ssh_H_matrix(n_sites, t1, t2):
 ssh_model = Model(
     name="ssh",
     display_name="SSH",
-    default_params={"t1": 1.0},
     param_labels={"t1": "t_1", "t2": "t_2"},
     hamiltonian_matrix=_ssh_H_matrix,
     get_optimizer=_ssh_optimizer,
-    sweep_defaults={"y": {"param": "t2", "range": (0.0, 2.0, 0.25)}},
 )
 
 quaph.register_model(ssh_model)
@@ -53,7 +51,7 @@ X_PARAM = "n_occ"
 Y_PARAM = "t2"
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-_LOG = os.path.join(_HERE, f"logs/{MODEL}/{N_SITES}-sites/simulated-ideal-{X_PARAM}-vs-{Y_PARAM}.json")
+_LOG = os.path.join(_HERE, f"logs/{MODEL}/{N_SITES}-sites/simulated-ideal-3d-{X_PARAM}-vs-{Y_PARAM}.json")
 
 if os.path.exists(_LOG):
     print("Plotting from existing log...")
@@ -65,12 +63,14 @@ else:
         n_sites=N_SITES,
         x_param=X_PARAM,
         y_param=Y_PARAM,
-        vqe_iters=500,
+        y_range=(0.0, 2.0, 0.5),
+        model_params={"t1": 1.0},
+        vqe_iters=200,
         vqe_layers=2,
         vqe_reps=1,
         iqpe_time=0.3,
         iqpe_trot=2,
-        iqpe_iters=4,
+        iqpe_iters=2,
         iqpe_reps=1,
         log_dir=os.path.join(_HERE, "logs"),
         plot_dir=os.path.join(_HERE, "plots"),

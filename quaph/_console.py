@@ -246,17 +246,6 @@ def _collect_dict(label: str, value_kind: str, *, required: bool) -> dict:
     return out
 
 
-def _collect_sweep_axis(axis: str) -> dict | None:
-    ans = _prompt(f"  Configure {axis}-axis sweep? (y/skip): ").lower()
-    if ans not in ("y", "yes"):
-        return None
-    param = _prompt_required(f"    {axis} param name: ")
-    lo = _parse_number(_prompt_required(f"    {axis} min: "))
-    hi = _parse_number(_prompt_required(f"    {axis} max: "))
-    step = _parse_number(_prompt_required(f"    {axis} step: "))
-    return {"param": param, "range": (float(lo), float(hi), float(step))}
-
-
 def _register_walkthrough() -> None:
     print("\n--- Register a custom model ---")
     print("At any optional step, type 'skip' to omit it.\n")
@@ -269,11 +258,6 @@ def _register_walkthrough() -> None:
         break
     display_name = _prompt_required("Display name (required, human-readable, e.g. 'SSH'): ")
 
-    default_params = _collect_dict(
-        "default_params (optional): numeric defaults for the model's Hamiltonian parameters",
-        "value (number)",
-        required=False,
-    )
     param_labels = _collect_dict(
         "param_labels (required): display labels for each parameter (include sweep params too)",
         "label (string)",
@@ -285,7 +269,7 @@ def _register_walkthrough() -> None:
 
     for field_name, hint in [
         ("hamiltonian_matrix", "(n_sites, **params) -> np.ndarray"),
-        ("fermionic_hamiltonian", "(n_sites, *, **params) -> FermionicOp"),
+        ("interaction_hamiltonian", "(n_sites, *, **params) -> FermionicOp (interaction term added to JW(hamiltonian_matrix))"),
         ("get_optimizer", "(max_iters: int) -> Optimizer"),
         ("mean_field_correction", "(n_sites, n_occ, **params) -> float"),
     ]:
@@ -301,22 +285,11 @@ def _register_walkthrough() -> None:
         callables[field_name] = fn
         source_blocks[field_name] = src
 
-    print("\nsweep_defaults (optional)")
-    sweep_defaults: dict = {}
-    x = _collect_sweep_axis("x")
-    if x:
-        sweep_defaults["x"] = x
-    y = _collect_sweep_axis("y")
-    if y:
-        sweep_defaults["y"] = y
-
     print("\n--- Summary ---")
     print(f"  name:           {name}")
     print(f"  display_name:   {display_name}")
-    print(f"  default_params: {default_params}")
     print(f"  param_labels:   {param_labels}")
     print(f"  callables:      {sorted(callables)}")
-    print(f"  sweep_defaults: {sweep_defaults or '(none)'}")
     confirm = _prompt("\nWrite this model? (y/n): ").lower()
     if confirm not in ("y", "yes"):
         print("aborted; nothing written.")
@@ -326,13 +299,11 @@ def _register_walkthrough() -> None:
         model = Model(
             name=name,
             display_name=display_name,
-            default_params=default_params,
             param_labels=param_labels,
             hamiltonian_matrix=callables.get("hamiltonian_matrix"),
-            fermionic_hamiltonian=callables.get("fermionic_hamiltonian"),
+            interaction_hamiltonian=callables.get("interaction_hamiltonian"),
             get_optimizer=callables.get("get_optimizer"),
             mean_field_correction=callables.get("mean_field_correction"),
-            sweep_defaults=sweep_defaults or None,
         )
         register_model(model, _source_blocks=source_blocks)
     except Exception as e:

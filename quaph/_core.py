@@ -2,8 +2,9 @@ import numpy as np
 
 from qiskit import transpile, QuantumCircuit
 from qiskit.circuit import QuantumRegister, ClassicalRegister
-from qiskit.circuit.library import excitation_preserving, PauliEvolutionGate
+from qiskit.circuit.library import excitation_preserving, efficient_su2, PauliEvolutionGate
 from qiskit.synthesis import SuzukiTrotter
+from qiskit.quantum_info import SparsePauliOp
 from qiskit_ibm_runtime import Session, Estimator
 
 from qiskit_nature.second_q.circuit.library import HartreeFock
@@ -48,22 +49,28 @@ def _fmt_params(n_sites, n_occ, model_params=None, **extra):
     return ", ".join(parts)
 
 
-def resolve_sweep(param: str, range_args, n_sites: int, spin: int = 2):
+def resolve_sweep(param: str, range_args, n_sites: int, spin: int = 2, momentum_axes: tuple[str, ...] = ()):
     if param == "n_occ":
         if range_args is None:
             vals = list(range(spin * n_sites + 1))
         else:
             lo, hi, st = range_args
             vals = list(range(int(lo), int(hi) + 1, max(1, int(st))))
-        return vals, r"$N_{\text{occ}}$", True
-    else:
+        return vals, r"$N_{\text{occ}}$", "n_occ"
+    if param in momentum_axes:
         if range_args is None:
-            raise ValueError(
-                f"A sweep range is required when the sweep parameter is '{param}' (not 'n_occ')."
-            )
-        lo, hi, st = range_args
+            lo, hi, st = -np.pi, np.pi, np.pi / 50
+        else:
+            lo, hi, st = range_args
         vals = list(np.arange(lo, hi + st / 2, st))
-        return vals, param, False
+        return vals, param, "momentum"
+    if range_args is None:
+        raise ValueError(
+            f"A sweep range is required when the sweep parameter is '{param}' (not 'n_occ')."
+        )
+    lo, hi, st = range_args
+    vals = list(np.arange(lo, hi + st / 2, st))
+    return vals, param, "parameter"
 
 
 def EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
@@ -115,6 +122,140 @@ def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCi
     qc.measure(phase_register, c)
 
     return qc
+
+
+def analytic_bands(model, k_tuple, model_params):
+    H = model.bloch_hamiltonian(*k_tuple, **model_params)
+    eigvals = np.sort(np.linalg.eigvalsh(H))
+    logger.info(f"Analytic bands (k={tuple(round(float(x), 3) for x in k_tuple)}, {_fmt_params(0, 0, model_params).split(', ', 2)[-1]}) = {eigvals.tolist()}")
+    return eigvals.tolist()
+
+
+def vqe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, get_optimizer_fn, max_iters, n_layers, rep, backend=None):
+    H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
+    hamiltonian = SparsePauliOp.from_operator(H_matrix)
+
+    if backend:
+        noise_model = NoiseModel.from_backend(backend)
+        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
+    else:
+        simulator = AerSimulator()
+
+    ansatz = efficient_su2(hamiltonian.num_qubits, reps=n_layers)
+    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
+
+    with Session(backend=simulator) as session:
+        estimator = Estimator(mode=session)
+        x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
+
+        cost_history = {"iters": 0, "cost_history": []}
+
+        def cost_func(params):
+            if cost_history["iters"] >= max_iters:
+                return cost_history["cost_history"][-1]
+            pub = (ansatz_circuit, [hamiltonian], [params])
+            result = estimator.run(pubs=[pub]).result()
+            energy = result[0].data.evs[0]
+            cost_history["iters"] += 1
+            cost_history["cost_history"].append(energy)
+            return energy
+
+        optimizer = get_optimizer_fn(max_iters)
+        res = optimizer.minimize(cost_func, x0=x0)
+        logger.debug(f"VQE bloch (k={tuple(round(float(x), 3) for x in k_tuple)}, rep={rep}) = {float(res.fun)}")
+        return float(res.fun)
+
+
+def iqpe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, time_param, n_trot, n_iters, rep, backend=None):
+    np.seterr(all='ignore')
+    H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
+    hamiltonian = SparsePauliOp.from_operator(H_matrix)
+
+    n_qubits = hamiltonian.num_qubits
+    st = SuzukiTrotter(reps=n_trot)
+    evolution = PauliEvolutionGate(hamiltonian, time=time_param, synthesis=st)
+    initial = QuantumCircuit(n_qubits)
+    for q in range(n_qubits):
+        initial.h(q)
+
+    if backend:
+        noise_model = NoiseModel.from_backend(backend)
+        sampler = Sampler(
+            backend_options={
+                "noise_model": noise_model,
+                "basis_gates": noise_model.basis_gates,
+            }
+        )
+    else:
+        sampler = Sampler()
+
+    omega_coef = 0
+    iter_phases = []
+    for k in range(n_iters, 0, -1):
+        omega_coef /= 2
+        qc = construct_iqpe_circuit(evolution, initial, k, -2 * np.pi * omega_coef)
+        sampler_job = sampler.run([qc])
+        result = sampler_job.result().quasi_dists[0]
+        x = 1 if result.get(1, 0) > result.get(0, 0) else 0
+        omega_coef = omega_coef + x / 2
+        iter_phases.append(omega_coef)
+        logger.debug(f"IQPE bloch (k={tuple(round(float(x), 3) for x in k_tuple)}, rep={rep}, iteration={n_iters-k+1}) phase={omega_coef}")
+
+    res = float(-2 * np.pi * omega_coef / time_param)
+    iter_energies = [float(-2 * np.pi * p / time_param) for p in iter_phases]
+    logger.debug(f"IQPE bloch (k={tuple(round(float(x), 3) for x in k_tuple)}, rep={rep}) = {res}")
+    return res, iter_energies
+
+
+def vqe_bloch_other_benchmarks(k_tuple, model_params, bloch_hamiltonian_fn, max_iters, n_layers, vqe_reps=1, backend=None):
+    if backend:
+        noise_model = NoiseModel.from_backend(backend)
+        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
+    else:
+        simulator = AerSimulator()
+
+    H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
+    hamiltonian = SparsePauliOp.from_operator(H_matrix)
+    ansatz = efficient_su2(hamiltonian.num_qubits, reps=n_layers)
+    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
+
+    num_queries = hamiltonian.size * max_iters * vqe_reps
+    full_circuit_depth = ansatz_circuit.depth()
+    two_gate_circuit_depth = ansatz_circuit.depth(lambda x: x.operation.num_qubits == 2)
+
+    logger.info(f"VQE bloch benchmarks (k={tuple(round(float(x), 3) for x in k_tuple)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}]")
+    return num_queries, (full_circuit_depth, two_gate_circuit_depth)
+
+
+def iqpe_bloch_other_benchmarks(k_tuple, model_params, bloch_hamiltonian_fn, time_param, n_trot, n_iters, iqpe_reps, backend=None):
+    np.seterr(all='ignore')
+    if backend:
+        noise_model = NoiseModel.from_backend(backend)
+        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
+    else:
+        simulator = AerSimulator()
+
+    H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
+    hamiltonian = SparsePauliOp.from_operator(H_matrix)
+    n_qubits = hamiltonian.num_qubits
+
+    st = SuzukiTrotter(reps=n_trot)
+    evolution = PauliEvolutionGate(hamiltonian, time=time_param, synthesis=st)
+    initial = QuantumCircuit(n_qubits)
+    for q in range(n_qubits):
+        initial.h(q)
+
+    full_circuit_depth = two_gate_circuit_depth = 0
+    for k in range(n_iters, 0, -1):
+        qc = construct_iqpe_circuit(evolution, initial, k, -2 * np.pi)
+        qc = transpile(qc, backend=simulator, optimization_level=3)
+        full_circuit_depth += qc.depth()
+        two_gate_circuit_depth += qc.depth(lambda x: x.operation.num_qubits == 2)
+
+    num_queries = hamiltonian.size * iqpe_reps * n_trot * n_iters
+
+    logger.info(f"IQPE bloch benchmarks (k={tuple(round(float(x), 3) for x in k_tuple)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth // n_iters},{two_gate_circuit_depth // n_iters}]")
+    return num_queries, (full_circuit_depth // n_iters, two_gate_circuit_depth // n_iters)
 
 
 def analytic(model, n_sites, n_occ, model_params):

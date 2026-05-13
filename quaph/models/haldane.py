@@ -8,6 +8,37 @@ def _get_optimizer(max_iters):
     return SPSA(maxiter=max_iters)
 
 
+_HALDANE_A_VECS = [
+    np.array([0.0, -1.0]),
+    np.array([np.sqrt(3) / 2, 0.5]),
+    np.array([-np.sqrt(3) / 2, 0.5]),
+]
+_HALDANE_B_VECS = [
+    _HALDANE_A_VECS[1] - _HALDANE_A_VECS[2],
+    _HALDANE_A_VECS[2] - _HALDANE_A_VECS[0],
+    _HALDANE_A_VECS[0] - _HALDANE_A_VECS[1],
+]
+
+
+def _bloch_hamiltonian(kx, ky, *, t1, t2, phi, M):
+    k = np.array([kx, ky])
+    sum_cos_a = sum(np.cos(np.dot(k, a)) for a in _HALDANE_A_VECS)
+    sum_sin_a = sum(np.sin(np.dot(k, a)) for a in _HALDANE_A_VECS)
+    sum_cos_b = sum(np.cos(np.dot(k, b)) for b in _HALDANE_B_VECS)
+    sum_sin_b = sum(np.sin(np.dot(k, b)) for b in _HALDANE_B_VECS)
+
+    h0 = 2 * t2 * np.cos(phi) * sum_cos_b
+    hx = t1 * sum_cos_a
+    hy = -t1 * sum_sin_a
+    hz = M + 2 * t2 * np.sin(phi) * sum_sin_b
+
+    return np.array(
+        [[h0 + hz, hx - 1j * hy],
+         [hx + 1j * hy, h0 - hz]],
+        dtype=complex,
+    )
+
+
 def _build_H_matrix(n_sites, t1, t2, phi, M):
     if n_sites % 2:
         raise ValueError(f"Haldane n_sites must be even (honeycomb has 2 atoms/cell); got {n_sites}.")
@@ -63,9 +94,10 @@ def _build_H_matrix(n_sites, t1, t2, phi, M):
 model = Model(
     name="haldane",
     display_name="Haldane",
-    default_params={"t1": 1.0, "phi": np.pi / 4, "M": 0.0},
-    param_labels={"t1": "t_1", "t2": "t_2", "phi": "\\phi", "M": "M"},
+    param_labels={"t1": "t_1", "t2": "t_2", "phi": "\\phi", "M": "M",
+                  "kx": "k_x", "ky": "k_y"},
     hamiltonian_matrix=_build_H_matrix,
+    bloch_hamiltonian=_bloch_hamiltonian,
+    momentum_axes=("kx", "ky"),
     get_optimizer=_get_optimizer,
-    sweep_defaults={"y": {"param": "t2", "range": (0.0, 1.0, 0.1)}},
 )

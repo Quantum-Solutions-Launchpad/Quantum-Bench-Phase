@@ -83,14 +83,9 @@ def _mean_field_correction(n_sites, n_occ, **params):
 model = Model(
     name="haldane-hubbard",
     display_name="Haldane–Hubbard",
-    default_params={"t1": 1.0, "phi": np.pi / 4, "M": 0.0},
     param_labels={"t1": "t_1", "U": "U", "t2": "t_2", "phi": "\\phi", "M": "M"},
     hamiltonian_matrix=_build_H_matrix,
     interaction_hamiltonian=_interaction_hamiltonian,
     get_optimizer=_get_optimizer,
     mean_field_correction=_mean_field_correction,
-    sweep_defaults={
-        "x": {"param": "t2", "range": (0.0, 1.5, 0.1)},
-        "y": {"param": "U", "range": (0.0, 4.0, 0.5)},
-    },
 )

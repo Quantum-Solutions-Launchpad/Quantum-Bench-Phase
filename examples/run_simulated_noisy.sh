@@ -6,7 +6,7 @@ X_PARAM="n_occ"
 Y_PARAM="U"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG="$HERE/logs/${MODEL}/${N_SITES}-sites/simulated-noisy-${X_PARAM}-vs-${Y_PARAM}.json"
+LOG="$HERE/logs/${MODEL}/${N_SITES}-sites/simulated-noisy-3d-${X_PARAM}-vs-${Y_PARAM}.json"
 
 if [ -f "$LOG" ]; then
     echo "Plotting from existing log..."
@@ -17,13 +17,15 @@ else
         --n-sites "$N_SITES" \
         --x-param "$X_PARAM" \
         --y-param "$Y_PARAM" \
-        --vqe-iters 10000 \
-        --vqe-layers 5 \
-        --vqe-reps 10 \
+        --y-range 0.0 4.0 1.0 \
+        --t 1.0 \
+        --vqe-iters 200 \
+        --vqe-layers 2 \
+        --vqe-reps 1 \
         --iqpe-time 0.2 \
-        --iqpe-trot 5 \
-        --iqpe-iters 8 \
-        --iqpe-reps 20 \
+        --iqpe-trot 2 \
+        --iqpe-iters 2 \
+        --iqpe-reps 1 \
         --log-dir "$HERE/logs" \
         --plot-dir "$HERE/plots"
 fi

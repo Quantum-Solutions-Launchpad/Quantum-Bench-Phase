@@ -27,11 +27,11 @@ class Model:
         param_labels: dict[str, str],
         *,
         hamiltonian_matrix: Callable,
-        default_params: dict[str, float] | None = None,
         interaction_hamiltonian: Callable | None = None,
         get_optimizer: Callable | None = None,
         mean_field_correction: Callable | None = None,
-        sweep_defaults: dict | None = None,
+        bloch_hamiltonian: Callable | None = None,
+        momentum_axes: tuple[str, ...] = (),
     ):
         if hamiltonian_matrix is None:
             raise ValueError(
@@ -39,14 +39,14 @@ class Model:
             )
         self.name = name
         self.display_name = display_name
-        self.default_params = default_params or {}
         self.param_labels = param_labels
-        self.sweep_defaults = sweep_defaults or {}
+        self.momentum_axes = tuple(momentum_axes)
 
         self._hamiltonian_matrix_fn = hamiltonian_matrix
         self._interaction_hamiltonian_fn = interaction_hamiltonian
         self._get_optimizer_fn = get_optimizer
         self._mean_field_correction_fn = mean_field_correction
+        self._bloch_hamiltonian_fn = bloch_hamiltonian
 
     @property
     def _build_H_matrix(self):
@@ -74,6 +74,19 @@ class Model:
         return self._mean_field_correction_fn
 
     @property
+    def bloch_hamiltonian(self):
+        if self._bloch_hamiltonian_fn is None:
+            raise ModelCapabilityError(
+                f"Model '{self.name}' does not implement bloch_hamiltonian; "
+                f"momentum-space (band structure) runs are not supported."
+            )
+        return self._bloch_hamiltonian_fn
+
+    @property
+    def supports_band_structure(self) -> bool:
+        return self._bloch_hamiltonian_fn is not None
+
+    @property
     def NAME(self):
         return self.name
 
@@ -82,19 +95,13 @@ class Model:
         return self.display_name
 
     @property
-    def DEFAULT_PARAMS(self):
-        return self.default_params
-
-    @property
     def PARAM_LABELS(self):
         return self.param_labels
-
-    @property
-    def SWEEP_DEFAULTS(self):
-        return self.sweep_defaults
 
     def __repr__(self):
         caps = ["analytic", "simulation"]
         if self._interaction_hamiltonian_fn is not None:
             caps.append("interacting")
+        if self._bloch_hamiltonian_fn is not None:
+            caps.append("band-structure")
         return f"Model(name={self.name!r}, capabilities={caps})"

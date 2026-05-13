@@ -7,44 +7,43 @@ from quaph._registry import get_model, remove_model
 from quaph._run import run_analytic, run_simulated_ideal, run_simulated_noisy
 
 
-def _sweep_param_names(model) -> set[str]:
-    names = set()
-    for ax_def in model.sweep_defaults.values():
-        p = ax_def.get("param")
-        if p and p != "n_occ" and p not in model.default_params:
-            names.add(p)
-    return names
+def _model_param_names(model) -> list[str]:
+    return [p for p in model.param_labels if p != "n_occ"]
 
 
 def _add_model_params(parser, model):
-    for name, val in model.default_params.items():
-        parser.add_argument(f"--{name}", type=type(val), default=val,
-                            metavar=name.upper())
-    for name in sorted(_sweep_param_names(model)):
-        parser.add_argument(f"--{name}", type=float, default=None,
-                            metavar=name.upper(),
-                            help=f"Fix {name} to a value (only valid when {name} is not the active sweep axis)")
+    for name in _model_param_names(model):
+        parser.add_argument(
+            f"--{name}", type=float, default=None, metavar=name.upper(),
+            help=f"Value for model parameter {name} (required unless it is the active sweep axis)",
+        )
 
 
-def _resolve_sweep_axes(args, model) -> tuple[str, str]:
-    """Return (x_param, y_param) as the library will resolve them."""
-    sd = model.sweep_defaults
-    x_param = args.x_param or sd.get("x", {"param": "n_occ"}).get("param", "n_occ")
-    y_param = args.y_param or sd.get("y", {"param": "n_occ"}).get("param", "n_occ")
-    return x_param, y_param
+def _resolve_sweep_axes(args) -> tuple[str | None, str | None]:
+    return args.x_param, args.y_param
 
 
-def _collect_model_params(args, model, x_param: str, y_param: str) -> dict:
-    params = {k: getattr(args, k) for k in model.default_params if k not in (x_param, y_param)}
-    for name in _sweep_param_names(model):
+def _collect_model_params(args, model, x_param, y_param) -> dict:
+    params: dict = {}
+    missing: list[str] = []
+    for name in _model_param_names(model):
         val = getattr(args, name, None)
-        if val is not None:
-            if name == x_param or name == y_param:
+        if name == x_param or name == y_param:
+            if val is not None:
                 raise ValueError(
                     f"--{name} cannot be used as a fixed value while '{name}' is the active "
                     f"sweep axis. Override the sweep with --x-param/--y-param first."
                 )
+            continue
+        if val is None:
+            missing.append(name)
+        else:
             params[name] = val
+    if missing:
+        raise ValueError(
+            f"Missing required model parameters for '{model.name}': "
+            f"{', '.join('--' + m for m in missing)}."
+        )
     return params
 
 
@@ -83,13 +82,13 @@ def _add_sim_optional(parser):
 
 
 def _dispatch_analytic(args, model):
-    x_param, y_param = _resolve_sweep_axes(args, model)
+    x_param, y_param = _resolve_sweep_axes(args)
     run_analytic(
         model,
         n_sites=args.n_sites,
-        x_param=args.x_param,
+        x_param=x_param,
         x_range=args.x_range,
-        y_param=args.y_param,
+        y_param=y_param,
         y_range=args.y_range,
         n_occ=args.n_occ,
         model_params=_collect_model_params(args, model, x_param, y_param),
@@ -101,13 +100,13 @@ def _dispatch_analytic(args, model):
 
 
 def _dispatch_simulated_ideal(args, model):
-    x_param, y_param = _resolve_sweep_axes(args, model)
+    x_param, y_param = _resolve_sweep_axes(args)
     run_simulated_ideal(
         model,
         n_sites=args.n_sites,
-        x_param=args.x_param,
+        x_param=x_param,
         x_range=args.x_range,
-        y_param=args.y_param,
+        y_param=y_param,
         y_range=args.y_range,
         n_occ=args.n_occ,
         model_params=_collect_model_params(args, model, x_param, y_param),
@@ -126,13 +125,13 @@ def _dispatch_simulated_ideal(args, model):
 
 
 def _dispatch_simulated_noisy(args, model):
-    x_param, y_param = _resolve_sweep_axes(args, model)
+    x_param, y_param = _resolve_sweep_axes(args)
     run_simulated_noisy(
         model,
         n_sites=args.n_sites,
-        x_param=args.x_param,
+        x_param=x_param,
         x_range=args.x_range,
-        y_param=args.y_param,
+        y_param=y_param,
         y_range=args.y_range,
         n_occ=args.n_occ,
         model_params=_collect_model_params(args, model, x_param, y_param),
@@ -190,8 +189,6 @@ def main(argv=None):
     plot_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
     plot_parser.add_argument("--output", default=None, metavar="PATH", help="Output PDF path")
     plot_parser.add_argument("--hide-legend", action="store_true", default=False)
-    plot_parser.add_argument("--heatmap", action="store_true", default=False,
-                             help="Render analytic results as a 2D heatmap (analytic only)")
 
     run_parser = sub.add_parser("run")
     run_sub = run_parser.add_subparsers(dest="subcommand", required=True)
@@ -208,7 +205,7 @@ def main(argv=None):
         _add_output_args(p)
 
     analytic_parser.add_argument("--heatmap", action="store_true", default=False,
-                                 help="Render results as a 2D heatmap instead of a 3D surface")
+                                 help="Render results as a 2D heatmap (requires both x and y sweep axes)")
 
     for p in (sim_ideal_parser, sim_noisy_parser):
         _add_sim_required(p)
@@ -230,16 +227,14 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     if args.command == "plot":
-        from quaph._run import load_result, SimulatedResult
+        from quaph._run import load_result
         try:
             result = load_result(args.path)
         except Exception as e:
             parser.error(str(e))
         kwargs = dict(hide_plot=args.hide_plot, output_path=args.output)
-        if isinstance(result, SimulatedResult):
+        if hasattr(result, "vqe_best_energies"):
             kwargs["hide_legend"] = args.hide_legend
-        else:
-            kwargs["heatmap"] = args.heatmap
         result.plot(**kwargs)
         return
 

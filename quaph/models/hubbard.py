@@ -67,11 +67,9 @@ def _mean_field_correction(n_sites, n_occ, **params):
 model = Model(
     name="hubbard",
     display_name="Hubbard",
-    default_params={"t": 1.0},
     param_labels={"t": "t", "U": "U"},
     hamiltonian_matrix=_build_H_matrix,
     interaction_hamiltonian=_interaction_hamiltonian,
     get_optimizer=_get_optimizer,
     mean_field_correction=_mean_field_correction,
-    sweep_defaults={"y": {"param": "U", "range": (0.0, 4.0, 0.5)}},
 )
