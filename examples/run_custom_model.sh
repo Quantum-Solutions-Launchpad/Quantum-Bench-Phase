@@ -19,6 +19,8 @@ if ! printf 'list\nexit\n' | quaph 2>/dev/null | grep -qE "^[[:space:]]+${MODEL}
 register
 ssh
 SSH
+1
+1
 t1
 t_1
 t2
@@ -26,30 +28,22 @@ t_2
 
 import numpy as np
 def hamiltonian_matrix(n_sites, t1, t2):
-    spin = 2
-    H = np.zeros((n_sites * spin, n_sites * spin), dtype=complex)
+    H = np.zeros((n_sites, n_sites), dtype=complex)
     for i in range(n_sites - 1):
         t = t1 if i % 2 == 0 else t2
-        for s in range(spin):
-            s1 = i * spin + s
-            s2 = (i + 1) * spin + s
-            H[s1, s2] -= t
-            H[s2, s1] -= t
+        H[i, i + 1] -= t
+        H[i + 1, i] -= t
     return H
 END
 from qiskit_nature.second_q.operators import FermionicOp
 def fermionic_hamiltonian(n_sites, *, t1, t2):
-    spin = 2
     hamiltonian = 0.0 * FermionicOp({})
     for i in range(n_sites - 1):
         t = t1 if i % 2 == 0 else t2
-        for s in range(spin):
-            s1 = i * spin + s
-            s2 = (i + 1) * spin + s
-            hamiltonian -= FermionicOp({
-                f"+_{s1} -_{s2}": t,
-                f"+_{s2} -_{s1}": t,
-            })
+        hamiltonian -= FermionicOp({
+            f"+_{i} -_{i + 1}": t,
+            f"+_{i + 1} -_{i}": t,
+        })
     return hamiltonian
 END
 from qiskit_algorithms.optimizers import SPSA

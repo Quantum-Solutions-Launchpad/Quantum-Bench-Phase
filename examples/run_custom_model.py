@@ -21,15 +21,11 @@ def _ssh_optimizer(max_iters):
 
 
 def _ssh_H_matrix(n_sites, t1, t2):
-    spin = 2
-    H = np.zeros((n_sites * spin, n_sites * spin), dtype=complex)
+    H = np.zeros((n_sites, n_sites), dtype=complex)
     for i in range(n_sites - 1):
         t = t1 if i % 2 == 0 else t2
-        for s in range(spin):
-            s1 = i * spin + s
-            s2 = (i + 1) * spin + s
-            H[s1, s2] -= t
-            H[s2, s1] -= t
+        H[i, i + 1] -= t
+        H[i + 1, i] -= t
     return H
 
 
@@ -37,6 +33,8 @@ ssh_model = Model(
     name="ssh",
     display_name="SSH",
     param_labels={"t1": "t_1", "t2": "t_2"},
+    spin=1,
+    n_dims=1,
     hamiltonian_matrix=_ssh_H_matrix,
     get_optimizer=_ssh_optimizer,
 )

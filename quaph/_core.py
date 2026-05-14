@@ -49,7 +49,7 @@ def _fmt_params(n_sites, n_occ, model_params=None, **extra):
     return ", ".join(parts)
 
 
-def resolve_sweep(param: str, range_args, n_sites: int, spin: int = 2, momentum_axes: tuple[str, ...] = ()):
+def resolve_sweep(param: str, range_args, n_sites: int, spin: int, momentum_axes: tuple[str, ...] = ()):
     if param == "n_occ":
         if range_args is None:
             vals = list(range(spin * n_sites + 1))
@@ -73,13 +73,22 @@ def resolve_sweep(param: str, range_args, n_sites: int, spin: int = 2, momentum_
     return vals, param, "parameter"
 
 
-def EP_ansatz(n_sites: int, n_layers: int, n_occ: int):
-    spin = 2
-    ansatz = QuantumCircuit(n_sites * spin)
+def EP_ansatz(n_sites: int, spin: int, n_layers: int, n_occ: int):
+    n_qubits = n_sites * spin
+    ansatz = QuantumCircuit(n_qubits)
     for i in range(n_occ):
         ansatz.x(i)
-    ansatz.compose(excitation_preserving(n_sites * spin, "fsim", "linear", reps=n_layers), inplace=True)
+    ansatz.compose(excitation_preserving(n_qubits, "fsim", "linear", reps=n_layers), inplace=True)
     return ansatz
+
+
+def _hf_initial_state(n_sites: int, spin: int, n_occ: int, mapper):
+    if spin == 2:
+        return HartreeFock(n_sites, (n_occ // 2 + n_occ % 2, n_occ // 2), mapper)
+    qc = QuantumCircuit(n_sites)
+    for i in range(n_occ):
+        qc.x(i)
+    return qc
 
 
 def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, n_sites: int, n_occ: int, rep: int, model_params: dict | None = None):
@@ -271,7 +280,7 @@ def analytic(model, n_sites, n_occ, model_params):
     return result
 
 
-def vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, mapper, max_iters, n_layers, rep, backend=None):
+def vqe(n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, mapper, max_iters, n_layers, rep, backend=None):
     fermionic_hamiltonian = fermionic_hamiltonian_fn(n_sites, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
@@ -281,7 +290,7 @@ def vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn
     else:
         simulator = AerSimulator()
 
-    ansatz = EP_ansatz(n_sites, n_layers, n_occ)
+    ansatz = EP_ansatz(n_sites, spin, n_layers, n_occ)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
     with Session(backend=simulator) as session:
@@ -315,7 +324,7 @@ def vqe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn
         return float(res.fun)
 
 
-def iqpe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep, backend=None):
+def iqpe(n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep, backend=None):
     np.seterr(all='ignore')
 
     fermionic_hamiltonian = fermionic_hamiltonian_fn(n_sites, **model_params)
@@ -323,7 +332,7 @@ def iqpe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_pa
 
     st = SuzukiTrotter(reps=n_trot)
     evolution = PauliEvolutionGate(qubit_hamiltonian, time=time_param, synthesis=st)
-    initial = HartreeFock(n_sites, (n_occ // 2 + n_occ % 2, n_occ // 2), mapper)
+    initial = _hf_initial_state(n_sites, spin, n_occ, mapper)
 
     if backend:
         noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
@@ -344,14 +353,14 @@ def iqpe(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_pa
     return res, iteration_energies
 
 
-def vqe_other_benchmarks(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
+def vqe_other_benchmarks(n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
     if backend:
         noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
         simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
     else:
         simulator = AerSimulator()
 
-    ansatz = EP_ansatz(n_sites, n_layers, n_occ)
+    ansatz = EP_ansatz(n_sites, spin, n_layers, n_occ)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
     fermionic_hamiltonian = fermionic_hamiltonian_fn(n_sites, **model_params)
@@ -365,7 +374,7 @@ def vqe_other_benchmarks(n_sites, n_occ, model_params, fermionic_hamiltonian_fn,
     return num_queries, (full_circuit_depth, two_gate_circuit_depth)
 
 
-def iqpe_other_benchmarks(n_sites, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, iqpe_reps, backend=None):
+def iqpe_other_benchmarks(n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, iqpe_reps, backend=None):
     np.seterr(all='ignore')
     if backend:
         noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
@@ -378,7 +387,7 @@ def iqpe_other_benchmarks(n_sites, n_occ, model_params, fermionic_hamiltonian_fn
 
     st = SuzukiTrotter(reps=n_trot)
     evolution = PauliEvolutionGate(qubit_hamiltonian, time=time_param, synthesis=st)
-    initial = HartreeFock(n_sites, (n_occ // 2 + n_occ % 2, n_occ // 2), mapper)
+    initial = _hf_initial_state(n_sites, spin, n_occ, mapper)
 
     full_circuit_depth = two_gate_circuit_depth = 0
     for k in range(n_iters, 0, -1):

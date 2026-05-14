@@ -63,8 +63,14 @@ def _file_tag(run_type: str, plot_format: str, x_param: str, y_param: str | None
 
 
 def _gate_momentum(model, x_param, y_param):
+    all_momentum_names = {"k", "kx", "ky", "kz"}
     for axis in (x_param, y_param):
-        if axis in {"kx", "ky", "kz"} and axis not in model.momentum_axes:
+        if axis in all_momentum_names and axis not in model.momentum_axes:
+            raise ModelCapabilityError(
+                f"Model '{model.name}' (n_dims={model.n_dims}) does not have momentum axis '{axis}'; "
+                f"available momentum axes are {model.momentum_axes}."
+            )
+        if axis in all_momentum_names and not model.supports_band_structure:
             raise ModelCapabilityError(
                 f"Model '{model.name}' does not implement bloch_hamiltonian; "
                 f"momentum-space (band structure) runs along '{axis}' are not supported."
@@ -241,7 +247,7 @@ def run_analytic(
 
     params = dict(model_params or {})
     fixed_n_occ = n_occ if n_occ is not None else n_sites
-    spin = 2
+    spin = model.spin
     momentum_axes = model.momentum_axes
 
     x_vals, _x_label_default, x_kind = resolve_sweep(x_param, x_range, n_sites, spin, momentum_axes)
@@ -406,7 +412,7 @@ def _run_simulated(
     do_vqe = vqe_reps > 0
     do_iqpe = iqpe_reps > 0
 
-    spin = 2
+    spin = model.spin
     mapper = JordanWignerMapper()
     fixed_n_occ = n_occ if n_occ is not None else n_sites
     momentum_axes = model.momentum_axes
@@ -504,13 +510,13 @@ def _run_simulated(
                 for rep in range(1, iqpe_reps + 1):
                     jobs.append(delayed(tagged_job)(
                         ("iqpe", ix, iy, rep), iqpe,
-                        n_sites, n_occ_val, cp, model.fermionic_hamiltonian,
+                        n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
                         mapper, iqpe_time, iqpe_trot, iqpe_iters, rep,
                         backend=backend
                     ))
                 jobs.append(delayed(tagged_job)(
                     ("iqpe_bench", ix, iy), iqpe_other_benchmarks,
-                    n_sites, n_occ_val, cp, model.fermionic_hamiltonian,
+                    n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
                     mapper, iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps,
                     backend=backend
                 ))
@@ -518,13 +524,13 @@ def _run_simulated(
                 for rep in range(1, vqe_reps + 1):
                     jobs.append(delayed(tagged_job)(
                         ("vqe", ix, iy, rep), vqe,
-                        n_sites, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
+                        n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
                         mapper, vqe_iters, vqe_layers, rep,
                         backend=backend
                     ))
                 jobs.append(delayed(tagged_job)(
                     ("vqe_bench", ix, iy), vqe_other_benchmarks,
-                    n_sites, n_occ_val, cp, model.fermionic_hamiltonian,
+                    n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
                     mapper, vqe_iters, vqe_layers, vqe_reps,
                     backend=backend
                 ))

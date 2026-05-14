@@ -258,6 +258,24 @@ def _register_walkthrough() -> None:
         break
     display_name = _prompt_required("Display name (required, human-readable, e.g. 'SSH'): ")
 
+    while True:
+        try:
+            spin = int(_prompt_required("spin (required, 1 = spinless, 2 = with spin): "))
+            if spin in (1, 2):
+                break
+        except ValueError:
+            pass
+        print("  (spin must be 1 or 2)")
+
+    while True:
+        try:
+            n_dims = int(_prompt_required("n_dims (required, lattice spatial dimensionality 1/2/3): "))
+            if n_dims in (1, 2, 3):
+                break
+        except ValueError:
+            pass
+        print("  (n_dims must be 1, 2, or 3)")
+
     param_labels = _collect_dict(
         "param_labels (required): display labels for each parameter (include sweep params too)",
         "label (string)",
@@ -288,6 +306,8 @@ def _register_walkthrough() -> None:
     print("\n--- Summary ---")
     print(f"  name:           {name}")
     print(f"  display_name:   {display_name}")
+    print(f"  spin:           {spin}")
+    print(f"  n_dims:         {n_dims}")
     print(f"  param_labels:   {param_labels}")
     print(f"  callables:      {sorted(callables)}")
     confirm = _prompt("\nWrite this model? (y/n): ").lower()
@@ -300,6 +320,8 @@ def _register_walkthrough() -> None:
             name=name,
             display_name=display_name,
             param_labels=param_labels,
+            spin=spin,
+            n_dims=n_dims,
             hamiltonian_matrix=callables.get("hamiltonian_matrix"),
             interaction_hamiltonian=callables.get("interaction_hamiltonian"),
             get_optimizer=callables.get("get_optimizer"),

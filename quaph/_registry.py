@@ -127,10 +127,15 @@ def _write_model_file(path: Path, model: Model, source_blocks: dict[str, str]) -
                 )
             callable_var_names[field_name] = name
 
+    momentum_axes_set = set(model.momentum_axes)
+    persisted_labels = {k: v for k, v in model.param_labels.items() if k not in momentum_axes_set}
+
     lines.append("model = Model(")
     lines.append(f"    name={model.name!r},")
     lines.append(f"    display_name={model.display_name!r},")
-    lines.append(f"    param_labels={model.param_labels!r},")
+    lines.append(f"    param_labels={persisted_labels!r},")
+    lines.append(f"    spin={model.spin!r},")
+    lines.append(f"    n_dims={model.n_dims!r},")
     for field_name, _ in _CALLABLE_FIELDS:
         if field_name in callable_var_names:
             lines.append(f"    {field_name}={callable_var_names[field_name]},")

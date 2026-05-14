@@ -56,16 +56,14 @@ def _build_H_matrix(n_sites, t1, t2, phi, M):
             f"size that samples the K-point and shows real Haldane phase structure)."
         )
 
-    spin = 2
-    H = np.zeros((n_sites * spin, n_sites * spin), dtype=complex)
+    H = np.zeros((n_sites, n_sites), dtype=complex)
 
     def A(i, j): return 2 * (i * Ly + j)
     def B(i, j): return 2 * (i * Ly + j) + 1
 
     for site in range(n_sites):
         sub = +1 if site % 2 == 0 else -1
-        for s in range(spin):
-            H[site * spin + s, site * spin + s] += sub * M
+        H[site, site] += sub * M
 
     for i in range(Lx):
         for j in range(Ly):
@@ -73,31 +71,25 @@ def _build_H_matrix(n_sites, t1, t2, phi, M):
             jp, jm = (j + 1) % Ly, (j - 1) % Ly
             a = A(i, j)
             for b in {B(i, j), B(im, j), B(i, jm)}:
-                for s in range(spin):
-                    s1, s2 = a * spin + s, b * spin + s
-                    H[s1, s2] += -t1
-                    H[s2, s1] += -t1
+                H[a, b] += -t1
+                H[b, a] += -t1
             for tgt in (A(ip, j), A(im, jp), A(i, jm)):
-                for s in range(spin):
-                    s1, s2 = a * spin + s, tgt * spin + s
-                    H[s1, s2] += -t2 * np.exp(+1j * phi)
-                    H[s2, s1] += -t2 * np.exp(-1j * phi)
+                H[a, tgt] += -t2 * np.exp(+1j * phi)
+                H[tgt, a] += -t2 * np.exp(-1j * phi)
             b0 = B(i, j)
             for tgt in (B(im, j), B(ip, jm), B(i, jp)):
-                for s in range(spin):
-                    s1, s2 = b0 * spin + s, tgt * spin + s
-                    H[s1, s2] += -t2 * np.exp(-1j * phi)
-                    H[s2, s1] += -t2 * np.exp(+1j * phi)
+                H[b0, tgt] += -t2 * np.exp(-1j * phi)
+                H[tgt, b0] += -t2 * np.exp(+1j * phi)
     return H
 
 
 model = Model(
     name="haldane",
     display_name="Haldane",
-    param_labels={"t1": "t_1", "t2": "t_2", "phi": "\\phi", "M": "M",
-                  "kx": "k_x", "ky": "k_y"},
+    param_labels={"t1": "t_1", "t2": "t_2", "phi": "\\phi", "M": "M"},
+    spin=1,
+    n_dims=2,
     hamiltonian_matrix=_build_H_matrix,
     bloch_hamiltonian=_bloch_hamiltonian,
-    momentum_axes=("kx", "ky"),
     get_optimizer=_get_optimizer,
 )

@@ -26,21 +26,37 @@ class Model:
         display_name: str,
         param_labels: dict[str, str],
         *,
+        spin: int,
+        n_dims: int,
         hamiltonian_matrix: Callable,
         interaction_hamiltonian: Callable | None = None,
         get_optimizer: Callable | None = None,
         mean_field_correction: Callable | None = None,
         bloch_hamiltonian: Callable | None = None,
-        momentum_axes: tuple[str, ...] = (),
     ):
         if hamiltonian_matrix is None:
             raise ValueError(
                 f"Model '{name}' requires hamiltonian_matrix."
             )
+        if spin not in (1, 2):
+            raise ValueError(
+                f"Model '{name}' has invalid spin={spin}; must be 1 (spinless) or 2 (with spin)."
+            )
+        momentum_axes_by_dims = {1: ("k",), 2: ("kx", "ky"), 3: ("kx", "ky", "kz")}
+        if n_dims not in momentum_axes_by_dims:
+            raise ValueError(
+                f"Model '{name}' has invalid n_dims={n_dims}; must be 1, 2, or 3."
+            )
         self.name = name
         self.display_name = display_name
-        self.param_labels = param_labels
-        self.momentum_axes = tuple(momentum_axes)
+        self.spin = spin
+        self.n_dims = n_dims
+        self.momentum_axes = momentum_axes_by_dims[n_dims]
+
+        momentum_labels = {"k": "k", "kx": "k_x", "ky": "k_y", "kz": "k_z"}
+        merged_labels = {a: momentum_labels[a] for a in self.momentum_axes}
+        merged_labels.update(param_labels)
+        self.param_labels = merged_labels
 
         self._hamiltonian_matrix_fn = hamiltonian_matrix
         self._interaction_hamiltonian_fn = interaction_hamiltonian
