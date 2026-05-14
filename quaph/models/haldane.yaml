@@ -1,0 +1,68 @@
+name: haldane
+display_name: Haldane
+spin: 1
+n_dims: 2
+lattice_shape: [Lx, Ly]
+sites_per_cell: 2
+sublattices: [A, B]
+parameters:
+  t1: {label: "t_1"}
+  t2: {label: "t_2"}
+  phi: {label: "\\phi"}
+  M:   {label: "M"}
+
+terms:
+  - kind: onsite
+    sublattice: A
+    coefficient: "+M"
+  - kind: onsite
+    sublattice: B
+    coefficient: "-M"
+
+  # NN A→B at offsets (0,0), (-1,0), (0,-1); add hermitian partner.
+  - kind: hopping
+    from: A
+    to: B
+    offsets: [[0, 0], [-1, 0], [0, -1]]
+    coefficient: "-t1"
+    hermitian_partner: true
+
+  # NNN A→A with phase +phi at offsets (+1,0), (-1,+1), (0,-1).
+  - kind: hopping
+    from: A
+    to: A
+    offsets: [[1, 0], [-1, 1], [0, -1]]
+    coefficient: "-t2 * exp(1j*phi)"
+    hermitian_partner: true
+
+  # NNN B→B with phase -phi at offsets (-1,0), (+1,-1), (0,+1).
+  - kind: hopping
+    from: B
+    to: B
+    offsets: [[-1, 0], [1, -1], [0, 1]]
+    coefficient: "-t2 * exp(-1j*phi)"
+    hermitian_partner: true
+
+optimizer:
+  type: SPSA
+  kwargs:
+    maxiter: "@max_iters"
+
+bloch_hamiltonian:
+  shape: [2, 2]
+  let:
+    a_vecs: [[0, -1], [0.86602540378443864676, 0.5], [-0.86602540378443864676, 0.5]]
+    b_vecs: [[1.7320508075688772935, 0], [-0.86602540378443864676, 1.5], [-0.86602540378443864676, -1.5]]
+    sum_cos_a: "sum([cos(kx*a[0] + ky*a[1]) for a in a_vecs])"
+    sum_sin_a: "sum([sin(kx*a[0] + ky*a[1]) for a in a_vecs])"
+    sum_cos_b: "sum([cos(kx*b[0] + ky*b[1]) for b in b_vecs])"
+    sum_sin_b: "sum([sin(kx*b[0] + ky*b[1]) for b in b_vecs])"
+    h0: "2 * t2 * cos(phi) * sum_cos_b"
+    hx: "t1 * sum_cos_a"
+    hy: "-t1 * sum_sin_a"
+    hz: "M + 2 * t2 * sin(phi) * sum_sin_b"
+  entries:
+    "0,0": "h0 + hz"
+    "0,1": "hx - 1j*hy"
+    "1,0": "hx + 1j*hy"
+    "1,1": "h0 - hz"

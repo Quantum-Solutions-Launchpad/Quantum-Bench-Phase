@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MODEL="ssh"
-LATTICE=(4)
+LATTICE=(2)
 X_PARAM="n_occ"
 Y_PARAM="t2"
 
@@ -22,42 +22,36 @@ ssh
 SSH
 1
 1
-L
-1
+Lcells
+2
+A,B
 t1
 t_1
 t2
 t_2
 
-import numpy as np
-def hamiltonian_matrix(lattice, t1, t2):
-    L, = lattice
-    H = np.zeros((L, L), dtype=complex)
-    for i in range(L - 1):
-        t = t1 if i % 2 == 0 else t2
-        H[i, i + 1] -= t
-        H[i + 1, i] -= t
-    return H
-END
-from qiskit_nature.second_q.operators import FermionicOp
-def fermionic_hamiltonian(lattice, *, t1, t2):
-    L, = lattice
-    hamiltonian = 0.0 * FermionicOp({})
-    for i in range(L - 1):
-        t = t1 if i % 2 == 0 else t2
-        hamiltonian -= FermionicOp({
-            f"+_{i} -_{i + 1}": t,
-            f"+_{i + 1} -_{i}": t,
-        })
-    return hamiltonian
-END
-from qiskit_algorithms.optimizers import SPSA
-def get_optimizer(max_iters):
-    return SPSA(maxiter=max_iters)
-END
-skip
-skip
-y
+hopping
+A
+B
+0
+
+-t1
+
+hopping
+B
+A
+1
+
+-t2
+
+done
+
+
+SPSA
+maxiter
+@max_iters
+
+
 exit
 QUAPH
 fi

@@ -1,0 +1,401 @@
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Annotated, Any, Literal, Union
+
+import numpy as np
+import yaml
+from asteval import Interpreter
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+from quaph._model import Model
+
+
+_QISKIT_OPTIMIZERS = (
+    "SPSA", "COBYLA", "L_BFGS_B", "NELDER_MEAD", "POWELL", "SLSQP",
+    "NFT", "ADAM", "GradientDescent", "QNSPSA", "AQGD", "CG", "P_BFGS",
+)
+
+
+def _make_evaluator(extra_names: dict | None = None) -> Interpreter:
+    aeval = Interpreter(use_numpy=True, minimal=False)
+    for unsafe in (
+        "open", "exec", "eval", "compile", "__import__", "globals", "locals",
+        "getattr", "setattr", "delattr", "input", "exit", "quit",
+        "print", "help",
+    ):
+        aeval.symtable.pop(unsafe, None)
+    if extra_names:
+        aeval.symtable.update(extra_names)
+    return aeval
+
+
+def _eval_expr(expr: str, names: dict) -> complex:
+    aeval = _make_evaluator(names)
+    val = aeval(expr, show_errors=False)
+    if aeval.error:
+        msg = "; ".join(e.get_error()[1] for e in aeval.error)
+        raise ValueError(f"failed to evaluate expression {expr!r}: {msg}")
+    return val
+
+
+class ParameterSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    label: str
+
+
+class OnsiteTerm(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    kind: Literal["onsite"]
+    sublattice: str
+    coefficient: str
+    spin_channels: list[Literal["up", "down"]] | None = None
+
+
+class HoppingTerm(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    kind: Literal["hopping"]
+    from_: str = Field(alias="from")
+    to: str
+    offsets: list[list[int]]
+    coefficient: str
+    hermitian_partner: bool = False
+    spin_channels: list[Literal["up", "down"]] | None = None
+
+
+class DensityDensityOnsiteTerm(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    kind: Literal["density_density_onsite"]
+    coefficient: str
+
+
+class DensityDensityBondTerm(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    kind: Literal["density_density_bond"]
+    from_: str = Field(alias="from")
+    to: str
+    offsets: list[list[int]]
+    coefficient: str
+
+
+class OptimizerSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: str
+    kwargs: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("type")
+    @classmethod
+    def _check_type(cls, v: str) -> str:
+        if v not in _QISKIT_OPTIMIZERS:
+            raise ValueError(
+                f"unknown optimizer '{v}'; supported: {', '.join(_QISKIT_OPTIMIZERS)}"
+            )
+        return v
+
+
+class BlochSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    shape: list[int]
+    let: dict[str, Any] = Field(default_factory=dict)
+    entries: dict[str, str]
+
+
+HamiltonianTerm = Annotated[Union[OnsiteTerm, HoppingTerm], Field(discriminator="kind")]
+InteractionTerm = Annotated[
+    Union[DensityDensityOnsiteTerm, DensityDensityBondTerm],
+    Field(discriminator="kind"),
+]
+
+
+class YamlModelSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    name: str
+    display_name: str
+    spin: Literal[1, 2]
+    n_dims: Literal[1, 2, 3]
+    lattice_shape: list[str]
+    sites_per_cell: int = Field(ge=1)
+    sublattices: list[str]
+    parameters: dict[str, ParameterSpec]
+    terms: list[HamiltonianTerm] = Field(default_factory=list)
+    interaction: list[InteractionTerm] = Field(default_factory=list)
+    mean_field_correction: str | None = None
+    optimizer: OptimizerSpec | None = None
+    bloch_hamiltonian: BlochSpec | None = None
+
+    @model_validator(mode="after")
+    def _check_consistency(self) -> "YamlModelSpec":
+        if len(self.lattice_shape) != self.n_dims:
+            raise ValueError(
+                f"lattice_shape has {len(self.lattice_shape)} entries but n_dims={self.n_dims}"
+            )
+        if len(self.sublattices) != self.sites_per_cell:
+            raise ValueError(
+                f"sublattices has {len(self.sublattices)} entries but sites_per_cell={self.sites_per_cell}"
+            )
+        known_sub = set(self.sublattices)
+        for t in self.terms:
+            if isinstance(t, OnsiteTerm):
+                if t.sublattice not in known_sub:
+                    raise ValueError(f"onsite term references unknown sublattice '{t.sublattice}'")
+            elif isinstance(t, HoppingTerm):
+                if t.from_ not in known_sub:
+                    raise ValueError(f"hopping term 'from' references unknown sublattice '{t.from_}'")
+                if t.to not in known_sub:
+                    raise ValueError(f"hopping term 'to' references unknown sublattice '{t.to}'")
+                for off in t.offsets:
+                    if len(off) != self.n_dims:
+                        raise ValueError(
+                            f"hopping offset {off} has length {len(off)} but n_dims={self.n_dims}"
+                        )
+                if t.spin_channels is not None and self.spin != 2:
+                    raise ValueError("spin_channels requires spin=2")
+            if t.spin_channels is not None and self.spin != 2:
+                raise ValueError(f"{t.kind} term has spin_channels but model spin={self.spin}")
+        for t in self.interaction:
+            if isinstance(t, DensityDensityOnsiteTerm) and self.spin != 2:
+                raise ValueError("density_density_onsite requires spin=2")
+            if isinstance(t, DensityDensityBondTerm):
+                if t.from_ not in known_sub:
+                    raise ValueError(f"density_density_bond 'from' references unknown sublattice '{t.from_}'")
+                if t.to not in known_sub:
+                    raise ValueError(f"density_density_bond 'to' references unknown sublattice '{t.to}'")
+        if self.bloch_hamiltonian is not None:
+            n = self.sites_per_cell
+            if self.bloch_hamiltonian.shape != [n, n]:
+                raise ValueError(
+                    f"bloch_hamiltonian.shape must be [{n}, {n}] (= sites_per_cell × sites_per_cell)"
+                )
+            for k in self.bloch_hamiltonian.entries:
+                parts = [p.strip() for p in k.split(",")]
+                if len(parts) != 2:
+                    raise ValueError(f"bloch entry key '{k}' must be 'row,col'")
+                try:
+                    r, c = int(parts[0]), int(parts[1])
+                except ValueError:
+                    raise ValueError(f"bloch entry key '{k}' must be integer 'row,col'")
+                if not (0 <= r < n and 0 <= c < n):
+                    raise ValueError(f"bloch entry key '{k}' out of range for shape [{n},{n}]")
+        return self
+
+
+def _flat_cell_index(cell_idx: tuple[int, ...], lattice: tuple[int, ...]) -> int:
+    flat = 0
+    for c, L in zip(cell_idx, lattice):
+        flat = flat * L + c
+    return flat
+
+
+def _iter_cells(lattice: tuple[int, ...]):
+    if len(lattice) == 1:
+        for i in range(lattice[0]):
+            yield (i,)
+    elif len(lattice) == 2:
+        for i in range(lattice[0]):
+            for j in range(lattice[1]):
+                yield (i, j)
+    elif len(lattice) == 3:
+        for i in range(lattice[0]):
+            for j in range(lattice[1]):
+                for k in range(lattice[2]):
+                    yield (i, j, k)
+
+
+def _build_hamiltonian_matrix(spec: YamlModelSpec):
+    sub_index = {name: i for i, name in enumerate(spec.sublattices)}
+    sites_per_cell = spec.sites_per_cell
+    spin = spec.spin
+    param_names = list(spec.parameters)
+
+    def hamiltonian_matrix(lattice, **params):
+        for pn in param_names:
+            if pn not in params:
+                raise TypeError(f"missing parameter '{pn}'")
+        lat = tuple(lattice)
+        if len(lat) != spec.n_dims:
+            raise ValueError(f"lattice has {len(lat)} dims, model expects {spec.n_dims}")
+        n_cells = 1
+        for L in lat:
+            n_cells *= L
+        n_sites = n_cells * sites_per_cell
+        dim = n_sites * spin
+        H = np.zeros((dim, dim), dtype=complex)
+
+        def orbital(cell: tuple[int, ...], sub: int, s: int) -> int:
+            return (_flat_cell_index(cell, lat) * sites_per_cell + sub) * spin + s
+
+        for term in spec.terms:
+            if isinstance(term, OnsiteTerm):
+                coef = complex(_eval_expr(term.coefficient, params))
+                sub = sub_index[term.sublattice]
+                channels = _resolve_spin_channels(term.spin_channels, spin)
+                for cell in _iter_cells(lat):
+                    for s in channels:
+                        o = orbital(cell, sub, s)
+                        H[o, o] += coef
+            elif isinstance(term, HoppingTerm):
+                coef = complex(_eval_expr(term.coefficient, params))
+                src = sub_index[term.from_]
+                dst = sub_index[term.to]
+                channels = _resolve_spin_channels(term.spin_channels, spin)
+                for cell in _iter_cells(lat):
+                    for off in term.offsets:
+                        tgt_cell = tuple((c + o) % L for c, o, L in zip(cell, off, lat))
+                        for s in channels:
+                            i_orb = orbital(cell, src, s)
+                            j_orb = orbital(tgt_cell, dst, s)
+                            H[i_orb, j_orb] += coef
+                            if term.hermitian_partner:
+                                H[j_orb, i_orb] += np.conj(coef)
+        return H
+
+    hamiltonian_matrix.__name__ = f"_yaml_H_{spec.name.replace('-', '_')}"
+    return hamiltonian_matrix
+
+
+def _resolve_spin_channels(spec_channels: list[str] | None, spin: int) -> list[int]:
+    if spin == 1:
+        return [0]
+    if spec_channels is None:
+        return list(range(spin))
+    mapping = {"up": 0, "down": 1}
+    return [mapping[c] for c in spec_channels]
+
+
+def _build_interaction_hamiltonian(spec: YamlModelSpec):
+    if not spec.interaction:
+        return None
+    from qiskit_nature.second_q.operators import FermionicOp
+    sites_per_cell = spec.sites_per_cell
+    spin = spec.spin
+
+    def interaction(lattice, **params):
+        lat = tuple(lattice)
+        n_cells = 1
+        for L in lat:
+            n_cells *= L
+        n_sites = n_cells * sites_per_cell
+        num_so = n_sites * spin
+        op = 0.0 * FermionicOp({}, num_spin_orbitals=num_so)
+        for term in spec.interaction:
+            coef = complex(_eval_expr(term.coefficient, params))
+            if coef == 0:
+                continue
+            if isinstance(term, DensityDensityOnsiteTerm):
+                for site in range(n_sites):
+                    up = site * spin + 0
+                    dn = site * spin + 1
+                    op += FermionicOp(
+                        {f"+_{up} -_{up} +_{dn} -_{dn}": coef},
+                        num_spin_orbitals=num_so,
+                    )
+        return op
+
+    interaction.__name__ = f"_yaml_int_{spec.name.replace('-', '_')}"
+    return interaction
+
+
+def _build_mean_field_correction(spec: YamlModelSpec):
+    if spec.mean_field_correction is None:
+        return None
+    expr = spec.mean_field_correction
+    sites_per_cell = spec.sites_per_cell
+
+    def mean_field_correction(lattice, n_occ, **params):
+        lat = tuple(lattice)
+        n_cells = 1
+        for L in lat:
+            n_cells *= L
+        n_sites = n_cells * sites_per_cell
+        names = dict(params)
+        names["n_sites"] = n_sites
+        names["n_occ"] = n_occ
+        return float(np.real(_eval_expr(expr, names)))
+
+    mean_field_correction.__name__ = f"_yaml_mf_{spec.name.replace('-', '_')}"
+    return mean_field_correction
+
+
+def _build_optimizer_factory(spec: YamlModelSpec):
+    if spec.optimizer is None:
+        return None
+    import qiskit_algorithms.optimizers as qopt
+    cls = getattr(qopt, spec.optimizer.type, None)
+    if cls is None:
+        raise ValueError(
+            f"qiskit_algorithms.optimizers has no '{spec.optimizer.type}'"
+        )
+    raw_kwargs = dict(spec.optimizer.kwargs)
+
+    def get_optimizer(max_iters):
+        resolved = {}
+        runtime = {"max_iters": max_iters}
+        for k, v in raw_kwargs.items():
+            if isinstance(v, str) and v.startswith("@"):
+                key = v[1:]
+                if key not in runtime:
+                    raise ValueError(f"optimizer kwarg references unknown runtime arg '{key}'")
+                resolved[k] = runtime[key]
+            else:
+                resolved[k] = v
+        return cls(**resolved)
+
+    get_optimizer.__name__ = f"_yaml_opt_{spec.name.replace('-', '_')}"
+    return get_optimizer
+
+
+def _build_bloch_hamiltonian(spec: YamlModelSpec):
+    if spec.bloch_hamiltonian is None:
+        return None
+    bspec = spec.bloch_hamiltonian
+    n = spec.sites_per_cell
+    momentum_names = {1: ("k",), 2: ("kx", "ky"), 3: ("kx", "ky", "kz")}[spec.n_dims]
+
+    let_items = list(bspec.let.items())
+    entries = bspec.entries
+
+    def bloch_hamiltonian(*ks, **params):
+        if len(ks) != len(momentum_names):
+            raise TypeError(f"expected {len(momentum_names)} momentum args, got {len(ks)}")
+        names: dict[str, Any] = dict(params)
+        for mn, val in zip(momentum_names, ks):
+            names[mn] = val
+        for let_name, raw in let_items:
+            if isinstance(raw, str):
+                names[let_name] = _eval_expr(raw, names)
+            else:
+                names[let_name] = raw
+        H = np.zeros((n, n), dtype=complex)
+        for key, expr in entries.items():
+            r, c = (int(x.strip()) for x in key.split(","))
+            H[r, c] = complex(_eval_expr(expr, names))
+        return H
+
+    bloch_hamiltonian.__name__ = f"_yaml_bloch_{spec.name.replace('-', '_')}"
+    return bloch_hamiltonian
+
+
+def load_yaml_model(path: str | Path) -> Model:
+    path = Path(path)
+    with open(path) as f:
+        data = yaml.safe_load(f)
+    spec = YamlModelSpec.model_validate(data)
+    return spec_to_model(spec)
+
+
+def spec_to_model(spec: YamlModelSpec) -> Model:
+    param_labels = {k: v.label for k, v in spec.parameters.items()}
+    return Model(
+        name=spec.name,
+        display_name=spec.display_name,
+        param_labels=param_labels,
+        spin=spec.spin,
+        n_dims=spec.n_dims,
+        lattice_shape=tuple(spec.lattice_shape),
+        sites_per_cell=spec.sites_per_cell,
+        hamiltonian_matrix=_build_hamiltonian_matrix(spec),
+        interaction_hamiltonian=_build_interaction_hamiltonian(spec),
+        get_optimizer=_build_optimizer_factory(spec),
+        mean_field_correction=_build_mean_field_correction(spec),
+        bloch_hamiltonian=_build_bloch_hamiltonian(spec),
+    )

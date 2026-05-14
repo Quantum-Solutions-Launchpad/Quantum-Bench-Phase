@@ -14,6 +14,10 @@ from quaph import Model
 # The model undergoes a topological phase transition at |t2/t1| = 1:
 #   trivial phase    |t2| < |t1|  (no in-gap edge states)
 #   topological phase  |t2| > |t1|  (zero-energy edge states)
+#
+# This script demonstrates the in-process Python API path. The same model
+# can also be registered interactively through the QuaPh console — see
+# run_custom_model.sh.
 # ---------------------------------------------------------------------------
 
 def _ssh_optimizer(max_iters):

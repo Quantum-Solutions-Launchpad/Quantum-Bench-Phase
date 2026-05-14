@@ -3,12 +3,13 @@ from __future__ import annotations
 import argparse
 import sys
 
-from quaph._registry import get_model, remove_model
+from quaph._registry import get_model, register_model_from_file, remove_model
 from quaph._run import run_analytic, run_simulated_ideal, run_simulated_noisy
 
 
 def _model_param_names(model) -> list[str]:
-    return [p for p in model.param_labels if p != "n_occ"]
+    momentum = set(model.momentum_axes)
+    return [p for p in model.param_labels if p != "n_occ" and p not in momentum]
 
 
 def _add_model_params(parser, model):
@@ -157,9 +158,20 @@ def main(argv=None):
         from quaph._console import run_console
         return run_console()
 
-    if argv == ["register"]:
-        from quaph._console import run_console
-        return run_console(initial_command="register")
+    if argv and argv[0] == "register":
+        if len(argv) == 1:
+            from quaph._console import run_console
+            return run_console(initial_command="register")
+        if len(argv) == 3 and argv[1] == "--from":
+            try:
+                model = register_model_from_file(argv[2])
+            except (FileNotFoundError, ValueError) as e:
+                print(f"error: {e}", file=sys.stderr)
+                return 1
+            print(f"Registered '{model.name}'.")
+            return 0
+        print("usage: quaph register | quaph register --from <path.yaml>", file=sys.stderr)
+        return 2
 
     if argv and argv[0] == "remove":
         if len(argv) != 2:
