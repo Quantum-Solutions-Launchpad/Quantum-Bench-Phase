@@ -8,6 +8,7 @@ from quaph._registry import (
     register_model_from_file,
     remove_model,
 )
+from quaph._yaml_model import build_tight_binding_model
 from quaph._run import (
     run_analytic,
     run_simulated_ideal,
@@ -23,6 +24,7 @@ __all__ = [
     "get_model",
     "register_model",
     "register_model_from_file",
+    "build_tight_binding_model",
     "remove_model",
     "run_analytic",
     "run_simulated_ideal",

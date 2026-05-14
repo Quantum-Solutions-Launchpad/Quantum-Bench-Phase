@@ -122,6 +122,8 @@ class YamlModelSpec(BaseModel):
     mean_field_correction: str | None = None
     optimizer: OptimizerSpec | None = None
     bloch_hamiltonian: BlochSpec | None = None
+    lattice_vectors: list[list[float]] | None = None
+    sublattice_positions: dict[str, list[float]] | None = None
 
     @model_validator(mode="after")
     def _check_consistency(self) -> "YamlModelSpec":
@@ -176,6 +178,26 @@ class YamlModelSpec(BaseModel):
                     raise ValueError(f"bloch entry key '{k}' must be integer 'row,col'")
                 if not (0 <= r < n and 0 <= c < n):
                     raise ValueError(f"bloch entry key '{k}' out of range for shape [{n},{n}]")
+        if self.lattice_vectors is not None:
+            if len(self.lattice_vectors) != self.n_dims:
+                raise ValueError(
+                    f"lattice_vectors has {len(self.lattice_vectors)} entries but n_dims={self.n_dims}"
+                )
+            for v in self.lattice_vectors:
+                if len(v) != self.n_dims:
+                    raise ValueError(
+                        f"lattice vector {v} has length {len(v)} but n_dims={self.n_dims}"
+                    )
+        if self.sublattice_positions is not None:
+            if self.lattice_vectors is None:
+                raise ValueError("sublattice_positions requires lattice_vectors")
+            for name, pos in self.sublattice_positions.items():
+                if name not in known_sub:
+                    raise ValueError(f"sublattice_positions references unknown sublattice '{name}'")
+                if len(pos) != self.n_dims:
+                    raise ValueError(
+                        f"sublattice position for '{name}' has length {len(pos)} but n_dims={self.n_dims}"
+                    )
         return self
 
 
@@ -375,10 +397,110 @@ def _build_bloch_hamiltonian(spec: YamlModelSpec):
     return bloch_hamiltonian
 
 
+def _build_auto_bloch_hamiltonian(spec: YamlModelSpec):
+    sub_index = {name: i for i, name in enumerate(spec.sublattices)}
+    n = spec.sites_per_cell
+    momentum_names = {1: ("k",), 2: ("kx", "ky"), 3: ("kx", "ky", "kz")}[spec.n_dims]
+    param_names = list(spec.parameters)
+
+    for t in spec.terms:
+        if t.spin_channels is not None:
+            raise ValueError(
+                f"auto bloch_hamiltonian cannot represent term with spin_channels="
+                f"{t.spin_channels}; provide an explicit bloch_hamiltonian: block"
+            )
+
+    use_cartesian = spec.lattice_vectors is not None
+    if use_cartesian:
+        a_mat = np.array(spec.lattice_vectors, dtype=float)
+        positions = {name: np.zeros(spec.n_dims) for name in spec.sublattices}
+        if spec.sublattice_positions is not None:
+            for name, pos in spec.sublattice_positions.items():
+                positions[name] = np.array(pos, dtype=float)
+
+    def bloch_hamiltonian(*ks, **params):
+        if len(ks) != len(momentum_names):
+            raise TypeError(
+                f"expected {len(momentum_names)} momentum args, got {len(ks)}"
+            )
+        for pn in param_names:
+            if pn not in params:
+                raise TypeError(f"missing parameter '{pn}'")
+        H = np.zeros((n, n), dtype=complex)
+        k_vec = np.array(ks, dtype=float) if use_cartesian else None
+        for term in spec.terms:
+            coef = complex(_eval_expr(term.coefficient, params))
+            if isinstance(term, OnsiteTerm):
+                a = sub_index[term.sublattice]
+                H[a, a] += coef
+            elif isinstance(term, HoppingTerm):
+                a = sub_index[term.from_]
+                b = sub_index[term.to]
+                for off in term.offsets:
+                    if use_cartesian:
+                        d_cart = np.array(off, dtype=float) @ a_mat
+                        d_cart = d_cart + positions[term.to] - positions[term.from_]
+                        phase = np.exp(1j * float(k_vec @ d_cart))
+                    else:
+                        phase = np.exp(1j * sum(k * o for k, o in zip(ks, off)))
+                    H[a, b] += coef * phase
+                    if term.hermitian_partner:
+                        H[b, a] += np.conj(coef) * np.conj(phase)
+        return H
+
+    bloch_hamiltonian.__name__ = f"_yaml_auto_bloch_{spec.name.replace('-', '_')}"
+    return bloch_hamiltonian
+
+
 def load_yaml_model(path: str | Path) -> Model:
     path = Path(path)
     with open(path) as f:
         data = yaml.safe_load(f)
+    spec = YamlModelSpec.model_validate(data)
+    return spec_to_model(spec)
+
+
+def build_tight_binding_model(
+    *,
+    name: str,
+    display_name: str,
+    spin: int,
+    n_dims: int,
+    lattice_shape,
+    sites_per_cell: int,
+    sublattices,
+    parameters: dict,
+    terms: list,
+    interaction: list | None = None,
+    mean_field_correction: str | None = None,
+    optimizer: dict | None = None,
+    bloch_hamiltonian: dict | None = None,
+    lattice_vectors=None,
+    sublattice_positions: dict | None = None,
+) -> Model:
+    data = {
+        "name": name,
+        "display_name": display_name,
+        "spin": spin,
+        "n_dims": n_dims,
+        "lattice_shape": list(lattice_shape),
+        "sites_per_cell": sites_per_cell,
+        "sublattices": list(sublattices),
+        "parameters": parameters,
+        "terms": terms,
+    }
+    if interaction is not None:
+        data["interaction"] = interaction
+    if mean_field_correction is not None:
+        data["mean_field_correction"] = mean_field_correction
+    if optimizer is not None:
+        data["optimizer"] = optimizer
+    if bloch_hamiltonian is not None:
+        data["bloch_hamiltonian"] = bloch_hamiltonian
+    if lattice_vectors is not None:
+        data["lattice_vectors"] = [list(v) for v in lattice_vectors]
+    if sublattice_positions is not None:
+        data["sublattice_positions"] = {k: list(v) for k, v in sublattice_positions.items()}
     spec = YamlModelSpec.model_validate(data)
     return spec_to_model(spec)
 
@@ -397,5 +519,9 @@ def spec_to_model(spec: YamlModelSpec) -> Model:
         interaction_hamiltonian=_build_interaction_hamiltonian(spec),
         get_optimizer=_build_optimizer_factory(spec),
         mean_field_correction=_build_mean_field_correction(spec),
-        bloch_hamiltonian=_build_bloch_hamiltonian(spec),
+        bloch_hamiltonian=(
+            _build_bloch_hamiltonian(spec)
+            if spec.bloch_hamiltonian is not None
+            else _build_auto_bloch_hamiltonian(spec)
+        ),
     )

@@ -36,22 +36,22 @@ B
 0
 
 -t1
-
+y
 hopping
 B
 A
 1
 
 -t2
-
+y
 done
-
-
+n
+y
 SPSA
 maxiter
 @max_iters
 
-
+y
 exit
 QUAPH
 fi
