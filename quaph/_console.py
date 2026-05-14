@@ -9,6 +9,8 @@ import yaml
 
 from quaph._registry import _MODELS, register_model_from_file, remove_model
 from quaph._yaml_model import (
+    _QISKIT_ANSATZES,
+    _QISKIT_MAPPERS,
     _QISKIT_OPTIMIZERS,
     YamlModelSpec,
     _make_evaluator,
@@ -234,6 +236,63 @@ def _prompt_expression(prompt: str, allowed_names: set[str]) -> str:
         print(f"  invalid: {err}")
 
 
+def _coerce_kwarg_value(v: str):
+    if v.startswith("@"):
+        return v
+    try:
+        return int(v)
+    except ValueError:
+        pass
+    try:
+        return float(v)
+    except ValueError:
+        pass
+    return v
+
+
+def _prompt_kwargs(label: str, runtime_args: tuple[str, ...]) -> dict:
+    kwargs: dict = {}
+    bindings = ", ".join(f"@{a}" for a in runtime_args) if runtime_args else "(none)"
+    print(f"  {label.capitalize()} kwargs. Enter pairs of <key> <value>. Value may be a number,")
+    print(f"  string, or one of the runtime bindings {bindings}. Blank key to finish.")
+    while True:
+        k = _prompt("    key: ")
+        if not k:
+            return kwargs
+        v = _prompt_required(f"    value for '{k}': ")
+        kwargs[k] = _coerce_kwarg_value(v)
+
+
+def _prompt_factory_block(
+    *, prompt: str, label: str, choices: list[str],
+    runtime_args: tuple[str, ...], default_yes: bool,
+) -> dict | None:
+    if not _prompt_yn(prompt, default=default_yes):
+        return None
+    otype = _prompt_choice(f"  {label}:", choices)
+    kwargs = _prompt_kwargs(label, runtime_args)
+    return {"type": otype, "kwargs": kwargs}
+
+
+def _prompt_ansatz_block() -> dict | None:
+    if not _prompt_yn(
+        "\nConfigure a VQE ansatz? (otherwise excitation_preserving "
+        "with fsim/linear + HF X-prefix is used)",
+        default=False,
+    ):
+        return None
+    otype = _prompt_choice("  ansatz:", list(_QISKIT_ANSATZES))
+    kwargs = _prompt_kwargs(
+        "ansatz",
+        runtime_args=("n_qubits", "n_layers", "n_occ", "spin", "n_sites"),
+    )
+    prefix = _prompt_choice(
+        "  initial_state_prefix (X gates on first n_occ qubits before the ansatz body):",
+        ["hartree_fock", "none"],
+    )
+    return {"type": otype, "kwargs": kwargs, "initial_state_prefix": prefix}
+
+
 def _prompt_choice(prompt: str, options: list[str]) -> str:
     while True:
         print(prompt)
@@ -383,28 +442,23 @@ def _register_walkthrough() -> None:
             f"  expression in {sorted(mf_names)}: ", mf_names
         )
 
-    optimizer = None
-    if _prompt_yn("\nConfigure a classical optimizer? (otherwise SPSA with @max_iters is used at runtime)", default=True):
-        otype = _prompt_choice("  optimizer:", list(_QISKIT_OPTIMIZERS))
-        kwargs: dict = {}
-        print("  Optimizer kwargs. Enter pairs of <key> <value>. Value may be a number, string,")
-        print("  or '@max_iters' to bind the runtime max-iterations arg. Blank key to finish.")
-        while True:
-            k = _prompt("    key: ")
-            if not k:
-                break
-            v = _prompt_required(f"    value for '{k}': ")
-            if v.startswith("@"):
-                kwargs[k] = v
-            else:
-                try:
-                    kwargs[k] = int(v)
-                except ValueError:
-                    try:
-                        kwargs[k] = float(v)
-                    except ValueError:
-                        kwargs[k] = v
-        optimizer = {"type": otype, "kwargs": kwargs}
+    optimizer = _prompt_factory_block(
+        prompt="\nConfigure a classical optimizer? (otherwise SPSA with @max_iters is used at runtime)",
+        label="optimizer",
+        choices=list(_QISKIT_OPTIMIZERS),
+        runtime_args=("max_iters",),
+        default_yes=True,
+    )
+
+    mapper = _prompt_factory_block(
+        prompt="\nConfigure a qubit mapper? (otherwise JordanWignerMapper is used)",
+        label="mapper",
+        choices=list(_QISKIT_MAPPERS),
+        runtime_args=("n_sites", "spin", "n_occ", "num_particles"),
+        default_yes=False,
+    )
+
+    ansatz = _prompt_ansatz_block()
 
     spec_data: dict = {
         "name": name,
@@ -423,6 +477,10 @@ def _register_walkthrough() -> None:
         spec_data["mean_field_correction"] = mean_field_correction
     if optimizer is not None:
         spec_data["optimizer"] = optimizer
+    if mapper is not None:
+        spec_data["mapper"] = mapper
+    if ansatz is not None:
+        spec_data["ansatz"] = ansatz
 
     try:
         YamlModelSpec.model_validate(spec_data)

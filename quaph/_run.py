@@ -7,7 +7,6 @@ from dataclasses import dataclass, field
 
 import numpy as np
 from joblib import Parallel, delayed
-from qiskit_nature.second_q.mappers import JordanWignerMapper
 
 from quaph._model import Model, ModelCapabilityError
 from quaph._core import (
@@ -465,8 +464,8 @@ def _run_simulated(
     else:
         n_sites = 0
         n_orbitals = 0
-    mapper = JordanWignerMapper()
     fixed_n_occ = n_occ if n_occ is not None else (n_orbitals // 2 if n_orbitals else 0)
+    mapper = model.get_mapper(n_sites, spin, fixed_n_occ)
     momentum_axes = model.momentum_axes
 
     x_vals, _x_label_default, x_kind = resolve_sweep(x_param, x_range, n_orbitals, momentum_axes)
@@ -577,12 +576,14 @@ def _run_simulated(
                     jobs.append(delayed(tagged_job)(
                         ("vqe", ix, iy, rep), vqe,
                         lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
+                        model.get_vqe_ansatz,
                         mapper, vqe_iters, vqe_layers, rep,
                         backend=backend
                     ))
                 jobs.append(delayed(tagged_job)(
                     ("vqe_bench", ix, iy), vqe_other_benchmarks,
                     lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
+                    model.get_vqe_ansatz,
                     mapper, vqe_iters, vqe_layers, vqe_reps,
                     backend=backend
                 ))

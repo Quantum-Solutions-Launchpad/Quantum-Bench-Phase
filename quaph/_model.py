@@ -33,6 +33,8 @@ class Model:
         hamiltonian_matrix: Callable,
         interaction_hamiltonian: Callable | None = None,
         get_optimizer: Callable | None = None,
+        get_mapper: Callable | None = None,
+        get_vqe_ansatz: Callable | None = None,
         mean_field_correction: Callable | None = None,
         bloch_hamiltonian: Callable | None = None,
     ):
@@ -75,6 +77,8 @@ class Model:
         self._hamiltonian_matrix_fn = hamiltonian_matrix
         self._interaction_hamiltonian_fn = interaction_hamiltonian
         self._get_optimizer_fn = get_optimizer
+        self._get_mapper_fn = get_mapper
+        self._get_vqe_ansatz_fn = get_vqe_ansatz
         self._mean_field_correction_fn = mean_field_correction
         self._bloch_hamiltonian_fn = bloch_hamiltonian
 
@@ -98,6 +102,31 @@ class Model:
             return self._get_optimizer_fn
         from qiskit_algorithms.optimizers import SPSA
         return lambda max_iters: SPSA(maxiter=max_iters)
+
+    @property
+    def get_mapper(self):
+        if self._get_mapper_fn is not None:
+            return self._get_mapper_fn
+        from qiskit_nature.second_q.mappers import JordanWignerMapper
+        return lambda n_sites, spin, n_occ: JordanWignerMapper()
+
+    @property
+    def get_vqe_ansatz(self):
+        if self._get_vqe_ansatz_fn is not None:
+            return self._get_vqe_ansatz_fn
+        from qiskit import QuantumCircuit
+        from qiskit.circuit.library import excitation_preserving
+
+        def default(n_qubits, n_layers, n_occ, spin):
+            qc = QuantumCircuit(n_qubits)
+            for i in range(n_occ):
+                qc.x(i)
+            qc.compose(
+                excitation_preserving(n_qubits, "fsim", "linear", reps=n_layers),
+                inplace=True,
+            )
+            return qc
+        return default
 
     @property
     def mean_field_correction(self):

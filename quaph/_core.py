@@ -2,7 +2,7 @@ import numpy as np
 
 from qiskit import transpile, QuantumCircuit
 from qiskit.circuit import QuantumRegister, ClassicalRegister
-from qiskit.circuit.library import excitation_preserving, efficient_su2, PauliEvolutionGate
+from qiskit.circuit.library import efficient_su2, PauliEvolutionGate
 from qiskit.synthesis import SuzukiTrotter
 from qiskit.quantum_info import SparsePauliOp
 from qiskit_ibm_runtime import Session, Estimator
@@ -71,15 +71,6 @@ def resolve_sweep(param: str, range_args, n_orbitals: int, momentum_axes: tuple[
     lo, hi, st = range_args
     vals = list(np.arange(lo, hi + st / 2, st))
     return vals, param, "parameter"
-
-
-def EP_ansatz(n_sites: int, spin: int, n_layers: int, n_occ: int):
-    n_qubits = n_sites * spin
-    ansatz = QuantumCircuit(n_qubits)
-    for i in range(n_occ):
-        ansatz.x(i)
-    ansatz.compose(excitation_preserving(n_qubits, "fsim", "linear", reps=n_layers), inplace=True)
-    return ansatz
 
 
 def _hf_initial_state(n_sites: int, spin: int, n_occ: int, mapper):
@@ -280,7 +271,7 @@ def analytic(model, lattice, n_occ, model_params):
     return result
 
 
-def vqe(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, mapper, max_iters, n_layers, rep, backend=None):
+def vqe(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, rep, backend=None):
     fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
@@ -290,7 +281,7 @@ def vqe(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, g
     else:
         simulator = AerSimulator()
 
-    ansatz = EP_ansatz(n_sites, spin, n_layers, n_occ)
+    ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
     with Session(backend=simulator) as session:
@@ -353,14 +344,14 @@ def iqpe(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, 
     return res, iteration_energies
 
 
-def vqe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
+def vqe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
     if backend:
         noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
         simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
     else:
         simulator = AerSimulator()
 
-    ansatz = EP_ansatz(n_sites, spin, n_layers, n_occ)
+    ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
     fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)

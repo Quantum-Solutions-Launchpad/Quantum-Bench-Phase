@@ -16,6 +16,15 @@ _QISKIT_OPTIMIZERS = (
     "NFT", "ADAM", "GradientDescent", "QNSPSA", "AQGD", "CG", "P_BFGS",
 )
 
+_QISKIT_MAPPERS = (
+    "JordanWignerMapper", "ParityMapper", "BravyiKitaevMapper",
+)
+
+_QISKIT_ANSATZES = (
+    "excitation_preserving", "efficient_su2", "real_amplitudes",
+    "pauli_two_design", "n_local", "two_local",
+)
+
 
 def _make_evaluator(extra_names: dict | None = None) -> Interpreter:
     aeval = Interpreter(use_numpy=True, minimal=False)
@@ -93,6 +102,37 @@ class OptimizerSpec(BaseModel):
         return v
 
 
+class MapperSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: str
+    kwargs: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("type")
+    @classmethod
+    def _check_type(cls, v: str) -> str:
+        if v not in _QISKIT_MAPPERS:
+            raise ValueError(
+                f"unknown mapper '{v}'; supported: {', '.join(_QISKIT_MAPPERS)}"
+            )
+        return v
+
+
+class AnsatzSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: str
+    kwargs: dict[str, Any] = Field(default_factory=dict)
+    initial_state_prefix: Literal["hartree_fock", "none"] = "hartree_fock"
+
+    @field_validator("type")
+    @classmethod
+    def _check_type(cls, v: str) -> str:
+        if v not in _QISKIT_ANSATZES:
+            raise ValueError(
+                f"unknown ansatz '{v}'; supported: {', '.join(_QISKIT_ANSATZES)}"
+            )
+        return v
+
+
 class BlochSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
     shape: list[int]
@@ -121,6 +161,8 @@ class YamlModelSpec(BaseModel):
     interaction: list[InteractionTerm] = Field(default_factory=list)
     mean_field_correction: str | None = None
     optimizer: OptimizerSpec | None = None
+    mapper: MapperSpec | None = None
+    ansatz: AnsatzSpec | None = None
     bloch_hamiltonian: BlochSpec | None = None
     lattice_vectors: list[list[float]] | None = None
     sublattice_positions: dict[str, list[float]] | None = None
@@ -350,20 +392,90 @@ def _build_optimizer_factory(spec: YamlModelSpec):
     raw_kwargs = dict(spec.optimizer.kwargs)
 
     def get_optimizer(max_iters):
-        resolved = {}
         runtime = {"max_iters": max_iters}
-        for k, v in raw_kwargs.items():
-            if isinstance(v, str) and v.startswith("@"):
-                key = v[1:]
-                if key not in runtime:
-                    raise ValueError(f"optimizer kwarg references unknown runtime arg '{key}'")
-                resolved[k] = runtime[key]
-            else:
-                resolved[k] = v
+        resolved = _resolve_runtime_kwargs(raw_kwargs, runtime, context="optimizer")
         return cls(**resolved)
 
     get_optimizer.__name__ = f"_yaml_opt_{spec.name.replace('-', '_')}"
     return get_optimizer
+
+
+def _resolve_runtime_kwargs(raw_kwargs: dict, runtime: dict, *, context: str) -> dict:
+    resolved = {}
+    for k, v in raw_kwargs.items():
+        if isinstance(v, str) and v.startswith("@"):
+            key = v[1:]
+            if key not in runtime:
+                raise ValueError(
+                    f"{context} kwarg '{k}' references unknown runtime arg '{key}'; "
+                    f"available: {sorted(runtime)}"
+                )
+            resolved[k] = runtime[key]
+        else:
+            resolved[k] = v
+    return resolved
+
+
+def _build_mapper_factory(spec: YamlModelSpec):
+    if spec.mapper is None:
+        return None
+    import qiskit_nature.second_q.mappers as qmappers
+    cls = getattr(qmappers, spec.mapper.type, None)
+    if cls is None:
+        raise ValueError(
+            f"qiskit_nature.second_q.mappers has no '{spec.mapper.type}'"
+        )
+    raw_kwargs = dict(spec.mapper.kwargs)
+
+    def get_mapper(n_sites: int, spin: int, n_occ: int):
+        num_particles = (n_occ // 2 + n_occ % 2, n_occ // 2) if spin == 2 else (n_occ, 0)
+        runtime = {
+            "n_sites": n_sites,
+            "spin": spin,
+            "n_occ": n_occ,
+            "num_particles": num_particles,
+        }
+        resolved = _resolve_runtime_kwargs(raw_kwargs, runtime, context="mapper")
+        return cls(**resolved)
+
+    get_mapper.__name__ = f"_yaml_mapper_{spec.name.replace('-', '_')}"
+    return get_mapper
+
+
+def _build_ansatz_factory(spec: YamlModelSpec):
+    if spec.ansatz is None:
+        return None
+    import qiskit.circuit.library as qlib
+    from qiskit import QuantumCircuit
+    func = getattr(qlib, spec.ansatz.type, None)
+    if func is None:
+        raise ValueError(
+            f"qiskit.circuit.library has no '{spec.ansatz.type}'"
+        )
+    raw_kwargs = dict(spec.ansatz.kwargs)
+    prefix_kind = spec.ansatz.initial_state_prefix
+
+    def get_vqe_ansatz(n_qubits: int, n_layers: int, n_occ: int, spin: int):
+        n_sites = n_qubits // spin if spin else n_qubits
+        runtime = {
+            "n_qubits": n_qubits,
+            "n_layers": n_layers,
+            "n_occ": n_occ,
+            "spin": spin,
+            "n_sites": n_sites,
+        }
+        resolved = _resolve_runtime_kwargs(raw_kwargs, runtime, context="ansatz")
+        body = func(n_qubits, **resolved)
+        if prefix_kind == "hartree_fock":
+            qc = QuantumCircuit(n_qubits)
+            for i in range(n_occ):
+                qc.x(i)
+            qc.compose(body, inplace=True)
+            return qc
+        return body
+
+    get_vqe_ansatz.__name__ = f"_yaml_ansatz_{spec.name.replace('-', '_')}"
+    return get_vqe_ansatz
 
 
 def _build_bloch_hamiltonian(spec: YamlModelSpec):
@@ -474,6 +586,8 @@ def build_tight_binding_model(
     interaction: list | None = None,
     mean_field_correction: str | None = None,
     optimizer: dict | None = None,
+    mapper: dict | None = None,
+    ansatz: dict | None = None,
     bloch_hamiltonian: dict | None = None,
     lattice_vectors=None,
     sublattice_positions: dict | None = None,
@@ -495,6 +609,10 @@ def build_tight_binding_model(
         data["mean_field_correction"] = mean_field_correction
     if optimizer is not None:
         data["optimizer"] = optimizer
+    if mapper is not None:
+        data["mapper"] = mapper
+    if ansatz is not None:
+        data["ansatz"] = ansatz
     if bloch_hamiltonian is not None:
         data["bloch_hamiltonian"] = bloch_hamiltonian
     if lattice_vectors is not None:
@@ -518,6 +636,8 @@ def spec_to_model(spec: YamlModelSpec) -> Model:
         hamiltonian_matrix=_build_hamiltonian_matrix(spec),
         interaction_hamiltonian=_build_interaction_hamiltonian(spec),
         get_optimizer=_build_optimizer_factory(spec),
+        get_mapper=_build_mapper_factory(spec),
+        get_vqe_ansatz=_build_ansatz_factory(spec),
         mean_field_correction=_build_mean_field_correction(spec),
         bloch_hamiltonian=(
             _build_bloch_hamiltonian(spec)

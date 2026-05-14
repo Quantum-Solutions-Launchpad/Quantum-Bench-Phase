@@ -51,3 +51,15 @@ optimizer:
   type: SPSA
   kwargs:
     maxiter: "@max_iters"
+
+mapper:
+  type: JordanWignerMapper
+  kwargs: {}
+
+ansatz:
+  type: excitation_preserving
+  kwargs:
+    mode: fsim
+    entanglement: linear
+    reps: "@n_layers"
+  initial_state_prefix: hartree_fock
