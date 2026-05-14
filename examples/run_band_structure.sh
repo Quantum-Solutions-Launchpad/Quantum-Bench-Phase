@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 MODEL="haldane"
-N_SITES=6
 X_PARAM="kx"
 Y_PARAM="ky"
 
@@ -14,7 +13,6 @@ PHI=$(python3 -c "import math; print(math.pi/2)")
 
 quaph run analytic \
     --model "$MODEL" \
-    --n-sites "$N_SITES" \
     --x-param "$X_PARAM" \
     --x-range "$NEG_PI" "$PI" "$STEP" \
     --y-param "$Y_PARAM" \
@@ -26,7 +24,6 @@ quaph run analytic \
 
 quaph run analytic \
     --model "$MODEL" \
-    --n-sites "$N_SITES" \
     --x-param "$X_PARAM" \
     --x-range "$NEG_PI" "$PI" "$STEP" \
     --y-param "$Y_PARAM" \

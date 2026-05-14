@@ -26,9 +26,9 @@ _BANNER = r"""
 
 _HELP = """\
 Commands:
-  run analytic --model NAME --n-sites N [...]
-  run simulated-ideal --model NAME --n-sites N [...]
-  run simulated-noisy --model NAME --n-sites N [...]
+  run analytic --model NAME --lattice L [L ...] [...]
+  run simulated-ideal --model NAME --lattice L [L ...] [...]
+  run simulated-noisy --model NAME --lattice L [L ...] [...]
   plot PATH
   register             Walk through registering a new custom model
   remove NAME          Permanently remove a registered model
@@ -276,6 +276,23 @@ def _register_walkthrough() -> None:
             pass
         print("  (n_dims must be 1, 2, or 3)")
 
+    while True:
+        raw = _prompt_required(f"lattice_shape (required, comma-separated axis names with {n_dims} entries, e.g. 'Lx,Ly'): ")
+        parts = [s.strip() for s in raw.split(",") if s.strip()]
+        if len(parts) == n_dims:
+            lattice_shape = tuple(parts)
+            break
+        print(f"  (need exactly {n_dims} entries)")
+
+    while True:
+        try:
+            sites_per_cell = int(_prompt_required("sites_per_cell (required, atoms per unit cell, e.g. 1 for chain, 2 for honeycomb): "))
+            if sites_per_cell >= 1:
+                break
+        except ValueError:
+            pass
+        print("  (sites_per_cell must be a positive int)")
+
     param_labels = _collect_dict(
         "param_labels (required): display labels for each parameter (include sweep params too)",
         "label (string)",
@@ -286,10 +303,10 @@ def _register_walkthrough() -> None:
     source_blocks: dict[str, str] = {}
 
     for field_name, hint in [
-        ("hamiltonian_matrix", "(n_sites, **params) -> np.ndarray"),
-        ("interaction_hamiltonian", "(n_sites, *, **params) -> FermionicOp (interaction term added to JW(hamiltonian_matrix))"),
+        ("hamiltonian_matrix", "(lattice, **params) -> np.ndarray"),
+        ("interaction_hamiltonian", "(lattice, *, **params) -> FermionicOp (interaction term added to JW(hamiltonian_matrix))"),
         ("get_optimizer", "(max_iters: int) -> Optimizer"),
-        ("mean_field_correction", "(n_sites, n_occ, **params) -> float"),
+        ("mean_field_correction", "(lattice, n_occ, **params) -> float"),
     ]:
         src = _read_paste_block(field_name, hint)
         if src is None:
@@ -308,6 +325,8 @@ def _register_walkthrough() -> None:
     print(f"  display_name:   {display_name}")
     print(f"  spin:           {spin}")
     print(f"  n_dims:         {n_dims}")
+    print(f"  lattice_shape:  {lattice_shape}")
+    print(f"  sites_per_cell: {sites_per_cell}")
     print(f"  param_labels:   {param_labels}")
     print(f"  callables:      {sorted(callables)}")
     confirm = _prompt("\nWrite this model? (y/n): ").lower()
@@ -322,6 +341,8 @@ def _register_walkthrough() -> None:
             param_labels=param_labels,
             spin=spin,
             n_dims=n_dims,
+            lattice_shape=lattice_shape,
+            sites_per_cell=sites_per_cell,
             hamiltonian_matrix=callables.get("hamiltonian_matrix"),
             interaction_hamiltonian=callables.get("interaction_hamiltonian"),
             get_optimizer=callables.get("get_optimizer"),

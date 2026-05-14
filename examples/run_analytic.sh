@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MODEL="haldane"
-N_SITES=18
+LATTICE=(3 3)
 X_PARAM="n_occ"
 Y_PARAM="t2"
 
@@ -11,7 +11,7 @@ PHI=$(python3 -c "import math; print(math.pi/4)")
 
 quaph run analytic \
     --model "$MODEL" \
-    --n-sites "$N_SITES" \
+    --lattice "${LATTICE[@]}" \
     --x-param "$X_PARAM" \
     --y-param "$Y_PARAM" \
     --y-range 0.0 1.0 0.1 \

@@ -3,7 +3,7 @@ import math
 import quaph
 
 MODEL = "haldane"
-N_SITES = 18
+LATTICE = (3, 3)
 X_PARAM = "n_occ"
 Y_PARAM = "t2"
 
@@ -11,7 +11,7 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 
 quaph.run_analytic(
     model=MODEL,
-    n_sites=N_SITES,
+    lattice=LATTICE,
     x_param=X_PARAM,
     y_param=Y_PARAM,
     y_range=(0.0, 1.0, 0.1),

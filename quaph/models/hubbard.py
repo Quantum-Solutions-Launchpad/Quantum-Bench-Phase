@@ -9,22 +9,9 @@ def _get_optimizer(max_iters):
     return SPSA(maxiter=max_iters)
 
 
-def _build_H_matrix(n_sites, t, U):
-    if n_sites % 2:
-        raise ValueError(f"Hubbard n_sites must be even (honeycomb has 2 atoms/cell); got {n_sites}.")
-    n_cells = n_sites // 2
-    Lx, Ly = 1, n_cells
-    for lx in range(2, n_cells // 2 + 1):
-        if n_cells % lx == 0 and n_cells // lx >= 2:
-            ly = n_cells // lx
-            if -abs(lx - ly) > -abs(Lx - Ly):
-                Lx, Ly = lx, ly
-    if min(Lx, Ly) < 2:
-        raise ValueError(
-            f"Hubbard n_sites={n_sites} cannot factor as 2*Lx*Ly with Lx, Ly >= 2. "
-            f"Use n_sites = 8, 12, 16, 18, 24, 32, 50, 72, ..."
-        )
-
+def _build_H_matrix(lattice, t, U):
+    Lx, Ly = lattice
+    n_sites = 2 * Lx * Ly
     spin = 2
     H = np.zeros((n_sites * spin, n_sites * spin), dtype=complex)
 
@@ -44,7 +31,9 @@ def _build_H_matrix(n_sites, t, U):
     return H
 
 
-def _interaction_hamiltonian(n_sites, *, t, U):
+def _interaction_hamiltonian(lattice, *, t, U):
+    Lx, Ly = lattice
+    n_sites = 2 * Lx * Ly
     spin = 2
     H = 0.0 * FermionicOp({}, num_spin_orbitals=n_sites * spin)
     for site in range(n_sites):
@@ -57,10 +46,12 @@ def _interaction_hamiltonian(n_sites, *, t, U):
     return H
 
 
-def _mean_field_correction(n_sites, n_occ, **params):
+def _mean_field_correction(lattice, n_occ, **params):
     U = params['U']
     if U == 0:
         return 0.0
+    Lx, Ly = lattice
+    n_sites = 2 * Lx * Ly
     return U * n_sites * (n_occ / (2 * n_sites)) ** 2
 
 
@@ -70,6 +61,8 @@ model = Model(
     param_labels={"t": "t", "U": "U"},
     spin=2,
     n_dims=2,
+    lattice_shape=("Lx", "Ly"),
+    sites_per_cell=2,
     hamiltonian_matrix=_build_H_matrix,
     interaction_hamiltonian=_interaction_hamiltonian,
     get_optimizer=_get_optimizer,

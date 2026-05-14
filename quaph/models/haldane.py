@@ -39,23 +39,9 @@ def _bloch_hamiltonian(kx, ky, *, t1, t2, phi, M):
     )
 
 
-def _build_H_matrix(n_sites, t1, t2, phi, M):
-    if n_sites % 2:
-        raise ValueError(f"Haldane n_sites must be even (honeycomb has 2 atoms/cell); got {n_sites}.")
-    n_cells = n_sites // 2
-    Lx, Ly = 1, n_cells
-    for lx in range(2, n_cells // 2 + 1):
-        if n_cells % lx == 0 and n_cells // lx >= 2:
-            ly = n_cells // lx
-            if ((lx % 3 == 0) + (ly % 3 == 0), -abs(lx - ly)) > ((Lx % 3 == 0) + (Ly % 3 == 0), -abs(Lx - Ly)):
-                Lx, Ly = lx, ly
-    if min(Lx, Ly) < 2:
-        raise ValueError(
-            f"Haldane n_sites={n_sites} cannot factor as 2*Lx*Ly with Lx, Ly >= 2. "
-            f"Use n_sites = 8, 12, 16, 18, 24, 32, 50, 72, ... (n_sites=18 is the smallest "
-            f"size that samples the K-point and shows real Haldane phase structure)."
-        )
-
+def _build_H_matrix(lattice, t1, t2, phi, M):
+    Lx, Ly = lattice
+    n_sites = 2 * Lx * Ly
     H = np.zeros((n_sites, n_sites), dtype=complex)
 
     def A(i, j): return 2 * (i * Ly + j)
@@ -89,6 +75,8 @@ model = Model(
     param_labels={"t1": "t_1", "t2": "t_2", "phi": "\\phi", "M": "M"},
     spin=1,
     n_dims=2,
+    lattice_shape=("Lx", "Ly"),
+    sites_per_cell=2,
     hamiltonian_matrix=_build_H_matrix,
     bloch_hamiltonian=_bloch_hamiltonian,
     get_optimizer=_get_optimizer,

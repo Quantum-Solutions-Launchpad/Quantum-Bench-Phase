@@ -40,8 +40,8 @@ def setup_logging():
     return logger
 
 
-def _fmt_params(n_sites, n_occ, model_params=None, **extra):
-    parts = [f"n_sites={n_sites}", f"n_occ={n_occ}"]
+def _fmt_params(lattice, n_occ, model_params=None, **extra):
+    parts = [f"lattice={tuple(lattice)}", f"n_occ={n_occ}"]
     for k, v in (model_params or {}).items():
         parts.append(f"{k}={v:g}" if isinstance(v, float) else f"{k}={v}")
     for k, v in extra.items():
@@ -49,10 +49,10 @@ def _fmt_params(n_sites, n_occ, model_params=None, **extra):
     return ", ".join(parts)
 
 
-def resolve_sweep(param: str, range_args, n_sites: int, spin: int, momentum_axes: tuple[str, ...] = ()):
+def resolve_sweep(param: str, range_args, n_orbitals: int, momentum_axes: tuple[str, ...] = ()):
     if param == "n_occ":
         if range_args is None:
-            vals = list(range(spin * n_sites + 1))
+            vals = list(range(n_orbitals + 1))
         else:
             lo, hi, st = range_args
             vals = list(range(int(lo), int(hi) + 1, max(1, int(st))))
@@ -91,7 +91,7 @@ def _hf_initial_state(n_sites: int, spin: int, n_occ: int, mapper):
     return qc
 
 
-def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, n_sites: int, n_occ: int, rep: int, model_params: dict | None = None):
+def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, lattice, n_occ: int, rep: int, model_params: dict | None = None):
     omega_coef = 0
     iteration_phases = []
 
@@ -107,7 +107,7 @@ def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, nu
         omega_coef = omega_coef + x / 2
         iteration_phases.append(omega_coef)
 
-        logger.debug(f"IQPE ({_fmt_params(n_sites, n_occ, model_params, repetition=rep, iteration=num_iterations-k+1)}) = {omega_coef}")
+        logger.debug(f"IQPE ({_fmt_params(lattice, n_occ, model_params, repetition=rep, iteration=num_iterations-k+1)}) = {omega_coef}")
 
     return omega_coef, iteration_phases
 
@@ -136,7 +136,7 @@ def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCi
 def analytic_bands(model, k_tuple, model_params):
     H = model.bloch_hamiltonian(*k_tuple, **model_params)
     eigvals = np.sort(np.linalg.eigvalsh(H))
-    logger.info(f"Analytic bands (k={tuple(round(float(x), 3) for x in k_tuple)}, {_fmt_params(0, 0, model_params).split(', ', 2)[-1]}) = {eigvals.tolist()}")
+    logger.info(f"Analytic bands (k={tuple(round(float(x), 3) for x in k_tuple)}, {_fmt_params((), 0, model_params).split(', ', 2)[-1]}) = {eigvals.tolist()}")
     return eigvals.tolist()
 
 
@@ -267,21 +267,21 @@ def iqpe_bloch_other_benchmarks(k_tuple, model_params, bloch_hamiltonian_fn, tim
     return num_queries, (full_circuit_depth // n_iters, two_gate_circuit_depth // n_iters)
 
 
-def analytic(model, n_sites, n_occ, model_params):
-    H = model._build_H_matrix(n_sites, **model_params)
+def analytic(model, lattice, n_occ, model_params):
+    H = model._build_H_matrix(lattice, **model_params)
     eigvals, _ = np.linalg.eigh(H)
     kinetic_energy = np.sum(np.sort(eigvals)[:n_occ])
 
     mf_fn = getattr(model, 'mean_field_correction', None)
-    interaction_energy = mf_fn(n_sites, n_occ, **model_params) if mf_fn else 0.0
+    interaction_energy = mf_fn(lattice, n_occ, **model_params) if mf_fn else 0.0
 
     result = kinetic_energy + interaction_energy
-    logger.info(f"Analytic ({_fmt_params(n_sites, n_occ, model_params)}) = {result}")
+    logger.info(f"Analytic ({_fmt_params(lattice, n_occ, model_params)}) = {result}")
     return result
 
 
-def vqe(n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, mapper, max_iters, n_layers, rep, backend=None):
-    fermionic_hamiltonian = fermionic_hamiltonian_fn(n_sites, **model_params)
+def vqe(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, mapper, max_iters, n_layers, rep, backend=None):
+    fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
     if backend:
@@ -320,14 +320,14 @@ def vqe(n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimi
         optimizer = get_optimizer_fn(max_iters)
         res = optimizer.minimize(cost_func, x0=x0)
 
-        logger.debug(f"VQE ({_fmt_params(n_sites, n_occ, model_params, repetition=rep)}) = {float(res.fun)}")
+        logger.debug(f"VQE ({_fmt_params(lattice, n_occ, model_params, repetition=rep)}) = {float(res.fun)}")
         return float(res.fun)
 
 
-def iqpe(n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep, backend=None):
+def iqpe(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep, backend=None):
     np.seterr(all='ignore')
 
-    fermionic_hamiltonian = fermionic_hamiltonian_fn(n_sites, **model_params)
+    fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
     st = SuzukiTrotter(reps=n_trot)
@@ -345,15 +345,15 @@ def iqpe(n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, t
     else:
         sampler = Sampler()
 
-    phase, iteration_phases = iqpe_estimate(evolution, initial, n_iters, sampler, n_sites, n_occ, rep, model_params)
+    phase, iteration_phases = iqpe_estimate(evolution, initial, n_iters, sampler, lattice, n_occ, rep, model_params)
     res = float(-2 * np.pi * phase / time_param)
     iteration_energies = [float(-2 * np.pi * p / time_param) for p in iteration_phases]
 
-    logger.debug(f"IQPE ({_fmt_params(n_sites, n_occ, model_params, repetition=rep)}) = {res}")
+    logger.debug(f"IQPE ({_fmt_params(lattice, n_occ, model_params, repetition=rep)}) = {res}")
     return res, iteration_energies
 
 
-def vqe_other_benchmarks(n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
+def vqe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
     if backend:
         noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
         simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
@@ -363,18 +363,18 @@ def vqe_other_benchmarks(n_sites, spin, n_occ, model_params, fermionic_hamiltoni
     ansatz = EP_ansatz(n_sites, spin, n_layers, n_occ)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
-    fermionic_hamiltonian = fermionic_hamiltonian_fn(n_sites, **model_params)
+    fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
     num_queries = qubit_hamiltonian.size * max_iters * vqe_reps
     full_circuit_depth = ansatz_circuit.depth()
     two_gate_circuit_depth = ansatz_circuit.depth(lambda x: x.operation.num_qubits == 2)
 
-    logger.info(f"VQE other benchmarks ({_fmt_params(n_sites, n_occ, model_params)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}]")
+    logger.info(f"VQE other benchmarks ({_fmt_params(lattice, n_occ, model_params)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}]")
     return num_queries, (full_circuit_depth, two_gate_circuit_depth)
 
 
-def iqpe_other_benchmarks(n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, iqpe_reps, backend=None):
+def iqpe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, iqpe_reps, backend=None):
     np.seterr(all='ignore')
     if backend:
         noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
@@ -382,7 +382,7 @@ def iqpe_other_benchmarks(n_sites, spin, n_occ, model_params, fermionic_hamilton
     else:
         simulator = AerSimulator()
 
-    fermionic_hamiltonian = fermionic_hamiltonian_fn(n_sites, **model_params)
+    fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
     st = SuzukiTrotter(reps=n_trot)
@@ -395,9 +395,9 @@ def iqpe_other_benchmarks(n_sites, spin, n_occ, model_params, fermionic_hamilton
         qc = transpile(qc, backend=simulator, optimization_level=3)
         full_circuit_depth += qc.depth()
         two_gate_circuit_depth += qc.depth(lambda x: x.operation.num_qubits == 2)
-        logger.debug(f"IQPE other benchmarks ({_fmt_params(n_sites, n_occ, model_params, iteration=n_iters-k+1)}): circuit_depth=[{qc.depth(), qc.depth(lambda x: x.operation.num_qubits == 2)}]")
+        logger.debug(f"IQPE other benchmarks ({_fmt_params(lattice, n_occ, model_params, iteration=n_iters-k+1)}): circuit_depth=[{qc.depth(), qc.depth(lambda x: x.operation.num_qubits == 2)}]")
 
     num_queries = qubit_hamiltonian.size * iqpe_reps * n_trot * n_iters
 
-    logger.info(f"IQPE other benchmarks ({_fmt_params(n_sites, n_occ, model_params)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth // n_iters},{two_gate_circuit_depth // n_iters}]")
+    logger.info(f"IQPE other benchmarks ({_fmt_params(lattice, n_occ, model_params)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth // n_iters},{two_gate_circuit_depth // n_iters}]")
     return num_queries, (full_circuit_depth // n_iters, two_gate_circuit_depth // n_iters)

@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 MODEL="haldane-hubbard"
-N_SITES=8
+LATTICE=(2 2)
 X_PARAM="t2"
 Y_PARAM="U"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG="$HERE/logs/${MODEL}/${N_SITES}-sites/simulated-ideal-3d-${X_PARAM}-vs-${Y_PARAM}.json"
+LATTICE_TAG=$(IFS=x; echo "${LATTICE[*]}")
+LOG="$HERE/logs/${MODEL}/${LATTICE_TAG}/simulated-ideal-3d-${X_PARAM}-vs-${Y_PARAM}.json"
 
 PHI=$(python3 -c "import math; print(math.pi/4)")
 
@@ -16,7 +17,7 @@ if [ -f "$LOG" ]; then
 else
     quaph run simulated-ideal \
         --model "$MODEL" \
-        --n-sites "$N_SITES" \
+        --lattice "${LATTICE[@]}" \
         --x-param "$X_PARAM" \
         --x-range 0.0 1.5 0.3 \
         --y-param "$Y_PARAM" \

@@ -3,7 +3,6 @@ import math
 import quaph
 
 MODEL = "haldane"
-N_SITES = 6
 X_PARAM = "kx"
 Y_PARAM = "ky"
 STEP = math.pi / 50
@@ -13,7 +12,6 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 
 quaph.run_analytic(
     model=MODEL,
-    n_sites=N_SITES,
     x_param=X_PARAM,
     x_range=(-math.pi, math.pi, STEP),
     y_param=Y_PARAM,
@@ -26,7 +24,6 @@ quaph.run_analytic(
 
 quaph.run_analytic(
     model=MODEL,
-    n_sites=N_SITES,
     x_param=X_PARAM,
     x_range=(-math.pi, math.pi, STEP),
     y_param=Y_PARAM,

@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 MODEL="ssh"
-N_SITES=4
+LATTICE=(4)
 X_PARAM="n_occ"
 Y_PARAM="t2"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG="$HERE/logs/${MODEL}/${N_SITES}-sites/simulated-ideal-3d-${X_PARAM}-vs-${Y_PARAM}.json"
+LATTICE_TAG=$(IFS=x; echo "${LATTICE[*]}")
+LOG="$HERE/logs/${MODEL}/${LATTICE_TAG}/simulated-ideal-3d-${X_PARAM}-vs-${Y_PARAM}.json"
 
 if [ -f "$LOG" ]; then
     echo "Plotting from existing log..."
@@ -21,24 +22,28 @@ ssh
 SSH
 1
 1
+L
+1
 t1
 t_1
 t2
 t_2
 
 import numpy as np
-def hamiltonian_matrix(n_sites, t1, t2):
-    H = np.zeros((n_sites, n_sites), dtype=complex)
-    for i in range(n_sites - 1):
+def hamiltonian_matrix(lattice, t1, t2):
+    L, = lattice
+    H = np.zeros((L, L), dtype=complex)
+    for i in range(L - 1):
         t = t1 if i % 2 == 0 else t2
         H[i, i + 1] -= t
         H[i + 1, i] -= t
     return H
 END
 from qiskit_nature.second_q.operators import FermionicOp
-def fermionic_hamiltonian(n_sites, *, t1, t2):
+def fermionic_hamiltonian(lattice, *, t1, t2):
+    L, = lattice
     hamiltonian = 0.0 * FermionicOp({})
-    for i in range(n_sites - 1):
+    for i in range(L - 1):
         t = t1 if i % 2 == 0 else t2
         hamiltonian -= FermionicOp({
             f"+_{i} -_{i + 1}": t,
@@ -59,7 +64,7 @@ fi
 
 quaph run simulated-ideal \
     --model "$MODEL" \
-    --n-sites "$N_SITES" \
+    --lattice "${LATTICE[@]}" \
     --x-param "$X_PARAM" \
     --y-param "$Y_PARAM" \
     --y-range 0.0 2.0 0.5 \

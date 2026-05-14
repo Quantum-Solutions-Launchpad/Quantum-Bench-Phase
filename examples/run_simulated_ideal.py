@@ -3,12 +3,13 @@ import math
 import quaph
 
 MODEL = "haldane-hubbard"
-N_SITES = 8
+LATTICE = (2, 2)
 X_PARAM = "t2"
 Y_PARAM = "U"
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-_LOG = os.path.join(_HERE, f"logs/{MODEL}/{N_SITES}-sites/simulated-ideal-3d-{X_PARAM}-vs-{Y_PARAM}.json")
+_LATTICE_TAG = "x".join(str(x) for x in LATTICE)
+_LOG = os.path.join(_HERE, f"logs/{MODEL}/{_LATTICE_TAG}/simulated-ideal-3d-{X_PARAM}-vs-{Y_PARAM}.json")
 
 if os.path.exists(_LOG):
     print("Plotting from existing log...")
@@ -17,7 +18,7 @@ if os.path.exists(_LOG):
 else:
     result = quaph.run_simulated_ideal(
         model=MODEL,
-        n_sites=N_SITES,
+        lattice=LATTICE,
         x_param=X_PARAM,
         x_range=(0.0, 1.5, 0.3),
         y_param=Y_PARAM,

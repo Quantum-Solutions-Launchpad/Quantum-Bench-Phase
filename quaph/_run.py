@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 from dataclasses import dataclass, field
 
@@ -28,12 +29,44 @@ def _resolve_model(model) -> Model:
     return model
 
 
-def _log_subdir(log_dir, model_name, n_sites):
-    return os.path.join(log_dir, model_name, f"{n_sites}-sites")
+def _resolve_lattice(model: Model, lattice) -> tuple[int, ...]:
+    if lattice is None:
+        raise ValueError(
+            f"Model '{model.name}' requires lattice={model.lattice_shape} "
+            f"(n_dims={model.n_dims}, sites_per_cell={model.sites_per_cell})."
+        )
+    try:
+        lat = tuple(int(x) for x in lattice)
+    except TypeError:
+        raise ValueError(
+            f"lattice must be a sequence of ints matching {model.lattice_shape}; got {lattice!r}"
+        )
+    if len(lat) != model.n_dims:
+        raise ValueError(
+            f"Model '{model.name}' expects lattice with {model.n_dims} entries "
+            f"(shape={model.lattice_shape}); got lattice={lat}."
+        )
+    if any(x < 1 for x in lat):
+        raise ValueError(f"lattice entries must be >= 1; got {lat}.")
+    return lat
 
 
-def _plot_subdir(plot_dir, model_name, n_sites):
-    return os.path.join(plot_dir, model_name, f"{n_sites}-sites")
+def _lattice_tag(lattice) -> str:
+    if lattice is None:
+        return "band-structure"
+    return "x".join(str(x) for x in lattice)
+
+
+def _log_subdir(log_dir, model_name, lattice):
+    return os.path.join(log_dir, model_name, _lattice_tag(lattice))
+
+
+def _plot_subdir(plot_dir, model_name, lattice):
+    return os.path.join(plot_dir, model_name, _lattice_tag(lattice))
+
+
+def _is_band_structure_axes(model, x_param, y_param) -> bool:
+    return (x_param in model.momentum_axes) or (y_param in model.momentum_axes)
 
 
 def _normalize_sweep_axes(x_param, x_range, y_param, y_range):
@@ -80,7 +113,7 @@ def _gate_momentum(model, x_param, y_param):
 @dataclass
 class AnalyticResult:
     model_name: str
-    n_sites: int
+    lattice: tuple[int, ...]
     x_param: str
     y_param: str | None
     x_values: list
@@ -110,7 +143,7 @@ class AnalyticResult:
 @dataclass
 class SimulatedResult:
     model_name: str
-    n_sites: int
+    lattice: tuple[int, ...]
     x_param: str
     y_param: str | None
     x_values: list
@@ -168,7 +201,7 @@ def load_result(path: str) -> AnalyticResult | SimulatedResult:
         energies = _read_grid(data["result"]["analytic"])
         return AnalyticResult(
             model_name=data["parameters"]["model"],
-            n_sites=data["parameters"]["n_sites"],
+            lattice=tuple(data["parameters"]["lattice"]),
             x_param=data["x_param"],
             y_param=data.get("y_param"),
             x_values=x_vals,
@@ -191,7 +224,7 @@ def load_result(path: str) -> AnalyticResult | SimulatedResult:
         Z_iqpe = _read_grid(data["result"]["iqpe"]) if "iqpe" in data["result"] else None
         return SimulatedResult(
             model_name=data["parameters"]["model"],
-            n_sites=data["parameters"]["n_sites"],
+            lattice=tuple(data["parameters"]["lattice"]),
             x_param=data["x_param"],
             y_param=data.get("y_param"),
             x_values=x_vals,
@@ -216,7 +249,7 @@ def load_result(path: str) -> AnalyticResult | SimulatedResult:
 def run_analytic(
     model,
     *,
-    n_sites: int,
+    lattice=None,
     x_param: str | None = None,
     x_range=None,
     y_param: str | None = None,
@@ -236,6 +269,13 @@ def run_analytic(
         raise ValueError("heatmap=True requires both x and y sweep axes; provide y_param/y_range.")
     _gate_momentum(model, x_param, y_param)
 
+    is_band_structure_run = _is_band_structure_axes(model, x_param, y_param)
+    if is_band_structure_run:
+        if lattice is not None:
+            raise ValueError("lattice and momentum-space sweep axes are mutually exclusive; omit lattice for band-structure runs.")
+    else:
+        lattice = _resolve_lattice(model, lattice)
+
     for axis in (x_param, y_param):
         if axis is None:
             continue
@@ -246,15 +286,21 @@ def run_analytic(
             )
 
     params = dict(model_params or {})
-    fixed_n_occ = n_occ if n_occ is not None else n_sites
     spin = model.spin
+    if lattice is not None:
+        n_sites = math.prod(lattice) * model.sites_per_cell
+        n_orbitals = n_sites * spin
+    else:
+        n_sites = 0
+        n_orbitals = 0
+    fixed_n_occ = n_occ if n_occ is not None else (n_orbitals // 2 if n_orbitals else 0)
     momentum_axes = model.momentum_axes
 
-    x_vals, _x_label_default, x_kind = resolve_sweep(x_param, x_range, n_sites, spin, momentum_axes)
+    x_vals, _x_label_default, x_kind = resolve_sweep(x_param, x_range, n_orbitals, momentum_axes)
     if is_1d:
         y_vals, y_kind = [], "none"
     else:
-        y_vals, _y_label_default, y_kind = resolve_sweep(y_param, y_range, n_sites, spin, momentum_axes)
+        y_vals, _y_label_default, y_kind = resolve_sweep(y_param, y_range, n_orbitals, momentum_axes)
 
     is_band_structure = (x_kind == "momentum") or (y_kind == "momentum")
     if is_band_structure:
@@ -305,7 +351,7 @@ def run_analytic(
         if is_band_structure:
             k_tuple = tuple(cell_params.pop(a) for a in momentum_axes)
             return analytic_bands(model, k_tuple, cell_params)
-        return analytic(model, n_sites, n_occ_val, cell_params)
+        return analytic(model, lattice, n_occ_val, cell_params)
 
     if is_1d:
         for ix, xv in enumerate(x_vals):
@@ -330,7 +376,7 @@ def run_analytic(
 
     log_path = None
     if log_dir is not None:
-        subdir = _log_subdir(log_dir, model.name, n_sites)
+        subdir = _log_subdir(log_dir, model.name, lattice)
         os.makedirs(subdir, exist_ok=True)
         log_path = os.path.join(subdir, f"{tag}.json")
         log_data = {
@@ -339,7 +385,7 @@ def run_analytic(
             "band_structure": is_band_structure,
             "parameters": {
                 "model": model.name,
-                "n_sites": n_sites,
+                "lattice": list(lattice) if lattice is not None else None,
                 "model_params": {k: float(v) for k, v in params.items()},
             },
             "x_param": x_param,
@@ -355,7 +401,7 @@ def run_analytic(
 
     plot_path = None
     if plot_dir is not None:
-        subdir = _plot_subdir(plot_dir, model.name, n_sites)
+        subdir = _plot_subdir(plot_dir, model.name, lattice)
         os.makedirs(subdir, exist_ok=True)
         plot_path = os.path.join(subdir, f"{tag}.pdf")
 
@@ -370,7 +416,7 @@ def run_analytic(
 
     return AnalyticResult(
         model_name=model.name,
-        n_sites=n_sites,
+        lattice=lattice,
         x_param=x_param,
         y_param=y_param,
         x_values=x_vals,
@@ -389,7 +435,7 @@ def _run_simulated(
     simulation_tag: str,
     backend,
     *,
-    n_sites: int,
+    lattice: tuple[int, ...],
     x_param: str,
     x_range,
     y_param: str | None,
@@ -413,15 +459,21 @@ def _run_simulated(
     do_iqpe = iqpe_reps > 0
 
     spin = model.spin
+    if lattice is not None:
+        n_sites = math.prod(lattice) * model.sites_per_cell
+        n_orbitals = n_sites * spin
+    else:
+        n_sites = 0
+        n_orbitals = 0
     mapper = JordanWignerMapper()
-    fixed_n_occ = n_occ if n_occ is not None else n_sites
+    fixed_n_occ = n_occ if n_occ is not None else (n_orbitals // 2 if n_orbitals else 0)
     momentum_axes = model.momentum_axes
 
-    x_vals, _x_label_default, x_kind = resolve_sweep(x_param, x_range, n_sites, spin, momentum_axes)
+    x_vals, _x_label_default, x_kind = resolve_sweep(x_param, x_range, n_orbitals, momentum_axes)
     if is_1d:
         y_vals, y_kind = [], "none"
     else:
-        y_vals, _y_label_default, y_kind = resolve_sweep(y_param, y_range, n_sites, spin, momentum_axes)
+        y_vals, _y_label_default, y_kind = resolve_sweep(y_param, y_range, n_orbitals, momentum_axes)
     nx = len(x_vals)
     ny = 1 if is_1d else len(y_vals)
     plot_format = "2d" if is_1d else "3d"
@@ -504,19 +556,19 @@ def _run_simulated(
                 continue
 
             jobs.append(delayed(tagged_job)(
-                ("analytic", ix, iy), analytic, model, n_sites, n_occ_val, cp
+                ("analytic", ix, iy), analytic, model, lattice, n_occ_val, cp
             ))
             if do_iqpe:
                 for rep in range(1, iqpe_reps + 1):
                     jobs.append(delayed(tagged_job)(
                         ("iqpe", ix, iy, rep), iqpe,
-                        n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
+                        lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
                         mapper, iqpe_time, iqpe_trot, iqpe_iters, rep,
                         backend=backend
                     ))
                 jobs.append(delayed(tagged_job)(
                     ("iqpe_bench", ix, iy), iqpe_other_benchmarks,
-                    n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
+                    lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
                     mapper, iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps,
                     backend=backend
                 ))
@@ -524,13 +576,13 @@ def _run_simulated(
                 for rep in range(1, vqe_reps + 1):
                     jobs.append(delayed(tagged_job)(
                         ("vqe", ix, iy, rep), vqe,
-                        n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
+                        lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
                         mapper, vqe_iters, vqe_layers, rep,
                         backend=backend
                     ))
                 jobs.append(delayed(tagged_job)(
                     ("vqe_bench", ix, iy), vqe_other_benchmarks,
-                    n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
+                    lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
                     mapper, vqe_iters, vqe_layers, vqe_reps,
                     backend=backend
                 ))
@@ -538,7 +590,7 @@ def _run_simulated(
     raw_tag = _file_tag(f"simulated-{simulation_tag}", plot_format, x_param, y_param)
     raw_data_path = None
     if log_dir is not None:
-        log_subdir = _log_subdir(log_dir, model.name, n_sites)
+        log_subdir = _log_subdir(log_dir, model.name, lattice)
         os.makedirs(os.path.join(log_subdir, "raw-data"), exist_ok=True)
         raw_data_path = os.path.join(log_subdir, "raw-data", f"{raw_tag}.json")
 
@@ -552,7 +604,7 @@ def _run_simulated(
 
     parameters = {
         "model": model.name,
-        "n_sites": n_sites,
+        "lattice": list(lattice),
         "simulation": simulation_tag,
         "model_params": {k: float(v) for k, v in model_params.items()},
     }
@@ -711,7 +763,7 @@ def _run_simulated(
 
     plot_path = None
     if plot_dir is not None:
-        plot_subdir = _plot_subdir(plot_dir, model.name, n_sites)
+        plot_subdir = _plot_subdir(plot_dir, model.name, lattice)
         os.makedirs(plot_subdir, exist_ok=True)
         plot_path = os.path.join(plot_subdir, f"{raw_tag}.pdf")
 
@@ -750,7 +802,7 @@ def _run_simulated(
 
     return SimulatedResult(
         model_name=model.name,
-        n_sites=n_sites,
+        lattice=lattice,
         x_param=x_param,
         y_param=y_param,
         x_values=x_vals,
@@ -778,7 +830,7 @@ def _resolve_method_reps(name, reps, *params):
     return reps
 
 
-def _prep_simulated_kwargs(model, x_param, x_range, y_param, y_range, n_occ, model_params,
+def _prep_simulated_kwargs(model, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
                            vqe_iters, vqe_layers, vqe_reps, iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps):
     model = _resolve_model(model)
     vqe_reps = _resolve_method_reps("vqe", vqe_reps, vqe_iters, vqe_layers)
@@ -786,6 +838,12 @@ def _prep_simulated_kwargs(model, x_param, x_range, y_param, y_range, n_occ, mod
 
     x_param, x_range, y_param, y_range, is_1d = _normalize_sweep_axes(x_param, x_range, y_param, y_range)
     _gate_momentum(model, x_param, y_param)
+
+    if _is_band_structure_axes(model, x_param, y_param):
+        if lattice is not None:
+            raise ValueError("lattice and momentum-space sweep axes are mutually exclusive; omit lattice for band-structure runs.")
+    else:
+        lattice = _resolve_lattice(model, lattice)
 
     for axis in (x_param, y_param):
         if axis is None:
@@ -797,13 +855,13 @@ def _prep_simulated_kwargs(model, x_param, x_range, y_param, y_range, n_occ, mod
             )
 
     params = dict(model_params or {})
-    return model, x_param, x_range, y_param, y_range, is_1d, n_occ, params, vqe_reps, iqpe_reps
+    return model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params, vqe_reps, iqpe_reps
 
 
 def run_simulated_ideal(
     model,
     *,
-    n_sites: int,
+    lattice=None,
     x_param: str | None = None,
     x_range=None,
     y_param: str | None = None,
@@ -822,15 +880,15 @@ def run_simulated_ideal(
     hide_plot: bool = False,
     hide_legend: bool = False,
 ) -> SimulatedResult:
-    (model, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
+    (model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
      vqe_reps, iqpe_reps) = _prep_simulated_kwargs(
-        model, x_param, x_range, y_param, y_range, n_occ, model_params,
+        model, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
         vqe_iters, vqe_layers, vqe_reps, iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps,
     )
 
     return _run_simulated(
         model, "ideal", None,
-        n_sites=n_sites, x_param=x_param, x_range=x_range,
+        lattice=lattice, x_param=x_param, x_range=x_range,
         y_param=y_param, y_range=y_range, n_occ=n_occ,
         model_params=params, vqe_iters=vqe_iters, vqe_layers=vqe_layers,
         vqe_reps=vqe_reps, iqpe_time=iqpe_time, iqpe_trot=iqpe_trot,
@@ -845,7 +903,7 @@ def run_simulated_noisy(
     model,
     *,
     backend=None,
-    n_sites: int,
+    lattice=None,
     x_param: str | None = None,
     x_range=None,
     y_param: str | None = None,
@@ -868,15 +926,15 @@ def run_simulated_noisy(
         from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
         backend = FakeSherbrooke()
 
-    (model, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
+    (model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
      vqe_reps, iqpe_reps) = _prep_simulated_kwargs(
-        model, x_param, x_range, y_param, y_range, n_occ, model_params,
+        model, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
         vqe_iters, vqe_layers, vqe_reps, iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps,
     )
 
     return _run_simulated(
         model, "noisy", backend,
-        n_sites=n_sites, x_param=x_param, x_range=x_range,
+        lattice=lattice, x_param=x_param, x_range=x_range,
         y_param=y_param, y_range=y_range, n_occ=n_occ,
         model_params=params, vqe_iters=vqe_iters, vqe_layers=vqe_layers,
         vqe_reps=vqe_reps, iqpe_time=iqpe_time, iqpe_trot=iqpe_trot,

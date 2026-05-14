@@ -55,14 +55,14 @@ def _add_sweep_args(parser):
     parser.add_argument("--y-range", type=float, nargs=3,
                         metavar=("MIN", "MAX", "STEP"), default=None)
     parser.add_argument("--n-occ", type=int, default=None,
-                        help="Fixed particle number (default: n_sites)")
+                        help="Fixed particle number (default: half-filling)")
 
 
 def _add_output_args(parser):
     parser.add_argument("--log-dir", default=None, metavar="PATH",
-                        help="Directory for log JSON files (model/n-sites/ appended)")
+                        help="Directory for log JSON files (model/<lattice-tag>/ appended)")
     parser.add_argument("--plot-dir", default=None, metavar="PATH",
-                        help="Directory for plot PDF files (model/n-sites/ appended)")
+                        help="Directory for plot PDF files (model/<lattice-tag>/ appended)")
     parser.add_argument("--hide-plot", dest="hide_plot",
                         action="store_true", default=False)
 
@@ -85,7 +85,7 @@ def _dispatch_analytic(args, model):
     x_param, y_param = _resolve_sweep_axes(args)
     run_analytic(
         model,
-        n_sites=args.n_sites,
+        lattice=tuple(args.lattice) if args.lattice else None,
         x_param=x_param,
         x_range=args.x_range,
         y_param=y_param,
@@ -103,7 +103,7 @@ def _dispatch_simulated_ideal(args, model):
     x_param, y_param = _resolve_sweep_axes(args)
     run_simulated_ideal(
         model,
-        n_sites=args.n_sites,
+        lattice=tuple(args.lattice) if args.lattice else None,
         x_param=x_param,
         x_range=args.x_range,
         y_param=y_param,
@@ -128,7 +128,7 @@ def _dispatch_simulated_noisy(args, model):
     x_param, y_param = _resolve_sweep_axes(args)
     run_simulated_noisy(
         model,
-        n_sites=args.n_sites,
+        lattice=tuple(args.lattice) if args.lattice else None,
         x_param=x_param,
         x_range=args.x_range,
         y_param=y_param,
@@ -200,7 +200,8 @@ def main(argv=None):
     for p in (analytic_parser, sim_ideal_parser, sim_noisy_parser):
         p.add_argument("--model", required=True, metavar="MODEL",
                        help="Registered model name (e.g. haldane, hubbard, haldane-hubbard)")
-        p.add_argument("--n-sites", type=int, required=True, metavar="N")
+        p.add_argument("--lattice", type=int, nargs="+", default=None, metavar="N",
+                       help="Lattice extents per dimension (e.g. --lattice 3 3 for a 3x3 unit-cell grid). Omit for momentum-space band-structure runs.")
         _add_sweep_args(p)
         _add_output_args(p)
 

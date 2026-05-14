@@ -28,6 +28,8 @@ class Model:
         *,
         spin: int,
         n_dims: int,
+        lattice_shape: tuple[str, ...],
+        sites_per_cell: int,
         hamiltonian_matrix: Callable,
         interaction_hamiltonian: Callable | None = None,
         get_optimizer: Callable | None = None,
@@ -47,10 +49,22 @@ class Model:
             raise ValueError(
                 f"Model '{name}' has invalid n_dims={n_dims}; must be 1, 2, or 3."
             )
+        lattice_shape = tuple(lattice_shape)
+        if len(lattice_shape) != n_dims:
+            raise ValueError(
+                f"Model '{name}' has lattice_shape={lattice_shape} (len {len(lattice_shape)}) "
+                f"but n_dims={n_dims}; they must match."
+            )
+        if not isinstance(sites_per_cell, int) or sites_per_cell < 1:
+            raise ValueError(
+                f"Model '{name}' has invalid sites_per_cell={sites_per_cell}; must be a positive int."
+            )
         self.name = name
         self.display_name = display_name
         self.spin = spin
         self.n_dims = n_dims
+        self.lattice_shape = lattice_shape
+        self.sites_per_cell = sites_per_cell
         self.momentum_axes = momentum_axes_by_dims[n_dims]
 
         momentum_labels = {"k": "k", "kx": "k_x", "ky": "k_y", "kz": "k_z"}
@@ -70,11 +84,11 @@ class Model:
 
     @property
     def fermionic_hamiltonian(self):
-        def _build(n_sites, **params):
-            H = self._hamiltonian_matrix_fn(n_sites, **params)
+        def _build(lattice, **params):
+            H = self._hamiltonian_matrix_fn(lattice, **params)
             op = matrix_to_fermionic_op(H)
             if self._interaction_hamiltonian_fn is not None:
-                op = op + self._interaction_hamiltonian_fn(n_sites, **params)
+                op = op + self._interaction_hamiltonian_fn(lattice, **params)
             return op
         return _build
 

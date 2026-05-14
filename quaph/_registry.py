@@ -136,6 +136,8 @@ def _write_model_file(path: Path, model: Model, source_blocks: dict[str, str]) -
     lines.append(f"    param_labels={persisted_labels!r},")
     lines.append(f"    spin={model.spin!r},")
     lines.append(f"    n_dims={model.n_dims!r},")
+    lines.append(f"    lattice_shape={model.lattice_shape!r},")
+    lines.append(f"    sites_per_cell={model.sites_per_cell!r},")
     for field_name, _ in _CALLABLE_FIELDS:
         if field_name in callable_var_names:
             lines.append(f"    {field_name}={callable_var_names[field_name]},")
