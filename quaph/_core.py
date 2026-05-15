@@ -124,11 +124,18 @@ def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCi
     return qc
 
 
-def analytic_bands(model, k_tuple, model_params):
+def analytic_bands(model, k_tuple, model_params, observable: str = "E"):
     H = model.bloch_hamiltonian(*k_tuple, **model_params)
-    eigvals = np.sort(np.linalg.eigvalsh(H))
-    logger.info(f"Analytic bands (k={tuple(round(float(x), 3) for x in k_tuple)}, {_fmt_params((), 0, model_params).split(', ', 2)[-1]}) = {eigvals.tolist()}")
-    return eigvals.tolist()
+    eigvals, eigvecs = np.linalg.eigh(H)
+    obs = model.get_observable(observable)
+    if obs.analytic_bloch is None:
+        raise ValueError(
+            f"Observable '{observable}' on model '{model.name}' has no analytic_bloch backend."
+        )
+    result = obs.analytic_bloch(model, k_tuple, H, eigvals, eigvecs, model_params)
+    k_str = tuple(round(float(x), 3) for x in k_tuple)
+    logger.info(f"Analytic [{observable}] (k={k_str}, {_fmt_params((), 0, model_params).split(', ', 2)[-1]}) = {result}")
+    return result
 
 
 def vqe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, get_optimizer_fn, max_iters, n_layers, rep, backend=None):
@@ -258,16 +265,12 @@ def iqpe_bloch_other_benchmarks(k_tuple, model_params, bloch_hamiltonian_fn, tim
     return num_queries, (full_circuit_depth // n_iters, two_gate_circuit_depth // n_iters)
 
 
-def analytic(model, lattice, n_occ, model_params):
+def analytic(model, lattice, n_occ, model_params, observable: str = "E"):
     H = model._build_H_matrix(lattice, **model_params)
-    eigvals, _ = np.linalg.eigh(H)
-    kinetic_energy = np.sum(np.sort(eigvals)[:n_occ])
-
-    mf_fn = getattr(model, 'mean_field_correction', None)
-    interaction_energy = mf_fn(lattice, n_occ, **model_params) if mf_fn else 0.0
-
-    result = kinetic_energy + interaction_energy
-    logger.info(f"Analytic ({_fmt_params(lattice, n_occ, model_params)}) = {result}")
+    eigvals, eigvecs = np.linalg.eigh(H)
+    obs = model.get_observable(observable)
+    result = float(obs.analytic(model, lattice, H, eigvals, eigvecs, n_occ, model_params))
+    logger.info(f"Analytic [{observable}] ({_fmt_params(lattice, n_occ, model_params)}) = {result}")
     return result
 
 

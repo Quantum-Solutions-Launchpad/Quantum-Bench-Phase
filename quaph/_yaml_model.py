@@ -8,7 +8,7 @@ import yaml
 from asteval import Interpreter
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from quaph._model import Model
+from quaph._model import Model, Observable
 
 
 _QISKIT_OPTIMIZERS = (
@@ -133,6 +133,13 @@ class AnsatzSpec(BaseModel):
         return v
 
 
+class ObservableSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    display_name: str
+    analytic: str
+    analytic_bloch: str | None = None
+
+
 class BlochSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
     shape: list[int]
@@ -166,6 +173,7 @@ class YamlModelSpec(BaseModel):
     bloch_hamiltonian: BlochSpec | None = None
     lattice_vectors: list[list[float]] | None = None
     sublattice_positions: dict[str, list[float]] | None = None
+    observables: dict[str, ObservableSpec] | None = None
 
     @model_validator(mode="after")
     def _check_consistency(self) -> "YamlModelSpec":
@@ -564,6 +572,60 @@ def _build_auto_bloch_hamiltonian(spec: YamlModelSpec):
     return bloch_hamiltonian
 
 
+def _build_observables(spec: YamlModelSpec) -> dict[str, Observable] | None:
+    if not spec.observables:
+        return None
+    momentum_names = {1: ("k",), 2: ("kx", "ky"), 3: ("kx", "ky", "kz")}[spec.n_dims]
+    out: dict[str, Observable] = {}
+    for obs_name, ospec in spec.observables.items():
+        analytic_expr = ospec.analytic
+        bloch_expr = ospec.analytic_bloch
+
+        def _make_analytic(expr=analytic_expr, oname=obs_name):
+            def analytic_fn(model, lattice, H, eigvals, eigvecs, n_occ, params):
+                V_occ = eigvecs[:, :n_occ]
+                rho = V_occ @ V_occ.conj().T
+                names: dict[str, Any] = dict(params)
+                names.update({
+                    "eigvals": eigvals, "eigvecs": eigvecs, "H": H,
+                    "rho": rho, "n_occ": n_occ,
+                    "n_sites": H.shape[0],
+                    "lattice": lattice,
+                })
+                val = _eval_expr(expr, names)
+                return float(np.real(val))
+            analytic_fn.__name__ = f"_yaml_obs_{spec.name.replace('-', '_')}_{oname}"
+            return analytic_fn
+
+        def _make_bloch(expr=bloch_expr, oname=obs_name):
+            if expr is None:
+                return None
+            def analytic_bloch_fn(model, k_tuple, H, eigvals, eigvecs, params):
+                names: dict[str, Any] = dict(params)
+                for mn, val in zip(momentum_names, k_tuple):
+                    names[mn] = val
+                names.update({
+                    "eigvals": eigvals, "eigvecs": eigvecs, "H": H,
+                    "n_bands": H.shape[0],
+                })
+                val = _eval_expr(expr, names)
+                if isinstance(val, np.ndarray):
+                    return val.tolist()
+                if isinstance(val, (list, tuple)):
+                    return list(val)
+                return float(np.real(val))
+            analytic_bloch_fn.__name__ = f"_yaml_obs_bloch_{spec.name.replace('-', '_')}_{oname}"
+            return analytic_bloch_fn
+
+        out[obs_name] = Observable(
+            name=obs_name,
+            display_name=ospec.display_name,
+            analytic=_make_analytic(),
+            analytic_bloch=_make_bloch(),
+        )
+    return out
+
+
 def load_yaml_model(path: str | Path) -> Model:
     path = Path(path)
     with open(path) as f:
@@ -591,6 +653,7 @@ def build_tight_binding_model(
     bloch_hamiltonian: dict | None = None,
     lattice_vectors=None,
     sublattice_positions: dict | None = None,
+    observables: dict | None = None,
 ) -> Model:
     data = {
         "name": name,
@@ -619,6 +682,8 @@ def build_tight_binding_model(
         data["lattice_vectors"] = [list(v) for v in lattice_vectors]
     if sublattice_positions is not None:
         data["sublattice_positions"] = {k: list(v) for k, v in sublattice_positions.items()}
+    if observables is not None:
+        data["observables"] = observables
     spec = YamlModelSpec.model_validate(data)
     return spec_to_model(spec)
 
@@ -644,4 +709,5 @@ def spec_to_model(spec: YamlModelSpec) -> Model:
             if spec.bloch_hamiltonian is not None
             else _build_auto_bloch_hamiltonian(spec)
         ),
+        observables=_build_observables(spec),
     )

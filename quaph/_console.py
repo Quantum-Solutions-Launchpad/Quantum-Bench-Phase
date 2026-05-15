@@ -43,7 +43,9 @@ Commands:
   register             Walk through registering a new custom model (writes YAML)
   register --from PATH Register a model from a YAML file
   remove NAME          Permanently remove a registered model
-  list                 List registered models
+  list models          List registered models
+  list observables --model NAME
+                       List observables exposed by a model
   help                 Show this help
   exit                 Leave the console
 """
@@ -136,7 +138,7 @@ def _handle_line(line: str) -> bool:
         if head == "help":
             print(_HELP, end="")
         elif head == "list":
-            _list_models()
+            _list_command(argv[1:])
         elif head == "register":
             _register_command(argv[1:])
         elif head == "remove":
@@ -152,6 +154,38 @@ def _handle_line(line: str) -> bool:
     except Exception as e:
         print(f"error: {e}")
     return True
+
+
+def _list_command(args: list[str]) -> None:
+    if not args:
+        print("usage: list models | list observables --model NAME")
+        return
+    target = args[0]
+    if target == "models":
+        _list_models()
+        return
+    if target == "observables":
+        model_name = None
+        rest = args[1:]
+        if len(rest) == 2 and rest[0] == "--model":
+            model_name = rest[1]
+        elif len(rest) == 1:
+            model_name = rest[0]
+        if not model_name:
+            print("usage: list observables --model NAME")
+            return
+        from quaph._registry import get_model
+        try:
+            model = get_model(model_name)
+        except ValueError as e:
+            print(f"error: {e}")
+            return
+        width = max(len(n) for n in model.observables)
+        for name in sorted(model.observables):
+            obs = model.observables[name]
+            print(f"  {name.ljust(width)}  {obs.display_name}")
+        return
+    print(f"unknown list target '{target}'; choose 'models' or 'observables'.")
 
 
 def _list_models() -> None:
@@ -272,6 +306,37 @@ def _prompt_factory_block(
     otype = _prompt_choice(f"  {label}:", choices)
     kwargs = _prompt_kwargs(label, runtime_args)
     return {"type": otype, "kwargs": kwargs}
+
+
+def _prompt_observables_block(param_names: set[str], n_dims: int) -> dict | None:
+    if not _prompt_yn(
+        "\nDeclare extra observables besides energy? (e.g. gap, double_occupancy)",
+        default=False,
+    ):
+        return None
+    momentum = {1: ("k",), 2: ("kx", "ky"), 3: ("kx", "ky", "kz")}[n_dims]
+    analytic_names = set(param_names) | {
+        "eigvals", "eigvecs", "H", "rho", "n_occ", "n_sites", "lattice",
+    }
+    bloch_names = set(param_names) | {"eigvals", "eigvecs", "H", "n_bands"} | set(momentum)
+    out: dict[str, dict] = {}
+    while True:
+        oname = _prompt("  observable name (blank to finish): ")
+        if not oname:
+            return out or None
+        if oname in out or oname == "E":
+            print(f"  '{oname}' already declared; pick another.")
+            continue
+        display = _prompt_required(f"  display label for '{oname}' (e.g. '\\Delta'): ")
+        analytic_expr = _prompt_expression(
+            f"  analytic expression in {sorted(analytic_names)}: ", analytic_names
+        )
+        entry: dict = {"display_name": display, "analytic": analytic_expr}
+        if _prompt_yn("  also provide an analytic_bloch expression?", default=False):
+            entry["analytic_bloch"] = _prompt_expression(
+                f"    expression in {sorted(bloch_names)}: ", bloch_names
+            )
+        out[oname] = entry
 
 
 def _prompt_ansatz_block() -> dict | None:
@@ -460,6 +525,8 @@ def _register_walkthrough() -> None:
 
     ansatz = _prompt_ansatz_block()
 
+    observables = _prompt_observables_block(allowed_coef_names, n_dims)
+
     spec_data: dict = {
         "name": name,
         "display_name": display_name,
@@ -481,6 +548,8 @@ def _register_walkthrough() -> None:
         spec_data["mapper"] = mapper
     if ansatz is not None:
         spec_data["ansatz"] = ansatz
+    if observables is not None:
+        spec_data["observables"] = observables
 
     try:
         YamlModelSpec.model_validate(spec_data)

@@ -1,10 +1,42 @@
 from __future__ import annotations
 
-from typing import Callable
+from dataclasses import dataclass
+from typing import Any, Callable
 
 
 class ModelCapabilityError(Exception):
     pass
+
+
+@dataclass
+class Observable:
+    name: str
+    display_name: str
+    analytic: Callable[..., float]
+    analytic_bloch: Callable[..., Any] | None = None
+    operator: Any = None
+
+
+def _default_energy_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
+    import numpy as np
+    e = float(np.sum(eigvals[:n_occ]))
+    if model._mean_field_correction_fn is not None:
+        e += float(model._mean_field_correction_fn(lattice, n_occ, **params))
+    return e
+
+
+def _default_energy_analytic_bloch(model, k_tuple, H, eigvals, eigvecs, params):
+    import numpy as np
+    return np.sort(eigvals).tolist()
+
+
+def default_energy_observable() -> "Observable":
+    return Observable(
+        name="E",
+        display_name="E",
+        analytic=_default_energy_analytic,
+        analytic_bloch=_default_energy_analytic_bloch,
+    )
 
 
 def matrix_to_fermionic_op(H, tol: float = 1e-12):
@@ -37,6 +69,7 @@ class Model:
         get_vqe_ansatz: Callable | None = None,
         mean_field_correction: Callable | None = None,
         bloch_hamiltonian: Callable | None = None,
+        observables: dict[str, "Observable"] | None = None,
     ):
         if hamiltonian_matrix is None:
             raise ValueError(
@@ -81,6 +114,20 @@ class Model:
         self._get_vqe_ansatz_fn = get_vqe_ansatz
         self._mean_field_correction_fn = mean_field_correction
         self._bloch_hamiltonian_fn = bloch_hamiltonian
+
+        merged_observables: dict[str, Observable] = {"E": default_energy_observable()}
+        if observables:
+            for obs_name, obs in observables.items():
+                if obs.name != obs_name:
+                    obs = Observable(
+                        name=obs_name,
+                        display_name=obs.display_name,
+                        analytic=obs.analytic,
+                        analytic_bloch=obs.analytic_bloch,
+                        operator=obs.operator,
+                    )
+                merged_observables[obs_name] = obs
+        self._observables = merged_observables
 
     @property
     def _build_H_matrix(self):
@@ -140,6 +187,18 @@ class Model:
                 f"momentum-space (band structure) runs are not supported."
             )
         return self._bloch_hamiltonian_fn
+
+    @property
+    def observables(self) -> dict[str, "Observable"]:
+        return self._observables
+
+    def get_observable(self, name: str) -> "Observable":
+        if name not in self._observables:
+            raise ModelCapabilityError(
+                f"Model '{self.name}' has no observable '{name}'; "
+                f"available: {sorted(self._observables)}"
+            )
+        return self._observables[name]
 
     @property
     def supports_band_structure(self) -> bool:

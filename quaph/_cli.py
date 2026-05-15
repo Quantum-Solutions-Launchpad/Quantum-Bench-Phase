@@ -93,6 +93,7 @@ def _dispatch_analytic(args, model):
         y_range=args.y_range,
         n_occ=args.n_occ,
         model_params=_collect_model_params(args, model, x_param, y_param),
+        observable=args.observable,
         log_dir=args.log_dir,
         plot_dir=args.plot_dir,
         hide_plot=args.hide_plot,
@@ -196,6 +197,11 @@ def main(argv=None):
     parser = argparse.ArgumentParser(prog="quaph")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    list_parser = sub.add_parser("list", help="List available models or observables")
+    list_parser.add_argument("target", choices=["models", "observables"])
+    list_parser.add_argument("--model", default=None, metavar="MODEL",
+                             help="Required when listing observables")
+
     plot_parser = sub.add_parser("plot")
     plot_parser.add_argument("path", help="Path to a log JSON file")
     plot_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
@@ -219,6 +225,9 @@ def main(argv=None):
 
     analytic_parser.add_argument("--heatmap", action="store_true", default=False,
                                  help="Render results as a 2D heatmap (requires both x and y sweep axes)")
+    analytic_parser.add_argument("--observable", default="E", metavar="NAME",
+                                 help="Observable to compute per cell (default: 'E'). "
+                                      "Use 'list observables --model NAME' to see what's available.")
 
     for p in (sim_ideal_parser, sim_noisy_parser):
         _add_sim_required(p)
@@ -238,6 +247,29 @@ def main(argv=None):
         _add_model_params(target, model)
 
     args = parser.parse_args(argv)
+
+    if args.command == "list":
+        if args.target == "models":
+            from quaph._registry import _MODELS
+            if not _MODELS:
+                print("(no models registered)")
+            else:
+                width = max(len(n) for n in _MODELS)
+                for name in sorted(_MODELS):
+                    print(f"  {name.ljust(width)}  {_MODELS[name].display_name}")
+            return
+        if args.target == "observables":
+            if not args.model:
+                parser.error("list observables requires --model NAME")
+            try:
+                model = get_model(args.model)
+            except ValueError as e:
+                parser.error(str(e))
+            width = max(len(n) for n in model.observables)
+            for name in sorted(model.observables):
+                obs = model.observables[name]
+                print(f"  {name.ljust(width)}  {obs.display_name}")
+            return
 
     if args.command == "plot":
         from quaph._run import load_result

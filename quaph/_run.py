@@ -88,6 +88,11 @@ def _label_for(model, param: str) -> str:
     return f"${model.param_labels.get(param, param)}$"
 
 
+def _observable_label(model, observable: str) -> str:
+    obs = model.get_observable(observable)
+    return f"${obs.display_name}$"
+
+
 def _file_tag(run_type: str, plot_format: str, x_param: str, y_param: str | None) -> str:
     if y_param is None:
         return f"{run_type}-{plot_format}-{x_param}"
@@ -255,6 +260,7 @@ def run_analytic(
     y_range=None,
     n_occ: int | None = None,
     model_params: dict | None = None,
+    observable: str = "E",
     log_dir=None,
     plot_dir=None,
     hide_plot: bool = False,
@@ -262,6 +268,7 @@ def run_analytic(
 ) -> AnalyticResult:
     model = _resolve_model(model)
     _ = model._build_H_matrix
+    _ = model.get_observable(observable)
 
     x_param, x_range, y_param, y_range, is_1d = _normalize_sweep_axes(x_param, x_range, y_param, y_range)
     if heatmap and is_1d:
@@ -314,7 +321,8 @@ def run_analytic(
                 )
 
     x_label = _label_for(model, x_param)
-    y_label = _label_for(model, y_param) if not is_1d else "$E$"
+    obs_label = _observable_label(model, observable)
+    y_label = _label_for(model, y_param) if not is_1d else obs_label
 
     plot_format = "2d" if is_1d else ("heatmap" if heatmap else "3d")
 
@@ -349,8 +357,8 @@ def run_analytic(
                 cell_params[y_param] = yv
         if is_band_structure:
             k_tuple = tuple(cell_params.pop(a) for a in momentum_axes)
-            return analytic_bands(model, k_tuple, cell_params)
-        return analytic(model, lattice, n_occ_val, cell_params)
+            return analytic_bands(model, k_tuple, cell_params, observable=observable)
+        return analytic(model, lattice, n_occ_val, cell_params, observable=observable)
 
     if is_1d:
         for ix, xv in enumerate(x_vals):
@@ -382,6 +390,7 @@ def run_analytic(
             "type": "analytic",
             "plot_format": plot_format,
             "band_structure": is_band_structure,
+            "observable": observable,
             "parameters": {
                 "model": model.name,
                 "lattice": list(lattice) if lattice is not None else None,
