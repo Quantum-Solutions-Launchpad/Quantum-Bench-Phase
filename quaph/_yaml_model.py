@@ -340,6 +340,7 @@ def _build_interaction_hamiltonian(spec: YamlModelSpec):
     from qiskit_nature.second_q.operators import FermionicOp
     sites_per_cell = spec.sites_per_cell
     spin = spec.spin
+    sub_index = {name: i for i, name in enumerate(spec.sublattices)}
 
     def interaction(lattice, **params):
         lat = tuple(lattice)
@@ -349,6 +350,10 @@ def _build_interaction_hamiltonian(spec: YamlModelSpec):
         n_sites = n_cells * sites_per_cell
         num_so = n_sites * spin
         op = 0.0 * FermionicOp({}, num_spin_orbitals=num_so)
+
+        def orbital(cell, sub, s):
+            return (_flat_cell_index(cell, lat) * sites_per_cell + sub) * spin + s
+
         for term in spec.interaction:
             coef = complex(_eval_expr(term.coefficient, params))
             if coef == 0:
@@ -361,6 +366,22 @@ def _build_interaction_hamiltonian(spec: YamlModelSpec):
                         {f"+_{up} -_{up} +_{dn} -_{dn}": coef},
                         num_spin_orbitals=num_so,
                     )
+            elif isinstance(term, DensityDensityBondTerm):
+                src = sub_index[term.from_]
+                dst = sub_index[term.to]
+                for cell in _iter_cells(lat):
+                    for off in term.offsets:
+                        tgt_cell = tuple((c + o) % L for c, o, L in zip(cell, off, lat))
+                        for s_a in range(spin):
+                            i_orb = orbital(cell, src, s_a)
+                            for s_b in range(spin):
+                                j_orb = orbital(tgt_cell, dst, s_b)
+                                if i_orb == j_orb:
+                                    continue
+                                op += FermionicOp(
+                                    {f"+_{i_orb} -_{i_orb} +_{j_orb} -_{j_orb}": coef},
+                                    num_spin_orbitals=num_so,
+                                )
         return op
 
     interaction.__name__ = f"_yaml_int_{spec.name.replace('-', '_')}"
@@ -525,10 +546,7 @@ def _build_auto_bloch_hamiltonian(spec: YamlModelSpec):
 
     for t in spec.terms:
         if t.spin_channels is not None:
-            raise ValueError(
-                f"auto bloch_hamiltonian cannot represent term with spin_channels="
-                f"{t.spin_channels}; provide an explicit bloch_hamiltonian: block"
-            )
+            return None
 
     use_cartesian = spec.lattice_vectors is not None
     if use_cartesian:

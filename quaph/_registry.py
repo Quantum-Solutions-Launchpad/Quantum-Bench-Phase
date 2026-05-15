@@ -7,7 +7,12 @@ from pathlib import Path
 from quaph._model import Model
 from quaph._yaml_model import load_yaml_model
 
-_BUILTIN_NAMES = frozenset({"haldane", "hubbard", "haldane-hubbard"})
+_BUILTIN_NAMES = frozenset({
+    "haldane", "hubbard", "haldane-hubbard",
+    "ssh", "rice-mele", "qwz", "kane-mele", "bhz", "lieb",
+    "kane-mele-hubbard", "extended-hubbard", "ionic-hubbard",
+    "t-V", "hubbard-triangular",
+})
 
 _MODELS: dict[str, Model] = {}
 

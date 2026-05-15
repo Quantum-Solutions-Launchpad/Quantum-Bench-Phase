@@ -93,10 +93,12 @@ def _observable_label(model, observable: str) -> str:
     return f"${obs.display_name}$"
 
 
-def _file_tag(run_type: str, plot_format: str, x_param: str, y_param: str | None) -> str:
+def _file_tag(run_type: str, plot_format: str, x_param: str, y_param: str | None,
+              observable: str | None = None) -> str:
+    obs = f"-{observable}" if observable and observable != "E" else ""
     if y_param is None:
-        return f"{run_type}-{plot_format}-{x_param}"
-    return f"{run_type}-{plot_format}-{x_param}-vs-{y_param}"
+        return f"{run_type}{obs}-{plot_format}-{x_param}"
+    return f"{run_type}{obs}-{plot_format}-{x_param}-vs-{y_param}"
 
 
 def _gate_momentum(model, x_param, y_param):
@@ -379,7 +381,7 @@ def run_analytic(
         else:
             analytic_block = {ix: {iy: float(Z[ix, iy]) for iy in range(len(y_vals))} for ix in range(len(x_vals))}
 
-    tag = _file_tag("analytic", plot_format, x_param, y_param)
+    tag = _file_tag("analytic", plot_format, x_param, y_param, observable=observable)
 
     log_path = None
     if log_dir is not None:
@@ -420,6 +422,7 @@ def run_analytic(
             output_path=plot_path, hide_plot=hide_plot,
             x_is_momentum=(x_kind == "momentum"),
             y_is_momentum=(y_kind == "momentum"),
+            z_label=obs_label,
         )
 
     return AnalyticResult(

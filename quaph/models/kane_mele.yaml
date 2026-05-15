@@ -1,0 +1,84 @@
+name: kane-mele
+display_name: Kane–Mele
+spin: 2
+n_dims: 2
+lattice_shape: [Lx, Ly]
+sites_per_cell: 2
+sublattices: [A, B]
+lattice_vectors: [[-0.86602540378443864676, -1.5], [0.86602540378443864676, -1.5]]
+sublattice_positions:
+  A: [0,  0]
+  B: [0, -1]
+parameters:
+  t:         {label: "t"}
+  lambda_SO: {label: "\\lambda_{SO}"}
+  M:         {label: "M"}
+
+# Kane–Mele on the honeycomb lattice. Sublattice mass M plus spin-dependent
+# next-nearest-neighbor hopping i λ_SO ν_ij σz. Z₂ TI ↔ trivial transition
+# at M = 3√3 λ_SO.
+terms:
+  - kind: onsite
+    sublattice: A
+    coefficient: "+M"
+  - kind: onsite
+    sublattice: B
+    coefficient: "-M"
+
+  # NN A→B at offsets (0,0), (-1,0), (0,-1).
+  - kind: hopping
+    from: A
+    to: B
+    offsets: [[0, 0], [-1, 0], [0, -1]]
+    coefficient: "-t"
+    hermitian_partner: true
+
+  # NNN A→A with chirality +1 (offsets (+1,0), (-1,+1), (0,-1)):
+  #   spin-up gets +i λ, spin-down gets -i λ.
+  - kind: hopping
+    from: A
+    to: A
+    offsets: [[1, 0], [-1, 1], [0, -1]]
+    coefficient: "+1j*lambda_SO"
+    hermitian_partner: true
+    spin_channels: [up]
+  - kind: hopping
+    from: A
+    to: A
+    offsets: [[1, 0], [-1, 1], [0, -1]]
+    coefficient: "-1j*lambda_SO"
+    hermitian_partner: true
+    spin_channels: [down]
+
+  # NNN B→B with chirality −1 (offsets (-1,0), (+1,-1), (0,+1)): opposite signs.
+  - kind: hopping
+    from: B
+    to: B
+    offsets: [[-1, 0], [1, -1], [0, 1]]
+    coefficient: "-1j*lambda_SO"
+    hermitian_partner: true
+    spin_channels: [up]
+  - kind: hopping
+    from: B
+    to: B
+    offsets: [[-1, 0], [1, -1], [0, 1]]
+    coefficient: "+1j*lambda_SO"
+    hermitian_partner: true
+    spin_channels: [down]
+
+optimizer:
+  type: SPSA
+  kwargs:
+    maxiter: "@max_iters"
+
+mapper:
+  type: JordanWignerMapper
+  kwargs: {}
+
+ansatz:
+  type: excitation_preserving
+  kwargs:
+    mode: fsim
+    entanglement: linear
+    reps: "@n_layers"
+  initial_state_prefix: hartree_fock

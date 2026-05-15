@@ -98,12 +98,14 @@ def plot_analytic(
     hide_plot: bool = False,
     x_is_momentum: bool = False,
     y_is_momentum: bool = False,
+    z_label: str = "$E$",
 ):
     if plot_format == "2d":
         return _plot_analytic_2d(
             x_vals, x_label, Z,
             x_is_momentum=x_is_momentum,
             output_path=output_path, hide_plot=hide_plot,
+            y_label=z_label,
         )
     if plot_format == "heatmap":
         if Z.ndim == 3:
@@ -117,6 +119,7 @@ def plot_analytic(
             x_vals, y_vals, x_label, y_label, Z,
             x_is_momentum=x_is_momentum, y_is_momentum=y_is_momentum,
             output_path=output_path, hide_plot=hide_plot,
+            z_label=z_label,
         )
     if Z.ndim == 3:
         return _plot_band_structure_3d(
@@ -129,6 +132,7 @@ def plot_analytic(
         x_vals, y_vals, x_label, y_label, Z,
         x_is_momentum=x_is_momentum, y_is_momentum=y_is_momentum,
         output_path=output_path, hide_plot=hide_plot,
+        z_label=z_label,
     )
 
 
@@ -143,6 +147,7 @@ def plot_analytic_3d(
     hide_plot: bool = False,
     x_is_momentum: bool = False,
     y_is_momentum: bool = False,
+    z_label: str = "$E$",
 ):
     _apply_rcparams()
 
@@ -170,7 +175,7 @@ def plot_analytic_3d(
 
     ax.set_xlabel(x_label, labelpad=12)
     ax.set_ylabel(y_label, labelpad=12)
-    ax.set_zlabel("$E$", labelpad=10)
+    ax.set_zlabel(z_label, labelpad=10)
 
     if x_is_momentum:
         _format_momentum_ticks(ax, "x", x_vals)
@@ -198,6 +203,7 @@ def plot_analytic_heatmap(
     hide_plot: bool = False,
     x_is_momentum: bool = False,
     y_is_momentum: bool = False,
+    z_label: str = "$E$",
 ):
     _apply_rcparams()
 
@@ -229,7 +235,7 @@ def plot_analytic_heatmap(
     ax.tick_params(direction="out", length=4, color="#888888")
 
     cbar = fig.colorbar(mesh, ax=ax, pad=0.02, fraction=0.045)
-    cbar.set_label("$E$", labelpad=10)
+    cbar.set_label(z_label, labelpad=10)
     cbar.outline.set_edgecolor("#cccccc")
 
     if x_is_momentum:
@@ -482,6 +488,7 @@ def _plot_analytic_2d(
     x_is_momentum: bool = False,
     output_path=None,
     hide_plot: bool = False,
+    y_label: str = "$E$",
 ):
     _apply_rcparams()
     fig, ax = plt.subplots(figsize=(9, 6))
@@ -516,7 +523,7 @@ def _plot_analytic_2d(
         ax.scatter(x_arr, Z, color=color, s=20, alpha=0.5, zorder=6)
 
     ax.set_xlabel(x_label, labelpad=8)
-    ax.set_ylabel("$E$", labelpad=8)
+    ax.set_ylabel(y_label, labelpad=8)
     ax.grid(True, linestyle="--", alpha=0.4)
     for spine in ax.spines.values():
         spine.set_edgecolor("#cccccc")

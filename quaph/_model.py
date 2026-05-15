@@ -39,6 +39,63 @@ def default_energy_observable() -> "Observable":
     )
 
 
+def _default_gap_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
+    if n_occ <= 0 or n_occ >= len(eigvals):
+        return 0.0
+    return float(eigvals[n_occ] - eigvals[n_occ - 1])
+
+
+def default_gap_observable() -> "Observable":
+    return Observable(
+        name="gap",
+        display_name=r"\Delta_{\mathrm{gap}}",
+        analytic=_default_gap_analytic,
+    )
+
+
+def _default_kinetic_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
+    return float(__import__("numpy").sum(eigvals[:n_occ]))
+
+
+def default_kinetic_observable() -> "Observable":
+    return Observable(
+        name="kinetic_energy",
+        display_name=r"E_{\mathrm{kin}}",
+        analytic=_default_kinetic_analytic,
+    )
+
+
+def _default_interaction_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
+    if model._mean_field_correction_fn is None:
+        return 0.0
+    return float(model._mean_field_correction_fn(lattice, n_occ, **params))
+
+
+def default_interaction_observable() -> "Observable":
+    return Observable(
+        name="interaction_energy",
+        display_name=r"E_{\mathrm{int}}",
+        analytic=_default_interaction_analytic,
+    )
+
+
+def _default_density_variance_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
+    import numpy as np
+    if n_occ <= 0:
+        return 0.0
+    V_occ = eigvecs[:, :n_occ]
+    rho_diag = np.real(np.einsum("ij,ij->i", V_occ.conj(), V_occ))
+    return float(np.var(rho_diag))
+
+
+def default_density_variance_observable() -> "Observable":
+    return Observable(
+        name="density_variance",
+        display_name=r"\mathrm{Var}(\langle n_i \rangle)",
+        analytic=_default_density_variance_analytic,
+    )
+
+
 def matrix_to_fermionic_op(H, tol: float = 1e-12):
     from qiskit_nature.second_q.operators import FermionicOp
     terms: dict[str, complex] = {}
@@ -115,7 +172,13 @@ class Model:
         self._mean_field_correction_fn = mean_field_correction
         self._bloch_hamiltonian_fn = bloch_hamiltonian
 
-        merged_observables: dict[str, Observable] = {"E": default_energy_observable()}
+        merged_observables: dict[str, Observable] = {
+            "E": default_energy_observable(),
+            "gap": default_gap_observable(),
+            "kinetic_energy": default_kinetic_observable(),
+            "interaction_energy": default_interaction_observable(),
+            "density_variance": default_density_variance_observable(),
+        }
         if observables:
             for obs_name, obs in observables.items():
                 if obs.name != obs_name:
