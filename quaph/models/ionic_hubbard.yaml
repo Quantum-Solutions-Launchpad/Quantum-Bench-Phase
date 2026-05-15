@@ -12,7 +12,7 @@ parameters:
 
 # Hubbard with a staggered onsite potential ±Δ. Band-insulator (small U/Δ),
 # spontaneously-dimerized intermediate phase, and Mott (large U) along the
-# (U, Δ) axis. Reference: Garg, Krishnamurthy, Randeria PRL 97, 046403 (2006).
+# (U, Δ) axis.
 terms:
   - kind: onsite
     sublattice: A

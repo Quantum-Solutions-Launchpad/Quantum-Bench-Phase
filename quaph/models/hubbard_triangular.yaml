@@ -14,8 +14,6 @@ parameters:
 
 # Hubbard on the triangular lattice. Frustration suppresses Néel order; the
 # half-filled model has a magnetic / spin-liquid / metal sequence as U/t grows.
-# Reference: Morita, Watanabe, Imada JPSJ 71, 2109 (2002); Yoshioka, Koga,
-# Kawakami PRL 103, 036401 (2009).
 terms:
   # 6 NN bonds on the triangular lattice. Use 3 directions and let
   # hermitian_partner produce the back-bonds.

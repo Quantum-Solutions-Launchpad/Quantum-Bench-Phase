@@ -11,8 +11,7 @@ parameters:
   V: {label: "V"}
 
 # Square-lattice Hubbard + nearest-neighbor density-density V.
-# Phase competition: Mott (large U) vs. CDW (large V). Reference: Hirsch
-# PRB 31, 4403 (1985); Zhang & Callaway PRB 39, 9397 (1989).
+# Phase competition: Mott (large U) vs. CDW (large V).
 terms:
   - kind: hopping
     from: A

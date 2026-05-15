@@ -11,7 +11,7 @@ parameters:
   M: {label: "M"}
 
 # 3-band tight-binding on the Lieb lattice. The middle band is flat at E=0
-# when M=0; a finite M gaps it open. Reference: Lieb (1989) ferrimagnetism.
+# when M=0; a finite M gaps it open.
 terms:
   - kind: onsite
     sublattice: A
