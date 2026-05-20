@@ -80,9 +80,12 @@ intersphinx_mapping = {
 html_theme = "shibuya"
 html_title = "QuaPh"
 html_static_path = ["_static"]
+html_favicon = "_static/favicon-dark.svg"
 
 html_theme_options = {
-    "accent_color": "indigo",
+    "accent_color": "violet",
+    "light_logo": "_static/favicon-light.svg",
+    "dark_logo": "_static/favicon-dark.svg",
     "github_url": "https://github.com/Quantum-Solutions-Launchpad/QSL-NNL-P7",
     "nav_links": [
         {"title": "Getting Started", "url": "getting-started/quickstart"},

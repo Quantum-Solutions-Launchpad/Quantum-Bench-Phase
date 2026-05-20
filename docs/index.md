@@ -1,11 +1,10 @@
-# QuaPh
+# QuaPh Library
+
+**QuaPh** (**Qua**ntum **Ph**ases) is a library for the generation and benchmarking of quantum phase diagrams of topological and correlated lattice models.
 
 ```{eval-rst}
-.. todo:: One-paragraph landing pitch:
-   "A library for the generation and benchmarking of quantum phase diagrams
-   of topological lattice models." Add a short feature list (built-in models,
-   classical baselines, ideal/noisy VQE & IQPE simulation, plotting,
-   YAML & Python model definition).
+.. todo:: Add a short feature list (built-in models, classical baselines,
+   ideal/noisy VQE & IQPE simulation, plotting, YAML & Python model definition).
 ```
 
 ```{toctree}
