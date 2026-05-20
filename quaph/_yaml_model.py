@@ -673,6 +673,56 @@ def build_tight_binding_model(
     sublattice_positions: dict | None = None,
     observables: dict | None = None,
 ) -> Model:
+    """Programmatically construct a :class:`Model` from tight-binding inputs.
+
+    .. todo:: Describe when to use this over inline YAML or a hand-written
+       :class:`Model`, and walk through one full example.
+
+    Parameters
+    ----------
+    name : str
+        Registry name.
+    display_name : str
+        Human-readable label for plots/UI.
+    spin : {1, 2}
+        Spinless or spinful.
+    n_dims : {1, 2, 3}
+        Spatial dimensionality.
+    lattice_shape : sequence of str
+        Names of the lattice extents.
+    sites_per_cell : int
+        Number of sublattice sites per unit cell.
+    sublattices : sequence of str
+        Sublattice labels; length must equal ``sites_per_cell``.
+    parameters : dict
+        Mapping of parameter name to ``{"label": "<LaTeX>"}``.
+    terms : list
+        List of hopping/onsite term dicts (see the YAML schema).
+    interaction : list, optional
+        Density-density interaction term dicts.
+    mean_field_correction : str, optional
+        Expression evaluated against parameters and ``n_occ``/``n_sites``.
+    optimizer, mapper, ansatz : dict, optional
+        Specs of the form ``{"type": str, "kwargs": dict}``.
+    bloch_hamiltonian : dict, optional
+        Explicit Bloch-Hamiltonian spec; otherwise one is inferred from ``terms``.
+    lattice_vectors : sequence of sequence of float, optional
+        Real-space lattice basis (required to use Cartesian Bloch phases).
+    sublattice_positions : dict, optional
+        Per-sublattice positions in Cartesian coordinates.
+    observables : dict, optional
+        Map of observable name to ``{"display_name", "analytic", "analytic_bloch"}``.
+
+    Returns
+    -------
+    Model
+        A ready-to-register :class:`Model`.
+
+    Raises
+    ------
+    pydantic.ValidationError
+        If any input violates the YAML schema (see :mod:`quaph._yaml_model`).
+    """
     data = {
         "name": name,
         "display_name": display_name,

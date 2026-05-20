@@ -5,11 +5,37 @@ from typing import Any, Callable
 
 
 class ModelCapabilityError(Exception):
+    """Raised when a :class:`Model` is asked for a capability it does not implement.
+
+    .. todo:: Document the situations that raise this (missing ``bloch_hamiltonian``,
+       unknown observable, momentum-axis mismatch).
+    """
     pass
 
 
 @dataclass
 class Observable:
+    """A scalar (or per-band) quantity computed from a diagonalized Hamiltonian.
+
+    .. todo:: Describe the observable contract, the difference between
+       real-space (``analytic``) and momentum-space (``analytic_bloch``)
+       callbacks, and how custom observables are attached to a :class:`Model`.
+
+    Parameters
+    ----------
+    name : str
+        Short identifier used as the lookup key in ``Model.observables``.
+    display_name : str
+        LaTeX-formatted label used on plot axes.
+    analytic : callable
+        Real-space evaluator with signature
+        ``(model, lattice, H, eigvals, eigvecs, n_occ, params) -> float``.
+    analytic_bloch : callable, optional
+        Momentum-space evaluator with signature
+        ``(model, k_tuple, H, eigvals, eigvecs, params) -> float | list[float]``.
+    operator : Any, optional
+        Optional Qiskit operator representation (reserved for future use).
+    """
     name: str
     display_name: str
     analytic: Callable[..., float]
@@ -109,6 +135,60 @@ def matrix_to_fermionic_op(H, tol: float = 1e-12):
 
 
 class Model:
+    """A tight-binding lattice model with classical and quantum simulation support.
+
+    .. todo:: Describe the role of :class:`Model` in QuaPh: how it bundles a
+       real-space Hamiltonian, an optional Bloch Hamiltonian, an optimizer /
+       mapper / ansatz triple, and observables into a single object that the
+       runners (:func:`quaph.run_analytic`, :func:`quaph.run_simulated_ideal`,
+       :func:`quaph.run_simulated_noisy`) can drive. Cover when to provide
+       ``hamiltonian_matrix`` vs. ``bloch_hamiltonian`` vs. both.
+
+    Parameters
+    ----------
+    name : str
+        Unique registry key (e.g. ``"ssh"``).
+    display_name : str
+        Human-readable name used in plots and the console UI.
+    param_labels : dict[str, str]
+        Map of model-parameter names to LaTeX labels (without ``$``).
+    spin : {1, 2}
+        Spinless (1) or spinful (2).
+    n_dims : {1, 2, 3}
+        Spatial dimensionality of the lattice.
+    lattice_shape : tuple[str, ...]
+        Names of the lattice extents (e.g. ``("Lx", "Ly")``); length must match ``n_dims``.
+    sites_per_cell : int
+        Number of sublattice sites per unit cell.
+    hamiltonian_matrix : callable
+        Real-space builder ``(lattice, **params) -> ndarray`` returning the
+        single-particle Hamiltonian.
+    interaction_hamiltonian : callable, optional
+        Builder ``(lattice, **params) -> FermionicOp`` for many-body terms.
+    get_optimizer : callable, optional
+        Factory ``(max_iters) -> Optimizer`` for VQE.
+    get_mapper : callable, optional
+        Factory ``(n_sites, spin, n_occ) -> QubitMapper``.
+    get_vqe_ansatz : callable, optional
+        Factory ``(n_qubits, n_layers, n_occ, spin) -> QuantumCircuit``.
+    mean_field_correction : callable, optional
+        Function ``(lattice, n_occ, **params) -> float`` adding a mean-field
+        energy contribution to analytic results.
+    bloch_hamiltonian : callable, optional
+        Momentum-space builder ``(*ks, **params) -> ndarray``; required for
+        band-structure runs.
+    observables : dict[str, Observable], optional
+        Extra observables to merge with the built-in defaults
+        (``E``, ``gap``, ``kinetic_energy``, ``interaction_energy``,
+        ``density_variance``).
+
+    Raises
+    ------
+    ValueError
+        If ``hamiltonian_matrix`` is missing, ``spin`` is not in ``{1, 2}``,
+        ``n_dims`` is not in ``{1, 2, 3}``, ``lattice_shape`` length does not
+        match ``n_dims``, or ``sites_per_cell`` is not a positive int.
+    """
     def __init__(
         self,
         name: str,
@@ -256,6 +336,26 @@ class Model:
         return self._observables
 
     def get_observable(self, name: str) -> "Observable":
+        """Return the :class:`Observable` registered under ``name``.
+
+        .. todo:: Describe the lookup semantics and the default observables
+           that are always available.
+
+        Parameters
+        ----------
+        name : str
+            Observable key (e.g. ``"E"``, ``"gap"``).
+
+        Returns
+        -------
+        Observable
+            The matching observable.
+
+        Raises
+        ------
+        ModelCapabilityError
+            If ``name`` is not a registered observable on this model.
+        """
         if name not in self._observables:
             raise ModelCapabilityError(
                 f"Model '{self.name}' has no observable '{name}'; "

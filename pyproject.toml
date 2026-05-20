@@ -12,6 +12,7 @@ authors = [
     { name = "Adam Godel", email = "adam.g@thewiser.org" },
     { name = "Adrian Acosta", email = "adrian.a@thewiser.org" },
     { name = "Maggie Bao", email = "maggie.b@thewiser.org" },
+    { name = "Connor Howe", email = "connor.h@thewiser.org" },
 ]
 keywords = ["quantum", "qiskit", "majorana", "topological", "vqe", "iqpe"]
 classifiers = [
@@ -38,6 +39,15 @@ dependencies = [
     "pyyaml>=6.0",
     "pydantic>=2.0",
     "asteval>=1.0",
+]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx>=7",
+    "shibuya>=2024.10",
+    "myst-parser>=3",
+    "sphinx-autodoc-typehints>=2",
+    "sphinx-copybutton>=0.5",
 ]
 
 [project.scripts]

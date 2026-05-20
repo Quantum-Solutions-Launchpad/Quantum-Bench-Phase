@@ -1,0 +1,93 @@
+"""Sphinx configuration for the QuaPh documentation."""
+
+from __future__ import annotations
+
+import os
+import sys
+from datetime import datetime
+
+sys.path.insert(0, os.path.abspath(".."))
+
+# -- Project information -----------------------------------------------------
+
+project = "QuaPh"
+author = "WISER/NNL"
+copyright = f"{datetime.now().year}, {author}"
+
+try:
+    from importlib.metadata import version as _pkg_version
+    release = _pkg_version("quaph")
+except Exception:
+    release = "0.1.0"
+version = ".".join(release.split(".")[:2])
+
+# -- General configuration ---------------------------------------------------
+
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.todo",
+    "sphinx.ext.viewcode",
+    "sphinx_autodoc_typehints",
+    "sphinx_copybutton",
+    "myst_parser",
+]
+
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".md": "markdown",
+}
+
+master_doc = "index"
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+
+# -- Autodoc / autosummary ---------------------------------------------------
+
+autosummary_generate = False
+autodoc_default_options = {
+    "members": True,
+    "undoc-members": False,
+    "show-inheritance": True,
+}
+autodoc_typehints = "description"
+napoleon_numpy_docstring = True
+napoleon_google_docstring = False
+
+todo_include_todos = True
+
+# -- MyST --------------------------------------------------------------------
+
+myst_enable_extensions = [
+    "colon_fence",
+    "deflist",
+    "smartquotes",
+    "tasklist",
+]
+myst_heading_anchors = 3
+
+# -- Intersphinx -------------------------------------------------------------
+
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
+    "matplotlib": ("https://matplotlib.org/stable", None),
+}
+
+# -- HTML output -------------------------------------------------------------
+
+html_theme = "shibuya"
+html_title = "QuaPh"
+html_static_path = ["_static"]
+
+html_theme_options = {
+    "accent_color": "indigo",
+    "github_url": "https://github.com/Quantum-Solutions-Launchpad/QSL-NNL-P7",
+    "nav_links": [
+        {"title": "Getting Started", "url": "getting-started/quickstart"},
+        {"title": "User Guide", "url": "user-guide/workflow"},
+        {"title": "Models", "url": "models/catalog"},
+        {"title": "API", "url": "api/index"},
+    ],
+}

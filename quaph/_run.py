@@ -118,6 +118,13 @@ def _gate_momentum(model, x_param, y_param):
 
 @dataclass
 class AnalyticResult:
+    """Result of a classical (exact-diagonalization) sweep.
+
+    .. todo:: Document the data layout (``energies`` shape for 1D vs. 2D
+       sweeps and band-structure runs) and the JSON log schema. Individual
+       field meanings are listed in the autodoc-generated attribute table
+       below.
+    """
     model_name: str
     lattice: tuple[int, ...]
     x_param: str
@@ -132,6 +139,18 @@ class AnalyticResult:
     _model_params: dict = field(default_factory=dict, repr=False)
 
     def plot(self, *, hide_plot: bool = False, output_path=None):
+        """Render the sweep as a 2D line, 3D surface, or heatmap.
+
+        .. todo:: Describe plot-format selection and how labels are inferred
+           from the model's ``param_labels``.
+
+        Parameters
+        ----------
+        hide_plot : bool, default False
+            If True, suppress the interactive matplotlib window.
+        output_path : str, optional
+            Destination file (``.pdf``/``.png``); skipped if ``None``.
+        """
         from quaph._registry import get_model
         model = get_model(self.model_name)
         x_label = _label_for(model, self.x_param)
@@ -148,6 +167,13 @@ class AnalyticResult:
 
 @dataclass
 class SimulatedResult:
+    """Result of a quantum-simulated sweep (VQE and/or IQPE) alongside the analytic baseline.
+
+    .. todo:: Document each field, the meaning of ``vqe_best_energies`` /
+       ``iqpe_best_energies`` (best-of-reps), and the layout of ``raw``.
+       Individual field types are listed in the autodoc-generated attribute
+       table below.
+    """
     model_name: str
     lattice: tuple[int, ...]
     x_param: str
@@ -168,6 +194,20 @@ class SimulatedResult:
 
     def plot(self, *, hide_plot: bool = False, output_path=None,
              hide_legend: bool = False):
+        """Render analytic baseline against VQE / IQPE estimates.
+
+        .. todo:: Describe how each method's curve/surface is rendered and
+           when to use ``hide_legend``.
+
+        Parameters
+        ----------
+        hide_plot : bool, default False
+            Suppress the interactive matplotlib window.
+        output_path : str, optional
+            Destination file path.
+        hide_legend : bool, default False
+            Omit the legend on the rendered figure.
+        """
         from quaph._registry import get_model
         model = get_model(self.model_name)
         x_label = _label_for(model, self.x_param)
@@ -186,6 +226,26 @@ class SimulatedResult:
 
 
 def load_result(path: str) -> AnalyticResult | SimulatedResult:
+    """Deserialize a JSON log written by one of the ``run_*`` functions.
+
+    .. todo:: Document the JSON schema and the dispatch on ``type``
+       (``"analytic"`` / ``"simulated-ideal"`` / ``"simulated-noisy"``).
+
+    Parameters
+    ----------
+    path : str
+        Path to the summary JSON log.
+
+    Returns
+    -------
+    AnalyticResult or SimulatedResult
+        Reconstructed result object suitable for ``.plot()``.
+
+    Raises
+    ------
+    ValueError
+        If the log's ``type`` field is unrecognized.
+    """
     with open(path) as f:
         data = json.load(f)
 
@@ -268,6 +328,49 @@ def run_analytic(
     hide_plot: bool = False,
     heatmap: bool = False,
 ) -> AnalyticResult:
+    """Sweep a model's parameter space analytically using diagonalization.
+
+    .. todo:: Describe sweep-axis semantics (``n_occ`` vs. parameter vs.
+       momentum), how ``lattice`` is required for real-space runs and
+       forbidden for band-structure runs, and the resulting log/plot paths.
+
+    Parameters
+    ----------
+    model : str or Model
+        Registered model name or a :class:`Model` instance.
+    lattice : tuple[int, ...], optional
+        Lattice extents; required for real-space runs, omit for momentum-space.
+    x_param, y_param : str, optional
+        Sweep axes. At least one of them must be provided.
+        Either ``"n_occ"``, a model parameter, or a momentum axis
+        (``"k"``, ``"kx"``, ``"ky"``, ``"kz"``).
+    x_range, y_range : tuple, optional
+        ``(start, stop, step)`` for non-``n_occ`` axes.
+    n_occ : int, optional
+        Fixed occupation when not swept; defaults to half-filling.
+    model_params : dict, optional
+        Fixed model parameters not on a sweep axis.
+    observable : str, default "E"
+        Observable key registered on the model.
+    log_dir, plot_dir : str, optional
+        Output directories for JSON log and PDF plot.
+    hide_plot : bool, default False
+        Suppress the matplotlib window.
+    heatmap : bool, default False
+        Render 2D sweeps as a heatmap instead of a 3D surface.
+
+    Returns
+    -------
+    AnalyticResult
+        Sweep result with attached log and plot paths.
+
+    Raises
+    ------
+    ValueError
+        For inconsistent axis/lattice combinations or missing ranges.
+    ModelCapabilityError
+        If a requested momentum axis is unavailable on this model.
+    """
     model = _resolve_model(model)
     _ = model._build_H_matrix
     _ = model.get_observable(observable)
@@ -893,6 +996,50 @@ def run_simulated_ideal(
     hide_plot: bool = False,
     hide_legend: bool = False,
 ) -> SimulatedResult:
+    """Run VQE and/or IQPE on an ideal (noise-free) simulator and compare to analytic.
+
+    .. todo:: Describe when to enable VQE vs. IQPE, parameter guidance for
+       each, and how the best-of-reps energy is selected per cell.
+
+    Parameters
+    ----------
+    model : str or Model
+        Registered model name or :class:`Model` instance.
+    lattice : tuple[int, ...], optional
+        Lattice extents; required for real-space runs.
+    x_param, y_param : str, optional
+        Sweep axes (see :func:`run_analytic`).
+    x_range, y_range : tuple, optional
+        ``(start, stop, step)`` for non-``n_occ`` axes.
+    n_occ : int, optional
+        Fixed occupation; defaults to half-filling.
+    model_params : dict, optional
+        Fixed model parameters off the sweep axes.
+    vqe_iters : int, optional
+        VQE optimizer iterations; enables VQE when set.
+    vqe_layers : int, optional
+        Number of ansatz layers.
+    vqe_reps : int, optional
+        Number of repetitions per cell (best result kept).
+    iqpe_time : float, optional
+        Trotter evolution time; enables IQPE when set.
+    iqpe_trot : int, optional
+        Trotter steps.
+    iqpe_iters : int, optional
+        IQPE iterations (phase-estimation precision bits).
+    iqpe_reps : int, optional
+        Repetitions per cell.
+    log_dir, plot_dir : str, optional
+        Output directories.
+    hide_plot : bool, default False
+        Suppress matplotlib display.
+    hide_legend : bool, default False
+        Omit the legend on the plot.
+
+    Returns
+    -------
+    SimulatedResult
+    """
     (model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
      vqe_reps, iqpe_reps) = _prep_simulated_kwargs(
         model, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
@@ -935,6 +1082,42 @@ def run_simulated_noisy(
     hide_plot: bool = False,
     hide_legend: bool = False,
 ) -> SimulatedResult:
+    """Run VQE and/or IQPE on a noisy backend (Qiskit Aer or IBM Runtime).
+
+    .. todo:: Describe how to construct a noise model or attach an
+       :class:`IBMBackend`, expected runtime caveats, and what changes
+       relative to :func:`run_simulated_ideal`.
+
+    Parameters
+    ----------
+    model : str or Model
+        Registered model name or :class:`Model` instance.
+    backend : object, optional
+        A Qiskit backend (e.g. ``AerSimulator`` with a noise model or an
+        IBM runtime backend). Defaults to ``FakeSherbrooke``.
+    lattice : tuple[int, ...], optional
+        Lattice extents.
+    x_param, y_param : str, optional
+        Sweep axes (see :func:`run_analytic`).
+    x_range, y_range : tuple, optional
+        ``(start, stop, step)`` for non-``n_occ`` axes.
+    n_occ : int, optional
+        Fixed occupation; defaults to half-filling.
+    model_params : dict, optional
+        Fixed model parameters off the sweep axes.
+    vqe_iters, vqe_layers, vqe_reps : int, optional
+        VQE configuration; setting any enables VQE.
+    iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps : optional
+        IQPE configuration; setting any enables IQPE.
+    log_dir, plot_dir : str, optional
+        Output directories.
+    hide_plot, hide_legend : bool, default False
+        Display controls for the rendered figure.
+
+    Returns
+    -------
+    SimulatedResult
+    """
     if backend is None:
         from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
         backend = FakeSherbrooke()
