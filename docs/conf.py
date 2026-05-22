@@ -30,9 +30,11 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
+    "sphinx.ext.mathjax",
     "sphinx_autodoc_typehints",
     "sphinx_copybutton",
     "myst_parser",
+    "jupyter_sphinx",
 ]
 
 source_suffix = {
@@ -62,6 +64,8 @@ todo_include_todos = True
 myst_enable_extensions = [
     "colon_fence",
     "deflist",
+    "dollarmath",
+    "amsmath",
     "smartquotes",
     "tasklist",
 ]

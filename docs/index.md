@@ -2,10 +2,9 @@
 
 **QuaPh** (**Qua**ntum **Ph**ases) is a library for the generation and benchmarking of quantum phase diagrams of topological and correlated lattice models.
 
-```{eval-rst}
-.. todo:: Add a short feature list (built-in models, classical baselines,
-   ideal/noisy VQE & IQPE simulation, plotting, YAML & Python model definition).
-```
+QuaPh supports ten built-in tight binding models and offers an easy API to define your own custom Hamiltonians. Once you choose a model, you can easily run analytic computations generate phase diagrams sweeping over different parameters for a host of different observables, as well as benchmark variational quantum simulation techniques.
+
+The library is packaged as both a Python API and a command-line interface. Both support the same features, so use the one you're more comfortable with.
 
 ```{toctree}
 :caption: Getting Started
