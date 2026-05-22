@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 MODEL="ssh"
-N_SITES=4
+LATTICE=(2)
 X_PARAM="n_occ"
 Y_PARAM="t2"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG="$HERE/logs/${MODEL}/${N_SITES}-sites/simulated-ideal-${X_PARAM}-vs-${Y_PARAM}.json"
+LATTICE_TAG=$(IFS=x; echo "${LATTICE[*]}")
+LOG="$HERE/logs/${MODEL}/${LATTICE_TAG}/simulated-ideal-3d-${X_PARAM}-vs-${Y_PARAM}.json"
 
 if [ -f "$LOG" ]; then
     echo "Plotting from existing log..."
@@ -19,53 +20,37 @@ if ! printf 'list\nexit\n' | quaph 2>/dev/null | grep -qE "^[[:space:]]+${MODEL}
 register
 ssh
 SSH
-t1
-1.0
-
+1
+1
+Lcells
+2
+A,B
 t1
 t_1
 t2
 t_2
 
-import numpy as np
-def hamiltonian_matrix(n_sites, t1, t2):
-    spin = 2
-    H = np.zeros((n_sites * spin, n_sites * spin), dtype=complex)
-    for i in range(n_sites - 1):
-        t = t1 if i % 2 == 0 else t2
-        for s in range(spin):
-            s1 = i * spin + s
-            s2 = (i + 1) * spin + s
-            H[s1, s2] -= t
-            H[s2, s1] -= t
-    return H
-END
-from qiskit_nature.second_q.operators import FermionicOp
-def fermionic_hamiltonian(n_sites, *, t1, t2):
-    spin = 2
-    hamiltonian = 0.0 * FermionicOp({})
-    for i in range(n_sites - 1):
-        t = t1 if i % 2 == 0 else t2
-        for s in range(spin):
-            s1 = i * spin + s
-            s2 = (i + 1) * spin + s
-            hamiltonian -= FermionicOp({
-                f"+_{s1} -_{s2}": t,
-                f"+_{s2} -_{s1}": t,
-            })
-    return hamiltonian
-END
-from qiskit_algorithms.optimizers import SPSA
-def get_optimizer(max_iters):
-    return SPSA(maxiter=max_iters)
-END
-skip
-skip
+hopping
+A
+B
+0
+
+-t1
 y
-t2
-0.0
-2.0
-0.25
+hopping
+B
+A
+1
+
+-t2
+y
+done
+n
+y
+SPSA
+maxiter
+@max_iters
+
 y
 exit
 QUAPH
@@ -73,15 +58,17 @@ fi
 
 quaph run simulated-ideal \
     --model "$MODEL" \
-    --n-sites "$N_SITES" \
+    --lattice "${LATTICE[@]}" \
     --x-param "$X_PARAM" \
     --y-param "$Y_PARAM" \
-    --vqe-iters 500 \
+    --y-range 0.0 2.0 0.5 \
+    --t1 1.0 \
+    --vqe-iters 200 \
     --vqe-layers 2 \
     --vqe-reps 1 \
     --iqpe-time 0.3 \
     --iqpe-trot 2 \
-    --iqpe-iters 4 \
+    --iqpe-iters 2 \
     --iqpe-reps 1 \
     --log-dir "$HERE/logs" \
     --plot-dir "$HERE/plots"

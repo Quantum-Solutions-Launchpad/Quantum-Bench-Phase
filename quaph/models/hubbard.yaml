@@ -1,0 +1,41 @@
+name: hubbard
+display_name: Hubbard
+spin: 2
+n_dims: 2
+lattice_shape: [Lx, Ly]
+sites_per_cell: 2
+sublattices: [A, B]
+parameters:
+  t: {label: "t"}
+  U: {label: "U"}
+
+terms:
+  - kind: hopping
+    from: A
+    to: B
+    offsets: [[0, 0], [-1, 0], [0, -1]]
+    coefficient: "-t"
+    hermitian_partner: true
+
+interaction:
+  - kind: density_density_onsite
+    coefficient: "U"
+
+mean_field_correction: "U * n_sites * (n_occ / (2 * n_sites))**2"
+
+optimizer:
+  type: SPSA
+  kwargs:
+    maxiter: "@max_iters"
+
+mapper:
+  type: JordanWignerMapper
+  kwargs: {}
+
+ansatz:
+  type: excitation_preserving
+  kwargs:
+    mode: fsim
+    entanglement: linear
+    reps: "@n_layers"
+  initial_state_prefix: hartree_fock

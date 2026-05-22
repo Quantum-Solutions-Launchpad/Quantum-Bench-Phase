@@ -2,9 +2,19 @@ from __future__ import annotations
 
 import shlex
 import sys
+import tempfile
+from pathlib import Path
 
-from quaph._model import Model
-from quaph._registry import _MODELS, register_model, remove_model
+import yaml
+
+from quaph._registry import _MODELS, register_model_from_file, remove_model
+from quaph._yaml_model import (
+    _QISKIT_ANSATZES,
+    _QISKIT_MAPPERS,
+    _QISKIT_OPTIMIZERS,
+    YamlModelSpec,
+    _make_evaluator,
+)
 
 
 _BANNER = r"""
@@ -26,13 +36,16 @@ _BANNER = r"""
 
 _HELP = """\
 Commands:
-  run analytic --model NAME --n-sites N [...]
-  run simulated-ideal --model NAME --n-sites N [...]
-  run simulated-noisy --model NAME --n-sites N [...]
+  run analytic --model NAME --lattice L [L ...] [...]
+  run simulated-ideal --model NAME --lattice L [L ...] [...]
+  run simulated-noisy --model NAME --lattice L [L ...] [...]
   plot PATH
-  register             Walk through registering a new custom model
+  register             Walk through registering a new custom model (writes YAML)
+  register --from PATH Register a model from a YAML file
   remove NAME          Permanently remove a registered model
-  list                 List registered models
+  list models          List registered models
+  list observables --model NAME
+                       List observables exposed by a model
   help                 Show this help
   exit                 Leave the console
 """
@@ -125,9 +138,9 @@ def _handle_line(line: str) -> bool:
         if head == "help":
             print(_HELP, end="")
         elif head == "list":
-            _list_models()
+            _list_command(argv[1:])
         elif head == "register":
-            _register_walkthrough()
+            _register_command(argv[1:])
         elif head == "remove":
             _remove_walkthrough(argv[1:])
         else:
@@ -141,6 +154,38 @@ def _handle_line(line: str) -> bool:
     except Exception as e:
         print(f"error: {e}")
     return True
+
+
+def _list_command(args: list[str]) -> None:
+    if not args:
+        print("usage: list models | list observables --model NAME")
+        return
+    target = args[0]
+    if target == "models":
+        _list_models()
+        return
+    if target == "observables":
+        model_name = None
+        rest = args[1:]
+        if len(rest) == 2 and rest[0] == "--model":
+            model_name = rest[1]
+        elif len(rest) == 1:
+            model_name = rest[0]
+        if not model_name:
+            print("usage: list observables --model NAME")
+            return
+        from quaph._registry import get_model
+        try:
+            model = get_model(model_name)
+        except ValueError as e:
+            print(f"error: {e}")
+            return
+        width = max(len(n) for n in model.observables)
+        for name in sorted(model.observables):
+            obs = model.observables[name]
+            print(f"  {name.ljust(width)}  {obs.display_name}")
+        return
+    print(f"unknown list target '{target}'; choose 'models' or 'observables'.")
 
 
 def _list_models() -> None:
@@ -160,6 +205,17 @@ def _remove_walkthrough(args: list[str]) -> None:
     remove_model(args[0])
 
 
+def _register_command(args: list[str]) -> None:
+    if not args:
+        _register_walkthrough()
+        return
+    if len(args) == 2 and args[0] == "--from":
+        model = register_model_from_file(args[1])
+        print(f"Registered '{model.name}'.")
+        return
+    print("usage: register | register --from PATH")
+
+
 def _prompt(prompt: str) -> str:
     return input(prompt).strip()
 
@@ -172,170 +228,353 @@ def _prompt_required(prompt: str) -> str:
         print("  (this field is required)")
 
 
-def _parse_number(s: str):
-    try:
-        if "." in s or "e" in s or "E" in s:
-            return float(s)
-        return int(s)
-    except ValueError:
-        return float(s)
-
-
-def _read_paste_block(label: str, signature_hint: str) -> str | None:
-    print(f"\n{label} (optional)")
-    print(f"  Expected signature: {signature_hint}")
-    print("  Type 'skip' to omit this callable, or paste Python source and finish")
-    print("  with a single line containing only END.")
-    first = input("  > ").rstrip()
-    if first.strip().lower() == "skip":
-        return None
-    lines: list[str] = [first]
+def _prompt_int(prompt: str, allowed: tuple[int, ...] | None = None, minimum: int | None = None) -> int:
     while True:
         try:
-            ln = input()
-        except EOFError:
-            break
-        if ln.strip() == "END":
-            break
-        lines.append(ln)
-    src = "\n".join(lines).strip()
-    if not src:
-        return None
-    return src
+            v = int(_prompt_required(prompt))
+        except ValueError:
+            print("  (must be an integer)")
+            continue
+        if allowed is not None and v not in allowed:
+            print(f"  (must be one of {allowed})")
+            continue
+        if minimum is not None and v < minimum:
+            print(f"  (must be >= {minimum})")
+            continue
+        return v
 
 
-def _exec_callable(src: str, field_name: str):
-    ns: dict = {}
-    exec(compile(src, f"<paste:{field_name}>", "exec"), ns)
-    funcs = [
-        v for k, v in ns.items()
-        if callable(v) and not k.startswith("_") and getattr(v, "__module__", None) is None
-    ]
-    if not funcs:
-        funcs = [v for k, v in ns.items() if callable(v) and getattr(v, "__name__", "") != "<lambda>"]
-    if not funcs:
-        raise ValueError(f"No function found in pasted source for {field_name}.")
-    if len(funcs) > 1:
-        name = _prompt_required(f"  Multiple functions defined; enter the one to use for {field_name}: ")
-        if name not in ns or not callable(ns[name]):
-            raise ValueError(f"'{name}' is not a defined function.")
-        return ns[name]
-    return funcs[0]
+def _prompt_yn(prompt: str, default: bool = False) -> bool:
+    suffix = " [Y/n]: " if default else " [y/N]: "
+    raw = _prompt(prompt + suffix).lower()
+    if not raw:
+        return default
+    return raw in ("y", "yes")
 
 
-def _collect_dict(label: str, value_kind: str, *, required: bool) -> dict:
-    print(f"\n{label}")
-    print(f"  Enter pairs one at a time. Leave the key blank to finish.")
-    out: dict = {}
+def _validate_expression(expr: str, allowed_names: set[str]) -> str | None:
+    aeval = _make_evaluator({n: 1.0 for n in allowed_names})
+    aeval(expr, show_errors=False)
+    if aeval.error:
+        first = aeval.error[0].get_error()
+        return f"{first[0]}: {first[1]}"
+    return None
+
+
+def _prompt_expression(prompt: str, allowed_names: set[str]) -> str:
     while True:
-        key = _prompt("  key: ")
-        if not key:
-            if required and not out:
-                print("  (at least one entry is required)")
-                continue
-            break
-        raw = _prompt(f"  {value_kind} for '{key}': ")
-        if value_kind == "value (number)":
-            try:
-                out[key] = _parse_number(raw)
-            except ValueError:
-                print(f"  '{raw}' is not a number; try again.")
-                continue
-        else:
-            out[key] = raw
-    return out
+        expr = _prompt_required(prompt)
+        err = _validate_expression(expr, allowed_names)
+        if err is None:
+            return expr
+        print(f"  invalid: {err}")
 
 
-def _collect_sweep_axis(axis: str) -> dict | None:
-    ans = _prompt(f"  Configure {axis}-axis sweep? (y/skip): ").lower()
-    if ans not in ("y", "yes"):
+def _coerce_kwarg_value(v: str):
+    if v.startswith("@"):
+        return v
+    try:
+        return int(v)
+    except ValueError:
+        pass
+    try:
+        return float(v)
+    except ValueError:
+        pass
+    return v
+
+
+def _prompt_kwargs(label: str, runtime_args: tuple[str, ...]) -> dict:
+    kwargs: dict = {}
+    bindings = ", ".join(f"@{a}" for a in runtime_args) if runtime_args else "(none)"
+    print(f"  {label.capitalize()} kwargs. Enter pairs of <key> <value>. Value may be a number,")
+    print(f"  string, or one of the runtime bindings {bindings}. Blank key to finish.")
+    while True:
+        k = _prompt("    key: ")
+        if not k:
+            return kwargs
+        v = _prompt_required(f"    value for '{k}': ")
+        kwargs[k] = _coerce_kwarg_value(v)
+
+
+def _prompt_factory_block(
+    *, prompt: str, label: str, choices: list[str],
+    runtime_args: tuple[str, ...], default_yes: bool,
+) -> dict | None:
+    if not _prompt_yn(prompt, default=default_yes):
         return None
-    param = _prompt_required(f"    {axis} param name: ")
-    lo = _parse_number(_prompt_required(f"    {axis} min: "))
-    hi = _parse_number(_prompt_required(f"    {axis} max: "))
-    step = _parse_number(_prompt_required(f"    {axis} step: "))
-    return {"param": param, "range": (float(lo), float(hi), float(step))}
+    otype = _prompt_choice(f"  {label}:", choices)
+    kwargs = _prompt_kwargs(label, runtime_args)
+    return {"type": otype, "kwargs": kwargs}
+
+
+def _prompt_observables_block(param_names: set[str], n_dims: int) -> dict | None:
+    if not _prompt_yn(
+        "\nDeclare extra observables besides energy? (e.g. gap, double_occupancy)",
+        default=False,
+    ):
+        return None
+    momentum = {1: ("k",), 2: ("kx", "ky"), 3: ("kx", "ky", "kz")}[n_dims]
+    analytic_names = set(param_names) | {
+        "eigvals", "eigvecs", "H", "rho", "n_occ", "n_sites", "lattice",
+    }
+    bloch_names = set(param_names) | {"eigvals", "eigvecs", "H", "n_bands"} | set(momentum)
+    out: dict[str, dict] = {}
+    while True:
+        oname = _prompt("  observable name (blank to finish): ")
+        if not oname:
+            return out or None
+        if oname in out or oname == "E":
+            print(f"  '{oname}' already declared; pick another.")
+            continue
+        display = _prompt_required(f"  display label for '{oname}' (e.g. '\\Delta'): ")
+        analytic_expr = _prompt_expression(
+            f"  analytic expression in {sorted(analytic_names)}: ", analytic_names
+        )
+        entry: dict = {"display_name": display, "analytic": analytic_expr}
+        if _prompt_yn("  also provide an analytic_bloch expression?", default=False):
+            entry["analytic_bloch"] = _prompt_expression(
+                f"    expression in {sorted(bloch_names)}: ", bloch_names
+            )
+        out[oname] = entry
+
+
+def _prompt_ansatz_block() -> dict | None:
+    if not _prompt_yn(
+        "\nConfigure a VQE ansatz? (otherwise excitation_preserving "
+        "with fsim/linear + HF X-prefix is used)",
+        default=False,
+    ):
+        return None
+    otype = _prompt_choice("  ansatz:", list(_QISKIT_ANSATZES))
+    kwargs = _prompt_kwargs(
+        "ansatz",
+        runtime_args=("n_qubits", "n_layers", "n_occ", "spin", "n_sites"),
+    )
+    prefix = _prompt_choice(
+        "  initial_state_prefix (X gates on first n_occ qubits before the ansatz body):",
+        ["hartree_fock", "none"],
+    )
+    return {"type": otype, "kwargs": kwargs, "initial_state_prefix": prefix}
+
+
+def _prompt_choice(prompt: str, options: list[str]) -> str:
+    while True:
+        print(prompt)
+        for i, opt in enumerate(options):
+            print(f"  {i + 1}. {opt}")
+        raw = _prompt_required("  > ")
+        if raw.isdigit():
+            idx = int(raw) - 1
+            if 0 <= idx < len(options):
+                return options[idx]
+        if raw in options:
+            return raw
+        print("  (invalid choice; pick a number or name)")
+
+
+def _prompt_offsets(n_dims: int) -> list[list[int]]:
+    print(f"  Enter offset vectors (each a comma-separated tuple of {n_dims} ints).")
+    print(f"  Blank line to finish.")
+    offsets: list[list[int]] = []
+    while True:
+        raw = _prompt("    offset: ")
+        if not raw:
+            if not offsets:
+                print("    (need at least one offset)")
+                continue
+            return offsets
+        try:
+            parts = [int(p) for p in raw.split(",")]
+        except ValueError:
+            print("    (must be comma-separated ints)")
+            continue
+        if len(parts) != n_dims:
+            print(f"    (need exactly {n_dims} components)")
+            continue
+        offsets.append(parts)
+
+
+def _prompt_spin_channels(spin: int) -> list[str] | None:
+    if spin != 2:
+        return None
+    raw = _prompt("  spin_channels [up,down / up / down] (blank = both): ").lower()
+    if not raw:
+        return None
+    parts = [p.strip() for p in raw.split(",") if p.strip()]
+    bad = [p for p in parts if p not in ("up", "down")]
+    if bad:
+        print(f"  (ignoring unknown spin channels: {bad}); using both")
+        return None
+    return parts
 
 
 def _register_walkthrough() -> None:
     print("\n--- Register a custom model ---")
-    print("At any optional step, type 'skip' to omit it.\n")
+    print("This walkthrough writes a YAML file under quaph/models/.")
+    print("Type 'skip' to omit any optional field.\n")
 
     while True:
-        name = _prompt_required("Model name (required, unique identifier, e.g. 'ssh'): ")
+        name = _prompt_required("Model name (unique identifier, e.g. 'ssh'): ")
         if name in _MODELS:
             print(f"  a model named '{name}' is already registered; pick another.")
             continue
         break
-    display_name = _prompt_required("Display name (required, human-readable, e.g. 'SSH'): ")
+    display_name = _prompt_required("Display name (human-readable, e.g. 'SSH'): ")
+    spin = _prompt_int("spin (1 = spinless, 2 = with spin): ", allowed=(1, 2))
+    n_dims = _prompt_int("n_dims (lattice spatial dimensionality 1/2/3): ", allowed=(1, 2, 3))
 
-    default_params = _collect_dict(
-        "default_params (optional): numeric defaults for the model's Hamiltonian parameters",
-        "value (number)",
-        required=False,
-    )
-    param_labels = _collect_dict(
-        "param_labels (required): display labels for each parameter (include sweep params too)",
-        "label (string)",
-        required=True,
-    )
+    while True:
+        raw = _prompt_required(f"lattice_shape (comma-separated axis names, {n_dims} entries, e.g. 'Lx,Ly'): ")
+        lattice_shape = [s.strip() for s in raw.split(",") if s.strip()]
+        if len(lattice_shape) == n_dims:
+            break
+        print(f"  (need exactly {n_dims} entries)")
 
-    callables: dict[str, object] = {}
-    source_blocks: dict[str, str] = {}
+    sites_per_cell = _prompt_int("sites_per_cell (atoms per unit cell): ", minimum=1)
 
-    for field_name, hint in [
-        ("hamiltonian_matrix", "(n_sites, **params) -> np.ndarray"),
-        ("fermionic_hamiltonian", "(n_sites, *, **params) -> FermionicOp"),
-        ("get_optimizer", "(max_iters: int) -> Optimizer"),
-        ("mean_field_correction", "(n_sites, n_occ, **params) -> float"),
-    ]:
-        src = _read_paste_block(field_name, hint)
-        if src is None:
+    while True:
+        raw = _prompt_required(f"sublattice names (comma-separated, {sites_per_cell} entries, e.g. 'A,B'): ")
+        sublattices = [s.strip() for s in raw.split(",") if s.strip()]
+        if len(sublattices) == sites_per_cell:
+            break
+        print(f"  (need exactly {sites_per_cell} entries)")
+
+    print("\nParameter declarations (e.g. t1, t2, phi, M).")
+    print("  Enter pairs of <name> <display_label>. Blank name to finish.")
+    parameters: dict[str, dict] = {}
+    while True:
+        name_in = _prompt("  parameter name: ")
+        if not name_in:
+            if not parameters:
+                print("  (at least one parameter is required)")
+                continue
+            break
+        if name_in in parameters:
+            print(f"  '{name_in}' already declared; pick another or blank to finish.")
             continue
-        try:
-            fn = _exec_callable(src, field_name)
-        except Exception as e:
-            print(f"error compiling {field_name}: {e}")
-            print("aborting registration.")
-            return
-        callables[field_name] = fn
-        source_blocks[field_name] = src
+        label = _prompt_required(f"  display label for '{name_in}' (e.g. 't_1', '\\phi'): ")
+        parameters[name_in] = {"label": label}
 
-    print("\nsweep_defaults (optional)")
-    sweep_defaults: dict = {}
-    x = _collect_sweep_axis("x")
-    if x:
-        sweep_defaults["x"] = x
-    y = _collect_sweep_axis("y")
-    if y:
-        sweep_defaults["y"] = y
+    allowed_coef_names = set(parameters)
 
-    print("\n--- Summary ---")
-    print(f"  name:           {name}")
-    print(f"  display_name:   {display_name}")
-    print(f"  default_params: {default_params}")
-    print(f"  param_labels:   {param_labels}")
-    print(f"  callables:      {sorted(callables)}")
-    print(f"  sweep_defaults: {sweep_defaults or '(none)'}")
-    confirm = _prompt("\nWrite this model? (y/n): ").lower()
-    if confirm not in ("y", "yes"):
+    terms: list[dict] = []
+    print("\nHamiltonian terms.")
+    while True:
+        kind = _prompt(
+            "  Add term [onsite/hopping/done]: "
+        ).lower()
+        if kind in ("done", "", "skip"):
+            break
+        if kind == "onsite":
+            sublattice = _prompt_choice("  sublattice:", sublattices)
+            coef = _prompt_expression(f"  coefficient (expression in {sorted(allowed_coef_names)}): ", allowed_coef_names)
+            term = {"kind": "onsite", "sublattice": sublattice, "coefficient": coef}
+            sc = _prompt_spin_channels(spin)
+            if sc is not None:
+                term["spin_channels"] = sc
+            terms.append(term)
+        elif kind == "hopping":
+            src = _prompt_choice("  from sublattice:", sublattices)
+            dst = _prompt_choice("  to sublattice:", sublattices)
+            offsets = _prompt_offsets(n_dims)
+            coef = _prompt_expression(f"  coefficient (expression in {sorted(allowed_coef_names)}): ", allowed_coef_names)
+            herm = _prompt_yn("  add hermitian partner?", default=True)
+            term = {
+                "kind": "hopping",
+                "from": src,
+                "to": dst,
+                "offsets": offsets,
+                "coefficient": coef,
+                "hermitian_partner": herm,
+            }
+            sc = _prompt_spin_channels(spin)
+            if sc is not None:
+                term["spin_channels"] = sc
+            terms.append(term)
+        else:
+            print(f"  unknown term kind '{kind}'; choose 'onsite' or 'hopping'.")
+
+    interaction: list[dict] = []
+    if spin == 2 and _prompt_yn("\nAdd a Hubbard-style on-site density-density interaction?"):
+        coef = _prompt_expression(f"  coefficient (expression in {sorted(allowed_coef_names)}): ", allowed_coef_names)
+        interaction.append({"kind": "density_density_onsite", "coefficient": coef})
+
+    mean_field_correction: str | None = None
+    if _prompt_yn("\nProvide a mean-field correction expression?"):
+        mf_names = allowed_coef_names | {"n_sites", "n_occ"}
+        mean_field_correction = _prompt_expression(
+            f"  expression in {sorted(mf_names)}: ", mf_names
+        )
+
+    optimizer = _prompt_factory_block(
+        prompt="\nConfigure a classical optimizer? (otherwise SPSA with @max_iters is used at runtime)",
+        label="optimizer",
+        choices=list(_QISKIT_OPTIMIZERS),
+        runtime_args=("max_iters",),
+        default_yes=True,
+    )
+
+    mapper = _prompt_factory_block(
+        prompt="\nConfigure a qubit mapper? (otherwise JordanWignerMapper is used)",
+        label="mapper",
+        choices=list(_QISKIT_MAPPERS),
+        runtime_args=("n_sites", "spin", "n_occ", "num_particles"),
+        default_yes=False,
+    )
+
+    ansatz = _prompt_ansatz_block()
+
+    observables = _prompt_observables_block(allowed_coef_names, n_dims)
+
+    spec_data: dict = {
+        "name": name,
+        "display_name": display_name,
+        "spin": spin,
+        "n_dims": n_dims,
+        "lattice_shape": lattice_shape,
+        "sites_per_cell": sites_per_cell,
+        "sublattices": sublattices,
+        "parameters": parameters,
+        "terms": terms,
+    }
+    if interaction:
+        spec_data["interaction"] = interaction
+    if mean_field_correction is not None:
+        spec_data["mean_field_correction"] = mean_field_correction
+    if optimizer is not None:
+        spec_data["optimizer"] = optimizer
+    if mapper is not None:
+        spec_data["mapper"] = mapper
+    if ansatz is not None:
+        spec_data["ansatz"] = ansatz
+    if observables is not None:
+        spec_data["observables"] = observables
+
+    try:
+        YamlModelSpec.model_validate(spec_data)
+    except Exception as e:
+        print(f"\nvalidation failed: {e}")
         print("aborted; nothing written.")
         return
 
+    yaml_text = yaml.safe_dump(spec_data, sort_keys=False, allow_unicode=True)
+    print("\n--- Generated YAML ---")
+    print(yaml_text)
+    if not _prompt_yn("Write this model?", default=True):
+        print("aborted; nothing written.")
+        return
+
+    with tempfile.NamedTemporaryFile(
+        "w", suffix=".yaml", delete=False, prefix=f"quaph_{name}_"
+    ) as tmp:
+        tmp.write(yaml_text)
+        tmp_path = Path(tmp.name)
     try:
-        model = Model(
-            name=name,
-            display_name=display_name,
-            default_params=default_params,
-            param_labels=param_labels,
-            hamiltonian_matrix=callables.get("hamiltonian_matrix"),
-            fermionic_hamiltonian=callables.get("fermionic_hamiltonian"),
-            get_optimizer=callables.get("get_optimizer"),
-            mean_field_correction=callables.get("mean_field_correction"),
-            sweep_defaults=sweep_defaults or None,
-        )
-        register_model(model, _source_blocks=source_blocks)
+        register_model_from_file(tmp_path)
     except Exception as e:
         print(f"error: {e}")
         return
+    finally:
+        tmp_path.unlink(missing_ok=True)
     print(f"Registered '{name}'.")

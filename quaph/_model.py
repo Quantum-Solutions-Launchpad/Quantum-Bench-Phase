@@ -1,10 +1,111 @@
 from __future__ import annotations
 
-from typing import Callable
+from dataclasses import dataclass
+from typing import Any, Callable
 
 
 class ModelCapabilityError(Exception):
     pass
+
+
+@dataclass
+class Observable:
+    name: str
+    display_name: str
+    analytic: Callable[..., float]
+    analytic_bloch: Callable[..., Any] | None = None
+    operator: Any = None
+
+
+def _default_energy_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
+    import numpy as np
+    e = float(np.sum(eigvals[:n_occ]))
+    if model._mean_field_correction_fn is not None:
+        e += float(model._mean_field_correction_fn(lattice, n_occ, **params))
+    return e
+
+
+def _default_energy_analytic_bloch(model, k_tuple, H, eigvals, eigvecs, params):
+    import numpy as np
+    return np.sort(eigvals).tolist()
+
+
+def default_energy_observable() -> "Observable":
+    return Observable(
+        name="E",
+        display_name="E",
+        analytic=_default_energy_analytic,
+        analytic_bloch=_default_energy_analytic_bloch,
+    )
+
+
+def _default_gap_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
+    if n_occ <= 0 or n_occ >= len(eigvals):
+        return 0.0
+    return float(eigvals[n_occ] - eigvals[n_occ - 1])
+
+
+def default_gap_observable() -> "Observable":
+    return Observable(
+        name="gap",
+        display_name=r"\Delta_{\mathrm{gap}}",
+        analytic=_default_gap_analytic,
+    )
+
+
+def _default_kinetic_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
+    return float(__import__("numpy").sum(eigvals[:n_occ]))
+
+
+def default_kinetic_observable() -> "Observable":
+    return Observable(
+        name="kinetic_energy",
+        display_name=r"E_{\mathrm{kin}}",
+        analytic=_default_kinetic_analytic,
+    )
+
+
+def _default_interaction_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
+    if model._mean_field_correction_fn is None:
+        return 0.0
+    return float(model._mean_field_correction_fn(lattice, n_occ, **params))
+
+
+def default_interaction_observable() -> "Observable":
+    return Observable(
+        name="interaction_energy",
+        display_name=r"E_{\mathrm{int}}",
+        analytic=_default_interaction_analytic,
+    )
+
+
+def _default_density_variance_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
+    import numpy as np
+    if n_occ <= 0:
+        return 0.0
+    V_occ = eigvecs[:, :n_occ]
+    rho_diag = np.real(np.einsum("ij,ij->i", V_occ.conj(), V_occ))
+    return float(np.var(rho_diag))
+
+
+def default_density_variance_observable() -> "Observable":
+    return Observable(
+        name="density_variance",
+        display_name=r"\mathrm{Var}(\langle n_i \rangle)",
+        analytic=_default_density_variance_analytic,
+    )
+
+
+def matrix_to_fermionic_op(H, tol: float = 1e-12):
+    from qiskit_nature.second_q.operators import FermionicOp
+    terms: dict[str, complex] = {}
+    N = H.shape[0]
+    for i in range(N):
+        for j in range(N):
+            c = complex(H[i, j])
+            if abs(c) > tol:
+                terms[f"+_{i} -_{j}"] = c
+    return FermionicOp(terms, num_spin_orbitals=N)
 
 
 class Model:
@@ -14,43 +115,96 @@ class Model:
         display_name: str,
         param_labels: dict[str, str],
         *,
-        default_params: dict[str, float] | None = None,
-        hamiltonian_matrix: Callable | None = None,
-        fermionic_hamiltonian: Callable | None = None,
+        spin: int,
+        n_dims: int,
+        lattice_shape: tuple[str, ...],
+        sites_per_cell: int,
+        hamiltonian_matrix: Callable,
+        interaction_hamiltonian: Callable | None = None,
         get_optimizer: Callable | None = None,
+        get_mapper: Callable | None = None,
+        get_vqe_ansatz: Callable | None = None,
         mean_field_correction: Callable | None = None,
-        sweep_defaults: dict | None = None,
+        bloch_hamiltonian: Callable | None = None,
+        observables: dict[str, "Observable"] | None = None,
     ):
+        if hamiltonian_matrix is None:
+            raise ValueError(
+                f"Model '{name}' requires hamiltonian_matrix."
+            )
+        if spin not in (1, 2):
+            raise ValueError(
+                f"Model '{name}' has invalid spin={spin}; must be 1 (spinless) or 2 (with spin)."
+            )
+        momentum_axes_by_dims = {1: ("k",), 2: ("kx", "ky"), 3: ("kx", "ky", "kz")}
+        if n_dims not in momentum_axes_by_dims:
+            raise ValueError(
+                f"Model '{name}' has invalid n_dims={n_dims}; must be 1, 2, or 3."
+            )
+        lattice_shape = tuple(lattice_shape)
+        if len(lattice_shape) != n_dims:
+            raise ValueError(
+                f"Model '{name}' has lattice_shape={lattice_shape} (len {len(lattice_shape)}) "
+                f"but n_dims={n_dims}; they must match."
+            )
+        if not isinstance(sites_per_cell, int) or sites_per_cell < 1:
+            raise ValueError(
+                f"Model '{name}' has invalid sites_per_cell={sites_per_cell}; must be a positive int."
+            )
         self.name = name
         self.display_name = display_name
-        self.default_params = default_params or {}
-        self.param_labels = param_labels
-        self.sweep_defaults = sweep_defaults or {}
+        self.spin = spin
+        self.n_dims = n_dims
+        self.lattice_shape = lattice_shape
+        self.sites_per_cell = sites_per_cell
+        self.momentum_axes = momentum_axes_by_dims[n_dims]
+
+        momentum_labels = {"k": "k", "kx": "k_x", "ky": "k_y", "kz": "k_z"}
+        merged_labels = {a: momentum_labels[a] for a in self.momentum_axes}
+        merged_labels.update(param_labels)
+        self.param_labels = merged_labels
 
         self._hamiltonian_matrix_fn = hamiltonian_matrix
-        self._fermionic_hamiltonian_fn = fermionic_hamiltonian
+        self._interaction_hamiltonian_fn = interaction_hamiltonian
         self._get_optimizer_fn = get_optimizer
+        self._get_mapper_fn = get_mapper
+        self._get_vqe_ansatz_fn = get_vqe_ansatz
         self._mean_field_correction_fn = mean_field_correction
+        self._bloch_hamiltonian_fn = bloch_hamiltonian
+
+        merged_observables: dict[str, Observable] = {
+            "E": default_energy_observable(),
+            "gap": default_gap_observable(),
+            "kinetic_energy": default_kinetic_observable(),
+            "interaction_energy": default_interaction_observable(),
+            "density_variance": default_density_variance_observable(),
+        }
+        if observables:
+            for obs_name, obs in observables.items():
+                if obs.name != obs_name:
+                    obs = Observable(
+                        name=obs_name,
+                        display_name=obs.display_name,
+                        analytic=obs.analytic,
+                        analytic_bloch=obs.analytic_bloch,
+                        operator=obs.operator,
+                    )
+                merged_observables[obs_name] = obs
+        self._observables = merged_observables
 
     @property
     def _build_H_matrix(self):
-        if self._hamiltonian_matrix_fn is None:
-            raise ModelCapabilityError(
-                f"Model '{self.name}' does not provide hamiltonian_matrix; "
-                "this is required for run_analytic(), run_simulated_ideal(), and run_simulated_noisy(). "
-                "Provide hamiltonian_matrix= when constructing Model."
-            )
         return self._hamiltonian_matrix_fn
 
     @property
     def fermionic_hamiltonian(self):
-        if self._fermionic_hamiltonian_fn is None:
-            raise ModelCapabilityError(
-                f"Model '{self.name}' does not provide fermionic_hamiltonian; "
-                "this is required for run_simulated_ideal() and run_simulated_noisy(). "
-                "Provide fermionic_hamiltonian= when constructing Model."
-            )
-        return self._fermionic_hamiltonian_fn
+        def _build(lattice, **params):
+            H = self._hamiltonian_matrix_fn(lattice, **params)
+            op = matrix_to_fermionic_op(H)
+            if self._interaction_hamiltonian_fn is not None:
+                op = op + self._interaction_hamiltonian_fn(lattice, **params)
+            return op
+        return _build
 
     @property
     def get_optimizer(self):
@@ -60,8 +214,58 @@ class Model:
         return lambda max_iters: SPSA(maxiter=max_iters)
 
     @property
+    def get_mapper(self):
+        if self._get_mapper_fn is not None:
+            return self._get_mapper_fn
+        from qiskit_nature.second_q.mappers import JordanWignerMapper
+        return lambda n_sites, spin, n_occ: JordanWignerMapper()
+
+    @property
+    def get_vqe_ansatz(self):
+        if self._get_vqe_ansatz_fn is not None:
+            return self._get_vqe_ansatz_fn
+        from qiskit import QuantumCircuit
+        from qiskit.circuit.library import excitation_preserving
+
+        def default(n_qubits, n_layers, n_occ, spin):
+            qc = QuantumCircuit(n_qubits)
+            for i in range(n_occ):
+                qc.x(i)
+            qc.compose(
+                excitation_preserving(n_qubits, "fsim", "linear", reps=n_layers),
+                inplace=True,
+            )
+            return qc
+        return default
+
+    @property
     def mean_field_correction(self):
         return self._mean_field_correction_fn
+
+    @property
+    def bloch_hamiltonian(self):
+        if self._bloch_hamiltonian_fn is None:
+            raise ModelCapabilityError(
+                f"Model '{self.name}' does not implement bloch_hamiltonian; "
+                f"momentum-space (band structure) runs are not supported."
+            )
+        return self._bloch_hamiltonian_fn
+
+    @property
+    def observables(self) -> dict[str, "Observable"]:
+        return self._observables
+
+    def get_observable(self, name: str) -> "Observable":
+        if name not in self._observables:
+            raise ModelCapabilityError(
+                f"Model '{self.name}' has no observable '{name}'; "
+                f"available: {sorted(self._observables)}"
+            )
+        return self._observables[name]
+
+    @property
+    def supports_band_structure(self) -> bool:
+        return self._bloch_hamiltonian_fn is not None
 
     @property
     def NAME(self):
@@ -72,21 +276,13 @@ class Model:
         return self.display_name
 
     @property
-    def DEFAULT_PARAMS(self):
-        return self.default_params
-
-    @property
     def PARAM_LABELS(self):
         return self.param_labels
 
-    @property
-    def SWEEP_DEFAULTS(self):
-        return self.sweep_defaults
-
     def __repr__(self):
-        caps = []
-        if self._hamiltonian_matrix_fn:
-            caps.append("analytic")
-        if self._fermionic_hamiltonian_fn:
-            caps.append("simulation")
+        caps = ["analytic", "simulation"]
+        if self._interaction_hamiltonian_fn is not None:
+            caps.append("interacting")
+        if self._bloch_hamiltonian_fn is not None:
+            caps.append("band-structure")
         return f"Model(name={self.name!r}, capabilities={caps})"

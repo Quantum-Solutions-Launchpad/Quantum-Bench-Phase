@@ -1,0 +1,49 @@
+name: rice-mele
+display_name: Rice–Mele
+spin: 1
+n_dims: 1
+lattice_shape: [Lx]
+sites_per_cell: 2
+sublattices: [A, B]
+parameters:
+  t1:    {label: "t_1"}
+  t2:    {label: "t_2"}
+  Delta: {label: "\\Delta"}
+
+terms:
+  - kind: onsite
+    sublattice: A
+    coefficient: "+Delta"
+  - kind: onsite
+    sublattice: B
+    coefficient: "-Delta"
+
+  - kind: hopping
+    from: A
+    to: B
+    offsets: [[0]]
+    coefficient: "-t1"
+    hermitian_partner: true
+  - kind: hopping
+    from: B
+    to: A
+    offsets: [[1]]
+    coefficient: "-t2"
+    hermitian_partner: true
+
+optimizer:
+  type: SPSA
+  kwargs:
+    maxiter: "@max_iters"
+
+mapper:
+  type: JordanWignerMapper
+  kwargs: {}
+
+ansatz:
+  type: excitation_preserving
+  kwargs:
+    mode: fsim
+    entanglement: linear
+    reps: "@n_layers"
+  initial_state_prefix: hartree_fock
