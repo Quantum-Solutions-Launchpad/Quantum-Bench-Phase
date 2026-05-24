@@ -85,6 +85,7 @@ html_theme = "shibuya"
 html_title = "QuaPh"
 html_static_path = ["_static"]
 html_favicon = "_static/favicon-dark.svg"
+html_css_files = ["custom.css"]
 
 html_theme_options = {
     "accent_color": "violet",

@@ -11,4 +11,3 @@ venv7/
 # Build environments
 build/
 docs/_build/
-docs/_static/
