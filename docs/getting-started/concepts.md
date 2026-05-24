@@ -47,34 +47,3 @@ QuaPh supports two quantum algorithms for estimating ground-state energies.
 
 **Analytic, simulated, and noisy runs**
 : Every QuaPh workflow can be executed in three modes. *Analytic* runs diagonalize the Hamiltonian classically and return the exact answer; they are the fastest and serve as a ground-truth reference. *Simulated ideal* runs execute the quantum circuit on a noiseless statevector simulator, so they capture algorithmic error (e.g. Trotter or ansatz error) without hardware noise. *Simulated noisy* runs use a noise model (or a real backend via Qiskit IBM Runtime) and additionally capture device noise.
-
-## Pipeline Overview
-
-A typical QuaPh run follows the same pipeline regardless of the model or algorithm:
-
-<div class="quaph-pipeline">
-  <div class="pipeline-row">
-    <div class="step">Model</div>
-    <div class="arrow arrow-right"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,18 60,18 60,0 100,30 60,60 60,42 0,42"/></svg></div>
-    <div class="step">Mapper</div>
-    <div class="arrow arrow-right"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,18 60,18 60,0 100,30 60,60 60,42 0,42"/></svg></div>
-    <div class="step">Ansatz /<br>Trotterization</div>
-  </div>
-  <div class="connector">
-    <div class="arrow arrow-down"><svg viewBox="0 0 60 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="18,0 42,0 42,60 60,60 30,100 0,60 18,60"/></svg></div>
-  </div>
-  <div class="pipeline-row">
-    <div class="step">Plot</div>
-    <div class="arrow arrow-left"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,18 40,18 40,0 0,30 40,60 40,42 100,42"/></svg></div>
-    <div class="step">Result</div>
-    <div class="arrow arrow-left"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,18 40,18 40,0 0,30 40,60 40,42 100,42"/></svg></div>
-    <div class="step">Optimizer</div>
-  </div>
-</div>
-
-- **Model.** A tight-binding Hamiltonian on a chosen lattice with chosen parameters.
-- **Mapper.** A fermion-to-qubit mapping (e.g. Jordan-Wigner) that turns the Hamiltonian into Pauli operators.
-- **Ansatz / Trotterization.** A parameterized circuit (VQE) or a Trotterized time-evolution circuit (IQPE).
-- **Optimizer.** A classical optimizer that updates ansatz parameters (VQE) or iterative execution of a quantum circuit (IQPE).
-- **Result.** Ground-state energies, gaps, or other observables across a parameter sweep.
-- **Plot.** A line plot, 3D plot, or heatmap of the observable.
