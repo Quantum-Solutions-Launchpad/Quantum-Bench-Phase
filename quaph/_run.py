@@ -11,7 +11,7 @@ from joblib import Parallel, delayed
 from quaph._model import Model, ModelCapabilityError
 from quaph._core import (
     resolve_sweep,
-    analytic, vqe, iqpe,
+    analytic, vqe, iqpe, vqe_observable, iqpe_observable,
     vqe_other_benchmarks, iqpe_other_benchmarks,
     analytic_bands, vqe_bloch, iqpe_bloch,
     vqe_bloch_other_benchmarks, iqpe_bloch_other_benchmarks,
@@ -465,9 +465,24 @@ def _run_simulated(
     hide_plot: bool,
     hide_legend: bool,
     is_1d: bool,
+    observable: str = "E",
 ) -> SimulatedResult:
     do_vqe = vqe_reps > 0
     do_iqpe = iqpe_reps > 0
+
+    obs = model.get_observable(observable)
+    iqpe_supports_observable = (
+        observable == "E"
+        or (obs.quantum_composite is not None and observable == "charge_gap")
+    )
+    if do_iqpe and not iqpe_supports_observable:
+        from loguru import logger as _logger
+        _logger.warning(
+            f"IQPE cannot measure observable '{observable}' directly; "
+            f"only the analytic and VQE backends will be computed."
+        )
+        do_iqpe = False
+        iqpe_reps = 0
 
     spin = model.spin
     if lattice is not None:
@@ -567,16 +582,24 @@ def _run_simulated(
                 continue
 
             jobs.append(delayed(tagged_job)(
-                ("analytic", ix, iy), analytic, model, lattice, n_occ_val, cp
+                ("analytic", ix, iy), analytic, model, lattice, n_occ_val, cp, observable
             ))
             if do_iqpe:
                 for rep in range(1, iqpe_reps + 1):
-                    jobs.append(delayed(tagged_job)(
-                        ("iqpe", ix, iy, rep), iqpe,
-                        lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
-                        mapper, iqpe_time, iqpe_trot, iqpe_iters, rep,
-                        backend=backend
-                    ))
+                    if observable == "E":
+                        jobs.append(delayed(tagged_job)(
+                            ("iqpe", ix, iy, rep), iqpe,
+                            lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
+                            mapper, iqpe_time, iqpe_trot, iqpe_iters, rep,
+                            backend=backend
+                        ))
+                    else:
+                        jobs.append(delayed(tagged_job)(
+                            ("iqpe", ix, iy, rep), iqpe_observable,
+                            model, lattice, n_sites, spin, n_occ_val, cp,
+                            mapper, iqpe_time, iqpe_trot, iqpe_iters, rep, observable,
+                            backend=backend
+                        ))
                 jobs.append(delayed(tagged_job)(
                     ("iqpe_bench", ix, iy), iqpe_other_benchmarks,
                     lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
@@ -585,13 +608,21 @@ def _run_simulated(
                 ))
             if do_vqe:
                 for rep in range(1, vqe_reps + 1):
-                    jobs.append(delayed(tagged_job)(
-                        ("vqe", ix, iy, rep), vqe,
-                        lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
-                        model.get_vqe_ansatz,
-                        mapper, vqe_iters, vqe_layers, rep,
-                        backend=backend
-                    ))
+                    if observable == "E":
+                        jobs.append(delayed(tagged_job)(
+                            ("vqe", ix, iy, rep), vqe,
+                            lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
+                            model.get_vqe_ansatz,
+                            mapper, vqe_iters, vqe_layers, rep,
+                            backend=backend
+                        ))
+                    else:
+                        jobs.append(delayed(tagged_job)(
+                            ("vqe", ix, iy, rep), vqe_observable,
+                            model, lattice, n_sites, spin, n_occ_val, cp,
+                            mapper, vqe_iters, vqe_layers, rep, observable,
+                            backend=backend
+                        ))
                 jobs.append(delayed(tagged_job)(
                     ("vqe_bench", ix, iy), vqe_other_benchmarks,
                     lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
@@ -600,7 +631,7 @@ def _run_simulated(
                     backend=backend
                 ))
 
-    raw_tag = _file_tag(f"simulated-{simulation_tag}", plot_format, x_param, y_param)
+    raw_tag = _file_tag(f"simulated-{simulation_tag}", plot_format, x_param, y_param, observable=observable)
     raw_data_path = None
     if log_dir is not None:
         log_subdir = _log_subdir(log_dir, model.name, lattice)
@@ -892,6 +923,7 @@ def run_simulated_ideal(
     plot_dir=None,
     hide_plot: bool = False,
     hide_legend: bool = False,
+    observable: str = "E",
 ) -> SimulatedResult:
     (model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
      vqe_reps, iqpe_reps) = _prep_simulated_kwargs(
@@ -908,7 +940,7 @@ def run_simulated_ideal(
         iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
         log_dir=log_dir, plot_dir=plot_dir,
         hide_plot=hide_plot, hide_legend=hide_legend,
-        is_1d=is_1d,
+        is_1d=is_1d, observable=observable,
     )
 
 
@@ -934,6 +966,7 @@ def run_simulated_noisy(
     plot_dir=None,
     hide_plot: bool = False,
     hide_legend: bool = False,
+    observable: str = "E",
 ) -> SimulatedResult:
     if backend is None:
         from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
@@ -954,5 +987,5 @@ def run_simulated_noisy(
         iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
         log_dir=log_dir, plot_dir=plot_dir,
         hide_plot=hide_plot, hide_legend=hide_legend,
-        is_1d=is_1d,
+        is_1d=is_1d, observable=observable,
     )

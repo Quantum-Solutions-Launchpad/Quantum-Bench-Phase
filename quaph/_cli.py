@@ -232,6 +232,10 @@ def main(argv=None):
     for p in (sim_ideal_parser, sim_noisy_parser):
         _add_sim_required(p)
         _add_sim_optional(p)
+        p.add_argument("--observable", default="E", metavar="NAME",
+                       help="Observable to compute per cell (default: 'E'). "
+                            "VQE supports any registered observable; IQPE supports only 'E' "
+                            "and energy-based composites.")
 
     if subcommand in ("analytic", "simulated-ideal", "simulated-noisy") and model_arg:
         try:

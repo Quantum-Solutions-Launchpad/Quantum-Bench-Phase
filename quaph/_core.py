@@ -274,7 +274,7 @@ def analytic(model, lattice, n_occ, model_params, observable: str = "E"):
     return result
 
 
-def vqe(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, rep, backend=None):
+def vqe(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, rep, backend=None, observable_qubit_ops=None):
     fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
 
@@ -313,9 +313,79 @@ def vqe(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, g
 
         optimizer = get_optimizer_fn(max_iters)
         res = optimizer.minimize(cost_func, x0=x0)
+        energy = float(res.fun)
+        optimal_params = np.asarray(res.x)
 
-        logger.debug(f"VQE ({_fmt_params(lattice, n_occ, model_params, repetition=rep)}) = {float(res.fun)}")
-        return float(res.fun)
+        logger.debug(f"VQE ({_fmt_params(lattice, n_occ, model_params, repetition=rep)}) = {energy}")
+
+        if observable_qubit_ops is None:
+            return energy
+
+        observable_values = []
+        for op in observable_qubit_ops:
+            pub = (ansatz_circuit, [op], [optimal_params])
+            result = estimator.run(pubs=[pub]).result()
+            observable_values.append(float(result[0].data.evs[0]))
+        return energy, observable_values
+
+
+def vqe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, max_iters, n_layers, rep, observable, backend=None):
+    obs = model.get_observable(observable)
+
+    def sub_eval(sub_n_occ, observable_qubit_ops=None):
+        return vqe(
+            lattice, n_sites, spin, sub_n_occ, model_params,
+            model.fermionic_hamiltonian, model.get_optimizer,
+            model.get_vqe_ansatz, mapper, max_iters, n_layers, rep,
+            backend=backend, observable_qubit_ops=observable_qubit_ops,
+        )
+
+    if obs.quantum_composite is not None:
+        n_orbitals = n_sites * spin
+        return float(obs.quantum_composite(
+            model, lattice, n_occ, model_params, mapper, n_orbitals, sub_eval,
+        ))
+    if observable == "E" or obs.quantum_operator is None:
+        return float(sub_eval(n_occ))
+    op_fermionic = obs.quantum_operator(model, lattice, **model_params)
+    if op_fermionic is None:
+        return 0.0
+    op_qubit = mapper.map(op_fermionic)
+    _, vals = sub_eval(n_occ, observable_qubit_ops=[op_qubit])
+    return float(vals[0])
+
+
+def iqpe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, time_param, n_trot, n_iters, rep, observable, backend=None):
+    obs = model.get_observable(observable)
+
+    def sub_eval(sub_n_occ, observable_qubit_ops=None):
+        if observable_qubit_ops is not None:
+            raise NotImplementedError(
+                "IQPE only supports observables whose composite uses energies; "
+                "operator-measurement observables require VQE."
+            )
+        energy, _ = iqpe(
+            lattice, n_sites, spin, sub_n_occ, model_params,
+            model.fermionic_hamiltonian, mapper, time_param, n_trot, n_iters, rep,
+            backend=backend,
+        )
+        return energy
+
+    if obs.quantum_composite is not None:
+        n_orbitals = n_sites * spin
+        return float(obs.quantum_composite(
+            model, lattice, n_occ, model_params, mapper, n_orbitals, sub_eval,
+        )), []
+    if observable == "E":
+        return iqpe(
+            lattice, n_sites, spin, n_occ, model_params,
+            model.fermionic_hamiltonian, mapper, time_param, n_trot, n_iters, rep,
+            backend=backend,
+        )
+    raise NotImplementedError(
+        f"IQPE cannot directly measure observable '{observable}' "
+        f"(requires operator measurement on the prepared state). Use VQE instead."
+    )
 
 
 def iqpe(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep, backend=None):

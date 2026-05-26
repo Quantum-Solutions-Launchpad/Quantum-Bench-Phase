@@ -804,10 +804,35 @@ def _build_uhf_observables(spec: YamlModelSpec):
         r = _cached(model, lattice, n_occ, params)
         return float(hf_gap(r, n_occ))
 
+    sites_per_cell = spec.sites_per_cell
+
+    def _spin_op(model, lattice, *, stagger: bool):
+        from qiskit_nature.second_q.operators import FermionicOp
+        lat = tuple(lattice)
+        n_cells = 1
+        for L in lat:
+            n_cells *= L
+        n_sites = n_cells * sites_per_cell
+        num_so = n_sites * 2
+        terms_dict: dict[str, complex] = {}
+        for s in range(n_sites):
+            sign = (+1.0 if (s % sites_per_cell) % 2 == 0 else -1.0) if stagger else +1.0
+            up = s * 2 + 0
+            dn = s * 2 + 1
+            terms_dict[f"+_{up} -_{up}"] = terms_dict.get(f"+_{up} -_{up}", 0.0) + sign / n_sites
+            terms_dict[f"+_{dn} -_{dn}"] = terms_dict.get(f"+_{dn} -_{dn}", 0.0) - sign / n_sites
+        return FermionicOp(terms_dict, num_spin_orbitals=num_so)
+
+    def _m_stag_quantum_op(model, lattice, **params):
+        return _spin_op(model, lattice, stagger=True)
+
+    def _m_total_quantum_op(model, lattice, **params):
+        return _spin_op(model, lattice, stagger=False)
+
     return {
         "E_uhf":   Observable(name="E_uhf",   display_name=r"E_{\mathrm{UHF}}",      analytic=_e_uhf),
-        "M_stag":  Observable(name="M_stag",  display_name=r"|m_{\mathrm{stag}}|",   analytic=_m_stag),
-        "M_total": Observable(name="M_total", display_name=r"|m_{\mathrm{total}}|",  analytic=_m_total),
+        "M_stag":  Observable(name="M_stag",  display_name=r"|m_{\mathrm{stag}}|",   analytic=_m_stag,  quantum_operator=_m_stag_quantum_op),
+        "M_total": Observable(name="M_total", display_name=r"|m_{\mathrm{total}}|",  analytic=_m_total, quantum_operator=_m_total_quantum_op),
         "gap_uhf": Observable(name="gap_uhf", display_name=r"\Delta_{\mathrm{UHF}}", analytic=_gap_uhf),
     }
 
