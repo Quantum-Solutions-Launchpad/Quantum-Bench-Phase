@@ -8,6 +8,7 @@ from qiskit.quantum_info import SparsePauliOp
 from qiskit_ibm_runtime import Session, Estimator
 
 from qiskit_nature.second_q.circuit.library import HartreeFock
+from qiskit_nature.second_q.operators import FermionicOp
 
 from qiskit_aer import AerSimulator
 from qiskit_aer.primitives import Sampler
@@ -76,9 +77,15 @@ def resolve_sweep(param: str, range_args, n_orbitals: int, momentum_axes: tuple[
 def _hf_initial_state(n_sites: int, spin: int, n_occ: int, mapper):
     if spin == 2:
         return HartreeFock(n_sites, (n_occ // 2 + n_occ % 2, n_occ // 2), mapper)
-    qc = QuantumCircuit(n_sites)
-    for i in range(n_occ):
-        qc.x(i)
+    num_modes = n_sites
+    label = " ".join(f"+_{i}" for i in range(n_occ))
+    bitstr_op = FermionicOp({label: 1.0} if label else {"": 1.0}, num_spin_orbitals=num_modes)
+    qubit_op = mapper.map(bitstr_op)
+    bits = qubit_op.paulis.x[0]
+    qc = QuantumCircuit(len(bits))
+    for i, bit in enumerate(bits):
+        if bit:
+            qc.x(i)
     return qc
 
 
