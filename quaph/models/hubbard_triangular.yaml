@@ -24,11 +24,8 @@ terms:
     coefficient: "-t"
     hermitian_partner: true
 
-interaction:
-  - kind: density_density_onsite
+  - kind: density_density
     coefficient: "U"
-
-mean_field_correction: "U * n_sites * (n_occ / (2 * n_sites))**2"
 
 optimizer:
   type: SPSA

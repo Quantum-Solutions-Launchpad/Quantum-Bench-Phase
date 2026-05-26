@@ -20,19 +20,14 @@ terms:
     coefficient: "-t"
     hermitian_partner: true
 
-interaction:
-  - kind: density_density_onsite
+  - kind: density_density
     coefficient: "U"
-  - kind: density_density_bond
+
+  - kind: density_density
     from: A
     to: B
     offsets: [[0, 0], [-1, 0], [0, -1]]
     coefficient: "V"
-
-# Hartree shift: U * Σ_i <n↑><n↓> + V * Σ_<ij> <n_i><n_j>.
-# For 2D square lattice each site has 4 NN bonds → n_bonds = 2 n_sites.
-# <n_i> = n_occ / n_sites (both spins). Total electrons per site n = n_occ/n_sites.
-mean_field_correction: "U * n_sites * (n_occ / (2 * n_sites))**2 + 2 * V * n_occ**2 / n_sites"
 
 optimizer:
   type: SPSA

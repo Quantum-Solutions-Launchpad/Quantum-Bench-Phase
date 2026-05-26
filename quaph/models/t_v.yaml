@@ -19,15 +19,11 @@ terms:
     coefficient: "-t"
     hermitian_partner: true
 
-interaction:
-  - kind: density_density_bond
+  - kind: density_density
     from: A
     to: A
     offsets: [[1]]
     coefficient: "V"
-
-# Hartree shift V * n_bonds * <n>^2 with n_bonds = n_sites and <n> = n_occ/n_sites.
-mean_field_correction: "V * n_occ**2 / n_sites"
 
 optimizer:
   type: SPSA

@@ -495,17 +495,9 @@ def _register_walkthrough() -> None:
         else:
             print(f"  unknown term kind '{kind}'; choose 'onsite' or 'hopping'.")
 
-    interaction: list[dict] = []
     if spin == 2 and _prompt_yn("\nAdd a Hubbard-style on-site density-density interaction?"):
         coef = _prompt_expression(f"  coefficient (expression in {sorted(allowed_coef_names)}): ", allowed_coef_names)
-        interaction.append({"kind": "density_density_onsite", "coefficient": coef})
-
-    mean_field_correction: str | None = None
-    if _prompt_yn("\nProvide a mean-field correction expression?"):
-        mf_names = allowed_coef_names | {"n_sites", "n_occ"}
-        mean_field_correction = _prompt_expression(
-            f"  expression in {sorted(mf_names)}: ", mf_names
-        )
+        terms.append({"kind": "density_density", "on": "*", "coefficient": coef})
 
     optimizer = _prompt_factory_block(
         prompt="\nConfigure a classical optimizer? (otherwise SPSA with @max_iters is used at runtime)",
@@ -538,10 +530,6 @@ def _register_walkthrough() -> None:
         "parameters": parameters,
         "terms": terms,
     }
-    if interaction:
-        spec_data["interaction"] = interaction
-    if mean_field_correction is not None:
-        spec_data["mean_field_correction"] = mean_field_correction
     if optimizer is not None:
         spec_data["optimizer"] = optimizer
     if mapper is not None:
