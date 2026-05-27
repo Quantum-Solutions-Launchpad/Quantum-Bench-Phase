@@ -1,0 +1,42 @@
+{
+    "type": "analytic",
+    "plot_format": "2d",
+    "band_structure": false,
+    "observable": "E",
+    "parameters": {
+        "model": "FH_D-1",
+        "lattice": null,
+        "qubit_operator": "/Users/adamgodel/hamlib/condensedmatter/fermihubbard/FH_D-1.zip",
+        "keys": [
+            "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-0_enc-jw",
+            "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-2_enc-jw",
+            "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-4_enc-jw",
+            "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-6_enc-jw",
+            "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-8_enc-jw",
+            "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-12_enc-jw"
+        ],
+        "extremum": "min",
+        "model_params": {}
+    },
+    "x_param": "U",
+    "y_param": null,
+    "x_values": [
+        0.0,
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        12.0
+    ],
+    "y_values": [],
+    "result": {
+        "analytic": {
+            "0": -4.472135954999575,
+            "1": -3.0695353593424244,
+            "2": -2.624942271510865,
+            "3": -2.5222450421032643,
+            "4": -2.460921421676659,
+            "5": -2.392464495765016
+        }
+    }
+}

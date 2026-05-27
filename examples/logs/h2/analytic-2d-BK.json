@@ -1,0 +1,36 @@
+{
+    "type": "analytic",
+    "plot_format": "2d",
+    "band_structure": false,
+    "observable": "E",
+    "parameters": {
+        "model": "H2",
+        "lattice": null,
+        "qubit_operator": "/Users/adamgodel/hamlib/chemistry/electronic/standard/H2.zip",
+        "keys": [
+            "ham_BK-4",
+            "ham_BK-6",
+            "ham_BK-8",
+            "ham_BK-12"
+        ],
+        "extremum": "min",
+        "model_params": {}
+    },
+    "x_param": "BK",
+    "y_param": null,
+    "x_values": [
+        4.0,
+        6.0,
+        8.0,
+        12.0
+    ],
+    "y_values": [],
+    "result": {
+        "analytic": {
+            "0": -1.1314597618973568,
+            "1": -1.1360548182798496,
+            "2": -1.1495389911866178,
+            "3": -1.159069852401408
+        }
+    }
+}

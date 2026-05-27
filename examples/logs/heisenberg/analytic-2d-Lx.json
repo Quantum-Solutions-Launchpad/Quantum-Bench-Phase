@@ -1,0 +1,48 @@
+{
+    "type": "analytic",
+    "plot_format": "2d",
+    "band_structure": false,
+    "observable": "E",
+    "parameters": {
+        "model": "heis",
+        "lattice": null,
+        "qubit_operator": "/Users/adamgodel/hamlib/condensedmatter/heisenberg/heis.zip",
+        "keys": [
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-4_h-1",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-5_h-1",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-6_h-1",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-7_h-1",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-8_h-1",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-9_h-1",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-10_h-1",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-12_h-1"
+        ],
+        "extremum": "min",
+        "model_params": {}
+    },
+    "x_param": "Lx",
+    "y_param": null,
+    "x_values": [
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0,
+        12.0
+    ],
+    "y_values": [],
+    "result": {
+        "analytic": {
+            "0": -6.46410161513775,
+            "1": -8.711545013271985,
+            "2": -10.007981427594117,
+            "3": -12.344958722746595,
+            "4": -13.928961951051573,
+            "5": -15.945286825517258,
+            "6": -17.72269435800623,
+            "7": -21.444591748145434
+        }
+    }
+}
