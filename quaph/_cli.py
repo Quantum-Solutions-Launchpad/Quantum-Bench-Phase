@@ -51,13 +51,19 @@ def _collect_model_params(args, model, x_param, y_param) -> dict:
 
 def _add_sweep_args(parser):
     parser.add_argument("--x-param", default=None, metavar="PARAM")
-    parser.add_argument("--x-range", type=float, nargs=3,
-                        metavar=("MIN", "MAX", "STEP"), default=None)
+    parser.add_argument("--x-range", type=float, nargs="+", metavar="N", default=None,
+                        help="MIN MAX [STEP]. Model sweeps require STEP; --qubit-operator "
+                             "sweeps may omit it to use every available token value in [MIN, MAX].")
     parser.add_argument("--y-param", default=None, metavar="PARAM")
-    parser.add_argument("--y-range", type=float, nargs=3,
-                        metavar=("MIN", "MAX", "STEP"), default=None)
+    parser.add_argument("--y-range", type=float, nargs="+", metavar="N", default=None,
+                        help="MIN MAX [STEP]; see --x-range.")
     parser.add_argument("--n-occ", type=int, default=None,
                         help="Fixed particle number (default: half-filling)")
+
+
+def _validate_range(name, rng):
+    if rng is not None and len(rng) not in (2, 3):
+        raise ValueError(f"--{name} takes 2 (MIN MAX) or 3 (MIN MAX STEP) values; got {len(rng)}.")
 
 
 def _add_output_args(parser):
@@ -84,12 +90,20 @@ def _add_sim_optional(parser):
 
 
 def _add_operator_args(parser, *, simulated):
-    parser.add_argument("--qubit-operator", dest="qubit_operator", default=None, metavar="PATH",
-                        help="Path to a HamLib HDF5 file (optionally PATH::glob). Sweeps the file's keys.")
+    parser.add_argument("--qubit-operator", dest="qubit_operator", default=None, metavar="SOURCE",
+                        help="HamLib HDF5 source: a local .h5/.hdf5 file, a local .zip archive "
+                             "containing one, or an http(s) URL to either (e.g. a HamLib library "
+                             ".zip link). Choose the sweep axes with --x-param/--y-param naming key "
+                             "tokens (e.g. --x-param h --y-param Lx) and narrow multi-family sources "
+                             "to one family with --select; with no axes it sweeps every key by "
+                             "instance index.")
     parser.add_argument("--extremum", choices=["min", "max"], default="min",
                         help="Target eigenvalue for the --qubit-operator path (default: min).")
-    parser.add_argument("--operator-x-param", dest="operator_x_param", default=None, metavar="NAME",
-                        help="HamLib key token to use as the numeric x-axis (e.g. U). Default: instance index.")
+    parser.add_argument("--select", dest="select", action="append", default=None, metavar="TERMS",
+                        help="Comma-separated key-segment filters to narrow the source to one "
+                             "Hamiltonian family before sweeping (repeatable, AND semantics). "
+                             "Terms match whole '-'/'_'-delimited segments, e.g. "
+                             "--select 1D,grid,pbc or a token pin like --select Ly-105.")
     if simulated:
         parser.add_argument("--ansatz", default=None, choices=list(_QISKIT_ANSATZES),
                             help="VQE ansatz type for the --qubit-operator path (default: efficient_su2).")
@@ -136,7 +150,12 @@ def _dispatch_analytic_operator(args):
     run_analytic(
         qubit_operator=args.qubit_operator,
         extremum=args.extremum,
-        operator_x_param=args.operator_x_param,
+        select=args.select,
+        x_param=args.x_param,
+        x_range=args.x_range,
+        y_param=args.y_param,
+        y_range=args.y_range,
+        heatmap=args.heatmap,
         log_dir=args.log_dir,
         plot_dir=args.plot_dir,
         hide_plot=args.hide_plot,
@@ -147,7 +166,11 @@ def _dispatch_simulated_operator(run_fn, args):
     run_fn(
         qubit_operator=args.qubit_operator,
         extremum=args.extremum,
-        operator_x_param=args.operator_x_param,
+        select=args.select,
+        x_param=args.x_param,
+        x_range=args.x_range,
+        y_param=args.y_param,
+        y_range=args.y_range,
         ansatz=_ansatz_dict(args),
         optimizer=_optimizer_dict(args),
         vqe_iters=args.vqe_iters,
@@ -338,6 +361,12 @@ def main(argv=None):
         _add_model_params(target, model)
 
     args = parser.parse_args(argv)
+
+    try:
+        _validate_range("x-range", getattr(args, "x_range", None))
+        _validate_range("y-range", getattr(args, "y_range", None))
+    except ValueError as e:
+        parser.error(str(e))
 
     if args.command == "list":
         if args.target == "models":

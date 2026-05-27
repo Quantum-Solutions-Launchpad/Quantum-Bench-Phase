@@ -50,26 +50,36 @@ def _fmt_params(lattice, n_occ, model_params=None, **extra):
     return ", ".join(parts)
 
 
+def _unpack_range(param, range_args, default_step):
+    lo, hi = range_args[0], range_args[1]
+    st = range_args[2] if len(range_args) > 2 else default_step
+    if st is None:
+        raise ValueError(
+            f"A step is required for sweep axis '{param}' (provide MIN MAX STEP)."
+        )
+    return lo, hi, st
+
+
 def resolve_sweep(param: str, range_args, n_orbitals: int, momentum_axes: tuple[str, ...] = ()):
     if param == "n_occ":
         if range_args is None:
             vals = list(range(n_orbitals + 1))
         else:
-            lo, hi, st = range_args
+            lo, hi, st = _unpack_range(param, range_args, 1)
             vals = list(range(int(lo), int(hi) + 1, max(1, int(st))))
         return vals, r"$N_{\text{occ}}$", "n_occ"
     if param in momentum_axes:
         if range_args is None:
             lo, hi, st = -np.pi, np.pi, np.pi / 50
         else:
-            lo, hi, st = range_args
+            lo, hi, st = _unpack_range(param, range_args, np.pi / 50)
         vals = list(np.arange(lo, hi + st / 2, st))
         return vals, param, "momentum"
     if range_args is None:
         raise ValueError(
             f"A sweep range is required when the sweep parameter is '{param}' (not 'n_occ')."
         )
-    lo, hi, st = range_args
+    lo, hi, st = _unpack_range(param, range_args, None)
     vals = list(np.arange(lo, hi + st / 2, st))
     return vals, param, "parameter"
 
