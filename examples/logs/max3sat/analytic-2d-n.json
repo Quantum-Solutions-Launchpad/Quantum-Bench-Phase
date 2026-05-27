@@ -1,0 +1,48 @@
+{
+    "type": "analytic",
+    "plot_format": "2d",
+    "band_structure": false,
+    "observable": "E",
+    "parameters": {
+        "model": "random_max3sat-hams",
+        "lattice": null,
+        "qubit_operator": "/Users/adamgodel/hamlib/binaryoptimization/max3sat/random/random_max3sat-hams.zip",
+        "keys": [
+            "max3sat_n-4_ratio-4_rinst-00",
+            "max3sat_n-5_ratio-4_rinst-00",
+            "max3sat_n-6_ratio-4_rinst-00",
+            "max3sat_n-7_ratio-4_rinst-00",
+            "max3sat_n-8_ratio-4_rinst-00",
+            "max3sat_n-9_ratio-4_rinst-00",
+            "max3sat_n-10_ratio-4_rinst-00",
+            "max3sat_n-12_ratio-4_rinst-00"
+        ],
+        "extremum": "min",
+        "model_params": {}
+    },
+    "x_param": "n",
+    "y_param": null,
+    "x_values": [
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0,
+        12.0
+    ],
+    "y_values": [],
+    "result": {
+        "analytic": {
+            "0": 11.0,
+            "1": 15.0,
+            "2": 15.0,
+            "3": 21.0,
+            "4": 21.0,
+            "5": 24.0,
+            "6": 29.0,
+            "7": 33.0
+        }
+    }
+}

@@ -25,6 +25,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
+    "h5py>=3",
     "joblib>=1.5",
     "loguru>=0.7",
     "matplotlib>=3.10",

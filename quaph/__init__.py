@@ -9,6 +9,7 @@ from quaph._registry import (
     remove_model,
 )
 from quaph._yaml_model import build_tight_binding_model
+from quaph._hamlib import load_hamlib_operator, list_hamlib_keys
 from quaph._run import (
     run_analytic,
     run_simulated_ideal,
@@ -26,6 +27,8 @@ __all__ = [
     "register_model_from_file",
     "build_tight_binding_model",
     "remove_model",
+    "load_hamlib_operator",
+    "list_hamlib_keys",
     "run_analytic",
     "run_simulated_ideal",
     "run_simulated_noisy",

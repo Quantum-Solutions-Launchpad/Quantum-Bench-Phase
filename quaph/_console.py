@@ -39,6 +39,18 @@ Commands:
   run analytic --model NAME --lattice L [L ...] [...]
   run simulated-ideal --model NAME --lattice L [L ...] [...]
   run simulated-noisy --model NAME --lattice L [L ...] [...]
+    OR
+  run analytic --qubit-operator SOURCE [--extremum min|max] [--x-param T --x-range MIN MAX [STEP]]
+  run simulated-ideal --qubit-operator SOURCE [...]
+  run simulated-noisy --qubit-operator SOURCE [...]
+                       Sweep a HamLib HDF5 file's Hamiltonians instead of a
+                       registered model. SOURCE is a local .h5/.hdf5 file, a local
+                       .zip archive containing one, or an http(s) URL to either
+                       (e.g. a HamLib library .zip link). Choose sweep axes with
+                       --x-param/--y-param naming key tokens (e.g. --x-param h
+                       --y-param Lx); a range may omit STEP to use every available
+                       value. Narrow multi-family sources with --select 1D,grid,pbc.
+                       With no axes it sweeps all keys by instance index.
   plot PATH
   register             Walk through registering a new custom model (writes YAML)
   register --from PATH Register a model from a YAML file
@@ -495,17 +507,9 @@ def _register_walkthrough() -> None:
         else:
             print(f"  unknown term kind '{kind}'; choose 'onsite' or 'hopping'.")
 
-    interaction: list[dict] = []
     if spin == 2 and _prompt_yn("\nAdd a Hubbard-style on-site density-density interaction?"):
         coef = _prompt_expression(f"  coefficient (expression in {sorted(allowed_coef_names)}): ", allowed_coef_names)
-        interaction.append({"kind": "density_density_onsite", "coefficient": coef})
-
-    mean_field_correction: str | None = None
-    if _prompt_yn("\nProvide a mean-field correction expression?"):
-        mf_names = allowed_coef_names | {"n_sites", "n_occ"}
-        mean_field_correction = _prompt_expression(
-            f"  expression in {sorted(mf_names)}: ", mf_names
-        )
+        terms.append({"kind": "density_density", "on": "*", "coefficient": coef})
 
     optimizer = _prompt_factory_block(
         prompt="\nConfigure a classical optimizer? (otherwise SPSA with @max_iters is used at runtime)",
@@ -538,10 +542,6 @@ def _register_walkthrough() -> None:
         "parameters": parameters,
         "terms": terms,
     }
-    if interaction:
-        spec_data["interaction"] = interaction
-    if mean_field_correction is not None:
-        spec_data["mean_field_correction"] = mean_field_correction
     if optimizer is not None:
         spec_data["optimizer"] = optimizer
     if mapper is not None:
