@@ -1,0 +1,59 @@
+name: lieb
+display_name: Lieb
+spin: 1
+n_dims: 2
+lattice_shape: [Lx, Ly]
+sites_per_cell: 3
+sublattices: [A, B, C]
+# A = corner site, B = mid-edge along x, C = mid-edge along y.
+parameters:
+  t: {label: "t"}
+  M: {label: "M"}
+
+# 3-band tight-binding on the Lieb lattice. The middle band is flat at E=0
+# when M=0; a finite M gaps it open.
+terms:
+  - kind: onsite
+    sublattice: A
+    coefficient: "+M"
+  - kind: onsite
+    sublattice: B
+    coefficient: "0"
+  - kind: onsite
+    sublattice: C
+    coefficient: "0"
+
+  # NN A↔B (along x): A in cell c connects to B in cell c (right of A) and
+  # B in cell c+(-1,0) (left of A).
+  - kind: hopping
+    from: A
+    to: B
+    offsets: [[0, 0], [-1, 0]]
+    coefficient: "-t"
+    hermitian_partner: true
+
+  # NN A↔C (along y): A in cell c connects to C in cell c (above A) and
+  # C in cell c+(0,-1) (below A).
+  - kind: hopping
+    from: A
+    to: C
+    offsets: [[0, 0], [0, -1]]
+    coefficient: "-t"
+    hermitian_partner: true
+
+optimizer:
+  type: SPSA
+  kwargs:
+    maxiter: "@max_iters"
+
+mapper:
+  type: JordanWignerMapper
+  kwargs: {}
+
+ansatz:
+  type: excitation_preserving
+  kwargs:
+    mode: fsim
+    entanglement: linear
+    reps: "@n_layers"
+  initial_state_prefix: hartree_fock

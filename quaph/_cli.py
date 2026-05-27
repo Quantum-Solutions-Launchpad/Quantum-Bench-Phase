@@ -169,7 +169,7 @@ def _dispatch_simulated_operator(run_fn, args):
         select=args.select,
         x_param=args.x_param,
         x_range=args.x_range,
-        y_param=args.y_param,
+        y_param=y_param,
         y_range=args.y_range,
         ansatz=_ansatz_dict(args),
         optimizer=_optimizer_dict(args),

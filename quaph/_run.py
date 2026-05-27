@@ -96,6 +96,9 @@ def _label_for(model, param: str) -> str:
 def _opt_lattice(lat):
     return tuple(lat) if lat else None
 
+def _observable_label(model, observable: str) -> str:
+    obs = model.get_observable(observable)
+    return f"${obs.display_name}$"
 
 def _result_labels(model_name, x_param, y_param):
     from quaph._registry import get_model
