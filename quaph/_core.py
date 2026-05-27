@@ -247,26 +247,27 @@ def iqpe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, time_param, n_trot, 
     return _iqpe_sparse(hamiltonian, initial, time_param, n_trot, n_iters, rep, backend=backend, label=label)
 
 
-def analytic_operator(hamiltonian, extremum="min"):
+def analytic_operator(hamiltonian, extremum="min", label=""):
     evals = np.linalg.eigvalsh(hamiltonian.to_matrix())
     result = float(evals.max() if extremum == "max" else evals.min())
-    logger.info(f"Analytic [operator, {extremum}] = {result}")
+    label_str = f" ({label})" if label else ""
+    logger.info(f"Analytic [operator]{label_str} = {result}")
     return result
 
 
-def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_layers, rep, extremum="min", backend=None):
+def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_layers, rep, extremum="min", backend=None, label=""):
     op = hamiltonian * -1 if extremum == "max" else hamiltonian
     ansatz = get_vqe_ansatz_fn(hamiltonian.num_qubits, n_layers, 0, 1)
-    label = f"operator ({extremum}, rep={rep})"
-    energy = _vqe_sparse(op, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=label)
+    vqe_label = f"[operator] ({label}, rep={rep})" if label else f"[operator] (rep={rep})"
+    energy = _vqe_sparse(op, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=vqe_label)
     return -energy if extremum == "max" else energy
 
 
-def iqpe_operator(hamiltonian, time_param, n_trot, n_iters, rep, extremum="min", backend=None):
+def iqpe_operator(hamiltonian, time_param, n_trot, n_iters, rep, extremum="min", backend=None, label=""):
     op = hamiltonian * -1 if extremum == "max" else hamiltonian
     initial = _uniform_initial(hamiltonian.num_qubits)
-    label = f"operator ({extremum}, rep={rep})"
-    energy, iter_energies = _iqpe_sparse(op, initial, time_param, n_trot, n_iters, rep, backend=backend, label=label)
+    iqpe_label = f"[operator] ({label}, rep={rep})" if label else f"[operator] (rep={rep})"
+    energy, iter_energies = _iqpe_sparse(op, initial, time_param, n_trot, n_iters, rep, backend=backend, label=iqpe_label)
     if extremum == "max":
         energy = -energy
         iter_energies = [-e for e in iter_energies]

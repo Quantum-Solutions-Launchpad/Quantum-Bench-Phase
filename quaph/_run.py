@@ -378,7 +378,7 @@ def _run_analytic_operator(qubit_operator, *, extremum, select,
     def _eval(key, label):
         if key is None:
             return np.nan
-        return analytic_operator(load_hamlib_operator(path, key), extremum)
+        return analytic_operator(load_hamlib_operator(path, key), extremum, label=label)
 
     if is_1d:
         Z = np.full((len(x_vals),), np.nan)
@@ -1162,18 +1162,19 @@ def _run_simulated_operator(qubit_operator, simulation_tag, backend, *, extremum
             if key is None:
                 continue
             op = load_hamlib_operator(path, key)
-            jobs.append(delayed(tagged_job)(("analytic", ix, iy), analytic_operator, op, extremum))
+            lbl = cell_label(ix, iy)
+            jobs.append(delayed(tagged_job)(("analytic", ix, iy), analytic_operator, op, extremum, lbl))
             if do_iqpe:
                 for rep in range(1, iqpe_reps + 1):
                     jobs.append(delayed(tagged_job)(
                         ("iqpe", ix, iy, rep), iqpe_operator,
-                        op, iqpe_time, iqpe_trot, iqpe_iters, rep, extremum, backend,
+                        op, iqpe_time, iqpe_trot, iqpe_iters, rep, extremum, backend, lbl,
                     ))
             if do_vqe:
                 for rep in range(1, vqe_reps + 1):
                     jobs.append(delayed(tagged_job)(
                         ("vqe", ix, iy, rep), vqe_operator,
-                        op, get_vqe_ansatz, get_optimizer, vqe_iters, vqe_layers, rep, extremum, backend,
+                        op, get_vqe_ansatz, get_optimizer, vqe_iters, vqe_layers, rep, extremum, backend, lbl,
                     ))
 
     def init_worker_logging():
