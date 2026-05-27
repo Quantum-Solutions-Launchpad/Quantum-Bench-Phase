@@ -39,6 +39,13 @@ Commands:
   run analytic --model NAME --lattice L [L ...] [...]
   run simulated-ideal --model NAME --lattice L [L ...] [...]
   run simulated-noisy --model NAME --lattice L [L ...] [...]
+    OR
+  run analytic --qubit-operator PATH[::GLOB] [--extremum min|max] [--operator-x-param NAME]
+  run simulated-ideal --qubit-operator PATH[::GLOB] [...]
+  run simulated-noisy --qubit-operator PATH[::GLOB] [...]
+                       Sweep a HamLib HDF5 file's Hamiltonians (one per key)
+                       instead of a registered model. ::GLOB optionally filters
+                       keys (e.g. ::*enc-bk*).
   plot PATH
   register             Walk through registering a new custom model (writes YAML)
   register --from PATH Register a model from a YAML file

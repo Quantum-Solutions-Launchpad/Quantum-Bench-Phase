@@ -5,6 +5,7 @@ import sys
 
 from quaph._registry import get_model, register_model_from_file, remove_model
 from quaph._run import run_analytic, run_simulated_ideal, run_simulated_noisy
+from quaph._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS
 
 
 def _model_param_names(model) -> list[str]:
@@ -80,6 +81,87 @@ def _add_sim_optional(parser):
     parser.add_argument("--vqe-reps", type=int, default=None, metavar="N")
     parser.add_argument("--iqpe-reps", type=int, default=None, metavar="N")
     parser.add_argument("--hide-legend", action="store_true", default=False)
+
+
+def _add_operator_args(parser, *, simulated):
+    parser.add_argument("--qubit-operator", dest="qubit_operator", default=None, metavar="PATH",
+                        help="Path to a HamLib HDF5 file (optionally PATH::glob). Sweeps the file's keys.")
+    parser.add_argument("--extremum", choices=["min", "max"], default="min",
+                        help="Target eigenvalue for the --qubit-operator path (default: min).")
+    parser.add_argument("--operator-x-param", dest="operator_x_param", default=None, metavar="NAME",
+                        help="HamLib key token to use as the numeric x-axis (e.g. U). Default: instance index.")
+    if simulated:
+        parser.add_argument("--ansatz", default=None, choices=list(_QISKIT_ANSATZES),
+                            help="VQE ansatz type for the --qubit-operator path (default: efficient_su2).")
+        parser.add_argument("--ansatz-kwarg", dest="ansatz_kwarg", action="append", default=None,
+                            metavar="KEY=VALUE",
+                            help="Ansatz kwarg; repeatable. Values may be numbers or runtime bindings like @n_layers.")
+        parser.add_argument("--ansatz-prefix", dest="ansatz_prefix", choices=["hartree_fock", "none"],
+                            default="none", help="Initial-state prefix for the ansatz (default: none).")
+        parser.add_argument("--optimizer", default=None, choices=list(_QISKIT_OPTIMIZERS),
+                            help="Classical optimizer for the --qubit-operator path (default: SPSA).")
+        parser.add_argument("--optimizer-kwarg", dest="optimizer_kwarg", action="append", default=None,
+                            metavar="KEY=VALUE",
+                            help="Optimizer kwarg; repeatable, e.g. maxiter=@max_iters.")
+
+
+def _parse_cli_kwargs(pairs):
+    from quaph._console import _coerce_kwarg_value
+    out = {}
+    for item in (pairs or []):
+        if "=" not in item:
+            raise ValueError(f"kwarg '{item}' must be KEY=VALUE")
+        k, v = item.split("=", 1)
+        out[k] = _coerce_kwarg_value(v)
+    return out
+
+
+def _ansatz_dict(args):
+    if getattr(args, "ansatz", None) is None:
+        return None
+    return {
+        "type": args.ansatz,
+        "kwargs": _parse_cli_kwargs(args.ansatz_kwarg),
+        "initial_state_prefix": args.ansatz_prefix,
+    }
+
+
+def _optimizer_dict(args):
+    if getattr(args, "optimizer", None) is None:
+        return None
+    return {"type": args.optimizer, "kwargs": _parse_cli_kwargs(args.optimizer_kwarg)}
+
+
+def _dispatch_analytic_operator(args):
+    run_analytic(
+        qubit_operator=args.qubit_operator,
+        extremum=args.extremum,
+        operator_x_param=args.operator_x_param,
+        log_dir=args.log_dir,
+        plot_dir=args.plot_dir,
+        hide_plot=args.hide_plot,
+    )
+
+
+def _dispatch_simulated_operator(run_fn, args):
+    run_fn(
+        qubit_operator=args.qubit_operator,
+        extremum=args.extremum,
+        operator_x_param=args.operator_x_param,
+        ansatz=_ansatz_dict(args),
+        optimizer=_optimizer_dict(args),
+        vqe_iters=args.vqe_iters,
+        vqe_layers=args.vqe_layers,
+        vqe_reps=args.vqe_reps,
+        iqpe_time=args.iqpe_time,
+        iqpe_trot=args.iqpe_trot,
+        iqpe_iters=args.iqpe_iters,
+        iqpe_reps=args.iqpe_reps,
+        log_dir=args.log_dir,
+        plot_dir=args.plot_dir,
+        hide_plot=args.hide_plot,
+        hide_legend=args.hide_legend,
+    )
 
 
 def _dispatch_analytic(args, model):
@@ -216,12 +298,17 @@ def main(argv=None):
     sim_noisy_parser = run_sub.add_parser("simulated-noisy")
 
     for p in (analytic_parser, sim_ideal_parser, sim_noisy_parser):
-        p.add_argument("--model", required=True, metavar="MODEL",
-                       help="Registered model name (e.g. haldane, hubbard, haldane-hubbard)")
+        p.add_argument("--model", default=None, metavar="MODEL",
+                       help="Registered model name (e.g. haldane, hubbard, haldane-hubbard). "
+                            "Mutually exclusive with --qubit-operator.")
         p.add_argument("--lattice", type=int, nargs="+", default=None, metavar="N",
                        help="Lattice extents per dimension (e.g. --lattice 3 3 for a 3x3 unit-cell grid). Omit for momentum-space band-structure runs.")
         _add_sweep_args(p)
         _add_output_args(p)
+
+    _add_operator_args(analytic_parser, simulated=False)
+    for p in (sim_ideal_parser, sim_noisy_parser):
+        _add_operator_args(p, simulated=True)
 
     analytic_parser.add_argument("--heatmap", action="store_true", default=False,
                                  help="Render results as a 2D heatmap (requires both x and y sweep axes)")
@@ -286,6 +373,23 @@ def main(argv=None):
             kwargs["hide_legend"] = args.hide_legend
         result.plot(**kwargs)
         return
+
+    if getattr(args, "qubit_operator", None) is not None:
+        if args.model:
+            parser.error("--model and --qubit-operator are mutually exclusive.")
+        try:
+            if args.subcommand == "analytic":
+                _dispatch_analytic_operator(args)
+            elif args.subcommand == "simulated-ideal":
+                _dispatch_simulated_operator(run_simulated_ideal, args)
+            elif args.subcommand == "simulated-noisy":
+                _dispatch_simulated_operator(run_simulated_noisy, args)
+        except (ValueError, FileNotFoundError, KeyError) as e:
+            parser.error(str(e))
+        return
+
+    if not args.model:
+        parser.error("one of --model or --qubit-operator is required")
 
     try:
         model = get_model(args.model)

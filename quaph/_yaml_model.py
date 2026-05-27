@@ -461,20 +461,24 @@ def _build_mean_field_correction(spec: YamlModelSpec):
 def _build_optimizer_factory(spec: YamlModelSpec):
     if spec.optimizer is None:
         return None
+    return build_optimizer_factory(spec.optimizer, name=spec.name)
+
+
+def build_optimizer_factory(optimizer_spec: OptimizerSpec, *, name: str):
     import qiskit_algorithms.optimizers as qopt
-    cls = getattr(qopt, spec.optimizer.type, None)
+    cls = getattr(qopt, optimizer_spec.type, None)
     if cls is None:
         raise ValueError(
-            f"qiskit_algorithms.optimizers has no '{spec.optimizer.type}'"
+            f"qiskit_algorithms.optimizers has no '{optimizer_spec.type}'"
         )
-    raw_kwargs = dict(spec.optimizer.kwargs)
+    raw_kwargs = dict(optimizer_spec.kwargs)
 
     def get_optimizer(max_iters):
         runtime = {"max_iters": max_iters}
         resolved = _resolve_runtime_kwargs(raw_kwargs, runtime, context="optimizer")
         return cls(**resolved)
 
-    get_optimizer.__name__ = f"_yaml_opt_{spec.name.replace('-', '_')}"
+    get_optimizer.__name__ = f"_opt_{name.replace('-', '_')}"
     return get_optimizer
 
 
@@ -523,15 +527,19 @@ def _build_mapper_factory(spec: YamlModelSpec):
 def _build_ansatz_factory(spec: YamlModelSpec):
     if spec.ansatz is None:
         return None
+    return build_ansatz_factory(spec.ansatz, name=spec.name)
+
+
+def build_ansatz_factory(ansatz_spec: AnsatzSpec, *, name: str):
     import qiskit.circuit.library as qlib
     from qiskit import QuantumCircuit
-    func = getattr(qlib, spec.ansatz.type, None)
+    func = getattr(qlib, ansatz_spec.type, None)
     if func is None:
         raise ValueError(
-            f"qiskit.circuit.library has no '{spec.ansatz.type}'"
+            f"qiskit.circuit.library has no '{ansatz_spec.type}'"
         )
-    raw_kwargs = dict(spec.ansatz.kwargs)
-    prefix_kind = spec.ansatz.initial_state_prefix
+    raw_kwargs = dict(ansatz_spec.kwargs)
+    prefix_kind = ansatz_spec.initial_state_prefix
 
     def get_vqe_ansatz(n_qubits: int, n_layers: int, n_occ: int, spin: int):
         n_sites = n_qubits // spin if spin else n_qubits
@@ -552,7 +560,7 @@ def _build_ansatz_factory(spec: YamlModelSpec):
             return qc
         return body
 
-    get_vqe_ansatz.__name__ = f"_yaml_ansatz_{spec.name.replace('-', '_')}"
+    get_vqe_ansatz.__name__ = f"_ansatz_{name.replace('-', '_')}"
     return get_vqe_ansatz
 
 
