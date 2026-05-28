@@ -12,6 +12,7 @@ from quaph._yaml_model import (
     _QISKIT_ANSATZES,
     _QISKIT_MAPPERS,
     _QISKIT_OPTIMIZERS,
+    _INITIAL_STATES,
     YamlModelSpec,
     _make_evaluator,
 )
@@ -370,6 +371,36 @@ def _prompt_ansatz_block() -> dict | None:
     return {"type": otype, "kwargs": kwargs, "initial_state_prefix": prefix}
 
 
+def _prompt_iqpe_initial_state_block() -> dict | None:
+    if not _prompt_yn(
+        "\nConfigure an IQPE initial state? (otherwise hartree_fock for fermionic, "
+        "uniform superposition for operator path)",
+        default=False,
+    ):
+        return None
+    kind = _prompt_choice("  initial state type:", list(_INITIAL_STATES))
+    d: dict = {"type": kind}
+    if kind == "vqe_informed":
+        print("  Configure the VQE run used to prepare the initial state.")
+        ansatz_type = _prompt_choice("    ansatz:", list(_QISKIT_ANSATZES))
+        kwargs = _prompt_kwargs(
+            "initial-vqe ansatz",
+            runtime_args=("n_qubits", "n_layers", "n_occ", "spin", "n_sites"),
+        )
+        prefix = _prompt_choice(
+            "    initial_state_prefix (X gates on first n_occ qubits before ansatz body):",
+            ["hartree_fock", "none"],
+        )
+        d["vqe_ansatz"] = {"type": ansatz_type, "kwargs": kwargs, "initial_state_prefix": prefix}
+        raw_layers = _prompt("    vqe_n_layers [1]: ").strip()
+        if raw_layers:
+            d["vqe_n_layers"] = int(raw_layers)
+        raw_iters = _prompt("    vqe_max_iters [100]: ").strip()
+        if raw_iters:
+            d["vqe_max_iters"] = int(raw_iters)
+    return d
+
+
 def _prompt_choice(prompt: str, options: list[str]) -> str:
     while True:
         print(prompt)
@@ -529,6 +560,8 @@ def _register_walkthrough() -> None:
 
     ansatz = _prompt_ansatz_block()
 
+    iqpe_initial_state = _prompt_iqpe_initial_state_block()
+
     observables = _prompt_observables_block(allowed_coef_names, n_dims)
 
     spec_data: dict = {
@@ -548,6 +581,8 @@ def _register_walkthrough() -> None:
         spec_data["mapper"] = mapper
     if ansatz is not None:
         spec_data["ansatz"] = ansatz
+    if iqpe_initial_state is not None:
+        spec_data["iqpe_initial_state"] = iqpe_initial_state
     if observables is not None:
         spec_data["observables"] = observables
 

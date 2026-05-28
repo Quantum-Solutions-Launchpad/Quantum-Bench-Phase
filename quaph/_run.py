@@ -794,14 +794,14 @@ def _run_simulated(
                             ("iqpe", ix, iy, rep), iqpe_fermionic,
                             lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
                             mapper, iqpe_time, iqpe_trot, iqpe_iters, rep,
-                            backend=backend
+                            backend=backend, get_initial_state_fn=model.get_iqpe_initial_state,
                         ))
                     else:
                         jobs.append(delayed(tagged_job)(
                             ("iqpe", ix, iy, rep), iqpe_observable,
                             model, lattice, n_sites, spin, n_occ_val, cp,
                             mapper, iqpe_time, iqpe_trot, iqpe_iters, rep, observable,
-                            backend=backend
+                            backend=backend, get_initial_state_fn=model.get_iqpe_initial_state,
                         ))
                 jobs.append(delayed(tagged_job)(
                     ("iqpe_bench", ix, iy), iqpe_other_benchmarks,
@@ -1107,13 +1107,14 @@ def _prep_simulated_kwargs(model, lattice, x_param, x_range, y_param, y_range, n
 
 def _run_simulated_operator(qubit_operator, simulation_tag, backend, *, extremum, select,
                             x_param, x_range, y_param, y_range,
-                            ansatz, optimizer,
+                            ansatz, optimizer, iqpe_initial_state,
                             vqe_iters, vqe_layers, vqe_reps,
                             iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps,
                             log_dir, plot_dir, hide_plot, hide_legend):
     from loguru import logger
     from quaph._yaml_model import (
-        AnsatzSpec, OptimizerSpec, build_ansatz_factory, build_optimizer_factory,
+        AnsatzSpec, OptimizerSpec, InitialStateSpec,
+        build_ansatz_factory, build_optimizer_factory, build_initial_state_factory,
     )
 
     if extremum not in ("min", "max"):
@@ -1152,6 +1153,10 @@ def _run_simulated_operator(qubit_operator, simulation_tag, backend, *, extremum
         )
         get_optimizer = build_optimizer_factory(optimizer_spec, name="operator")
 
+    if do_iqpe:
+        iqpe_init_spec = InitialStateSpec.model_validate(iqpe_initial_state) if iqpe_initial_state else InitialStateSpec(type="uniform")
+        get_iqpe_initial_state = build_initial_state_factory(iqpe_init_spec, name="operator")
+
     def tagged_job(tag, func, *a, **kw):
         return tag, func(*a, **kw)
 
@@ -1172,6 +1177,7 @@ def _run_simulated_operator(qubit_operator, simulation_tag, backend, *, extremum
                     jobs.append(delayed(tagged_job)(
                         ("iqpe", ix, iy, rep), iqpe_operator,
                         op, iqpe_time, iqpe_trot, iqpe_iters, rep, extremum, backend, lbl,
+                        get_iqpe_initial_state,
                     ))
             if do_vqe:
                 for rep in range(1, vqe_reps + 1):
@@ -1304,6 +1310,7 @@ def run_simulated_ideal(
     select=None,
     ansatz: dict | None = None,
     optimizer: dict | None = None,
+    iqpe_initial_state: dict | None = None,
     log_dir=None,
     plot_dir=None,
     hide_plot: bool = False,
@@ -1317,7 +1324,7 @@ def run_simulated_ideal(
             qubit_operator, "ideal", None,
             extremum=extremum, select=select,
             x_param=x_param, x_range=x_range, y_param=y_param, y_range=y_range,
-            ansatz=ansatz, optimizer=optimizer,
+            ansatz=ansatz, optimizer=optimizer, iqpe_initial_state=iqpe_initial_state,
             vqe_iters=vqe_iters, vqe_layers=vqe_layers, vqe_reps=vqe_reps,
             iqpe_time=iqpe_time, iqpe_trot=iqpe_trot, iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
             log_dir=log_dir, plot_dir=plot_dir, hide_plot=hide_plot, hide_legend=hide_legend,
@@ -1365,6 +1372,7 @@ def run_simulated_noisy(
     select=None,
     ansatz: dict | None = None,
     optimizer: dict | None = None,
+    iqpe_initial_state: dict | None = None,
     log_dir=None,
     plot_dir=None,
     hide_plot: bool = False,
@@ -1382,7 +1390,7 @@ def run_simulated_noisy(
             qubit_operator, "noisy", backend,
             extremum=extremum, select=select,
             x_param=x_param, x_range=x_range, y_param=y_param, y_range=y_range,
-            ansatz=ansatz, optimizer=optimizer,
+            ansatz=ansatz, optimizer=optimizer, iqpe_initial_state=iqpe_initial_state,
             vqe_iters=vqe_iters, vqe_layers=vqe_layers, vqe_reps=vqe_reps,
             iqpe_time=iqpe_time, iqpe_trot=iqpe_trot, iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
             log_dir=log_dir, plot_dir=plot_dir, hide_plot=hide_plot, hide_legend=hide_legend,

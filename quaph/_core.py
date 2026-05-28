@@ -125,6 +125,36 @@ def _uniform_initial(n_qubits: int) -> QuantumCircuit:
     return qc
 
 
+def _zero_initial(n_qubits: int) -> QuantumCircuit:
+    return QuantumCircuit(n_qubits)
+
+
+def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend=None) -> QuantumCircuit:
+    simulator = _make_simulator(backend)
+    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
+
+    with Session(backend=simulator) as session:
+        estimator = Estimator(mode=session)
+        x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
+        cost_history = {"iters": 0, "prev": None}
+
+        def cost_func(params):
+            if cost_history["iters"] >= max_iters and cost_history["prev"] is not None:
+                return cost_history["prev"]
+            pub = (ansatz_circuit, [hamiltonian], [params])
+            result = estimator.run(pubs=[pub]).result()
+            energy = float(result[0].data.evs[0])
+            cost_history["iters"] += 1
+            cost_history["prev"] = energy
+            return energy
+
+        optimizer = get_optimizer_fn(max_iters)
+        res = optimizer.minimize(cost_func, x0=x0)
+
+    param_dict = dict(zip(ansatz.parameters, res.x))
+    return ansatz.assign_parameters(param_dict)
+
+
 def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, label: str = ""):
     omega_coef = 0
     iteration_phases = []
@@ -263,9 +293,12 @@ def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_
     return -energy if extremum == "max" else energy
 
 
-def iqpe_operator(hamiltonian, time_param, n_trot, n_iters, rep, extremum="min", backend=None, label=""):
+def iqpe_operator(hamiltonian, time_param, n_trot, n_iters, rep, extremum="min", backend=None, label="", get_initial_state_fn=None):
     op = hamiltonian * -1 if extremum == "max" else hamiltonian
-    initial = _uniform_initial(hamiltonian.num_qubits)
+    if get_initial_state_fn is not None:
+        initial = get_initial_state_fn(op)
+    else:
+        initial = _uniform_initial(hamiltonian.num_qubits)
     iqpe_label = f"[operator] ({label}, rep={rep})" if label else f"[operator] (rep={rep})"
     energy, iter_energies = _iqpe_sparse(op, initial, time_param, n_trot, n_iters, rep, backend=backend, label=iqpe_label)
     if extremum == "max":
@@ -371,7 +404,7 @@ def vqe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, m
     return float(vals[0])
 
 
-def iqpe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, time_param, n_trot, n_iters, rep, observable, backend=None):
+def iqpe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, time_param, n_trot, n_iters, rep, observable, backend=None, get_initial_state_fn=None):
     obs = model.get_observable(observable)
 
     def sub_eval(sub_n_occ, observable_qubit_ops=None):
@@ -383,7 +416,7 @@ def iqpe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, 
         energy, _ = iqpe_fermionic(
             lattice, n_sites, spin, sub_n_occ, model_params,
             model.fermionic_hamiltonian, mapper, time_param, n_trot, n_iters, rep,
-            backend=backend,
+            backend=backend, get_initial_state_fn=get_initial_state_fn,
         )
         return energy
 
@@ -396,7 +429,7 @@ def iqpe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, 
         return iqpe_fermionic(
             lattice, n_sites, spin, n_occ, model_params,
             model.fermionic_hamiltonian, mapper, time_param, n_trot, n_iters, rep,
-            backend=backend,
+            backend=backend, get_initial_state_fn=get_initial_state_fn,
         )
     raise NotImplementedError(
         f"IQPE cannot directly measure observable '{observable}' "
@@ -404,10 +437,13 @@ def iqpe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, 
     )
 
 
-def iqpe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep, backend=None):
+def iqpe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep, backend=None, get_initial_state_fn=None):
     fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
-    initial = _hf_initial_state(n_sites, spin, n_occ, mapper)
+    if get_initial_state_fn is not None:
+        initial = get_initial_state_fn(qubit_hamiltonian, n_occ=n_occ, spin=spin, mapper=mapper)
+    else:
+        initial = _hf_initial_state(n_sites, spin, n_occ, mapper)
     label = f"({_fmt_params(lattice, n_occ, model_params, repetition=rep)})"
     return _iqpe_sparse(qubit_hamiltonian, initial, time_param, n_trot, n_iters, rep, backend=backend, label=label)
 
