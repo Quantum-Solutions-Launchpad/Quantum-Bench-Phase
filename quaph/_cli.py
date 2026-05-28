@@ -5,7 +5,7 @@ import sys
 
 from quaph._registry import get_model, register_model_from_file, remove_model
 from quaph._run import run_analytic, run_simulated_ideal, run_simulated_noisy
-from quaph._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS
+from quaph._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS, _INITIAL_STATES
 
 
 def _model_param_names(model) -> list[str]:
@@ -117,6 +117,21 @@ def _add_operator_args(parser, *, simulated):
         parser.add_argument("--optimizer-kwarg", dest="optimizer_kwarg", action="append", default=None,
                             metavar="KEY=VALUE",
                             help="Optimizer kwarg; repeatable, e.g. maxiter=@max_iters.")
+        parser.add_argument("--iqpe-initial-state", dest="iqpe_initial_state", default=None,
+                            choices=list(_INITIAL_STATES),
+                            help="Initial state type for IQPE (default: uniform for operator path).")
+        parser.add_argument("--iqpe-initial-vqe-ansatz", dest="iqpe_initial_vqe_ansatz", default=None,
+                            choices=list(_QISKIT_ANSATZES),
+                            help="VQE ansatz for vqe_informed initial state (default: efficient_su2).")
+        parser.add_argument("--iqpe-initial-vqe-ansatz-kwarg", dest="iqpe_initial_vqe_ansatz_kwarg",
+                            action="append", default=None, metavar="KEY=VALUE",
+                            help="Ansatz kwarg for vqe_informed initial state; repeatable.")
+        parser.add_argument("--iqpe-initial-vqe-n-layers", dest="iqpe_initial_vqe_n_layers", type=int,
+                            default=None, metavar="N",
+                            help="Ansatz layers for vqe_informed initial state (default: 1).")
+        parser.add_argument("--iqpe-initial-vqe-max-iters", dest="iqpe_initial_vqe_max_iters", type=int,
+                            default=None, metavar="N",
+                            help="VQE iterations for vqe_informed initial state (default: 100).")
 
 
 def _parse_cli_kwargs(pairs):
@@ -146,6 +161,24 @@ def _optimizer_dict(args):
     return {"type": args.optimizer, "kwargs": _parse_cli_kwargs(args.optimizer_kwarg)}
 
 
+def _iqpe_initial_state_dict(args):
+    if getattr(args, "iqpe_initial_state", None) is None:
+        return None
+    d: dict = {"type": args.iqpe_initial_state}
+    if args.iqpe_initial_state == "vqe_informed":
+        if getattr(args, "iqpe_initial_vqe_ansatz", None) is not None:
+            d["vqe_ansatz"] = {
+                "type": args.iqpe_initial_vqe_ansatz,
+                "kwargs": _parse_cli_kwargs(args.iqpe_initial_vqe_ansatz_kwarg),
+                "initial_state_prefix": "hartree_fock",
+            }
+        if getattr(args, "iqpe_initial_vqe_n_layers", None) is not None:
+            d["vqe_n_layers"] = args.iqpe_initial_vqe_n_layers
+        if getattr(args, "iqpe_initial_vqe_max_iters", None) is not None:
+            d["vqe_max_iters"] = args.iqpe_initial_vqe_max_iters
+    return d
+
+
 def _dispatch_analytic_operator(args):
     run_analytic(
         qubit_operator=args.qubit_operator,
@@ -173,6 +206,7 @@ def _dispatch_simulated_operator(run_fn, args):
         y_range=args.y_range,
         ansatz=_ansatz_dict(args),
         optimizer=_optimizer_dict(args),
+        iqpe_initial_state=_iqpe_initial_state_dict(args),
         vqe_iters=args.vqe_iters,
         vqe_layers=args.vqe_layers,
         vqe_reps=args.vqe_reps,

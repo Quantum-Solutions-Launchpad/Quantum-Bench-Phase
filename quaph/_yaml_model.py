@@ -25,6 +25,10 @@ _QISKIT_ANSATZES = (
     "pauli_two_design", "n_local", "two_local",
 )
 
+_INITIAL_STATES = (
+    "hartree_fock", "uniform", "computational_zero", "vqe_informed",
+)
+
 
 def _make_evaluator(extra_names: dict | None = None) -> Interpreter:
     aeval = Interpreter(use_numpy=True, minimal=False)
@@ -150,6 +154,15 @@ class AnsatzSpec(BaseModel):
         return v
 
 
+class InitialStateSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["hartree_fock", "uniform", "computational_zero", "vqe_informed"]
+    vqe_ansatz: AnsatzSpec | None = None
+    vqe_n_layers: int = 1
+    vqe_max_iters: int = 100
+    vqe_optimizer: OptimizerSpec | None = None
+
+
 class ObservableSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
     display_name: str
@@ -184,6 +197,7 @@ class YamlModelSpec(BaseModel):
     optimizer: OptimizerSpec | None = None
     mapper: MapperSpec | None = None
     ansatz: AnsatzSpec | None = None
+    iqpe_initial_state: InitialStateSpec | None = None
     bloch_hamiltonian: BlochSpec | None = None
     lattice_vectors: list[list[float]] | None = None
     sublattice_positions: dict[str, list[float]] | None = None
@@ -564,6 +578,48 @@ def build_ansatz_factory(ansatz_spec: AnsatzSpec, *, name: str):
     return get_vqe_ansatz
 
 
+def build_initial_state_factory(spec: InitialStateSpec, *, name: str):
+    from quaph._core import (
+        _hf_initial_state, _uniform_initial, _zero_initial, _vqe_initial_state,
+    )
+
+    kind = spec.type
+
+    if kind == "vqe_informed":
+        vqe_ansatz_spec = spec.vqe_ansatz or AnsatzSpec(
+            type="efficient_su2", kwargs={"reps": "@n_layers"}, initial_state_prefix="hartree_fock",
+        )
+        vqe_optimizer_spec = spec.vqe_optimizer or OptimizerSpec(
+            type="SPSA", kwargs={"maxiter": "@max_iters"},
+        )
+        vqe_n_layers = spec.vqe_n_layers
+        vqe_max_iters = spec.vqe_max_iters
+        get_ansatz = build_ansatz_factory(vqe_ansatz_spec, name=f"{name}_vqe_init")
+        get_optimizer = build_optimizer_factory(vqe_optimizer_spec, name=f"{name}_vqe_init")
+
+    def get_initial_state(hamiltonian, *, n_occ: int = 0, spin: int = 1, mapper=None):
+        n_qubits = hamiltonian.num_qubits
+        if kind == "hartree_fock":
+            n_sites = n_qubits // spin if spin else n_qubits
+            return _hf_initial_state(n_sites, spin, n_occ, mapper)
+        if kind == "uniform":
+            return _uniform_initial(n_qubits)
+        if kind == "computational_zero":
+            return _zero_initial(n_qubits)
+        # vqe_informed
+        ansatz = get_ansatz(n_qubits, vqe_n_layers, n_occ, spin)
+        return _vqe_initial_state(hamiltonian, ansatz, get_optimizer, vqe_max_iters)
+
+    get_initial_state.__name__ = f"_initial_state_{name.replace('-', '_')}"
+    return get_initial_state
+
+
+def _build_initial_state_factory(spec: YamlModelSpec):
+    if spec.iqpe_initial_state is None:
+        return None
+    return build_initial_state_factory(spec.iqpe_initial_state, name=spec.name)
+
+
 def _build_bloch_hamiltonian(spec: YamlModelSpec):
     if spec.bloch_hamiltonian is None:
         return None
@@ -865,6 +921,7 @@ def spec_to_model(spec: YamlModelSpec) -> Model:
         get_optimizer=_build_optimizer_factory(spec),
         get_mapper=_build_mapper_factory(spec),
         get_vqe_ansatz=_build_ansatz_factory(spec),
+        get_iqpe_initial_state=_build_initial_state_factory(spec),
         mean_field_correction=_build_mean_field_correction(spec),
         bloch_hamiltonian=(
             _build_bloch_hamiltonian(spec)

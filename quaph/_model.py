@@ -185,6 +185,7 @@ class Model:
         get_optimizer: Callable | None = None,
         get_mapper: Callable | None = None,
         get_vqe_ansatz: Callable | None = None,
+        get_iqpe_initial_state: Callable | None = None,
         mean_field_correction: Callable | None = None,
         bloch_hamiltonian: Callable | None = None,
         observables: dict[str, "Observable"] | None = None,
@@ -230,6 +231,7 @@ class Model:
         self._get_optimizer_fn = get_optimizer
         self._get_mapper_fn = get_mapper
         self._get_vqe_ansatz_fn = get_vqe_ansatz
+        self._get_iqpe_initial_state_fn = get_iqpe_initial_state
         self._mean_field_correction_fn = mean_field_correction
         self._bloch_hamiltonian_fn = bloch_hamiltonian
 
@@ -298,6 +300,18 @@ class Model:
                 inplace=True,
             )
             return qc
+        return default
+
+    @property
+    def get_iqpe_initial_state(self):
+        if self._get_iqpe_initial_state_fn is not None:
+            return self._get_iqpe_initial_state_fn
+        from quaph._core import _hf_initial_state
+
+        def default(hamiltonian, *, n_occ: int = 0, spin: int = 1, mapper=None):
+            n_qubits = hamiltonian.num_qubits
+            n_sites = n_qubits // spin if spin else n_qubits
+            return _hf_initial_state(n_sites, spin, n_occ, mapper)
         return default
 
     @property
