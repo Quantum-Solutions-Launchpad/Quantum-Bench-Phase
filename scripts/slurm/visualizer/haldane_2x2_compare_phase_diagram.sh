@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J haldane-2x2-dmrg
+#SBATCH -J haldane-2x2-compare
 #SBATCH -C cpu
 #SBATCH -q regular
 #SBATCH -N 2
@@ -17,23 +17,24 @@ source "${REPO_ROOT}/scripts/slurm/visualizer/common_visualizer.sh"
 setup_visualizer_env
 setup_visualizer_dmrg_env "${SLURM_CPUS_PER_TASK:-16}"
 
-print_visualizer_header "Running Haldane 2x2 ITensorMPS DMRG phase diagram against exact values"
+print_visualizer_header "Running Haldane 2x2 exact/VQE/IQPE/DMRG comparison phase diagram"
 echo "  t2 sweep:    ${HALDANE_T2_START:-0.0} ${HALDANE_T2_END:-1.0} ${HALDANE_T2_STEP:-0.1}"
-echo "  nsweeps:     ${DMRG_NSWEEPS:-4}"
-echo "  maxdims:     ${DMRG_MAXDIMS:-20,50,100,200}"
-echo "  cutoff:      ${DMRG_CUTOFF:-1e-9}"
+echo "  vqe:         reps=${VQE_REPS:-10}, iters=${VQE_ITERS:-10000}, layers=${VQE_LAYERS:-5}"
+echo "  iqpe:        reps=${IQPE_REPS:-20}, time=${IQPE_TIME:-0.2}, trot=${IQPE_TROT:-5}, iters=${IQPE_ITERS:-8}"
+echo "  dmrg:        nsweeps=${DMRG_NSWEEPS:-4}, maxdims=${DMRG_MAXDIMS:-20,50,100,200}, cutoff=${DMRG_CUTOFF:-1e-9}"
 echo "  threads:     ${DMRG_THREADS} per shard"
 
 cmd=(
-    dmrg
+    compare
+    --algorithms exact vqe iqpe dmrg
 )
 append_haldane_2x2_phase_args cmd
+append_vqe_iqpe_args cmd
+append_compare_dmrg_args cmd
 append_output_args cmd
-append_dmrg_run_args cmd
 
 run_visualizer_sharded_cmd cmd
 
-echo "Completed Haldane 2x2 DMRG run at $(date)"
-echo "  summary: ${LOG_DIR}/haldane/2x2/dmrg/dmrg-n_occ-vs-t2.json"
-echo "  raw dir: ${LOG_DIR}/haldane/2x2/dmrg/raw-data"
-echo "  plot:    ${PLOT_DIR}/haldane/2x2/dmrg/dmrg-n_occ-vs-t2.pdf"
+echo "Completed Haldane 2x2 comparison run at $(date)"
+echo "  summary: ${LOG_DIR}/haldane/2x2/compare-n_occ-vs-t2.json"
+echo "  plot:    ${PLOT_DIR}/haldane/2x2/compare-n_occ-vs-t2.pdf"

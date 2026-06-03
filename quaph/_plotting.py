@@ -264,7 +264,9 @@ def plot_simulated(
     y_is_momentum: bool = False,
     vqe_label: str = "VQE",
     iqpe_label: str = "IQPE",
+    extra_series: list[dict] | None = None,
 ):
+    extra_series = extra_series or []
     if plot_format == "2d":
         return _plot_simulated_2d(
             x_vals, x_label, Z_exact, Z_vqe, Z_iqpe,
@@ -272,6 +274,7 @@ def plot_simulated(
             hide_legend=hide_legend,
             output_path=output_path, hide_plot=hide_plot,
             vqe_label=vqe_label, iqpe_label=iqpe_label,
+            extra_series=extra_series,
         )
     if Z_exact.ndim == 3:
         return _plot_band_structure_3d(
@@ -332,6 +335,20 @@ def plot_simulated(
                                      markerfacecolor="#6DBF82", markersize=14, label=iqpe_label))
         hover_series.append({"xs": x_flat[iqpe_mask], "ys": y_flat[iqpe_mask],
                              "zs": iqpe_flat[iqpe_mask], "label": iqpe_label})
+
+    for series in extra_series:
+        values = np.asarray(series["values"], dtype=float).ravel()
+        mask = values >= z_clip
+        color = series.get("color", "#D55E00")
+        marker = series.get("marker", "D")
+        label = series.get("label", "Series")
+        size = series.get("size", 45)
+        ax.scatter(x_flat[mask], y_flat[mask], values[mask],
+                   color=color, marker=marker, s=size, depthshade=True, zorder=6)
+        legend_handles.append(Line2D([0], [0], marker=marker, color="w",
+                                     markerfacecolor=color, markersize=14, label=label))
+        hover_series.append({"xs": x_flat[mask], "ys": y_flat[mask],
+                             "zs": values[mask], "label": label})
 
     ax.set_zlim(bottom=z_clip)
 
@@ -554,7 +571,9 @@ def _plot_simulated_2d(
     hide_plot: bool = False,
     vqe_label: str = "VQE",
     iqpe_label: str = "IQPE",
+    extra_series: list[dict] | None = None,
 ):
+    extra_series = extra_series or []
     _apply_rcparams()
     fig, ax = plt.subplots(figsize=(9, 6))
 
@@ -590,6 +609,16 @@ def _plot_simulated_2d(
     if Z_iqpe is not None:
         ax.scatter(x_arr, Z_iqpe, color="#6DBF82", marker="^", s=45,
                    label=iqpe_label, zorder=6)
+    for series in extra_series:
+        ax.scatter(
+            x_arr,
+            np.asarray(series["values"], dtype=float),
+            color=series.get("color", "#D55E00"),
+            marker=series.get("marker", "D"),
+            s=series.get("size", 45),
+            label=series.get("label", "Series"),
+            zorder=6,
+        )
 
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel("$E$", labelpad=8)
