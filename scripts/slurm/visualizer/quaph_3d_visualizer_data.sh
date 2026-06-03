@@ -67,7 +67,6 @@ run_visualizer_config() {
         --log-dir "${LOG_DIR}"
         --plot-dir "${PLOT_DIR}"
         --hide-plot
-        --hide-legend
     )
 
     if [[ "${model}" == "haldane" ]]; then

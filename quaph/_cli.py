@@ -6,6 +6,7 @@ import sys
 
 from quaph._registry import get_model, register_model_from_file, remove_model
 from quaph._run import run_analytic, run_simulated_ideal, run_simulated_noisy
+from quaph._dmrg import run_dmrg_itensor
 
 
 def _model_param_names(model) -> list[str]:
@@ -81,6 +82,27 @@ def _add_sim_optional(parser):
     parser.add_argument("--vqe-reps", type=int, default=None, metavar="N")
     parser.add_argument("--iqpe-reps", type=int, default=None, metavar="N")
     parser.add_argument("--hide-legend", action="store_true", default=False)
+    parser.add_argument("--task-index", type=int, default=None, metavar="N")
+    parser.add_argument("--task-count", type=int, default=1, metavar="N")
+    parser.add_argument("--prepare-only", action="store_true", default=False)
+    parser.add_argument("--aggregate-only", action="store_true", default=False)
+    parser.add_argument("--no-progress-log", action="store_true", default=False)
+
+
+def _add_dmrg_args(parser):
+    parser.add_argument("--julia", default="julia", metavar="PATH",
+                        help="Julia executable to use for ITensorMPS DMRG")
+    parser.add_argument("--julia-module", default="julia/1.11.7", metavar="NAME",
+                        help="Environment module to load if --julia is not on PATH")
+    parser.add_argument("--julia-project", default=None, metavar="PATH",
+                        help="Julia project containing ITensors, ITensorMPS, and JSON")
+    parser.add_argument("--dmrg-script", default=None, metavar="PATH",
+                        help="Override the bundled Julia DMRG bridge script")
+    parser.add_argument("--nsweeps", type=int, default=4, metavar="N")
+    parser.add_argument("--maxdims", default="20,50,100,200", metavar="LIST")
+    parser.add_argument("--cutoff", type=float, default=1e-9, metavar="F")
+    parser.add_argument("--seed", type=int, default=1234, metavar="N")
+    parser.add_argument("--conserve-qns", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--task-index", type=int, default=None, metavar="N")
     parser.add_argument("--task-count", type=int, default=1, metavar="N")
     parser.add_argument("--prepare-only", action="store_true", default=False)
@@ -167,6 +189,44 @@ def _dispatch_simulated_noisy(args, model):
     )
 
 
+def _dispatch_dmrg(args, model):
+    x_param, y_param = _resolve_sweep_axes(args)
+    result = run_dmrg_itensor(
+        model,
+        lattice=tuple(args.lattice) if args.lattice else None,
+        x_param=x_param,
+        x_range=args.x_range,
+        y_param=y_param,
+        y_range=args.y_range,
+        n_occ=args.n_occ,
+        model_params=_collect_model_params(args, model, x_param, y_param),
+        log_dir=args.log_dir,
+        plot_dir=args.plot_dir,
+        hide_plot=args.hide_plot,
+        julia=args.julia,
+        julia_module=args.julia_module,
+        julia_project=args.julia_project,
+        nsweeps=args.nsweeps,
+        maxdims=args.maxdims,
+        cutoff=args.cutoff,
+        seed=args.seed,
+        conserve_qns=args.conserve_qns,
+        script_path=args.dmrg_script,
+        task_index=args.task_index,
+        task_count=args.task_count,
+        prepare_only=args.prepare_only,
+        aggregate_only=args.aggregate_only,
+        no_progress_log=args.no_progress_log,
+    )
+    if "summary_path" in result:
+        print(f"Wrote {result['summary_path']}")
+    elif result.get("type") == "dmrg-shard":
+        print(
+            f"Completed DMRG shard {result['task_index']}/{result['task_count']} "
+            f"({result['num_cells']} cells)"
+        )
+
+
 def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
@@ -242,8 +302,9 @@ def main(argv=None):
     analytic_parser = run_sub.add_parser("analytic")
     sim_ideal_parser = run_sub.add_parser("simulated-ideal")
     sim_noisy_parser = run_sub.add_parser("simulated-noisy")
+    dmrg_parser = run_sub.add_parser("dmrg")
 
-    for p in (analytic_parser, sim_ideal_parser, sim_noisy_parser):
+    for p in (analytic_parser, sim_ideal_parser, sim_noisy_parser, dmrg_parser):
         p.add_argument("--model", required=True, metavar="MODEL",
                        help="Registered model name (e.g. haldane, hubbard, haldane-hubbard)")
         p.add_argument("--lattice", type=int, nargs="+", default=None, metavar="N",
@@ -260,8 +321,9 @@ def main(argv=None):
     for p in (sim_ideal_parser, sim_noisy_parser):
         _add_sim_required(p)
         _add_sim_optional(p)
+    _add_dmrg_args(dmrg_parser)
 
-    if subcommand in ("analytic", "simulated-ideal", "simulated-noisy") and model_arg:
+    if subcommand in ("analytic", "simulated-ideal", "simulated-noisy", "dmrg") and model_arg:
         try:
             model = get_model(model_arg)
         except ValueError as e:
@@ -271,6 +333,7 @@ def main(argv=None):
             "analytic": analytic_parser,
             "simulated-ideal": sim_ideal_parser,
             "simulated-noisy": sim_noisy_parser,
+            "dmrg": dmrg_parser,
         }[subcommand]
         _add_model_params(target, model)
 
@@ -323,5 +386,7 @@ def main(argv=None):
             _dispatch_simulated_ideal(args, model)
         elif args.subcommand == "simulated-noisy":
             _dispatch_simulated_noisy(args, model)
+        elif args.subcommand == "dmrg":
+            _dispatch_dmrg(args, model)
     except ValueError as e:
         parser.error(str(e))

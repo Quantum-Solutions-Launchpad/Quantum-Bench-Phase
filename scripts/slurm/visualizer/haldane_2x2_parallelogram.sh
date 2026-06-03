@@ -44,7 +44,6 @@ cmd=(
     --log-dir "${LOG_DIR}"
     --plot-dir "${PLOT_DIR}"
     --hide-plot
-    --hide-legend
 )
 
 echo "Running Haldane 2x2 parallelogram phase diagram"
