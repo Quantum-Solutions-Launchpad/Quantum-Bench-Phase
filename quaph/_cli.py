@@ -5,6 +5,7 @@ import sys
 
 from quaph._registry import get_model, register_model_from_file, remove_model
 from quaph._run import run_analytic, run_simulated_ideal, run_simulated_noisy
+from quaph._realspace import plot_real_space_state_density
 from quaph._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS, _INITIAL_STATES
 
 
@@ -226,6 +227,7 @@ def _dispatch_analytic(args, model):
     run_analytic(
         model,
         lattice=tuple(args.lattice) if args.lattice else None,
+        boundary=args.boundary,
         x_param=x_param,
         x_range=args.x_range,
         y_param=y_param,
@@ -245,6 +247,7 @@ def _dispatch_simulated_ideal(args, model):
     run_simulated_ideal(
         model,
         lattice=tuple(args.lattice) if args.lattice else None,
+        boundary=args.boundary,
         x_param=x_param,
         x_range=args.x_range,
         y_param=y_param,
@@ -270,6 +273,7 @@ def _dispatch_simulated_noisy(args, model):
     run_simulated_noisy(
         model,
         lattice=tuple(args.lattice) if args.lattice else None,
+        boundary=args.boundary,
         x_param=x_param,
         x_range=args.x_range,
         y_param=y_param,
@@ -347,6 +351,28 @@ def main(argv=None):
     plot_parser.add_argument("--output", default=None, metavar="PATH", help="Output PDF path")
     plot_parser.add_argument("--hide-legend", action="store_true", default=False)
 
+    plot_state_parser = sub.add_parser("plot-state", help="Plot a real-space eigenstate density")
+    plot_state_parser.add_argument("--model", default=None, metavar="MODEL",
+                                   help="Registered model name (e.g. haldane, hubbard, haldane-hubbard).")
+    plot_state_parser.add_argument("--lattice", type=int, nargs="+", required=True, metavar="N",
+                                   help="Lattice extents per dimension (e.g. --lattice 3 3).")
+    plot_state_parser.add_argument("--boundary", choices=["periodic", "hard-wall", "hard_wall", "open"],
+                                   default="periodic",
+                                   help="Real-space boundary condition for the finite-lattice model (default: periodic).")
+    plot_state_parser.add_argument("--state-index", type=int, default=None,
+                                   help="Eigenstate index after sorting energies ascending. Defaults to the state closest to E=0.")
+    plot_state_parser.add_argument("--n-occ", type=int, default=None,
+                                   help="Select the highest occupied state for this filling, i.e. state index n_occ - 1.")
+    plot_state_parser.add_argument("--view", choices=["2d", "3d"], default="2d",
+                                   help="Density view to render (default: 2d).")
+    plot_state_parser.add_argument("--output", default=None, metavar="PATH",
+                                   help="Output image/PDF path. Omit to show an interactive window.")
+    plot_state_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
+    plot_state_parser.add_argument("--no-bonds", dest="show_bonds", action="store_false", default=True,
+                                   help="Hide hopping bonds in the real-space plot.")
+    plot_state_parser.add_argument("--max-bonds", type=int, default=3000,
+                                   help="Maximum number of bonds to draw (default: 3000).")
+
     run_parser = sub.add_parser("run")
     run_sub = run_parser.add_subparsers(dest="subcommand", required=True)
 
@@ -360,6 +386,8 @@ def main(argv=None):
                             "Mutually exclusive with --qubit-operator.")
         p.add_argument("--lattice", type=int, nargs="+", default=None, metavar="N",
                        help="Lattice extents per dimension (e.g. --lattice 3 3 for a 3x3 unit-cell grid). Omit for momentum-space band-structure runs.")
+        p.add_argument("--boundary", choices=["periodic", "hard-wall", "hard_wall", "open"], default="periodic",
+                       help="Real-space boundary condition for finite-lattice model runs (default: periodic).")
         _add_sweep_args(p)
         _add_output_args(p)
 
@@ -381,17 +409,24 @@ def main(argv=None):
                             "VQE supports any registered observable; IQPE supports only 'E' "
                             "and energy-based composites.")
 
-    if subcommand in ("analytic", "simulated-ideal", "simulated-noisy") and model_arg:
+    if (
+        (subcommand in ("analytic", "simulated-ideal", "simulated-noisy"))
+        or pre_args.command == "plot-state"
+    ) and model_arg:
         try:
             model = get_model(model_arg)
         except ValueError as e:
             parser.error(str(e))
 
-        target = {
-            "analytic": analytic_parser,
-            "simulated-ideal": sim_ideal_parser,
-            "simulated-noisy": sim_noisy_parser,
-        }[subcommand]
+        target = (
+            plot_state_parser
+            if pre_args.command == "plot-state"
+            else {
+                "analytic": analytic_parser,
+                "simulated-ideal": sim_ideal_parser,
+                "simulated-noisy": sim_noisy_parser,
+            }[subcommand]
+        )
         _add_model_params(target, model)
 
     args = parser.parse_args(argv)
@@ -460,7 +495,22 @@ def main(argv=None):
         parser.error(str(e))
 
     try:
-        if args.subcommand == "analytic":
+        if args.command == "plot-state":
+            params = _collect_model_params(args, model, None, None)
+            plot_real_space_state_density(
+                model=model,
+                lattice=args.lattice,
+                model_params=params,
+                boundary=args.boundary,
+                state_index=args.state_index,
+                n_occ=args.n_occ,
+                view=args.view,
+                show_bonds=args.show_bonds,
+                max_bonds=args.max_bonds,
+                output_path=args.output,
+                hide_plot=args.hide_plot,
+            )
+        elif args.subcommand == "analytic":
             _dispatch_analytic(args, model)
         elif args.subcommand == "simulated-ideal":
             _dispatch_simulated_ideal(args, model)

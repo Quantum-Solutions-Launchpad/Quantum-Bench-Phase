@@ -120,6 +120,56 @@ def _observable_label(model, observable: str) -> str:
     return f"${obs.display_name}$"
 
 
+def _normalize_boundary(boundary: str | None) -> str:
+    if boundary is None:
+        return "periodic"
+    mode = str(boundary).strip().lower().replace("-", "_").replace(" ", "_")
+    aliases = {
+        "pbc": "periodic",
+        "periodic_boundary": "periodic",
+        "periodic_boundary_condition": "periodic",
+        "open": "hard_wall",
+        "obc": "hard_wall",
+        "hardwall": "hard_wall",
+        "hard_wall_boundary": "hard_wall",
+        "hard_wall_boundary_condition": "hard_wall",
+    }
+    mode = aliases.get(mode, mode)
+    if mode not in ("periodic", "hard_wall"):
+        raise ValueError(
+            f"unsupported boundary mode {boundary!r}; expected 'periodic' or 'hard_wall'."
+        )
+    return mode
+
+
+def _with_boundary(params: dict | None, boundary: str | None) -> dict:
+    out = dict(params or {})
+    requested = _normalize_boundary(boundary)
+    existing_key = "boundary" if "boundary" in out else "boundary_condition" if "boundary_condition" in out else None
+    if existing_key is not None:
+        existing = _normalize_boundary(out[existing_key])
+        if requested != "periodic" and existing != requested:
+            raise ValueError(
+                f"conflicting boundary settings: boundary={requested!r}, "
+                f"model_params[{existing_key!r}]={existing!r}."
+            )
+        out.pop("boundary_condition", None)
+        out["boundary"] = existing
+    elif requested != "periodic":
+        out["boundary"] = requested
+    return out
+
+
+def _serialize_model_params(params: dict) -> dict:
+    serial = {}
+    for k, v in params.items():
+        if isinstance(v, (int, float, np.integer, np.floating)):
+            serial[k] = float(v)
+        else:
+            serial[k] = v
+    return serial
+
+
 def _file_tag(run_type: str, plot_format: str, x_param: str, y_param: str | None,
               observable: str | None = None) -> str:
     obs = f"-{observable}" if observable and observable != "E" else ""
@@ -450,6 +500,7 @@ def run_analytic(
     model=None,
     *,
     lattice=None,
+    boundary: str | None = None,
     x_param: str | None = None,
     x_range=None,
     y_param: str | None = None,
@@ -496,7 +547,7 @@ def run_analytic(
                 f"Override the sweep with x_param/y_param instead."
             )
 
-    params = dict(model_params or {})
+    params = _with_boundary(model_params, boundary)
     spin = model.spin
     if lattice is not None:
         n_sites = math.prod(lattice) * model.sites_per_cell
@@ -515,6 +566,8 @@ def run_analytic(
 
     is_band_structure = (x_kind == "momentum") or (y_kind == "momentum")
     if is_band_structure:
+        if _normalize_boundary(params.get("boundary")) != "periodic":
+            raise ValueError("hard-wall boundary is only supported for real-space lattice runs, not momentum-space band-structure runs.")
         if x_kind == "n_occ" or y_kind == "n_occ" or n_occ is not None:
             raise ValueError("n_occ is not meaningful for band-structure (momentum-space) runs.")
         _ = model.bloch_hamiltonian
@@ -599,7 +652,7 @@ def run_analytic(
             "parameters": {
                 "model": model.name,
                 "lattice": list(lattice) if lattice is not None else None,
-                "model_params": {k: float(v) for k, v in params.items()},
+                "model_params": _serialize_model_params(params),
             },
             "x_param": x_param,
             "y_param": y_param,
@@ -853,7 +906,7 @@ def _run_simulated(
         "model": model.name,
         "lattice": list(lattice),
         "simulation": simulation_tag,
-        "model_params": {k: float(v) for k, v in model_params.items()},
+        "model_params": _serialize_model_params(model_params),
     }
     if do_vqe:
         parameters["vqe"] = {"iters": vqe_iters, "layers": vqe_layers, "reps": vqe_reps}
@@ -1077,7 +1130,7 @@ def _resolve_method_reps(name, reps, *params):
     return reps
 
 
-def _prep_simulated_kwargs(model, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
+def _prep_simulated_kwargs(model, lattice, boundary, x_param, x_range, y_param, y_range, n_occ, model_params,
                            vqe_iters, vqe_layers, vqe_reps, iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps):
     model = _resolve_model(model)
     vqe_reps = _resolve_method_reps("vqe", vqe_reps, vqe_iters, vqe_layers)
@@ -1101,7 +1154,9 @@ def _prep_simulated_kwargs(model, lattice, x_param, x_range, y_param, y_range, n
                 f"Override the sweep with x_param/y_param instead."
             )
 
-    params = dict(model_params or {})
+    params = _with_boundary(model_params, boundary)
+    if _is_band_structure_axes(model, x_param, y_param) and _normalize_boundary(params.get("boundary")) != "periodic":
+        raise ValueError("hard-wall boundary is only supported for real-space lattice runs, not momentum-space band-structure runs.")
     return model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params, vqe_reps, iqpe_reps
 
 
@@ -1292,6 +1347,7 @@ def run_simulated_ideal(
     model=None,
     *,
     lattice=None,
+    boundary: str | None = None,
     x_param: str | None = None,
     x_range=None,
     y_param: str | None = None,
@@ -1332,7 +1388,7 @@ def run_simulated_ideal(
 
     (model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
      vqe_reps, iqpe_reps) = _prep_simulated_kwargs(
-        model, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
+        model, lattice, boundary, x_param, x_range, y_param, y_range, n_occ, model_params,
         vqe_iters, vqe_layers, vqe_reps, iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps,
     )
 
@@ -1354,6 +1410,7 @@ def run_simulated_noisy(
     *,
     backend=None,
     lattice=None,
+    boundary: str | None = None,
     x_param: str | None = None,
     x_range=None,
     y_param: str | None = None,
@@ -1398,7 +1455,7 @@ def run_simulated_noisy(
 
     (model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
      vqe_reps, iqpe_reps) = _prep_simulated_kwargs(
-        model, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
+        model, lattice, boundary, x_param, x_range, y_param, y_range, n_occ, model_params,
         vqe_iters, vqe_layers, vqe_reps, iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps,
     )
 

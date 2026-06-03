@@ -18,6 +18,11 @@ from quaph._run import (
     AnalyticResult,
     SimulatedResult,
 )
+from quaph._realspace import (
+    plot_real_space_state_density,
+    real_space_positions,
+    RealSpaceStateResult,
+)
 
 __all__ = [
     "Model",
@@ -35,4 +40,7 @@ __all__ = [
     "load_result",
     "AnalyticResult",
     "SimulatedResult",
+    "plot_real_space_state_density",
+    "real_space_positions",
+    "RealSpaceStateResult",
 ]

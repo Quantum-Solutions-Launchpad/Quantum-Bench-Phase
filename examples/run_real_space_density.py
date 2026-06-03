@@ -1,0 +1,38 @@
+import math
+import os
+
+import quaph
+
+
+MODEL = "haldane"
+LATTICE = (3, 3)
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_PLOT_DIR = os.path.join(_HERE, "plots", MODEL, "3x3")
+
+
+PARAMS = {
+    "t1": 1.0,
+    "t2": 0.1,
+    "phi": math.pi / 4,
+    "M": 0.0,
+}
+
+
+quaph.plot_real_space_state_density(
+    model=MODEL,
+    lattice=LATTICE,
+    model_params=PARAMS,
+    boundary="periodic",
+    output_path=os.path.join(_PLOT_DIR, "real-space-density-periodic-2d.png"),
+    hide_plot=True,
+)
+
+quaph.plot_real_space_state_density(
+    model=MODEL,
+    lattice=LATTICE,
+    model_params=PARAMS,
+    boundary="hard_wall",
+    output_path=os.path.join(_PLOT_DIR, "real-space-density-hard-wall-2d.png"),
+    hide_plot=True,
+)

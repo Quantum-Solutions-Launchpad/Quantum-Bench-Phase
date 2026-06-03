@@ -181,6 +181,9 @@ class Model:
         lattice_shape: tuple[str, ...],
         sites_per_cell: int,
         hamiltonian_matrix: Callable,
+        sublattices: tuple[str, ...] | None = None,
+        lattice_vectors: tuple[tuple[float, ...], ...] | None = None,
+        sublattice_positions: dict[str, tuple[float, ...]] | None = None,
         interaction_hamiltonian: Callable | None = None,
         get_optimizer: Callable | None = None,
         get_mapper: Callable | None = None,
@@ -213,12 +216,30 @@ class Model:
             raise ValueError(
                 f"Model '{name}' has invalid sites_per_cell={sites_per_cell}; must be a positive int."
             )
+        if sublattices is None:
+            sublattices = tuple(f"s{i}" for i in range(sites_per_cell))
+        else:
+            sublattices = tuple(sublattices)
+        if len(sublattices) != sites_per_cell:
+            raise ValueError(
+                f"Model '{name}' has {len(sublattices)} sublattices but "
+                f"sites_per_cell={sites_per_cell}."
+            )
         self.name = name
         self.display_name = display_name
         self.spin = spin
         self.n_dims = n_dims
         self.lattice_shape = lattice_shape
         self.sites_per_cell = sites_per_cell
+        self.sublattices = sublattices
+        self.lattice_vectors = (
+            tuple(tuple(float(x) for x in v) for v in lattice_vectors)
+            if lattice_vectors is not None else None
+        )
+        self.sublattice_positions = (
+            {k: tuple(float(x) for x in v) for k, v in sublattice_positions.items()}
+            if sublattice_positions is not None else {}
+        )
         self.momentum_axes = momentum_axes_by_dims[n_dims]
 
         momentum_labels = {"k": "k", "kx": "k_x", "ky": "k_y", "kz": "k_z"}
