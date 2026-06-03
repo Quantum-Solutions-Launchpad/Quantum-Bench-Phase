@@ -9,6 +9,7 @@ from quaph._registry import (
     remove_model,
 )
 from quaph._yaml_model import build_tight_binding_model
+from quaph._diff import plot_diff
 from quaph._run import (
     run_analytic,
     run_simulated_ideal,
@@ -32,4 +33,5 @@ __all__ = [
     "load_result",
     "AnalyticResult",
     "SimulatedResult",
+    "plot_diff",
 ]
