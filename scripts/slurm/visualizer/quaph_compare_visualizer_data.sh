@@ -3,19 +3,20 @@
 #SBATCH -C cpu
 #SBATCH -q regular
 #SBATCH -N 6
-#SBATCH --ntasks-per-node=8
-#SBATCH -c 1
+#SBATCH --ntasks-per-node=16
+#SBATCH -c 8
+#SBATCH --array=0-5%2
 #SBATCH -t 48:00:00
 #SBATCH -A m5027
-#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.out
-#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.err
+#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%A_%a.out
+#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%A_%a.err
 
 set -euo pipefail
 
 REPO_ROOT="${REPO_ROOT:-/pscratch/sd/m/mbao202/NNL-P7}"
 source "${REPO_ROOT}/scripts/slurm/visualizer/common_visualizer.sh"
 setup_visualizer_env
-setup_visualizer_dmrg_env "${SLURM_CPUS_PER_TASK:-1}"
+setup_visualizer_dmrg_env "${SLURM_CPUS_PER_TASK:-8}"
 
 ALGORITHMS="${ALGORITHMS:-exact vqe iqpe dmrg}"
 
@@ -29,11 +30,14 @@ TASK_IDS="${TASK_IDS:-}"
 
 print_visualizer_header "Collecting QuAPH comparison visualizer data"
 echo "  algorithms:  ${ALGORITHMS}"
+echo "  quantum:     ${QUANTUM_PIPELINE:-ideal}"
 echo "  configs:     ${TOTAL_TASKS}"
 echo "  dmrg:        nsweeps=${DMRG_NSWEEPS:-4}, maxdims=${DMRG_MAXDIMS:-20,50,100,200}, cutoff=${DMRG_CUTOFF:-1e-9}"
 echo "  threads:     ${DMRG_THREADS} per shard"
 if [[ -n "${TASK_IDS}" ]]; then
     echo "  task ids:    ${TASK_IDS}"
+elif [[ -n "${SLURM_ARRAY_TASK_ID:-}" ]]; then
+    echo "  array task:  ${SLURM_ARRAY_TASK_ID}"
 fi
 
 run_visualizer_config() {
@@ -52,6 +56,7 @@ run_visualizer_config() {
         --x-param "${x_param}"
         --y-param "${y_param}"
         --algorithms "${algorithms[@]}"
+        --quantum-pipeline "${QUANTUM_PIPELINE:-ideal}"
     )
 
     if [[ "${model}" == "haldane" ]]; then
@@ -74,8 +79,12 @@ run_visualizer_config() {
     run_visualizer_sharded_cmd cmd
 
     local lattice_tag="${lattice// /x}"
-    local summary="${LOG_DIR}/${model}/${lattice_tag}/compare-${x_param}-vs-${y_param}.json"
-    local plot="${PLOT_DIR}/${model}/${lattice_tag}/compare-${x_param}-vs-${y_param}.pdf"
+    local compare_tag="compare-${x_param}-vs-${y_param}"
+    if [[ "${QUANTUM_PIPELINE:-ideal}" != "ideal" ]]; then
+        compare_tag="compare-${QUANTUM_PIPELINE}-${x_param}-vs-${y_param}"
+    fi
+    local summary="${LOG_DIR}/${model}/${lattice_tag}/${compare_tag}.json"
+    local plot="${PLOT_DIR}/${model}/${lattice_tag}/${compare_tag}.pdf"
     echo "Completed config ${task_id} at $(date)"
     echo "  summary: ${summary}"
     echo "  plot:    ${plot}"
@@ -83,6 +92,8 @@ run_visualizer_config() {
 
 if [[ -n "${TASK_IDS}" ]]; then
     task_ids="${TASK_IDS}"
+elif [[ -n "${SLURM_ARRAY_TASK_ID:-}" ]]; then
+    task_ids="${SLURM_ARRAY_TASK_ID}"
 else
     task_ids="$(seq 0 $((TOTAL_TASKS - 1)))"
 fi

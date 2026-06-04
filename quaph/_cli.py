@@ -115,6 +115,8 @@ def _add_compare_args(parser):
     parser.add_argument("--algorithms", nargs="+", default=["exact", "vqe", "iqpe", "dmrg"],
                         choices=["exact", "vqe", "iqpe", "dmrg"],
                         help="Algorithms to include in the shared comparison plot")
+    parser.add_argument("--quantum-pipeline", choices=["ideal", "noisy"], default="ideal",
+                        help="Simulation pipeline to use for VQE/IQPE in compare runs")
     _add_sim_required(parser)
     _add_sim_optional(parser)
     parser.add_argument("--julia", default="julia", metavar="PATH",
@@ -261,6 +263,7 @@ def _dispatch_compare(args, model):
         n_occ=args.n_occ,
         model_params=_collect_model_params(args, model, x_param, y_param),
         algorithms=args.algorithms,
+        quantum_pipeline=args.quantum_pipeline,
         vqe_iters=args.vqe_iters,
         vqe_layers=args.vqe_layers,
         vqe_reps=args.vqe_reps,

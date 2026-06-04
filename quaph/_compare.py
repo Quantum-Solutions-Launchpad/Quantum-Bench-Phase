@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 
 from quaph._dmrg import run_dmrg_itensor
-from quaph._run import run_simulated_ideal
+from quaph._run import run_simulated_ideal, run_simulated_noisy
 
 
 def _lattice_tag(lattice) -> str:
@@ -18,6 +18,13 @@ def _file_tag(x_param: str, y_param: str | None) -> str:
     if y_param is None:
         return f"compare-{x_param}"
     return f"compare-{x_param}-vs-{y_param}"
+
+
+def _compare_file_tag(x_param: str, y_param: str | None, quantum_pipeline: str) -> str:
+    tag = _file_tag(x_param, y_param)
+    if quantum_pipeline == "ideal":
+        return tag
+    return tag.replace("compare", f"compare-{quantum_pipeline}", 1)
 
 
 def _grid_from_block(block, nx: int, ny: int, *, key: str | None = None) -> np.ndarray:
@@ -60,6 +67,7 @@ def run_compare(
     n_occ: int | None,
     model_params: dict,
     algorithms: list[str],
+    quantum_pipeline: str = "ideal",
     vqe_iters: int | None = None,
     vqe_layers: int | None = None,
     vqe_reps: int | None = None,
@@ -87,10 +95,13 @@ def run_compare(
     no_progress_log: bool = False,
 ):
     algorithms = [a.lower() for a in algorithms]
+    quantum_pipeline = quantum_pipeline.lower()
     allowed = {"exact", "vqe", "iqpe", "dmrg"}
     unknown = sorted(set(algorithms) - allowed)
     if unknown:
         raise ValueError(f"Unknown compare algorithms: {', '.join(unknown)}")
+    if quantum_pipeline not in {"ideal", "noisy"}:
+        raise ValueError("quantum_pipeline must be 'ideal' or 'noisy'.")
     if "exact" not in algorithms:
         algorithms = ["exact", *algorithms]
     if "dmrg" in algorithms and lattice is None:
@@ -100,7 +111,8 @@ def run_compare(
     if "iqpe" in algorithms and (iqpe_time is None or iqpe_trot is None or iqpe_iters is None):
         raise ValueError("Compare runs with IQPE require --iqpe-time, --iqpe-trot, and --iqpe-iters.")
 
-    sim_result = run_simulated_ideal(
+    run_simulated = run_simulated_noisy if quantum_pipeline == "noisy" else run_simulated_ideal
+    sim_result = run_simulated(
         model,
         lattice=lattice,
         x_param=x_param,
@@ -201,6 +213,7 @@ def run_compare(
         "type": "compare",
         "plot_format": "2d" if is_1d else "3d",
         "algorithms": algorithms,
+        "quantum_pipeline": quantum_pipeline,
         "model": model.name,
         "lattice": list(lattice) if lattice is not None else None,
         "x_param": x_param,
@@ -210,6 +223,7 @@ def run_compare(
         "parameters": {
             "model_params": model_params,
             "n_occ": n_occ,
+            "quantum_pipeline": quantum_pipeline,
         },
         "result": result_block,
         "source_logs": {
@@ -219,10 +233,11 @@ def run_compare(
     }
 
     summary_path = None
+    output_tag = _compare_file_tag(x_param, y_param, quantum_pipeline)
     if log_dir is not None:
         log_subdir = _log_subdir(log_dir, model.name, lattice)
         os.makedirs(log_subdir, exist_ok=True)
-        summary_path = log_subdir / f"{_file_tag(x_param, y_param)}.json"
+        summary_path = log_subdir / f"{output_tag}.json"
         with open(summary_path, "w") as f:
             json.dump(summary, f, indent=2)
         summary["summary_path"] = str(summary_path)
@@ -231,7 +246,7 @@ def run_compare(
     if plot_dir is not None:
         plot_subdir = _plot_subdir(plot_dir, model.name, lattice)
         os.makedirs(plot_subdir, exist_ok=True)
-        plot_path = plot_subdir / f"{_file_tag(x_param, y_param)}.pdf"
+        plot_path = plot_subdir / f"{output_tag}.pdf"
 
     if plot_path is not None or not hide_plot:
         from quaph._plotting import plot_simulated
