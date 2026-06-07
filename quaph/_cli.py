@@ -8,6 +8,7 @@ from quaph._registry import get_model, register_model_from_file, remove_model
 from quaph._run import run_analytic, run_simulated_ideal, run_simulated_noisy
 from quaph._dmrg import run_dmrg_itensor
 from quaph._compare import run_compare
+from quaph._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS, _INITIAL_STATES
 
 
 def _model_param_names(model) -> list[str]:
@@ -53,13 +54,19 @@ def _collect_model_params(args, model, x_param, y_param) -> dict:
 
 def _add_sweep_args(parser):
     parser.add_argument("--x-param", default=None, metavar="PARAM")
-    parser.add_argument("--x-range", type=float, nargs=3,
-                        metavar=("MIN", "MAX", "STEP"), default=None)
+    parser.add_argument("--x-range", type=float, nargs="+", metavar="N", default=None,
+                        help="MIN MAX [STEP]. Model sweeps require STEP; --qubit-operator "
+                             "sweeps may omit it to use every available token value in [MIN, MAX].")
     parser.add_argument("--y-param", default=None, metavar="PARAM")
-    parser.add_argument("--y-range", type=float, nargs=3,
-                        metavar=("MIN", "MAX", "STEP"), default=None)
+    parser.add_argument("--y-range", type=float, nargs="+", metavar="N", default=None,
+                        help="MIN MAX [STEP]; see --x-range.")
     parser.add_argument("--n-occ", type=int, default=None,
                         help="Fixed particle number (default: half-filling)")
+
+
+def _validate_range(name, rng):
+    if rng is not None and len(rng) not in (2, 3):
+        raise ValueError(f"--{name} takes 2 (MIN MAX) or 3 (MIN MAX STEP) values; got {len(rng)}.")
 
 
 def _add_output_args(parser):
@@ -132,6 +139,138 @@ def _add_compare_args(parser):
     parser.add_argument("--dmrg-cutoff", type=float, default=1e-9, metavar="F")
     parser.add_argument("--dmrg-seed", type=int, default=1234, metavar="N")
     parser.add_argument("--dmrg-conserve-qns", action=argparse.BooleanOptionalAction, default=True)
+
+
+def _add_operator_args(parser, *, simulated):
+    parser.add_argument("--qubit-operator", dest="qubit_operator", default=None, metavar="SOURCE",
+                        help="HamLib HDF5 source: a local .h5/.hdf5 file, a local .zip archive "
+                             "containing one, or an http(s) URL to either (e.g. a HamLib library "
+                             ".zip link). Choose the sweep axes with --x-param/--y-param naming key "
+                             "tokens (e.g. --x-param h --y-param Lx) and narrow multi-family sources "
+                             "to one family with --select; with no axes it sweeps every key by "
+                             "instance index.")
+    parser.add_argument("--extremum", choices=["min", "max"], default="min",
+                        help="Target eigenvalue for the --qubit-operator path (default: min).")
+    parser.add_argument("--select", dest="select", action="append", default=None, metavar="TERMS",
+                        help="Comma-separated key-segment filters to narrow the source to one "
+                             "Hamiltonian family before sweeping (repeatable, AND semantics). "
+                             "Terms match whole '-'/'_'-delimited segments, e.g. "
+                             "--select 1D,grid,pbc or a token pin like --select Ly-105.")
+    if simulated:
+        parser.add_argument("--ansatz", default=None, choices=list(_QISKIT_ANSATZES),
+                            help="VQE ansatz type for the --qubit-operator path (default: efficient_su2).")
+        parser.add_argument("--ansatz-kwarg", dest="ansatz_kwarg", action="append", default=None,
+                            metavar="KEY=VALUE",
+                            help="Ansatz kwarg; repeatable. Values may be numbers or runtime bindings like @n_layers.")
+        parser.add_argument("--ansatz-prefix", dest="ansatz_prefix", choices=["hartree_fock", "none"],
+                            default="none", help="Initial-state prefix for the ansatz (default: none).")
+        parser.add_argument("--optimizer", default=None, choices=list(_QISKIT_OPTIMIZERS),
+                            help="Classical optimizer for the --qubit-operator path (default: SPSA).")
+        parser.add_argument("--optimizer-kwarg", dest="optimizer_kwarg", action="append", default=None,
+                            metavar="KEY=VALUE",
+                            help="Optimizer kwarg; repeatable, e.g. maxiter=@max_iters.")
+        parser.add_argument("--iqpe-initial-state", dest="iqpe_initial_state", default=None,
+                            choices=list(_INITIAL_STATES),
+                            help="Initial state type for IQPE (default: uniform for operator path).")
+        parser.add_argument("--iqpe-initial-vqe-ansatz", dest="iqpe_initial_vqe_ansatz", default=None,
+                            choices=list(_QISKIT_ANSATZES),
+                            help="VQE ansatz for vqe_informed initial state (default: efficient_su2).")
+        parser.add_argument("--iqpe-initial-vqe-ansatz-kwarg", dest="iqpe_initial_vqe_ansatz_kwarg",
+                            action="append", default=None, metavar="KEY=VALUE",
+                            help="Ansatz kwarg for vqe_informed initial state; repeatable.")
+        parser.add_argument("--iqpe-initial-vqe-n-layers", dest="iqpe_initial_vqe_n_layers", type=int,
+                            default=None, metavar="N",
+                            help="Ansatz layers for vqe_informed initial state (default: 1).")
+        parser.add_argument("--iqpe-initial-vqe-max-iters", dest="iqpe_initial_vqe_max_iters", type=int,
+                            default=None, metavar="N",
+                            help="VQE iterations for vqe_informed initial state (default: 100).")
+
+
+def _parse_cli_kwargs(pairs):
+    from quaph._console import _coerce_kwarg_value
+    out = {}
+    for item in (pairs or []):
+        if "=" not in item:
+            raise ValueError(f"kwarg '{item}' must be KEY=VALUE")
+        k, v = item.split("=", 1)
+        out[k] = _coerce_kwarg_value(v)
+    return out
+
+
+def _ansatz_dict(args):
+    if getattr(args, "ansatz", None) is None:
+        return None
+    return {
+        "type": args.ansatz,
+        "kwargs": _parse_cli_kwargs(args.ansatz_kwarg),
+        "initial_state_prefix": args.ansatz_prefix,
+    }
+
+
+def _optimizer_dict(args):
+    if getattr(args, "optimizer", None) is None:
+        return None
+    return {"type": args.optimizer, "kwargs": _parse_cli_kwargs(args.optimizer_kwarg)}
+
+
+def _iqpe_initial_state_dict(args):
+    if getattr(args, "iqpe_initial_state", None) is None:
+        return None
+    d: dict = {"type": args.iqpe_initial_state}
+    if args.iqpe_initial_state == "vqe_informed":
+        if getattr(args, "iqpe_initial_vqe_ansatz", None) is not None:
+            d["vqe_ansatz"] = {
+                "type": args.iqpe_initial_vqe_ansatz,
+                "kwargs": _parse_cli_kwargs(args.iqpe_initial_vqe_ansatz_kwarg),
+                "initial_state_prefix": "hartree_fock",
+            }
+        if getattr(args, "iqpe_initial_vqe_n_layers", None) is not None:
+            d["vqe_n_layers"] = args.iqpe_initial_vqe_n_layers
+        if getattr(args, "iqpe_initial_vqe_max_iters", None) is not None:
+            d["vqe_max_iters"] = args.iqpe_initial_vqe_max_iters
+    return d
+
+
+def _dispatch_analytic_operator(args):
+    run_analytic(
+        qubit_operator=args.qubit_operator,
+        extremum=args.extremum,
+        select=args.select,
+        x_param=args.x_param,
+        x_range=args.x_range,
+        y_param=args.y_param,
+        y_range=args.y_range,
+        heatmap=args.heatmap,
+        log_dir=args.log_dir,
+        plot_dir=args.plot_dir,
+        hide_plot=args.hide_plot,
+    )
+
+
+def _dispatch_simulated_operator(run_fn, args):
+    run_fn(
+        qubit_operator=args.qubit_operator,
+        extremum=args.extremum,
+        select=args.select,
+        x_param=args.x_param,
+        x_range=args.x_range,
+        y_param=y_param,
+        y_range=args.y_range,
+        ansatz=_ansatz_dict(args),
+        optimizer=_optimizer_dict(args),
+        iqpe_initial_state=_iqpe_initial_state_dict(args),
+        vqe_iters=args.vqe_iters,
+        vqe_layers=args.vqe_layers,
+        vqe_reps=args.vqe_reps,
+        iqpe_time=args.iqpe_time,
+        iqpe_trot=args.iqpe_trot,
+        iqpe_iters=args.iqpe_iters,
+        iqpe_reps=args.iqpe_reps,
+        log_dir=args.log_dir,
+        plot_dir=args.plot_dir,
+        hide_plot=args.hide_plot,
+        hide_legend=args.hide_legend,
+    )
 
 
 def _dispatch_analytic(args, model):
@@ -377,13 +516,26 @@ def main(argv=None):
     dmrg_parser = run_sub.add_parser("dmrg")
     compare_parser = run_sub.add_parser("compare")
 
-    for p in (analytic_parser, sim_ideal_parser, sim_noisy_parser, dmrg_parser, compare_parser):
+    # Fixed a merge conflict, the quantum algo runs can use either a registered model or --qubit-operator;
+    # DMRG and compare still require a registered model.
+    for p in (analytic_parser, sim_ideal_parser, sim_noisy_parser):
+        p.add_argument("--model", default=None, metavar="MODEL",
+                       help="Registered model name (e.g. haldane, hubbard, haldane-hubbard). "
+                            "Mutually exclusive with --qubit-operator.")
+
+    for p in (dmrg_parser, compare_parser):
         p.add_argument("--model", required=True, metavar="MODEL",
                        help="Registered model name (e.g. haldane, hubbard, haldane-hubbard)")
+
+    for p in (analytic_parser, sim_ideal_parser, sim_noisy_parser, dmrg_parser, compare_parser):
         p.add_argument("--lattice", type=int, nargs="+", default=None, metavar="N",
                        help="Lattice extents per dimension (e.g. --lattice 3 3 for a 3x3 unit-cell grid). Omit for momentum-space band-structure runs.")
         _add_sweep_args(p)
         _add_output_args(p)
+
+    _add_operator_args(analytic_parser, simulated=False)
+    for p in (sim_ideal_parser, sim_noisy_parser):
+        _add_operator_args(p, simulated=True)
 
     analytic_parser.add_argument("--heatmap", action="store_true", default=False,
                                  help="Render results as a 2D heatmap (requires both x and y sweep axes)")
@@ -394,6 +546,11 @@ def main(argv=None):
     for p in (sim_ideal_parser, sim_noisy_parser):
         _add_sim_required(p)
         _add_sim_optional(p)
+        p.add_argument("--observable", default="E", metavar="NAME",
+                       help="Observable to compute per cell (default: 'E'). "
+                            "VQE supports any registered observable; IQPE supports only 'E' "
+                            "and energy-based composites.")
+
     _add_dmrg_args(dmrg_parser)
     _add_compare_args(compare_parser)
 
@@ -413,6 +570,12 @@ def main(argv=None):
         _add_model_params(target, model)
 
     args = parser.parse_args(argv)
+
+    try:
+        _validate_range("x-range", getattr(args, "x_range", None))
+        _validate_range("y-range", getattr(args, "y_range", None))
+    except ValueError as e:
+        parser.error(str(e))
 
     if args.command == "list":
         if args.target == "models":
@@ -448,6 +611,23 @@ def main(argv=None):
             kwargs["hide_legend"] = args.hide_legend
         result.plot(**kwargs)
         return
+
+    if getattr(args, "qubit_operator", None) is not None:
+        if args.model:
+            parser.error("--model and --qubit-operator are mutually exclusive.")
+        try:
+            if args.subcommand == "analytic":
+                _dispatch_analytic_operator(args)
+            elif args.subcommand == "simulated-ideal":
+                _dispatch_simulated_operator(run_simulated_ideal, args)
+            elif args.subcommand == "simulated-noisy":
+                _dispatch_simulated_operator(run_simulated_noisy, args)
+        except (ValueError, FileNotFoundError, KeyError) as e:
+            parser.error(str(e))
+        return
+
+    if not args.model:
+        parser.error("one of --model or --qubit-operator is required")
 
     try:
         model = get_model(args.model)

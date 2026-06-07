@@ -12,6 +12,7 @@ from quaph._yaml_model import (
     _QISKIT_ANSATZES,
     _QISKIT_MAPPERS,
     _QISKIT_OPTIMIZERS,
+    _INITIAL_STATES,
     YamlModelSpec,
     _make_evaluator,
 )
@@ -39,6 +40,18 @@ Commands:
   run analytic --model NAME --lattice L [L ...] [...]
   run simulated-ideal --model NAME --lattice L [L ...] [...]
   run simulated-noisy --model NAME --lattice L [L ...] [...]
+    OR
+  run analytic --qubit-operator SOURCE [--extremum min|max] [--x-param T --x-range MIN MAX [STEP]]
+  run simulated-ideal --qubit-operator SOURCE [...]
+  run simulated-noisy --qubit-operator SOURCE [...]
+                       Sweep a HamLib HDF5 file's Hamiltonians instead of a
+                       registered model. SOURCE is a local .h5/.hdf5 file, a local
+                       .zip archive containing one, or an http(s) URL to either
+                       (e.g. a HamLib library .zip link). Choose sweep axes with
+                       --x-param/--y-param naming key tokens (e.g. --x-param h
+                       --y-param Lx); a range may omit STEP to use every available
+                       value. Narrow multi-family sources with --select 1D,grid,pbc.
+                       With no axes it sweeps all keys by instance index.
   plot PATH
   register             Walk through registering a new custom model (writes YAML)
   register --from PATH Register a model from a YAML file
@@ -358,6 +371,36 @@ def _prompt_ansatz_block() -> dict | None:
     return {"type": otype, "kwargs": kwargs, "initial_state_prefix": prefix}
 
 
+def _prompt_iqpe_initial_state_block() -> dict | None:
+    if not _prompt_yn(
+        "\nConfigure an IQPE initial state? (otherwise hartree_fock for fermionic, "
+        "uniform superposition for operator path)",
+        default=False,
+    ):
+        return None
+    kind = _prompt_choice("  initial state type:", list(_INITIAL_STATES))
+    d: dict = {"type": kind}
+    if kind == "vqe_informed":
+        print("  Configure the VQE run used to prepare the initial state.")
+        ansatz_type = _prompt_choice("    ansatz:", list(_QISKIT_ANSATZES))
+        kwargs = _prompt_kwargs(
+            "initial-vqe ansatz",
+            runtime_args=("n_qubits", "n_layers", "n_occ", "spin", "n_sites"),
+        )
+        prefix = _prompt_choice(
+            "    initial_state_prefix (X gates on first n_occ qubits before ansatz body):",
+            ["hartree_fock", "none"],
+        )
+        d["vqe_ansatz"] = {"type": ansatz_type, "kwargs": kwargs, "initial_state_prefix": prefix}
+        raw_layers = _prompt("    vqe_n_layers [1]: ").strip()
+        if raw_layers:
+            d["vqe_n_layers"] = int(raw_layers)
+        raw_iters = _prompt("    vqe_max_iters [100]: ").strip()
+        if raw_iters:
+            d["vqe_max_iters"] = int(raw_iters)
+    return d
+
+
 def _prompt_choice(prompt: str, options: list[str]) -> str:
     while True:
         print(prompt)
@@ -495,17 +538,9 @@ def _register_walkthrough() -> None:
         else:
             print(f"  unknown term kind '{kind}'; choose 'onsite' or 'hopping'.")
 
-    interaction: list[dict] = []
     if spin == 2 and _prompt_yn("\nAdd a Hubbard-style on-site density-density interaction?"):
         coef = _prompt_expression(f"  coefficient (expression in {sorted(allowed_coef_names)}): ", allowed_coef_names)
-        interaction.append({"kind": "density_density_onsite", "coefficient": coef})
-
-    mean_field_correction: str | None = None
-    if _prompt_yn("\nProvide a mean-field correction expression?"):
-        mf_names = allowed_coef_names | {"n_sites", "n_occ"}
-        mean_field_correction = _prompt_expression(
-            f"  expression in {sorted(mf_names)}: ", mf_names
-        )
+        terms.append({"kind": "density_density", "on": "*", "coefficient": coef})
 
     optimizer = _prompt_factory_block(
         prompt="\nConfigure a classical optimizer? (otherwise SPSA with @max_iters is used at runtime)",
@@ -525,6 +560,8 @@ def _register_walkthrough() -> None:
 
     ansatz = _prompt_ansatz_block()
 
+    iqpe_initial_state = _prompt_iqpe_initial_state_block()
+
     observables = _prompt_observables_block(allowed_coef_names, n_dims)
 
     spec_data: dict = {
@@ -538,16 +575,14 @@ def _register_walkthrough() -> None:
         "parameters": parameters,
         "terms": terms,
     }
-    if interaction:
-        spec_data["interaction"] = interaction
-    if mean_field_correction is not None:
-        spec_data["mean_field_correction"] = mean_field_correction
     if optimizer is not None:
         spec_data["optimizer"] = optimizer
     if mapper is not None:
         spec_data["mapper"] = mapper
     if ansatz is not None:
         spec_data["ansatz"] = ansatz
+    if iqpe_initial_state is not None:
+        spec_data["iqpe_initial_state"] = iqpe_initial_state
     if observables is not None:
         spec_data["observables"] = observables
 

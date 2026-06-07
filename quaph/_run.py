@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
 from datetime import datetime
 from dataclasses import dataclass, field
 
@@ -12,10 +13,14 @@ from joblib import Parallel, delayed
 from quaph._model import Model, ModelCapabilityError
 from quaph._core import (
     resolve_sweep,
-    analytic, vqe, iqpe,
+    analytic, vqe_fermionic, iqpe_fermionic, vqe_observable, iqpe_observable,
     vqe_other_benchmarks, iqpe_other_benchmarks,
     analytic_bands, vqe_bloch, iqpe_bloch,
     vqe_bloch_other_benchmarks, iqpe_bloch_other_benchmarks,
+    analytic_operator, vqe_operator, iqpe_operator,
+)
+from quaph._hamlib import (
+    list_hamlib_keys, load_hamlib_operator, parse_key_params,
 )
 from quaph._plotting import plot_analytic, plot_simulated
 from quaph._registry import get_model as _get_model
@@ -89,6 +94,28 @@ def _label_for(model, param: str) -> str:
     return f"${model.param_labels.get(param, param)}$"
 
 
+def _opt_lattice(lat):
+    return tuple(lat) if lat else None
+
+def _observable_label(model, observable: str) -> str:
+    obs = model.get_observable(observable)
+    return f"${obs.display_name}$"
+
+def _result_labels(model_name, x_param, y_param):
+    from quaph._registry import get_model
+    try:
+        model = get_model(model_name)
+    except Exception:
+        x_label = "Instance" if x_param == "instance" else f"${x_param}$"
+        y_label = f"${y_param}$" if y_param else "$E$"
+        return x_label, y_label, False, False
+    x_label = _label_for(model, x_param)
+    y_label = _label_for(model, y_param) if y_param else "$E$"
+    x_is_momentum = x_param in model.momentum_axes
+    y_is_momentum = bool(y_param) and y_param in model.momentum_axes
+    return x_label, y_label, x_is_momentum, y_is_momentum
+
+
 def _observable_label(model, observable: str) -> str:
     obs = model.get_observable(observable)
     return f"${obs.display_name}$"
@@ -133,12 +160,9 @@ class AnalyticResult:
     _model_params: dict = field(default_factory=dict, repr=False)
 
     def plot(self, *, hide_plot: bool = False, output_path=None):
-        from quaph._registry import get_model
-        model = get_model(self.model_name)
-        x_label = _label_for(model, self.x_param)
-        y_label = _label_for(model, self.y_param) if self.y_param else "$E$"
-        x_is_momentum = self.x_param in model.momentum_axes
-        y_is_momentum = bool(self.y_param) and self.y_param in model.momentum_axes
+        x_label, y_label, x_is_momentum, y_is_momentum = _result_labels(
+            self.model_name, self.x_param, self.y_param
+        )
         return plot_analytic(
             self.x_values, self.y_values, x_label, y_label, self.energies,
             plot_format=self.plot_format,
@@ -169,12 +193,9 @@ class SimulatedResult:
 
     def plot(self, *, hide_plot: bool = False, output_path=None,
              hide_legend: bool = False):
-        from quaph._registry import get_model
-        model = get_model(self.model_name)
-        x_label = _label_for(model, self.x_param)
-        y_label = _label_for(model, self.y_param) if self.y_param else "$E$"
-        x_is_momentum = self.x_param in model.momentum_axes
-        y_is_momentum = bool(self.y_param) and self.y_param in model.momentum_axes
+        x_label, y_label, x_is_momentum, y_is_momentum = _result_labels(
+            self.model_name, self.x_param, self.y_param
+        )
         Z_exact = self.analytic_bands if self.band_structure else self.analytic_energies
         return plot_simulated(
             self.x_values, self.y_values, x_label, y_label,
@@ -208,7 +229,7 @@ def load_result(path: str) -> AnalyticResult | SimulatedResult:
         energies = _read_grid(data["result"]["analytic"])
         return AnalyticResult(
             model_name=data["parameters"]["model"],
-            lattice=tuple(data["parameters"]["lattice"]),
+            lattice=_opt_lattice(data["parameters"].get("lattice")),
             x_param=data["x_param"],
             y_param=data.get("y_param"),
             x_values=x_vals,
@@ -231,7 +252,7 @@ def load_result(path: str) -> AnalyticResult | SimulatedResult:
         Z_iqpe = _read_grid(data["result"]["iqpe"]) if "iqpe" in data["result"] else None
         return SimulatedResult(
             model_name=data["parameters"]["model"],
-            lattice=tuple(data["parameters"]["lattice"]),
+            lattice=_opt_lattice(data["parameters"].get("lattice")),
             x_param=data["x_param"],
             y_param=data.get("y_param"),
             x_values=x_vals,
@@ -253,8 +274,181 @@ def load_result(path: str) -> AnalyticResult | SimulatedResult:
         )
 
 
+def _operator_axis_values(parsed, param, rng):
+    tol = 1e-9
+    available = sorted({d[param] for d in parsed if param in d})
+    if not available:
+        raise ValueError(f"No Hamiltonian keys contain a numeric '{param}' token.")
+    if rng is None:
+        return available
+    lo, hi = rng[0], rng[1]
+    step = rng[2] if len(rng) > 2 else None
+    vals = [v for v in available if lo - tol <= v <= hi + tol]
+    if step is not None and step > 0:
+        grid = []
+        g = lo
+        while g <= hi + tol:
+            grid.append(g)
+            g += step
+        snap = max(tol, abs(step) * 1e-6)
+        vals = [v for v in vals if any(abs(v - gp) <= snap for gp in grid)]
+    if not vals:
+        raise ValueError(
+            f"No '{param}' token values fall within the requested range for the selected keys "
+            f"(available: {available})."
+        )
+    return vals
+
+
+def _select_unique_key(keys, parsed, constraints, cell_label):
+    tol = 1e-9
+    cand = [
+        k for k, d in zip(keys, parsed)
+        if all(p in d and abs(d[p] - v) <= tol for p, v in constraints)
+    ]
+    if len(cand) > 1:
+        sample = ", ".join(cand[:4]) + (", ..." if len(cand) > 4 else "")
+        raise ValueError(
+            f"{len(cand)} keys match {cell_label}; the sweep axes don't identify a unique "
+            f"Hamiltonian. Narrow the source to one family with --select (e.g. --select 1D,grid,pbc) "
+            f"or add the other varying token as a second sweep axis. Matches: {sample}"
+        )
+    return cand[0] if cand else None
+
+
+def _filter_keys(keys, select):
+    terms = [t.strip() for chunk in (select or []) for t in chunk.split(",") if t.strip()]
+    if not terms:
+        return keys
+    patterns = [re.compile(rf"(?:^|[-_]){re.escape(t)}(?=$|[-_])") for t in terms]
+    filtered = [k for k in keys if all(p.search(k) for p in patterns)]
+    if not filtered:
+        raise ValueError(
+            f"No Hamiltonian keys match all --select terms {terms}. Terms match whole "
+            f"'-'/'_'-delimited segments (e.g. 1D, grid, pbc, or a token like Ly-105)."
+        )
+    return filtered
+
+
+def _resolve_operator_axes(keys, x_param, x_range, y_param, y_range):
+    if x_param is None and y_param is not None:
+        x_param, x_range, y_param, y_range = y_param, y_range, None, None
+
+    if x_param is None:
+        x_vals = list(range(len(keys)))
+        return "instance", x_vals, "Instance", None, [], None, list(keys), True
+
+    parsed = [parse_key_params(k) for k in keys]
+    x_vals = _operator_axis_values(parsed, x_param, x_range)
+    x_label = f"${x_param}$"
+
+    if y_param is None:
+        grid = [
+            _select_unique_key(keys, parsed, [(x_param, xv)], f"{x_param}={xv}")
+            for xv in x_vals
+        ]
+        return x_param, x_vals, x_label, None, [], None, grid, True
+
+    y_vals = _operator_axis_values(parsed, y_param, y_range)
+    grid = [
+        [
+            _select_unique_key(
+                keys, parsed, [(x_param, xv), (y_param, yv)],
+                f"{x_param}={xv}, {y_param}={yv}",
+            )
+            for yv in y_vals
+        ]
+        for xv in x_vals
+    ]
+    return x_param, x_vals, x_label, y_param, y_vals, f"${y_param}$", grid, False
+
+
+def _run_analytic_operator(qubit_operator, *, extremum, select,
+                           x_param, x_range, y_param, y_range, heatmap,
+                           log_dir, plot_dir, hide_plot):
+    if extremum not in ("min", "max"):
+        raise ValueError(f"extremum must be 'min' or 'max'; got {extremum!r}.")
+    path = qubit_operator
+    keys = list_hamlib_keys(path)
+    if not keys:
+        raise ValueError(f"No Hamiltonian datasets found in '{path}'.")
+    keys = _filter_keys(keys, select)
+
+    (x_param, x_vals, x_label, y_param, y_vals, y_label, key_grid,
+     is_1d) = _resolve_operator_axes(keys, x_param, x_range, y_param, y_range)
+    if heatmap and is_1d:
+        raise ValueError("heatmap requires both x and y sweep axes; provide --y-param/--y-range.")
+
+    def _eval(key, label):
+        if key is None:
+            return np.nan
+        return analytic_operator(load_hamlib_operator(path, key), extremum, label=label)
+
+    if is_1d:
+        Z = np.full((len(x_vals),), np.nan)
+        for ix, key in enumerate(key_grid):
+            Z[ix] = _eval(key, f"{x_param}={x_vals[ix]}")
+        analytic_block = {ix: float(Z[ix]) for ix in range(len(x_vals))}
+        plot_format = "2d"
+    else:
+        Z = np.full((len(x_vals), len(y_vals)), np.nan)
+        for ix in range(len(x_vals)):
+            for iy in range(len(y_vals)):
+                Z[ix, iy] = _eval(key_grid[ix][iy], f"{x_param}={x_vals[ix]}, {y_param}={y_vals[iy]}")
+        analytic_block = {ix: {iy: float(Z[ix, iy]) for iy in range(len(y_vals))}
+                          for ix in range(len(x_vals))}
+        plot_format = "heatmap" if heatmap else "3d"
+
+    model_name = os.path.splitext(os.path.basename(path))[0]
+    tag = _file_tag("analytic", plot_format, x_param, y_param)
+
+    log_path = None
+    if log_dir is not None:
+        os.makedirs(log_dir, exist_ok=True)
+        log_path = os.path.join(log_dir, f"{tag}.json")
+        log_data = {
+            "type": "analytic",
+            "plot_format": plot_format,
+            "band_structure": False,
+            "observable": "E",
+            "parameters": {
+                "model": model_name,
+                "lattice": None,
+                "qubit_operator": path,
+                "keys": key_grid,
+                "extremum": extremum,
+                "model_params": {},
+            },
+            "x_param": x_param,
+            "y_param": y_param,
+            "x_values": x_vals,
+            "y_values": y_vals,
+            "result": {"analytic": analytic_block},
+        }
+        with open(log_path, "w") as f:
+            json.dump(log_data, f, indent=4)
+
+    plot_path = None
+    if plot_dir is not None:
+        os.makedirs(plot_dir, exist_ok=True)
+        plot_path = os.path.join(plot_dir, f"{tag}.pdf")
+
+    if plot_path is not None or not hide_plot:
+        plot_analytic(
+            x_vals, y_vals, x_label, y_label or "$E$", Z,
+            plot_format=plot_format, output_path=plot_path, hide_plot=hide_plot,
+            x_is_momentum=False, y_is_momentum=False, z_label="$E$",
+        )
+
+    return AnalyticResult(
+        model_name=model_name, lattice=None, x_param=x_param, y_param=y_param,
+        x_values=x_vals, y_values=y_vals, energies=Z, plot_format=plot_format,
+        band_structure=False, log_path=log_path, plot_path=plot_path, _model_params={},
+    )
+
+
 def run_analytic(
-    model,
+    model=None,
     *,
     lattice=None,
     x_param: str | None = None,
@@ -264,11 +458,20 @@ def run_analytic(
     n_occ: int | None = None,
     model_params: dict | None = None,
     observable: str = "E",
+    qubit_operator: str | None = None,
+    extremum: str = "min",
+    select=None,
     log_dir=None,
     plot_dir=None,
     hide_plot: bool = False,
     heatmap: bool = False,
 ) -> AnalyticResult:
+    if qubit_operator is not None:
+        return _run_analytic_operator(
+            qubit_operator, extremum=extremum, select=select,
+            x_param=x_param, x_range=x_range, y_param=y_param, y_range=y_range,
+            heatmap=heatmap, log_dir=log_dir, plot_dir=plot_dir, hide_plot=hide_plot,
+        )
     model = _resolve_model(model)
     _ = model._build_H_matrix
     _ = model.get_observable(observable)
@@ -471,9 +674,24 @@ def _run_simulated(
     prepare_only: bool = False,
     aggregate_only: bool = False,
     no_progress_log: bool = False,
+    observable: str = "E",
 ) -> SimulatedResult:
     do_vqe = vqe_reps > 0
     do_iqpe = iqpe_reps > 0
+
+    obs = model.get_observable(observable)
+    iqpe_supports_observable = (
+        observable == "E"
+        or (obs.quantum_composite is not None and observable == "charge_gap")
+    )
+    if do_iqpe and not iqpe_supports_observable:
+        from loguru import logger as _logger
+        _logger.warning(
+            f"IQPE cannot measure observable '{observable}' directly; "
+            f"only the analytic and VQE backends will be computed."
+        )
+        do_iqpe = False
+        iqpe_reps = 0
 
     spin = model.spin
     if lattice is not None:
@@ -573,16 +791,24 @@ def _run_simulated(
                 continue
 
             jobs.append(delayed(tagged_job)(
-                ("analytic", ix, iy), analytic, model, lattice, n_occ_val, cp
+                ("analytic", ix, iy), analytic, model, lattice, n_occ_val, cp, observable
             ))
             if do_iqpe:
                 for rep in range(1, iqpe_reps + 1):
-                    jobs.append(delayed(tagged_job)(
-                        ("iqpe", ix, iy, rep), iqpe,
-                        lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
-                        mapper, iqpe_time, iqpe_trot, iqpe_iters, rep,
-                        backend=backend
-                    ))
+                    if observable == "E":
+                        jobs.append(delayed(tagged_job)(
+                            ("iqpe", ix, iy, rep), iqpe_fermionic,
+                            lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
+                            mapper, iqpe_time, iqpe_trot, iqpe_iters, rep,
+                            backend=backend, get_initial_state_fn=model.get_iqpe_initial_state,
+                        ))
+                    else:
+                        jobs.append(delayed(tagged_job)(
+                            ("iqpe", ix, iy, rep), iqpe_observable,
+                            model, lattice, n_sites, spin, n_occ_val, cp,
+                            mapper, iqpe_time, iqpe_trot, iqpe_iters, rep, observable,
+                            backend=backend, get_initial_state_fn=model.get_iqpe_initial_state,
+                        ))
                 jobs.append(delayed(tagged_job)(
                     ("iqpe_bench", ix, iy), iqpe_other_benchmarks,
                     lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
@@ -591,13 +817,21 @@ def _run_simulated(
                 ))
             if do_vqe:
                 for rep in range(1, vqe_reps + 1):
-                    jobs.append(delayed(tagged_job)(
-                        ("vqe", ix, iy, rep), vqe,
-                        lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
-                        model.get_vqe_ansatz,
-                        mapper, vqe_iters, vqe_layers, rep,
-                        backend=backend
-                    ))
+                    if observable == "E":
+                        jobs.append(delayed(tagged_job)(
+                            ("vqe", ix, iy, rep), vqe_fermionic,
+                            lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
+                            model.get_vqe_ansatz,
+                            mapper, vqe_iters, vqe_layers, rep,
+                            backend=backend
+                        ))
+                    else:
+                        jobs.append(delayed(tagged_job)(
+                            ("vqe", ix, iy, rep), vqe_observable,
+                            model, lattice, n_sites, spin, n_occ_val, cp,
+                            mapper, vqe_iters, vqe_layers, rep, observable,
+                            backend=backend
+                        ))
                 jobs.append(delayed(tagged_job)(
                     ("vqe_bench", ix, iy), vqe_other_benchmarks,
                     lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
@@ -606,7 +840,7 @@ def _run_simulated(
                     backend=backend
                 ))
 
-    raw_tag = _file_tag(f"simulated-{simulation_tag}", plot_format, x_param, y_param)
+    raw_tag = _file_tag(f"simulated-{simulation_tag}", plot_format, x_param, y_param, observable=observable)
     if task_count < 1:
         raise ValueError("task_count must be at least 1")
     if task_index is not None and not 0 <= task_index < task_count:
@@ -1003,8 +1237,191 @@ def _prep_simulated_kwargs(model, lattice, x_param, x_range, y_param, y_range, n
     return model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params, vqe_reps, iqpe_reps
 
 
+def _run_simulated_operator(qubit_operator, simulation_tag, backend, *, extremum, select,
+                            x_param, x_range, y_param, y_range,
+                            ansatz, optimizer, iqpe_initial_state,
+                            vqe_iters, vqe_layers, vqe_reps,
+                            iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps,
+                            log_dir, plot_dir, hide_plot, hide_legend):
+    from loguru import logger
+    from quaph._yaml_model import (
+        AnsatzSpec, OptimizerSpec, InitialStateSpec,
+        build_ansatz_factory, build_optimizer_factory, build_initial_state_factory,
+    )
+
+    if extremum not in ("min", "max"):
+        raise ValueError(f"extremum must be 'min' or 'max'; got {extremum!r}.")
+
+    do_vqe = vqe_reps > 0
+    do_iqpe = iqpe_reps > 0
+
+    path = qubit_operator
+    keys = list_hamlib_keys(path)
+    if not keys:
+        raise ValueError(f"No Hamiltonian datasets found in '{path}'.")
+    keys = _filter_keys(keys, select)
+
+    (x_param, x_vals, x_label, y_param, y_vals, y_label, key_grid,
+     is_1d) = _resolve_operator_axes(keys, x_param, x_range, y_param, y_range)
+    nx = len(x_vals)
+    ny = 1 if is_1d else len(y_vals)
+    model_name = os.path.splitext(os.path.basename(path))[0]
+
+    def cell_key(ix, iy):
+        return key_grid[ix] if is_1d else key_grid[ix][iy]
+
+    def cell_label(ix, iy):
+        if is_1d:
+            return f"{x_param}={x_vals[ix]}"
+        return f"{x_param}={x_vals[ix]}, {y_param}={y_vals[iy]}"
+
+    if do_vqe:
+        ansatz_spec = AnsatzSpec.model_validate(ansatz) if ansatz else AnsatzSpec(
+            type="efficient_su2", kwargs={"reps": "@n_layers"}, initial_state_prefix="none",
+        )
+        get_vqe_ansatz = build_ansatz_factory(ansatz_spec, name="operator")
+        optimizer_spec = OptimizerSpec.model_validate(optimizer) if optimizer else OptimizerSpec(
+            type="SPSA", kwargs={"maxiter": "@max_iters"},
+        )
+        get_optimizer = build_optimizer_factory(optimizer_spec, name="operator")
+
+    if do_iqpe:
+        iqpe_init_spec = InitialStateSpec.model_validate(iqpe_initial_state) if iqpe_initial_state else InitialStateSpec(type="uniform")
+        get_iqpe_initial_state = build_initial_state_factory(iqpe_init_spec, name="operator")
+
+    def tagged_job(tag, func, *a, **kw):
+        return tag, func(*a, **kw)
+
+    grid = {(ix, iy): {"analytic": None, "vqe": [], "iqpe": [], "iqpe_iters": []}
+            for ix in range(nx) for iy in range(ny)}
+
+    jobs = []
+    for ix in range(nx):
+        for iy in range(ny):
+            key = cell_key(ix, iy)
+            if key is None:
+                continue
+            op = load_hamlib_operator(path, key)
+            lbl = cell_label(ix, iy)
+            jobs.append(delayed(tagged_job)(("analytic", ix, iy), analytic_operator, op, extremum, lbl))
+            if do_iqpe:
+                for rep in range(1, iqpe_reps + 1):
+                    jobs.append(delayed(tagged_job)(
+                        ("iqpe", ix, iy, rep), iqpe_operator,
+                        op, iqpe_time, iqpe_trot, iqpe_iters, rep, extremum, backend, lbl,
+                        get_iqpe_initial_state,
+                    ))
+            if do_vqe:
+                for rep in range(1, vqe_reps + 1):
+                    jobs.append(delayed(tagged_job)(
+                        ("vqe", ix, iy, rep), vqe_operator,
+                        op, get_vqe_ansatz, get_optimizer, vqe_iters, vqe_layers, rep, extremum, backend, lbl,
+                    ))
+
+    def init_worker_logging():
+        from quaph._core import setup_logging as _sl
+        _sl()
+
+    for tag, result in Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(jobs):
+        cell = (tag[1], tag[2])
+        if tag[0] == "analytic":
+            grid[cell]["analytic"] = result
+        elif tag[0] == "vqe":
+            grid[cell]["vqe"].append(result)
+        elif tag[0] == "iqpe":
+            energy, iter_energies = result
+            grid[cell]["iqpe"].append(energy)
+            grid[cell]["iqpe_iters"].append(iter_energies)
+
+    shape = (nx,) if is_1d else (nx, ny)
+    Z_exact = np.full(shape, np.nan)
+    Z_vqe = np.full(shape, np.nan) if do_vqe else None
+    Z_iqpe = np.full(shape, np.nan) if do_iqpe else None
+    for ix in range(nx):
+        for iy in range(ny):
+            cell = grid[(ix, iy)]
+            idx = ix if is_1d else (ix, iy)
+            exact = cell["analytic"]
+            if exact is None:
+                continue
+            Z_exact[idx] = exact
+            loc = cell_label(ix, iy)
+            if do_iqpe and cell["iqpe"]:
+                Z_iqpe[idx] = min(cell["iqpe"], key=lambda e: abs(e - exact))
+                logger.info(f"IQPE ({loc}) = {Z_iqpe[idx]}")
+            if do_vqe and cell["vqe"]:
+                Z_vqe[idx] = min(cell["vqe"], key=lambda e: abs(e - exact))
+                logger.info(f"VQE  ({loc}) = {Z_vqe[idx]}")
+
+    plot_format = "2d" if is_1d else "3d"
+    parameters = {
+        "model": model_name,
+        "lattice": None,
+        "qubit_operator": path,
+        "keys": key_grid,
+        "extremum": extremum,
+        "simulation": simulation_tag,
+        "model_params": {},
+    }
+    if do_vqe:
+        parameters["vqe"] = {"iters": vqe_iters, "layers": vqe_layers, "reps": vqe_reps}
+    if do_iqpe:
+        parameters["iqpe"] = {"time": iqpe_time, "trot": iqpe_trot, "iters": iqpe_iters, "reps": iqpe_reps}
+
+    def _block(Z):
+        if is_1d:
+            return {ix: float(Z[ix]) for ix in range(nx)}
+        return {ix: {iy: float(Z[ix, iy]) for iy in range(ny)} for ix in range(nx)}
+
+    result_block = {"analytic": _block(Z_exact)}
+    if do_iqpe:
+        result_block["iqpe"] = _block(Z_iqpe)
+    if do_vqe:
+        result_block["vqe"] = _block(Z_vqe)
+
+    summary = {
+        "type": f"simulated-{simulation_tag}",
+        "plot_format": plot_format,
+        "band_structure": False,
+        "parameters": parameters,
+        "x_param": x_param, "y_param": y_param,
+        "x_values": x_vals, "y_values": y_vals,
+        "result": result_block,
+    }
+
+    tag = _file_tag(f"simulated-{simulation_tag}", plot_format, x_param, y_param)
+    summary_path = None
+    if log_dir is not None:
+        os.makedirs(log_dir, exist_ok=True)
+        summary_path = os.path.join(log_dir, f"{tag}.json")
+        with open(summary_path, "w") as f:
+            json.dump(summary, f, indent=4)
+
+    plot_path = None
+    if plot_dir is not None:
+        os.makedirs(plot_dir, exist_ok=True)
+        plot_path = os.path.join(plot_dir, f"{tag}.pdf")
+
+    if plot_path is not None or not hide_plot:
+        plot_simulated(
+            x_vals, y_vals, x_label, y_label or "$E$", Z_exact, Z_vqe, Z_iqpe,
+            plot_format=plot_format, hide_legend=hide_legend,
+            output_path=plot_path, hide_plot=hide_plot,
+            x_is_momentum=False, y_is_momentum=False,
+        )
+
+    return SimulatedResult(
+        model_name=model_name, lattice=None, x_param=x_param, y_param=y_param,
+        x_values=x_vals, y_values=y_vals, analytic_energies=Z_exact,
+        vqe_best_energies=Z_vqe, iqpe_best_energies=Z_iqpe,
+        plot_format=plot_format, band_structure=False, analytic_bands=None,
+        raw=summary, raw_log_path=None, summary_log_path=summary_path,
+        plot_path=plot_path, _model_params={},
+    )
+
+
 def run_simulated_ideal(
-    model,
+    model=None,
     *,
     lattice=None,
     x_param: str | None = None,
@@ -1020,6 +1437,12 @@ def run_simulated_ideal(
     iqpe_trot: int | None = None,
     iqpe_iters: int | None = None,
     iqpe_reps: int | None = None,
+    qubit_operator: str | None = None,
+    extremum: str = "min",
+    select=None,
+    ansatz: dict | None = None,
+    optimizer: dict | None = None,
+    iqpe_initial_state: dict | None = None,
     log_dir=None,
     plot_dir=None,
     hide_plot: bool = False,
@@ -1029,7 +1452,21 @@ def run_simulated_ideal(
     prepare_only: bool = False,
     aggregate_only: bool = False,
     no_progress_log: bool = False,
+    observable: str = "E",
 ) -> SimulatedResult:
+    if qubit_operator is not None:
+        vqe_reps = _resolve_method_reps("vqe", vqe_reps, vqe_iters, vqe_layers)
+        iqpe_reps = _resolve_method_reps("iqpe", iqpe_reps, iqpe_time, iqpe_trot, iqpe_iters)
+        return _run_simulated_operator(
+            qubit_operator, "ideal", None,
+            extremum=extremum, select=select,
+            x_param=x_param, x_range=x_range, y_param=y_param, y_range=y_range,
+            ansatz=ansatz, optimizer=optimizer, iqpe_initial_state=iqpe_initial_state,
+            vqe_iters=vqe_iters, vqe_layers=vqe_layers, vqe_reps=vqe_reps,
+            iqpe_time=iqpe_time, iqpe_trot=iqpe_trot, iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
+            log_dir=log_dir, plot_dir=plot_dir, hide_plot=hide_plot, hide_legend=hide_legend,
+        )
+
     (model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
      vqe_reps, iqpe_reps) = _prep_simulated_kwargs(
         model, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
@@ -1049,11 +1486,12 @@ def run_simulated_ideal(
         task_index=task_index, task_count=task_count,
         prepare_only=prepare_only, aggregate_only=aggregate_only,
         no_progress_log=no_progress_log,
+        observable=observable,
     )
 
 
 def run_simulated_noisy(
-    model,
+    model=None,
     *,
     backend=None,
     lattice=None,
@@ -1070,6 +1508,12 @@ def run_simulated_noisy(
     iqpe_trot: int | None = None,
     iqpe_iters: int | None = None,
     iqpe_reps: int | None = None,
+    qubit_operator: str | None = None,
+    extremum: str = "min",
+    select=None,
+    ansatz: dict | None = None,
+    optimizer: dict | None = None,
+    iqpe_initial_state: dict | None = None,
     log_dir=None,
     plot_dir=None,
     hide_plot: bool = False,
@@ -1079,10 +1523,24 @@ def run_simulated_noisy(
     prepare_only: bool = False,
     aggregate_only: bool = False,
     no_progress_log: bool = False,
+    observable: str = "E",
 ) -> SimulatedResult:
     if backend is None:
         from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
         backend = FakeSherbrooke()
+
+    if qubit_operator is not None:
+        vqe_reps = _resolve_method_reps("vqe", vqe_reps, vqe_iters, vqe_layers)
+        iqpe_reps = _resolve_method_reps("iqpe", iqpe_reps, iqpe_time, iqpe_trot, iqpe_iters)
+        return _run_simulated_operator(
+            qubit_operator, "noisy", backend,
+            extremum=extremum, select=select,
+            x_param=x_param, x_range=x_range, y_param=y_param, y_range=y_range,
+            ansatz=ansatz, optimizer=optimizer, iqpe_initial_state=iqpe_initial_state,
+            vqe_iters=vqe_iters, vqe_layers=vqe_layers, vqe_reps=vqe_reps,
+            iqpe_time=iqpe_time, iqpe_trot=iqpe_trot, iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
+            log_dir=log_dir, plot_dir=plot_dir, hide_plot=hide_plot, hide_legend=hide_legend,
+        )
 
     (model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
      vqe_reps, iqpe_reps) = _prep_simulated_kwargs(
@@ -1103,4 +1561,5 @@ def run_simulated_noisy(
         task_index=task_index, task_count=task_count,
         prepare_only=prepare_only, aggregate_only=aggregate_only,
         no_progress_log=no_progress_log,
+        observable=observable,
     )

@@ -4,22 +4,23 @@ import quaph
 from quaph._compare import run_compare
 from quaph._dmrg import run_dmrg_itensor
 
-"""
- Note from Maggie to Adam: I specified this example phase diagram with the same parameters as the one I simulated on perlmutter, 
- except I removed the parallelism features. So, the current dmrg data in examples/logs and examples/plots didn't come from running 
- run_dmrg.py on local machine, but from a previoous perlmutter job with my slurm scripts below. 
+# Note from Maggie to Adam: I specified this example phase diagram with the same
+# parameters as the one I simulated on Perlmutter, except I removed the
+# parallelism features. The current DMRG data in examples/logs and
+# examples/plots did not come from running run_dmrg.py on a local machine, but
+# from a previous Perlmutter job with my SLURM scripts below.
+#
+# The data should be identical because they have the same specifications.
+#
+# Let me know if you want me to run a simpler/smaller one, if you intend to have
+# users be able to run and finish these examples in time on their local machine.
 
- The data should be identical because they have the same specifications.
-
- Let me know if you want me to run a simpler/smaller one, if you indend to have users be able to run and finish these examples in time on
- their local machine.
-"""
 MODEL = "haldane"
 LATTICE = (2, 2)
 X_PARAM = "n_occ"
 Y_PARAM = "t2"
 X_RANGE = None
-Y_RANGE = (0.0, 1.0, 0.1) 
+Y_RANGE = (0.0, 1.0, 0.1)
 MODEL_PARAMS = {"t1": 1.0, "phi": math.pi / 4, "M": 0.0}
 DMRG_NSWEEPS = 4
 DMRG_MAXDIMS = "20,50,100,200"

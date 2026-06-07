@@ -1,0 +1,133 @@
+{
+    "type": "analytic",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "parameters": {
+        "model": "random_max3sat-hams",
+        "lattice": null,
+        "qubit_operator": "/Users/adamgodel/hamlib/binaryoptimization/max3sat/random/random_max3sat-hams.zip",
+        "keys": [
+            [
+                "max3sat_n-4_ratio-2_rinst-00",
+                "max3sat_n-4_ratio-3_rinst-00",
+                "max3sat_n-4_ratio-4_rinst-00",
+                "max3sat_n-4_ratio-5_rinst-00"
+            ],
+            [
+                "max3sat_n-5_ratio-2_rinst-00",
+                "max3sat_n-5_ratio-3_rinst-00",
+                "max3sat_n-5_ratio-4_rinst-00",
+                "max3sat_n-5_ratio-5_rinst-00"
+            ],
+            [
+                "max3sat_n-6_ratio-2_rinst-00",
+                "max3sat_n-6_ratio-3_rinst-00",
+                "max3sat_n-6_ratio-4_rinst-00",
+                "max3sat_n-6_ratio-5_rinst-00"
+            ],
+            [
+                "max3sat_n-7_ratio-2_rinst-00",
+                "max3sat_n-7_ratio-3_rinst-00",
+                "max3sat_n-7_ratio-4_rinst-00",
+                "max3sat_n-7_ratio-5_rinst-00"
+            ],
+            [
+                "max3sat_n-8_ratio-2_rinst-00",
+                "max3sat_n-8_ratio-3_rinst-00",
+                "max3sat_n-8_ratio-4_rinst-00",
+                "max3sat_n-8_ratio-5_rinst-00"
+            ],
+            [
+                "max3sat_n-9_ratio-2_rinst-00",
+                "max3sat_n-9_ratio-3_rinst-00",
+                "max3sat_n-9_ratio-4_rinst-00",
+                "max3sat_n-9_ratio-5_rinst-00"
+            ],
+            [
+                "max3sat_n-10_ratio-2_rinst-00",
+                "max3sat_n-10_ratio-3_rinst-00",
+                "max3sat_n-10_ratio-4_rinst-00",
+                "max3sat_n-10_ratio-5_rinst-00"
+            ],
+            [
+                "max3sat_n-12_ratio-2_rinst-00",
+                "max3sat_n-12_ratio-3_rinst-00",
+                "max3sat_n-12_ratio-4_rinst-00",
+                "max3sat_n-12_ratio-5_rinst-00"
+            ]
+        ],
+        "extremum": "min",
+        "model_params": {}
+    },
+    "x_param": "n",
+    "y_param": "ratio",
+    "x_values": [
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0,
+        12.0
+    ],
+    "y_values": [
+        2.0,
+        3.0,
+        4.0,
+        5.0
+    ],
+    "result": {
+        "analytic": {
+            "0": {
+                "0": 5.0,
+                "1": 7.0,
+                "2": 11.0,
+                "3": 14.0
+            },
+            "1": {
+                "0": 6.0,
+                "1": 11.0,
+                "2": 15.0,
+                "3": 17.0
+            },
+            "2": {
+                "0": 8.0,
+                "1": 13.0,
+                "2": 15.0,
+                "3": 22.0
+            },
+            "3": {
+                "0": 10.0,
+                "1": 14.0,
+                "2": 21.0,
+                "3": 27.0
+            },
+            "4": {
+                "0": 8.0,
+                "1": 15.0,
+                "2": 21.0,
+                "3": 29.0
+            },
+            "5": {
+                "0": 10.0,
+                "1": 19.0,
+                "2": 24.0,
+                "3": 34.0
+            },
+            "6": {
+                "0": 13.0,
+                "1": 20.0,
+                "2": 29.0,
+                "3": 36.0
+            },
+            "7": {
+                "0": 16.0,
+                "1": 25.0,
+                "2": 33.0,
+                "3": 45.0
+            }
+        }
+    }
+}
