@@ -19,8 +19,8 @@ quaph.run(
     y_param=Y_PARAM,
     y_range=(-math.pi, math.pi, STEP),
     model_params=MODEL_PARAMS,
-    log_dir=os.path.join(_HERE, "logs"),
-    plot_dir=os.path.join(_HERE, "plots"),
+    log_path=os.path.join(_HERE, "logs", "haldane", "band-structure-heatmap.json"),
+    plot_path=os.path.join(_HERE, "plots", "haldane", "band-structure-heatmap.pdf"),
     heatmap=True,
 )
 
@@ -32,7 +32,7 @@ quaph.run(
     y_param=Y_PARAM,
     y_range=(-math.pi, math.pi, STEP),
     model_params=MODEL_PARAMS,
-    log_dir=os.path.join(_HERE, "logs"),
-    plot_dir=os.path.join(_HERE, "plots"),
+    log_path=os.path.join(_HERE, "logs", "haldane", "band-structure-3d.json"),
+    plot_path=os.path.join(_HERE, "plots", "haldane", "band-structure-3d.pdf"),
     heatmap=False,
 )

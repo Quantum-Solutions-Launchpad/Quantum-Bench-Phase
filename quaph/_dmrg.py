@@ -58,15 +58,11 @@ def _export_fermionic_op(model: Model, lattice, n_occ: int, model_params: dict, 
 
 
 def _default_julia_script():
-    return Path(__file__).resolve().parent.parent / "scripts" / "julia-dmrg" / "dmrg_itensor_cli.jl"
+    return Path(__file__).resolve().parent / "julia-dmrg" / "dmrg_itensor_cli.jl"
 
 
 def _default_julia_project():
-    return Path(__file__).resolve().parent.parent / "scripts" / "julia-dmrg"
-
-
-def _default_julia_depot():
-    return Path(os.environ.get("QUAPH_JULIA_DEPOT", "/pscratch/sd/m/mbao202/julia_depot"))
+    return Path(__file__).resolve().parent / "julia-dmrg"
 
 
 def _nersc_julia_path():
@@ -121,7 +117,11 @@ def _run_julia_dmrg(
     else:
         cmd = [julia, *julia_args]
     env = os.environ.copy()
-    env.setdefault("JULIA_DEPOT_PATH", str(_default_julia_depot()))
+    # Point Julia at a specific depot only if the user asked for one (e.g. a
+    # shared HPC depot via QUAPH_JULIA_DEPOT); otherwise use Julia's default.
+    depot = os.environ.get("QUAPH_JULIA_DEPOT")
+    if depot:
+        env.setdefault("JULIA_DEPOT_PATH", depot)
     subprocess.run(cmd, check=True, env=env)
 
 

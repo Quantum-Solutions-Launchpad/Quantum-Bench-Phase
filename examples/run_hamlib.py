@@ -20,8 +20,8 @@ quaph.run(
     x_range=(4, 12),
     y_param="h",
     select=["1D", "nonpbc"],
-    log_dir=os.path.join(_HERE, "logs", "tfim"),
-    plot_dir=os.path.join(_HERE, "plots", "tfim"),
+    log_path=os.path.join(_HERE, "logs", "tfim", "Lx-vs-h.json"),
+    plot_path=os.path.join(_HERE, "plots", "tfim", "Lx-vs-h.pdf"),
 )
 
 # Heatmap: same data, alternative view
@@ -33,8 +33,8 @@ quaph.run(
     y_param="h",
     select=["1D", "nonpbc"],
     heatmap=True,
-    log_dir=os.path.join(_HERE, "logs", "tfim"),
-    plot_dir=os.path.join(_HERE, "plots", "tfim"),
+    log_path=os.path.join(_HERE, "logs", "tfim", "Lx-vs-h-heatmap.json"),
+    plot_path=os.path.join(_HERE, "plots", "tfim", "Lx-vs-h-heatmap.pdf"),
 )
 
 # 2D line: energy vs transverse field at fixed Lx=8
@@ -43,6 +43,6 @@ quaph.run(
     qubit_operator=HAMLIB_PATH,
     x_param="h",
     select=["1D", "nonpbc", "Lx-8"],
-    log_dir=os.path.join(_HERE, "logs", "tfim"),
-    plot_dir=os.path.join(_HERE, "plots", "tfim"),
+    log_path=os.path.join(_HERE, "logs", "tfim", "h.json"),
+    plot_path=os.path.join(_HERE, "plots", "tfim", "h.pdf"),
 )

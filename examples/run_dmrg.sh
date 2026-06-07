@@ -2,9 +2,9 @@
 
 # DMRG vs. exact ground-state energy across a Haldane-model phase diagram.
 #
-# DMRG requires a working Julia + ITensorMPS toolchain (see scripts/julia-dmrg/),
-# so this only runs end-to-end where Julia is available. Selecting `analytic`
-# alongside `dmrg` overlays the exact ground-state energy as the reference.
+# DMRG requires a working Julia + ITensorMPS toolchain (bundled under
+# quaph/julia-dmrg/), so this only runs end-to-end where Julia is available.
+# Selecting `analytic` alongside `dmrg` overlays the exact energy as reference.
 
 MODEL="haldane"
 LATTICE=(2 2)
@@ -16,8 +16,8 @@ DMRG_MAXDIMS="20,50,100,200"
 DMRG_CUTOFF="1e-9"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LATTICE_TAG=$(IFS=x; echo "${LATTICE[*]}")
-LOG="$HERE/logs/${MODEL}/${LATTICE_TAG}/run-analytic+dmrg-3d-${X_PARAM}-vs-${Y_PARAM}.json"
+LOG="$HERE/logs/${MODEL}/dmrg-n_occ-vs-t2.json"
+PLOT="$HERE/plots/${MODEL}/dmrg-n_occ-vs-t2.pdf"
 
 PHI=$(python3 -c "import math; print(math.pi/4)")
 
@@ -36,6 +36,6 @@ else
         --dmrg-nsweeps "$DMRG_NSWEEPS" \
         --dmrg-maxdims "$DMRG_MAXDIMS" \
         --dmrg-cutoff "$DMRG_CUTOFF" \
-        --log-dir "$HERE/logs" \
-        --plot-dir "$HERE/plots"
+        --log-path "$LOG" \
+        --plot-path "$PLOT"
 fi

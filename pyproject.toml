@@ -47,3 +47,6 @@ quaph = "quaph._cli:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["quaph*"]
+
+[tool.setuptools.package-data]
+quaph = ["julia-dmrg/*.jl", "julia-dmrg/*.toml", "models/*.yaml", "models/*.yml"]

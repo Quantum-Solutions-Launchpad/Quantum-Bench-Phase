@@ -64,10 +64,10 @@ def _validate_range(name, rng):
 
 
 def _add_output_args(parser):
-    parser.add_argument("--log-dir", default=None, metavar="PATH",
-                        help="Directory for log JSON files (model/<lattice-tag>/ appended)")
-    parser.add_argument("--plot-dir", default=None, metavar="PATH",
-                        help="Directory for plot PDF files (model/<lattice-tag>/ appended)")
+    parser.add_argument("--log-path", default=None, metavar="FILE",
+                        help="JSON file to write the run log to")
+    parser.add_argument("--plot-path", default=None, metavar="FILE",
+                        help="PDF file to write the plot to")
     parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
     parser.add_argument("--hide-legend", action="store_true", default=False)
 
@@ -242,7 +242,7 @@ def _dispatch_run(args):
             qubit_operator=args.qubit_operator, extremum=args.extremum, select=args.select,
             x_param=args.x_param, x_range=args.x_range,
             y_param=args.y_param, y_range=args.y_range,
-            log_dir=args.log_dir, plot_dir=args.plot_dir,
+            log_path=args.log_path, plot_path=args.plot_path,
             hide_plot=args.hide_plot, hide_legend=args.hide_legend, heatmap=args.heatmap,
         )
         return
@@ -257,7 +257,7 @@ def _dispatch_run(args):
         y_param=args.y_param, y_range=args.y_range, n_occ=args.n_occ,
         model_params=_collect_model_params(args, model, args.x_param, args.y_param),
         observable=args.observable,
-        log_dir=args.log_dir, plot_dir=args.plot_dir,
+        log_path=args.log_path, plot_path=args.plot_path,
         hide_plot=args.hide_plot, hide_legend=args.hide_legend, heatmap=args.heatmap,
         task_index=args.task_index, task_count=args.task_count,
         prepare_only=args.prepare_only, aggregate_only=args.aggregate_only,

@@ -16,8 +16,8 @@ quaph run \
     --x-param Lx --x-range 4 12 \
     --y-param h \
     --select 1D nonpbc \
-    --log-dir "$HERE/logs/tfim" \
-    --plot-dir "$HERE/plots/tfim"
+    --log-path "$HERE/logs/tfim/Lx-vs-h.json" \
+    --plot-path "$HERE/plots/tfim/Lx-vs-h.pdf"
 
 # Heatmap: same data, alternative view
 quaph run \
@@ -27,8 +27,8 @@ quaph run \
     --y-param h \
     --select 1D nonpbc \
     --heatmap \
-    --log-dir "$HERE/logs/tfim" \
-    --plot-dir "$HERE/plots/tfim"
+    --log-path "$HERE/logs/tfim/Lx-vs-h-heatmap.json" \
+    --plot-path "$HERE/plots/tfim/Lx-vs-h-heatmap.pdf"
 
 # 2D line: energy vs transverse field at fixed Lx=8
 quaph run \
@@ -36,5 +36,5 @@ quaph run \
     --qubit-operator "$HAMLIB_PATH" \
     --x-param h \
     --select 1D nonpbc Lx-8 \
-    --log-dir "$HERE/logs/tfim" \
-    --plot-dir "$HERE/plots/tfim"
+    --log-path "$HERE/logs/tfim/h.json" \
+    --plot-path "$HERE/plots/tfim/h.pdf"

@@ -63,20 +63,6 @@ def _resolve_lattice(model: Model, lattice) -> tuple[int, ...]:
     return lat
 
 
-def _lattice_tag(lattice) -> str:
-    if lattice is None:
-        return "band-structure"
-    return "x".join(str(x) for x in lattice)
-
-
-def _log_subdir(log_dir, model_name, lattice):
-    return os.path.join(log_dir, model_name, _lattice_tag(lattice))
-
-
-def _plot_subdir(plot_dir, model_name, lattice):
-    return os.path.join(plot_dir, model_name, _lattice_tag(lattice))
-
-
 def _is_band_structure_axes(model, x_param, y_param) -> bool:
     return (x_param in model.momentum_axes) or (y_param in model.momentum_axes)
 
@@ -133,13 +119,10 @@ def _safe_observable_label(model_name, observable: str) -> str:
         return "$E$"
 
 
-def _run_file_tag(methods, plot_format, x_param, y_param, observable, noisy):
-    mstr = "+".join(m.value for m in methods)
-    obs = f"-{observable}" if observable and observable != "E" else ""
-    noise = "-noisy" if noisy else ""
-    if y_param is None:
-        return f"run-{mstr}{obs}{noise}-{plot_format}-{x_param}"
-    return f"run-{mstr}{obs}{noise}-{plot_format}-{x_param}-vs-{y_param}"
+def _derived_paths(log_path):
+    """Sidecar raw + progress journal paths derived from a user's log_path."""
+    base = os.path.splitext(log_path)[0]
+    return f"{base}.raw-data.json", f"{base}.progress.jsonl"
 
 
 def _gate_momentum(model, x_param, y_param):
@@ -366,8 +349,8 @@ def run(
     qubit_operator: str | None = None,
     extremum: str = "min",
     select=None,
-    log_dir=None,
-    plot_dir=None,
+    log_path=None,
+    plot_path=None,
     hide_plot: bool = False,
     hide_legend: bool = False,
     heatmap: bool = False,
@@ -382,6 +365,10 @@ def run(
     ``method`` is a :class:`~quaph.Method` (or list of them). ``method_params`` is
     a dict keyed by method enum/value holding that method's parameters. ``backend``
     selects ideal (``None``) vs. noisy execution for the quantum methods.
+
+    ``log_path`` / ``plot_path`` are the exact JSON / PDF files to write (both the
+    containing directory and the file name are chosen by the caller); parent
+    directories are created as needed. Either may be ``None`` to skip that output.
     """
     methods = _normalize_methods(method)
     method_objs = _build_method_objects(methods, method_params)
@@ -392,7 +379,7 @@ def run(
             qubit_operator, methods, method_objs, backend, backend_label,
             extremum=extremum, select=select,
             x_param=x_param, x_range=x_range, y_param=y_param, y_range=y_range,
-            heatmap=heatmap, log_dir=log_dir, plot_dir=plot_dir,
+            heatmap=heatmap, log_path=log_path, plot_path=plot_path,
             hide_plot=hide_plot, hide_legend=hide_legend,
         )
 
@@ -400,7 +387,7 @@ def run(
         model, methods, method_objs, backend, backend_label,
         lattice=lattice, x_param=x_param, x_range=x_range,
         y_param=y_param, y_range=y_range, n_occ=n_occ, model_params=model_params,
-        observable=observable, log_dir=log_dir, plot_dir=plot_dir,
+        observable=observable, log_path=log_path, plot_path=plot_path,
         hide_plot=hide_plot, hide_legend=hide_legend, heatmap=heatmap,
         task_index=task_index, task_count=task_count,
         prepare_only=prepare_only, aggregate_only=aggregate_only,
@@ -412,7 +399,7 @@ def run(
 def _run_model_methods(
     model, methods, method_objs, backend, backend_label,
     *, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
-    observable, log_dir, plot_dir, hide_plot, hide_legend, heatmap,
+    observable, log_path, plot_path, hide_plot, hide_legend, heatmap,
     task_index, task_count, prepare_only, aggregate_only, no_progress_log,
 ):
     from loguru import logger
@@ -491,8 +478,6 @@ def _run_model_methods(
                 )
 
     plot_format = "2d" if is_1d else ("heatmap" if heatmap else "3d")
-    noisy = backend is not None
-    tag = _run_file_tag(methods, plot_format, x_param, y_param, observable, noisy)
 
     if task_count < 1:
         raise ValueError("task_count must be at least 1")
@@ -501,19 +486,14 @@ def _run_model_methods(
 
     use_parallel = any(method_objs[m].WANTS_PARALLEL for m in methods)
 
-    log_subdir = None
-    raw_dir = None
     raw_data_path = None
     progress_path = None
-    if log_dir is not None:
-        log_subdir = _log_subdir(log_dir, model.name, lattice)
+    if log_path is not None:
+        os.makedirs(os.path.dirname(os.path.abspath(log_path)), exist_ok=True)
         # Raw sidecar + progress journal only matter for expensive parallel runs
         # (benchmarks, resume, sharding); analytic-only runs need just the summary.
         if use_parallel:
-            raw_dir = os.path.join(log_subdir, "raw-data")
-            os.makedirs(raw_dir, exist_ok=True)
-            raw_data_path = os.path.join(raw_dir, f"{tag}.json")
-            progress_path = os.path.join(raw_dir, f"{tag}.progress.jsonl")
+            raw_data_path, progress_path = _derived_paths(log_path)
 
     raw_cells = {m.value: {str(ix): {} for ix in range(nx)} for m in methods}
 
@@ -540,7 +520,7 @@ def _run_model_methods(
         ctx = CellContext(
             ix=ix, iy=iy, cell_index=ix * ny + iy,
             n_sites=n_sites, spin=spin, n_orbitals=n_orbitals,
-            raw_dir=raw_dir or tmp_dir, tmp_dir=tmp_dir, label=label,
+            raw_dir=tmp_dir, tmp_dir=tmp_dir, label=label,
         )
         if is_band:
             k_tuple = tuple(cp.pop(a) for a in momentum_axes)
@@ -574,7 +554,7 @@ def _run_model_methods(
 
     def load_progress():
         if progress_path is None:
-            raise ValueError("log_dir is required for aggregate_only")
+            raise ValueError("log_path is required for aggregate_only")
         if not os.path.exists(progress_path):
             raise FileNotFoundError(f"Progress file does not exist: {progress_path}")
         with open(progress_path) as f:
@@ -756,18 +736,10 @@ def _run_model_methods(
         with open(raw_data_path, "w") as f:
             json.dump(build_raw(), f, indent=4)
 
-    log_path = None
-    if log_subdir is not None:
-        os.makedirs(log_subdir, exist_ok=True)
-        log_path = os.path.join(log_subdir, f"{tag}.json")
+    if log_path is not None:
+        os.makedirs(os.path.dirname(os.path.abspath(log_path)), exist_ok=True)
         with open(log_path, "w") as f:
             json.dump(summary, f, indent=4)
-
-    plot_path = None
-    if plot_dir is not None:
-        plot_subdir = _plot_subdir(plot_dir, model.name, lattice)
-        os.makedirs(plot_subdir, exist_ok=True)
-        plot_path = os.path.join(plot_subdir, f"{tag}.pdf")
 
     # squeeze grids for the result object
     grids_out = {}
@@ -887,7 +859,7 @@ def _resolve_operator_axes(keys, x_param, x_range, y_param, y_range):
 def _run_operator_methods(
     qubit_operator, methods, method_objs, backend, backend_label,
     *, extremum, select, x_param, x_range, y_param, y_range,
-    heatmap, log_dir, plot_dir, hide_plot, hide_legend,
+    heatmap, log_path, plot_path, hide_plot, hide_legend,
 ):
     from loguru import logger
 
@@ -914,7 +886,6 @@ def _run_operator_methods(
     nx = len(x_vals)
     ny = 1 if is_1d else len(y_vals)
     model_name = os.path.splitext(os.path.basename(path))[0]
-    noisy = backend is not None
     plot_format = "2d" if is_1d else ("heatmap" if heatmap else "3d")
 
     def cell_key(ix, iy):
@@ -988,18 +959,10 @@ def _run_operator_methods(
         "result": {m.value: scalar_block(grids_full[m.value]) for m in methods},
     }
 
-    tag = _run_file_tag(methods, plot_format, x_param, y_param, "E", noisy)
-    log_path = None
-    if log_dir is not None:
-        os.makedirs(log_dir, exist_ok=True)
-        log_path = os.path.join(log_dir, f"{tag}.json")
+    if log_path is not None:
+        os.makedirs(os.path.dirname(os.path.abspath(log_path)), exist_ok=True)
         with open(log_path, "w") as f:
             json.dump(summary, f, indent=4)
-
-    plot_path = None
-    if plot_dir is not None:
-        os.makedirs(plot_dir, exist_ok=True)
-        plot_path = os.path.join(plot_dir, f"{tag}.pdf")
 
     grids_out = {m.value: _squeeze_scalar(grids_full[m.value], is_1d) for m in methods}
     result = RunResult(

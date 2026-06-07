@@ -6,8 +6,8 @@ X_PARAM="t2"
 Y_PARAM="U"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LATTICE_TAG=$(IFS=x; echo "${LATTICE[*]}")
-LOG="$HERE/logs/${MODEL}/${LATTICE_TAG}/run-analytic+vqe+iqpe-3d-${X_PARAM}-vs-${Y_PARAM}.json"
+LOG="$HERE/logs/${MODEL}/sim-ideal-t2-vs-U.json"
+PLOT="$HERE/plots/${MODEL}/sim-ideal-t2-vs-U.pdf"
 
 PHI=$(python3 -c "import math; print(math.pi/4)")
 
@@ -31,6 +31,6 @@ else
         --iqpe-trot 2 \
         --iqpe-iters 2 \
         --iqpe-reps 1 \
-        --log-dir "$HERE/logs" \
-        --plot-dir "$HERE/plots"
+        --log-path "$LOG" \
+        --plot-path "$PLOT"
 fi
