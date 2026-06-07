@@ -7,7 +7,7 @@ function print_usage()
     println(
         """
         Usage:
-          julia scripts/julia-dmrg/dmrg_haldane.jl [options]
+          julia scripts/julia-dmrg/old-haldane-only/dmrg_haldane.jl [options]
 
         Options:
           --n-sites 4,6,8              Comma-separated site counts
@@ -361,7 +361,7 @@ function main()
 
     out = Dict(
         "format" => "dmrg_haldane_sweep_v1",
-        "created_by" => "scripts/julia-dmrg/dmrg_haldane.jl",
+        "created_by" => "scripts/julia-dmrg/old-haldane-only/dmrg_haldane.jl",
         "parameters" => Dict(
             "n_sites_values" => config["n_sites_values"],
             "t1" => config["t1"],

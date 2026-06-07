@@ -13,7 +13,7 @@
 
 PROJECT_DIR="${PROJECT_DIR:-/pscratch/sd/m/mbao202/NNL-P7}"
 JULIA_PROJECT_DIR="${JULIA_PROJECT_DIR:-$PROJECT_DIR/scripts/julia-dmrg}"
-SCRIPT="${SCRIPT:-$PROJECT_DIR/scripts/julia-dmrg/dmrg_haldane.jl}"
+SCRIPT="${SCRIPT:-$PROJECT_DIR/scripts/julia-dmrg/old-haldane-only/dmrg_haldane.jl}"
 
 mkdir -p "${PROJECT_DIR}/logs/${SLURM_JOB_NAME}"
 cd "${PROJECT_DIR}"

@@ -13,7 +13,7 @@
 set -euo pipefail
 
 REPO_ROOT="${REPO_ROOT:-/pscratch/sd/m/mbao202/NNL-P7}"
-source "${REPO_ROOT}/scripts/slurm/visualizer/common_visualizer.sh"
+source "${REPO_ROOT}/scripts/slurm/phase-diagrams/common_visualizer.sh"
 setup_visualizer_env
 setup_visualizer_dmrg_env "${SLURM_CPUS_PER_TASK:-16}"
 

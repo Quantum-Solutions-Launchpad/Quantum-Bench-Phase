@@ -12,7 +12,7 @@
 
 ROOT="/pscratch/sd/m/mbao202/NNL-P7"
 JULIA_PROJECT_DIR="${ROOT}/scripts/julia-dmrg"
-SCRIPT="${JULIA_PROJECT_DIR}/CPU_dmrg_haldane_phase_diagram.jl"
+SCRIPT="${JULIA_PROJECT_DIR}/old-haldane-only/CPU_dmrg_haldane_phase_diagram.jl"
 
 mkdir -p "${ROOT}/logs/${SLURM_JOB_NAME}"
 cd "${ROOT}"

@@ -9,7 +9,7 @@
 #SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/logs/slurm/%x-%j.err
 
 REPO_ROOT="${REPO_ROOT:-/pscratch/sd/m/mbao202/NNL-P7}"
-source "${REPO_ROOT}/scripts/slurm/common/realspace_simulated.sh"
+source "${REPO_ROOT}/scripts/slurm/old-dmrg-slurm/common/realspace_simulated.sh"
 setup_realspace_env
 
 CMD="scripts/real_space_simulated_ideal.py --model haldane --n-sites 4 --t2 1.0 --no-debug"

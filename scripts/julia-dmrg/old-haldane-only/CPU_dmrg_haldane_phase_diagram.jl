@@ -12,7 +12,7 @@ Results are saved incrementally as JSONL batches.
 
 Usage:
   julia --project=/pscratch/sd/m/mbao202/NNL-P7/scripts/julia-dmrg \
-    /pscratch/sd/m/mbao202/NNL-P7/scripts/julia-dmrg/CPU_dmrg_haldane_phase_diagram.jl \
+    /pscratch/sd/m/mbao202/NNL-P7/scripts/julia-dmrg/old-haldane-only/CPU_dmrg_haldane_phase_diagram.jl \
     N_start N_end t1 t2_start t2_end t2_step [label]
 =#
 

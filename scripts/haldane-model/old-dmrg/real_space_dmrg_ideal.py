@@ -18,7 +18,7 @@ def parse_args() -> argparse.Namespace:
         "--input-json",
         type=Path,
         default=None,
-        help="Path to the sweep JSON produced by scripts/julia-dmrg/dmrg_haldane.jl",
+        help="Path to the sweep JSON produced by scripts/julia-dmrg/old-haldane-only/dmrg_haldane.jl",
     )
     parser.add_argument(
         "--output-dir",

@@ -6,13 +6,13 @@
 #SBATCH -n 1
 #SBATCH -c 16
 #SBATCH -t 48:00:00
-#SBATCH -J haldane_n100_t2_1
+#SBATCH -J haldane_n1000_t2_1
 #SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/logs/%x/%j.out
 #SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/logs/%x/%j.err
 
 PROJECT_DIR="/pscratch/sd/m/mbao202/NNL-P7"
 JULIA_PROJECT_DIR="${PROJECT_DIR}/scripts/julia-dmrg"
-SCRIPT="${PROJECT_DIR}/scripts/julia-dmrg/dmrg_haldane.jl"
+SCRIPT="${PROJECT_DIR}/scripts/julia-dmrg/old-haldane-only/dmrg_haldane.jl"
 
 mkdir -p "${PROJECT_DIR}/logs/${SLURM_JOB_NAME}"
 cd "${PROJECT_DIR}"
@@ -26,7 +26,7 @@ export OPENBLAS_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MPLCONFIGDIR="/tmp/mpl-cache-${SLURM_JOB_ID}"
 
-N_SITES=100
+N_SITES=120
 T1_VALUE=1.0
 T2_VALUE=1.0
 PHI_VALUE=0.7853981633974483
@@ -36,7 +36,7 @@ NSWEEPS=4
 CUTOFF=1e-9
 CONSERVE_QNS=true
 SEEDS=401,402
-OUTPUT_JSON="cache/haldane-model/real-space/dmrg/large-system-runs/n-sites-100_t2-1_t1-1.0.json"
+OUTPUT_JSON="cache/haldane-model/real-space/dmrg/large-system-runs/n-sites-1000_t2-1_t1-1.0.json"
 
 mkdir -p "$MPLCONFIGDIR"
 mkdir -p "$(dirname "$OUTPUT_JSON")"
@@ -57,4 +57,3 @@ srun --cpu-bind=cores \
   --conserve-qns "${CONSERVE_QNS}" \
   --seeds "${SEEDS}" \
   --output "${OUTPUT_JSON}"
-

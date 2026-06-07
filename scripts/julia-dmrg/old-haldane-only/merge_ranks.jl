@@ -3,7 +3,7 @@
 using Printf
 
 if !(1 <= length(ARGS) <= 2)
-    println("Usage: julia merge_ranks.jl <input_dir> [output_file]")
+    println("Usage: julia scripts/julia-dmrg/old-haldane-only/merge_ranks.jl <input_dir> [output_file]")
     exit(1)
 end
 
