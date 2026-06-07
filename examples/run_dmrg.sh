@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# DMRG vs. exact ground-state energy across a Haldane-model phase diagram.
+#
+# DMRG requires a working Julia + ITensorMPS toolchain (bundled under
+# quaph/julia-dmrg/), so this only runs end-to-end where Julia is available.
+# Selecting `analytic` alongside `dmrg` overlays the exact energy as reference.
+
 MODEL="haldane"
 LATTICE=(2 2)
 X_PARAM="n_occ"
@@ -10,53 +16,26 @@ DMRG_MAXDIMS="20,50,100,200"
 DMRG_CUTOFF="1e-9"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LATTICE_TAG=$(IFS=x; echo "${LATTICE[*]}")
-LOG_DIR="$HERE/logs"
-PLOT_DIR="$HERE/plots"
-DMRG_LOG="$LOG_DIR/${MODEL}/${LATTICE_TAG}/dmrg/dmrg-${X_PARAM}-vs-${Y_PARAM}.json"
-COMPARE_LOG="$LOG_DIR/${MODEL}/${LATTICE_TAG}/compare-${X_PARAM}-vs-${Y_PARAM}.json"
+LOG="$HERE/logs/${MODEL}/dmrg-n_occ-vs-t2.json"
+PLOT="$HERE/plots/${MODEL}/dmrg-n_occ-vs-t2.pdf"
 
 PHI=$(python3 -c "import math; print(math.pi/4)")
 
-if [ -f "$DMRG_LOG" ]; then
-    echo "DMRG log already exists: $DMRG_LOG"
+if [ -f "$LOG" ]; then
+    echo "Plotting from existing log..."
+    quaph plot "$LOG"
 else
-    quaph run dmrg \
+    quaph run \
         --model "$MODEL" \
+        --method analytic dmrg \
         --lattice "${LATTICE[@]}" \
         --x-param "$X_PARAM" \
         --y-param "$Y_PARAM" \
         --y-range "${Y_RANGE[@]}" \
         --t1 1.0 --phi "$PHI" --M 0.0 \
-        --nsweeps "$DMRG_NSWEEPS" \
-        --maxdims "$DMRG_MAXDIMS" \
-        --cutoff "$DMRG_CUTOFF" \
-        --log-dir "$LOG_DIR" \
-        --plot-dir "$PLOT_DIR"
-fi
-
-if [ -f "$COMPARE_LOG" ]; then
-    echo "Plotting from existing compare log..."
-    quaph plot "$COMPARE_LOG"
-else
-    quaph run compare \
-        --model "$MODEL" \
-        --lattice "${LATTICE[@]}" \
-        --x-param "$X_PARAM" \
-        --y-param "$Y_PARAM" \
-        --y-range "${Y_RANGE[@]}" \
-        --t1 1.0 --phi "$PHI" --M 0.0 \
-        --algorithms exact dmrg \
-        --quantum-pipeline ideal \
         --dmrg-nsweeps "$DMRG_NSWEEPS" \
         --dmrg-maxdims "$DMRG_MAXDIMS" \
         --dmrg-cutoff "$DMRG_CUTOFF" \
-        --log-dir "$LOG_DIR" \
-        --plot-dir "$PLOT_DIR"
+        --log-path "$LOG" \
+        --plot-path "$PLOT"
 fi
-
-# To include quantum algorithms in the comparison, add vqe and/or iqpe to
-# --algorithms and provide the matching VQE/IQPE flags:
-#   --algorithms exact vqe iqpe dmrg \
-#   --vqe-iters 200 --vqe-layers 2 --vqe-reps 1 \
-#   --iqpe-time 0.2 --iqpe-trot 2 --iqpe-iters 2 --iqpe-reps 1

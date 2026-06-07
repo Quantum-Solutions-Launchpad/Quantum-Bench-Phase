@@ -8,7 +8,7 @@ import yaml
 from asteval import Interpreter
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from quaph._model import Model, Observable
+from quaph._model import Model, Observable, default_energy_observable
 
 
 _QISKIT_OPTIMIZERS = (
@@ -579,9 +579,8 @@ def build_ansatz_factory(ansatz_spec: AnsatzSpec, *, name: str):
 
 
 def build_initial_state_factory(spec: InitialStateSpec, *, name: str):
-    from quaph._core import (
-        _hf_initial_state, _uniform_initial, _zero_initial, _vqe_initial_state,
-    )
+    from quaph._core import _hf_initial_state, _uniform_initial, _zero_initial
+    from quaph._vqe import _vqe_initial_state
 
     kind = spec.type
 
@@ -817,96 +816,120 @@ def build_tight_binding_model(
     return spec_to_model(spec)
 
 
-def _build_uhf_observables(spec: YamlModelSpec):
-    if spec.spin != 2:
+def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Observable] | None:
+    if not _dd_terms(spec):
         return None
-    onsite_dd = [
-        t for t in spec.terms
-        if isinstance(t, DensityDensityTerm) and t.is_onsite
-    ]
-    if not onsite_dd:
-        return None
-    from quaph._model import Observable
-    from quaph._uhf import (
-        run_uhf_lowest,
-        staggered_magnetization,
-        total_magnetization,
-        hf_gap,
-    )
 
-    def _u_coefficient(params: dict) -> float:
-        total = 0.0
-        for t in onsite_dd:
-            total += float(np.real(_eval_expr(t.coefficient, params)))
-        return total
-
-    def _cached(model, lattice, n_occ, params):
-        key = (tuple(lattice), int(n_occ), tuple(sorted(params.items())))
-        cache = getattr(model, "_uhf_cache", None)
-        if cache is None:
-            cache = {}
-            model._uhf_cache = cache
-        if key in cache:
-            return cache[key]
-        U = _u_coefficient(params)
-        result = run_uhf_lowest(model, lattice, n_occ, params, U)
-        cache[key] = result
-        return result
-
-    def _e_uhf(model, lattice, H, eigvals, eigvecs, n_occ, params):
-        return float(_cached(model, lattice, n_occ, params).energy)
-
-    def _m_stag(model, lattice, H, eigvals, eigvecs, n_occ, params):
-        r = _cached(model, lattice, n_occ, params)
-        return float(abs(staggered_magnetization(r, model.sites_per_cell)))
-
-    def _m_total(model, lattice, H, eigvals, eigvecs, n_occ, params):
-        r = _cached(model, lattice, n_occ, params)
-        return float(abs(total_magnetization(r)))
-
-    def _gap_uhf(model, lattice, H, eigvals, eigvecs, n_occ, params):
-        r = _cached(model, lattice, n_occ, params)
-        return float(hf_gap(r, n_occ))
+    import math
 
     sites_per_cell = spec.sites_per_cell
 
-    def _spin_op(model, lattice, *, stagger: bool):
+    def _mb_result_cached(model, lattice, n_occ, params):
+        """Returns (eigvals, ground_state_vec_in_sector, sector_mask)."""
+        key = (tuple(lattice), int(n_occ), tuple(sorted(params.items())))
+        cache = getattr(model, "_mb_cache", None)
+        if cache is None:
+            cache = {}
+            model._mb_cache = cache
+        if key in cache:
+            return cache[key]
+        n_sites = math.prod(lattice) * model.sites_per_cell
+        fermionic_op = model.fermionic_hamiltonian(lattice, **params)
+        mapper = model.get_mapper(n_sites, model.spin, n_occ)
+        qubit_op = mapper.map(fermionic_op)
+        H_mb = qubit_op.to_matrix()
+        n_qubits = qubit_op.num_qubits
+        occ_counts = np.array([bin(i).count('1') for i in range(2**n_qubits)])
+        mask = occ_counts == n_occ
+        H_sector = H_mb[np.ix_(mask, mask)]
+        evs, vecs = np.linalg.eigh(H_sector)
+        result = (evs, vecs[:, 0], mask)
+        cache[key] = result
+        return result
+
+    def _spin_sector_expectation(model, lattice, n_occ, psi, mask, *, stagger: bool):
         from qiskit_nature.second_q.operators import FermionicOp
         lat = tuple(lattice)
-        n_cells = 1
-        for L in lat:
-            n_cells *= L
-        n_sites = n_cells * sites_per_cell
-        num_so = n_sites * 2
+        n_sites = math.prod(lat) * model.sites_per_cell
+        num_so = n_sites * model.spin
         terms_dict: dict[str, complex] = {}
         for s in range(n_sites):
             sign = (+1.0 if (s % sites_per_cell) % 2 == 0 else -1.0) if stagger else +1.0
-            up = s * 2 + 0
-            dn = s * 2 + 1
+            up, dn = s * 2, s * 2 + 1
+            terms_dict[f"+_{up} -_{up}"] = terms_dict.get(f"+_{up} -_{up}", 0.0) + sign / n_sites
+            terms_dict[f"+_{dn} -_{dn}"] = terms_dict.get(f"+_{dn} -_{dn}", 0.0) - sign / n_sites
+        spin_op = FermionicOp(terms_dict, num_spin_orbitals=num_so)
+        mapper = model.get_mapper(n_sites, model.spin, n_occ)
+        qubit_op = mapper.map(spin_op)
+        Op_sector = qubit_op.to_matrix()[np.ix_(mask, mask)]
+        return float(abs(np.real(psi.conj() @ Op_sector @ psi)))
+
+    def _spin_fermionic_op(model, lattice, *, stagger: bool):
+        from qiskit_nature.second_q.operators import FermionicOp
+        lat = tuple(lattice)
+        n_sites = math.prod(lat) * model.sites_per_cell
+        num_so = n_sites * model.spin
+        terms_dict: dict[str, complex] = {}
+        for s in range(n_sites):
+            sign = (+1.0 if (s % sites_per_cell) % 2 == 0 else -1.0) if stagger else +1.0
+            up, dn = s * 2, s * 2 + 1
             terms_dict[f"+_{up} -_{up}"] = terms_dict.get(f"+_{up} -_{up}", 0.0) + sign / n_sites
             terms_dict[f"+_{dn} -_{dn}"] = terms_dict.get(f"+_{dn} -_{dn}", 0.0) - sign / n_sites
         return FermionicOp(terms_dict, num_spin_orbitals=num_so)
 
+    def _e_mb(model, lattice, H, eigvals, eigvecs, n_occ, params):
+        evs, _, _ = _mb_result_cached(model, lattice, n_occ, params)
+        return float(evs[0]) if len(evs) > 0 else float('nan')
+
+    def _gap_mb(model, lattice, H, eigvals, eigvecs, n_occ, params):
+        evs, _, _ = _mb_result_cached(model, lattice, n_occ, params)
+        if len(evs) < 2:
+            return 0.0
+        return float(evs[1] - evs[0])
+
+    def _m_stag(model, lattice, H, eigvals, eigvecs, n_occ, params):
+        _, psi, mask = _mb_result_cached(model, lattice, n_occ, params)
+        return _spin_sector_expectation(model, lattice, n_occ, psi, mask, stagger=True)
+
+    def _m_total(model, lattice, H, eigvals, eigvecs, n_occ, params):
+        _, psi, mask = _mb_result_cached(model, lattice, n_occ, params)
+        return _spin_sector_expectation(model, lattice, n_occ, psi, mask, stagger=False)
+
     def _m_stag_quantum_op(model, lattice, **params):
-        return _spin_op(model, lattice, stagger=True)
+        return _spin_fermionic_op(model, lattice, stagger=True)
 
     def _m_total_quantum_op(model, lattice, **params):
-        return _spin_op(model, lattice, stagger=False)
+        return _spin_fermionic_op(model, lattice, stagger=False)
 
     return {
-        "E_uhf":   Observable(name="E_uhf",   display_name=r"E_{\mathrm{UHF}}",      analytic=_e_uhf),
-        "M_stag":  Observable(name="M_stag",  display_name=r"|m_{\mathrm{stag}}|",   analytic=_m_stag,  quantum_operator=_m_stag_quantum_op),
-        "M_total": Observable(name="M_total", display_name=r"|m_{\mathrm{total}}|",  analytic=_m_total, quantum_operator=_m_total_quantum_op),
-        "gap_uhf": Observable(name="gap_uhf", display_name=r"\Delta_{\mathrm{UHF}}", analytic=_gap_uhf),
+        "E": Observable(
+            name="E", display_name="E",
+            analytic=_e_mb,
+            analytic_bloch=default_energy_observable().analytic_bloch,
+        ),
+        "gap": Observable(
+            name="gap", display_name=r"\Delta_{\mathrm{gap}}",
+            analytic=_gap_mb,
+        ),
+        "M_stag": Observable(
+            name="M_stag", display_name=r"|m_{\mathrm{stag}}|",
+            analytic=_m_stag,
+            quantum_operator=_m_stag_quantum_op,
+        ),
+        "M_total": Observable(
+            name="M_total", display_name=r"|m_{\mathrm{total}}|",
+            analytic=_m_total,
+            quantum_operator=_m_total_quantum_op,
+        ),
     }
 
 
 def spec_to_model(spec: YamlModelSpec) -> Model:
     param_labels = {k: v.label for k, v in spec.parameters.items()}
     observables = _build_observables(spec) or {}
-    uhf_obs = _build_uhf_observables(spec)
-    if uhf_obs:
-        for k, v in uhf_obs.items():
+    int_obs = _build_interacting_analytic_observables(spec)
+    if int_obs:
+        for k, v in int_obs.items():
             observables.setdefault(k, v)
     return Model(
         name=spec.name,

@@ -6,8 +6,8 @@ X_PARAM="n_occ"
 Y_PARAM="t2"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LATTICE_TAG=$(IFS=x; echo "${LATTICE[*]}")
-LOG="$HERE/logs/${MODEL}/${LATTICE_TAG}/simulated-ideal-3d-${X_PARAM}-vs-${Y_PARAM}.json"
+LOG="$HERE/logs/${MODEL}/sim-n_occ-vs-t2.json"
+PLOT="$HERE/plots/${MODEL}/sim-n_occ-vs-t2.pdf"
 
 if [ -f "$LOG" ]; then
     echo "Plotting from existing log..."
@@ -56,8 +56,9 @@ exit
 QUAPH
 fi
 
-quaph run simulated-ideal \
+quaph run \
     --model "$MODEL" \
+    --method analytic vqe iqpe \
     --lattice "${LATTICE[@]}" \
     --x-param "$X_PARAM" \
     --y-param "$Y_PARAM" \
@@ -70,5 +71,5 @@ quaph run simulated-ideal \
     --iqpe-trot 2 \
     --iqpe-iters 2 \
     --iqpe-reps 1 \
-    --log-dir "$HERE/logs" \
-    --plot-dir "$HERE/plots"
+    --log-path "$LOG" \
+    --plot-path "$PLOT"
