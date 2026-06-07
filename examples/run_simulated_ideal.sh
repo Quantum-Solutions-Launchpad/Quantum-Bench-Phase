@@ -7,7 +7,7 @@ Y_PARAM="U"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LATTICE_TAG=$(IFS=x; echo "${LATTICE[*]}")
-LOG="$HERE/logs/${MODEL}/${LATTICE_TAG}/simulated-ideal-3d-${X_PARAM}-vs-${Y_PARAM}.json"
+LOG="$HERE/logs/${MODEL}/${LATTICE_TAG}/run-analytic+vqe+iqpe-3d-${X_PARAM}-vs-${Y_PARAM}.json"
 
 PHI=$(python3 -c "import math; print(math.pi/4)")
 
@@ -15,8 +15,9 @@ if [ -f "$LOG" ]; then
     echo "Plotting from existing log..."
     quaph plot "$LOG"
 else
-    quaph run simulated-ideal \
+    quaph run \
         --model "$MODEL" \
+        --method analytic vqe iqpe \
         --lattice "${LATTICE[@]}" \
         --x-param "$X_PARAM" \
         --x-range 0.0 1.5 0.3 \

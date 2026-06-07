@@ -1,12 +1,17 @@
+"""Shared low-level infrastructure for QuaPh simulation methods.
+
+Technique-specific solver logic lives in the per-method modules
+(:mod:`quaph._analytic`, :mod:`quaph._vqe`, :mod:`quaph._iqpe`,
+:mod:`quaph._dmrg`). This module holds only what those methods share: logging,
+sweep-axis resolution, the noisy/ideal backend constructors, and the
+initial-state circuit builders reused across VQE/IQPE and the model layer.
+"""
+
+import sys
+
 import numpy as np
 
-from qiskit import transpile, QuantumCircuit
-from qiskit.circuit import QuantumRegister, ClassicalRegister
-from qiskit.circuit.library import efficient_su2, PauliEvolutionGate
-from qiskit.synthesis import SuzukiTrotter
-from qiskit.quantum_info import SparsePauliOp
-from qiskit_ibm_runtime import Session, Estimator
-
+from qiskit import QuantumCircuit
 from qiskit_nature.second_q.circuit.library import HartreeFock
 from qiskit_nature.second_q.operators import FermionicOp
 
@@ -14,7 +19,6 @@ from qiskit_aer import AerSimulator
 from qiskit_aer.primitives import Sampler
 from qiskit_aer.noise import NoiseModel
 
-import sys
 from loguru import logger
 
 
@@ -84,21 +88,6 @@ def resolve_sweep(param: str, range_args, n_orbitals: int, momentum_axes: tuple[
     return vals, param, "parameter"
 
 
-def _hf_initial_state(n_sites: int, spin: int, n_occ: int, mapper):
-    if spin == 2:
-        return HartreeFock(n_sites, (n_occ // 2 + n_occ % 2, n_occ // 2), mapper)
-    num_modes = n_sites
-    label = " ".join(f"+_{i}" for i in range(n_occ))
-    bitstr_op = FermionicOp({label: 1.0} if label else {"": 1.0}, num_spin_orbitals=num_modes)
-    qubit_op = mapper.map(bitstr_op)
-    bits = qubit_op.paulis.x[0]
-    qc = QuantumCircuit(len(bits))
-    for i, bit in enumerate(bits):
-        if bit:
-            qc.x(i)
-    return qc
-
-
 def _make_simulator(backend):
     if backend:
         noise_model = NoiseModel.from_backend(backend)
@@ -118,6 +107,21 @@ def _make_sampler(backend):
     return Sampler()
 
 
+def _hf_initial_state(n_sites: int, spin: int, n_occ: int, mapper):
+    if spin == 2:
+        return HartreeFock(n_sites, (n_occ // 2 + n_occ % 2, n_occ // 2), mapper)
+    num_modes = n_sites
+    label = " ".join(f"+_{i}" for i in range(n_occ))
+    bitstr_op = FermionicOp({label: 1.0} if label else {"": 1.0}, num_spin_orbitals=num_modes)
+    qubit_op = mapper.map(bitstr_op)
+    bits = qubit_op.paulis.x[0]
+    qc = QuantumCircuit(len(bits))
+    for i, bit in enumerate(bits):
+        if bit:
+            qc.x(i)
+    return qc
+
+
 def _uniform_initial(n_qubits: int) -> QuantumCircuit:
     qc = QuantumCircuit(n_qubits)
     for q in range(n_qubits):
@@ -127,372 +131,3 @@ def _uniform_initial(n_qubits: int) -> QuantumCircuit:
 
 def _zero_initial(n_qubits: int) -> QuantumCircuit:
     return QuantumCircuit(n_qubits)
-
-
-def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend=None) -> QuantumCircuit:
-    simulator = _make_simulator(backend)
-    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
-
-    with Session(backend=simulator) as session:
-        estimator = Estimator(mode=session)
-        x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
-        cost_history = {"iters": 0, "prev": None}
-
-        def cost_func(params):
-            if cost_history["iters"] >= max_iters and cost_history["prev"] is not None:
-                return cost_history["prev"]
-            pub = (ansatz_circuit, [hamiltonian], [params])
-            result = estimator.run(pubs=[pub]).result()
-            energy = float(result[0].data.evs[0])
-            cost_history["iters"] += 1
-            cost_history["prev"] = energy
-            return energy
-
-        optimizer = get_optimizer_fn(max_iters)
-        res = optimizer.minimize(cost_func, x0=x0)
-
-    param_dict = dict(zip(ansatz.parameters, res.x))
-    return ansatz.assign_parameters(param_dict)
-
-
-def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, label: str = ""):
-    omega_coef = 0
-    iteration_phases = []
-
-    for k in range(num_iterations, 0, -1):
-        omega_coef /= 2
-
-        qc = construct_iqpe_circuit(unitary, state_preparation, k, -2 * np.pi * omega_coef)
-
-        sampler_job = sampler.run([qc])
-        result = sampler_job.result().quasi_dists[0]
-        x = 1 if result.get(1, 0) > result.get(0, 0) else 0
-
-        omega_coef = omega_coef + x / 2
-        iteration_phases.append(omega_coef)
-
-        logger.debug(f"IQPE {label} iteration={num_iterations-k+1} = {omega_coef}")
-
-    return omega_coef, iteration_phases
-
-
-def construct_iqpe_circuit(unitary: QuantumCircuit, state_preparation: QuantumCircuit, k: int, omega: float):
-    phase_register = QuantumRegister(1, name="a")
-    eigenstate_register = QuantumRegister(unitary.num_qubits, name="q")
-
-    qc = QuantumCircuit(eigenstate_register)
-    qc.add_register(phase_register)
-    qc.append(state_preparation, eigenstate_register)
-
-    qc.h(phase_register[0])
-    for _ in range(2 ** (k - 1)):
-        qc = qc.compose(unitary.control(), [unitary.num_qubits] + list(range(0, unitary.num_qubits)))
-    qc.p(omega, phase_register[0])
-    qc.h(phase_register[0])
-
-    c = ClassicalRegister(1, name="c")
-    qc.add_register(c)
-    qc.measure(phase_register, c)
-
-    return qc
-
-
-def analytic_bands(model, k_tuple, model_params, observable: str = "E"):
-    H = model.bloch_hamiltonian(*k_tuple, **model_params)
-    eigvals, eigvecs = np.linalg.eigh(H)
-    obs = model.get_observable(observable)
-    if obs.analytic_bloch is None:
-        raise ValueError(
-            f"Observable '{observable}' on model '{model.name}' has no analytic_bloch backend."
-        )
-    result = obs.analytic_bloch(model, k_tuple, H, eigvals, eigvecs, model_params)
-    k_str = tuple(round(float(x), 3) for x in k_tuple)
-    logger.info(f"Analytic [{observable}] (k={k_str}, {_fmt_params((), 0, model_params).split(', ', 2)[-1]}) = {result}")
-    return result
-
-
-def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=None, label="", observable_qubit_ops=None):
-    simulator = _make_simulator(backend)
-    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
-
-    with Session(backend=simulator) as session:
-        estimator = Estimator(mode=session)
-        x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
-
-        cost_history = {"iters": 0, "cost_history": []}
-
-        def cost_func(params):
-            if cost_history["iters"] >= max_iters:
-                return cost_history["cost_history"][-1]
-            pub = (ansatz_circuit, [hamiltonian], [params])
-            result = estimator.run(pubs=[pub]).result()
-            energy = result[0].data.evs[0]
-            cost_history["iters"] += 1
-            cost_history["cost_history"].append(energy)
-            return energy
-
-        optimizer = get_optimizer_fn(max_iters)
-        res = optimizer.minimize(cost_func, x0=x0)
-        energy = float(res.fun)
-        logger.debug(f"VQE {label} = {energy}")
-
-        if observable_qubit_ops is None:
-            return energy
-
-        optimal_params = np.asarray(res.x)
-        observable_values = []
-        for op in observable_qubit_ops:
-            pub = (ansatz_circuit, [op], [optimal_params])
-            result = estimator.run(pubs=[pub]).result()
-            observable_values.append(float(result[0].data.evs[0]))
-        return energy, observable_values
-
-
-def _iqpe_sparse(hamiltonian, initial, time_param, n_trot, n_iters, rep, backend=None, label=""):
-    np.seterr(all='ignore')
-    st = SuzukiTrotter(reps=n_trot)
-    evolution = PauliEvolutionGate(hamiltonian, time=time_param, synthesis=st)
-    sampler = _make_sampler(backend)
-
-    phase, iteration_phases = iqpe_estimate(evolution, initial, n_iters, sampler, label)
-    res = float(-2 * np.pi * phase / time_param)
-    iter_energies = [float(-2 * np.pi * p / time_param) for p in iteration_phases]
-    logger.debug(f"IQPE {label} = {res}")
-    return res, iter_energies
-
-
-def vqe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, get_optimizer_fn, max_iters, n_layers, rep, backend=None):
-    H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
-    hamiltonian = SparsePauliOp.from_operator(H_matrix)
-    ansatz = efficient_su2(hamiltonian.num_qubits, reps=n_layers)
-    label = f"bloch (k={tuple(round(float(x), 3) for x in k_tuple)}, rep={rep})"
-    return _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=label)
-
-
-def iqpe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, time_param, n_trot, n_iters, rep, backend=None):
-    H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
-    hamiltonian = SparsePauliOp.from_operator(H_matrix)
-    initial = _uniform_initial(hamiltonian.num_qubits)
-    label = f"bloch (k={tuple(round(float(x), 3) for x in k_tuple)}, rep={rep})"
-    return _iqpe_sparse(hamiltonian, initial, time_param, n_trot, n_iters, rep, backend=backend, label=label)
-
-
-def analytic_operator(hamiltonian, extremum="min", label=""):
-    evals = np.linalg.eigvalsh(hamiltonian.to_matrix())
-    result = float(evals.max() if extremum == "max" else evals.min())
-    label_str = f" ({label})" if label else ""
-    logger.info(f"Analytic [operator]{label_str} = {result}")
-    return result
-
-
-def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_layers, rep, extremum="min", backend=None, label=""):
-    op = hamiltonian * -1 if extremum == "max" else hamiltonian
-    ansatz = get_vqe_ansatz_fn(hamiltonian.num_qubits, n_layers, 0, 1)
-    vqe_label = f"[operator] ({label}, rep={rep})" if label else f"[operator] (rep={rep})"
-    energy = _vqe_sparse(op, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=vqe_label)
-    return -energy if extremum == "max" else energy
-
-
-def iqpe_operator(hamiltonian, time_param, n_trot, n_iters, rep, extremum="min", backend=None, label="", get_initial_state_fn=None):
-    op = hamiltonian * -1 if extremum == "max" else hamiltonian
-    if get_initial_state_fn is not None:
-        initial = get_initial_state_fn(op)
-    else:
-        initial = _uniform_initial(hamiltonian.num_qubits)
-    iqpe_label = f"[operator] ({label}, rep={rep})" if label else f"[operator] (rep={rep})"
-    energy, iter_energies = _iqpe_sparse(op, initial, time_param, n_trot, n_iters, rep, backend=backend, label=iqpe_label)
-    if extremum == "max":
-        energy = -energy
-        iter_energies = [-e for e in iter_energies]
-    return energy, iter_energies
-
-
-def vqe_bloch_other_benchmarks(k_tuple, model_params, bloch_hamiltonian_fn, max_iters, n_layers, vqe_reps=1, backend=None):
-    if backend:
-        noise_model = NoiseModel.from_backend(backend)
-        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
-    else:
-        simulator = AerSimulator()
-
-    H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
-    hamiltonian = SparsePauliOp.from_operator(H_matrix)
-    ansatz = efficient_su2(hamiltonian.num_qubits, reps=n_layers)
-    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
-
-    num_queries = hamiltonian.size * max_iters * vqe_reps
-    full_circuit_depth = ansatz_circuit.depth()
-    two_gate_circuit_depth = ansatz_circuit.depth(lambda x: x.operation.num_qubits == 2)
-
-    logger.info(f"VQE bloch benchmarks (k={tuple(round(float(x), 3) for x in k_tuple)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}]")
-    return num_queries, (full_circuit_depth, two_gate_circuit_depth)
-
-
-def iqpe_bloch_other_benchmarks(k_tuple, model_params, bloch_hamiltonian_fn, time_param, n_trot, n_iters, iqpe_reps, backend=None):
-    np.seterr(all='ignore')
-    if backend:
-        noise_model = NoiseModel.from_backend(backend)
-        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
-    else:
-        simulator = AerSimulator()
-
-    H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
-    hamiltonian = SparsePauliOp.from_operator(H_matrix)
-    n_qubits = hamiltonian.num_qubits
-
-    st = SuzukiTrotter(reps=n_trot)
-    evolution = PauliEvolutionGate(hamiltonian, time=time_param, synthesis=st)
-    initial = QuantumCircuit(n_qubits)
-    for q in range(n_qubits):
-        initial.h(q)
-
-    full_circuit_depth = two_gate_circuit_depth = 0
-    for k in range(n_iters, 0, -1):
-        qc = construct_iqpe_circuit(evolution, initial, k, -2 * np.pi)
-        qc = transpile(qc, backend=simulator, optimization_level=3)
-        full_circuit_depth += qc.depth()
-        two_gate_circuit_depth += qc.depth(lambda x: x.operation.num_qubits == 2)
-
-    num_queries = hamiltonian.size * iqpe_reps * n_trot * n_iters
-
-    logger.info(f"IQPE bloch benchmarks (k={tuple(round(float(x), 3) for x in k_tuple)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth // n_iters},{two_gate_circuit_depth // n_iters}]")
-    return num_queries, (full_circuit_depth // n_iters, two_gate_circuit_depth // n_iters)
-
-
-def analytic(model, lattice, n_occ, model_params, observable: str = "E"):
-    H = model._build_H_matrix(lattice, **model_params)
-    eigvals, eigvecs = np.linalg.eigh(H)
-    obs = model.get_observable(observable)
-    result = float(obs.analytic(model, lattice, H, eigvals, eigvecs, n_occ, model_params))
-    logger.info(f"Analytic [{observable}] ({_fmt_params(lattice, n_occ, model_params)}) = {result}")
-    return result
-
-
-def vqe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, rep, backend=None, observable_qubit_ops=None):
-    fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
-    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
-    ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
-    label = f"({_fmt_params(lattice, n_occ, model_params, repetition=rep)})"
-    return _vqe_sparse(
-        qubit_hamiltonian, ansatz, get_optimizer_fn, max_iters, rep,
-        backend=backend, label=label, observable_qubit_ops=observable_qubit_ops,
-    )
-
-
-def vqe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, max_iters, n_layers, rep, observable, backend=None):
-    obs = model.get_observable(observable)
-
-    def sub_eval(sub_n_occ, observable_qubit_ops=None):
-        return vqe_fermionic(
-            lattice, n_sites, spin, sub_n_occ, model_params,
-            model.fermionic_hamiltonian, model.get_optimizer,
-            model.get_vqe_ansatz, mapper, max_iters, n_layers, rep,
-            backend=backend, observable_qubit_ops=observable_qubit_ops,
-        )
-
-    if obs.quantum_composite is not None:
-        n_orbitals = n_sites * spin
-        return float(obs.quantum_composite(
-            model, lattice, n_occ, model_params, mapper, n_orbitals, sub_eval,
-        ))
-    if observable == "E" or obs.quantum_operator is None:
-        return float(sub_eval(n_occ))
-    op_fermionic = obs.quantum_operator(model, lattice, **model_params)
-    if op_fermionic is None:
-        return 0.0
-    op_qubit = mapper.map(op_fermionic)
-    _, vals = sub_eval(n_occ, observable_qubit_ops=[op_qubit])
-    return float(vals[0])
-
-
-def iqpe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, time_param, n_trot, n_iters, rep, observable, backend=None, get_initial_state_fn=None):
-    obs = model.get_observable(observable)
-
-    def sub_eval(sub_n_occ, observable_qubit_ops=None):
-        if observable_qubit_ops is not None:
-            raise NotImplementedError(
-                "IQPE only supports observables whose composite uses energies; "
-                "operator-measurement observables require VQE."
-            )
-        energy, _ = iqpe_fermionic(
-            lattice, n_sites, spin, sub_n_occ, model_params,
-            model.fermionic_hamiltonian, mapper, time_param, n_trot, n_iters, rep,
-            backend=backend, get_initial_state_fn=get_initial_state_fn,
-        )
-        return energy
-
-    if obs.quantum_composite is not None:
-        n_orbitals = n_sites * spin
-        return float(obs.quantum_composite(
-            model, lattice, n_occ, model_params, mapper, n_orbitals, sub_eval,
-        )), []
-    if observable == "E":
-        return iqpe_fermionic(
-            lattice, n_sites, spin, n_occ, model_params,
-            model.fermionic_hamiltonian, mapper, time_param, n_trot, n_iters, rep,
-            backend=backend, get_initial_state_fn=get_initial_state_fn,
-        )
-    raise NotImplementedError(
-        f"IQPE cannot directly measure observable '{observable}' "
-        f"(requires operator measurement on the prepared state). Use VQE instead."
-    )
-
-
-def iqpe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep, backend=None, get_initial_state_fn=None):
-    fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
-    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
-    if get_initial_state_fn is not None:
-        initial = get_initial_state_fn(qubit_hamiltonian, n_occ=n_occ, spin=spin, mapper=mapper)
-    else:
-        initial = _hf_initial_state(n_sites, spin, n_occ, mapper)
-    label = f"({_fmt_params(lattice, n_occ, model_params, repetition=rep)})"
-    return _iqpe_sparse(qubit_hamiltonian, initial, time_param, n_trot, n_iters, rep, backend=backend, label=label)
-
-
-def vqe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
-    if backend:
-        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
-        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
-    else:
-        simulator = AerSimulator()
-
-    ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
-    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
-
-    fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
-    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
-
-    num_queries = qubit_hamiltonian.size * max_iters * vqe_reps
-    full_circuit_depth = ansatz_circuit.depth()
-    two_gate_circuit_depth = ansatz_circuit.depth(lambda x: x.operation.num_qubits == 2)
-
-    logger.info(f"VQE other benchmarks ({_fmt_params(lattice, n_occ, model_params)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth},{two_gate_circuit_depth}]")
-    return num_queries, (full_circuit_depth, two_gate_circuit_depth)
-
-
-def iqpe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, iqpe_reps, backend=None):
-    np.seterr(all='ignore')
-    if backend:
-        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
-        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
-    else:
-        simulator = AerSimulator()
-
-    fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
-    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
-
-    st = SuzukiTrotter(reps=n_trot)
-    evolution = PauliEvolutionGate(qubit_hamiltonian, time=time_param, synthesis=st)
-    initial = _hf_initial_state(n_sites, spin, n_occ, mapper)
-
-    full_circuit_depth = two_gate_circuit_depth = 0
-    for k in range(n_iters, 0, -1):
-        qc = construct_iqpe_circuit(evolution, initial, k, -2 * np.pi)
-        qc = transpile(qc, backend=simulator, optimization_level=3)
-        full_circuit_depth += qc.depth()
-        two_gate_circuit_depth += qc.depth(lambda x: x.operation.num_qubits == 2)
-        logger.debug(f"IQPE other benchmarks ({_fmt_params(lattice, n_occ, model_params, iteration=n_iters-k+1)}): circuit_depth=[{qc.depth(), qc.depth(lambda x: x.operation.num_qubits == 2)}]")
-
-    num_queries = qubit_hamiltonian.size * iqpe_reps * n_trot * n_iters
-
-    logger.info(f"IQPE other benchmarks ({_fmt_params(lattice, n_occ, model_params)}): num_queries={num_queries}, circuit_depth=[{full_circuit_depth // n_iters},{two_gate_circuit_depth // n_iters}]")
-    return num_queries, (full_circuit_depth // n_iters, two_gate_circuit_depth // n_iters)

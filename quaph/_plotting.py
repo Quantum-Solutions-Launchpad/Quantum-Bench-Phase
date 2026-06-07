@@ -264,6 +264,7 @@ def plot_simulated(
     y_is_momentum: bool = False,
     vqe_label: str = "VQE",
     iqpe_label: str = "IQPE",
+    surface_label: str = "Analytic",
     extra_series: list[dict] | None = None,
 ):
     extra_series = extra_series or []
@@ -274,6 +275,7 @@ def plot_simulated(
             hide_legend=hide_legend,
             output_path=output_path, hide_plot=hide_plot,
             vqe_label=vqe_label, iqpe_label=iqpe_label,
+            surface_label=surface_label,
             extra_series=extra_series,
         )
     if Z_exact.ndim == 3:
@@ -312,8 +314,8 @@ def plot_simulated(
     z_clip = float(np.nanmin(Z_exact))
     x_flat, y_flat = X_grid.ravel(), Y_grid.ravel()
 
-    hover_series = [{"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z_exact.ravel(), "label": "Analytic"}]
-    legend_handles = [mpatches.Patch(label="Analytic")]
+    hover_series = [{"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z_exact.ravel(), "label": surface_label}]
+    legend_handles = [mpatches.Patch(label=surface_label)]
     handler_map = {legend_handles[0]: _GradientPatchHandler(cmap_obj)}
 
     if Z_vqe is not None:
@@ -571,6 +573,7 @@ def _plot_simulated_2d(
     hide_plot: bool = False,
     vqe_label: str = "VQE",
     iqpe_label: str = "IQPE",
+    surface_label: str = "Analytic",
     extra_series: list[dict] | None = None,
 ):
     extra_series = extra_series or []
@@ -600,7 +603,7 @@ def _plot_simulated_2d(
         )
         color = cmap_obj(0.5)
         ax.plot(x_arr, Z_exact, color=color, linewidth=1.8, alpha=0.9,
-                label="Analytic", zorder=4)
+                label=surface_label, zorder=4)
         ax.scatter(x_arr, Z_exact, color=color, s=20, alpha=0.5, zorder=5)
 
     if Z_vqe is not None:

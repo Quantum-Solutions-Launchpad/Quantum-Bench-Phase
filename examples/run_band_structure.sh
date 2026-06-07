@@ -11,8 +11,9 @@ STEP=$(python3 -c "import math; print(math.pi/50)")
 NEG_PI=$(python3 -c "import math; print(-math.pi)")
 PHI=$(python3 -c "import math; print(math.pi/2)")
 
-quaph run analytic \
+quaph run \
     --model "$MODEL" \
+    --method analytic \
     --x-param "$X_PARAM" \
     --x-range "$NEG_PI" "$PI" "$STEP" \
     --y-param "$Y_PARAM" \
@@ -22,8 +23,9 @@ quaph run analytic \
     --plot-dir "$HERE/plots" \
     --heatmap
 
-quaph run analytic \
+quaph run \
     --model "$MODEL" \
+    --method analytic \
     --x-param "$X_PARAM" \
     --x-range "$NEG_PI" "$PI" "$STEP" \
     --y-param "$Y_PARAM" \

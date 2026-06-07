@@ -7,14 +7,16 @@ Y_PARAM="U"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LATTICE_TAG=$(IFS=x; echo "${LATTICE[*]}")
-LOG="$HERE/logs/${MODEL}/${LATTICE_TAG}/simulated-noisy-3d-${X_PARAM}-vs-${Y_PARAM}.json"
+LOG="$HERE/logs/${MODEL}/${LATTICE_TAG}/run-analytic+vqe+iqpe-noisy-3d-${X_PARAM}-vs-${Y_PARAM}.json"
 
 if [ -f "$LOG" ]; then
     echo "Plotting from existing log..."
     quaph plot "$LOG"
 else
-    quaph run simulated-noisy \
+    quaph run \
         --model "$MODEL" \
+        --method analytic vqe iqpe \
+        --noisy \
         --lattice "${LATTICE[@]}" \
         --x-param "$X_PARAM" \
         --y-param "$Y_PARAM" \

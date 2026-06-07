@@ -579,9 +579,8 @@ def build_ansatz_factory(ansatz_spec: AnsatzSpec, *, name: str):
 
 
 def build_initial_state_factory(spec: InitialStateSpec, *, name: str):
-    from quaph._core import (
-        _hf_initial_state, _uniform_initial, _zero_initial, _vqe_initial_state,
-    )
+    from quaph._core import _hf_initial_state, _uniform_initial, _zero_initial
+    from quaph._vqe import _vqe_initial_state
 
     kind = spec.type
 

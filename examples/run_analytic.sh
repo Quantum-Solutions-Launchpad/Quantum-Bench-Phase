@@ -9,8 +9,9 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 PHI=$(python3 -c "import math; print(math.pi/4)")
 
-quaph run analytic \
+quaph run \
     --model "$MODEL" \
+    --method analytic \
     --lattice "${LATTICE[@]}" \
     --x-param "$X_PARAM" \
     --y-param "$Y_PARAM" \
