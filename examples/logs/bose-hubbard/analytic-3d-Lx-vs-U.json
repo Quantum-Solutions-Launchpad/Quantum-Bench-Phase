@@ -1,0 +1,105 @@
+{
+    "type": "analytic",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "parameters": {
+        "model": "BH_D-1_d-4",
+        "lattice": null,
+        "qubit_operator": "/Users/adamgodel/hamlib/condensedmatter/bosehubbard/BH_D-1_d-4.zip",
+        "keys": [
+            [
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-2_U-2_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-2_U-10_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-2_U-20_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-2_U-30_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-2_U-40_enc-stdbinary_d-4"
+            ],
+            [
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-3_U-2_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-3_U-10_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-3_U-20_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-3_U-30_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-3_U-40_enc-stdbinary_d-4"
+            ],
+            [
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-2_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-10_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-20_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-30_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-40_enc-stdbinary_d-4"
+            ],
+            [
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-5_U-2_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-5_U-10_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-5_U-20_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-5_U-30_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-5_U-40_enc-stdbinary_d-4"
+            ],
+            [
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-6_U-2_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-6_U-10_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-6_U-20_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-6_U-30_enc-stdbinary_d-4",
+                "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-6_U-40_enc-stdbinary_d-4"
+            ]
+        ],
+        "extremum": "min",
+        "model_params": {}
+    },
+    "x_param": "Lx",
+    "y_param": "U",
+    "x_values": [
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0
+    ],
+    "y_values": [
+        2.0,
+        10.0,
+        20.0,
+        30.0,
+        40.0
+    ],
+    "result": {
+        "analytic": {
+            "0": {
+                "0": -1.23606797749979,
+                "1": -1.0000000000000056,
+                "2": -1.0000000000000107,
+                "3": -1.0000000000000038,
+                "4": -1.0000000000000204
+            },
+            "1": {
+                "0": -2.601332708929784,
+                "1": -1.6938398392065208,
+                "2": -1.5601877306323637,
+                "3": -1.5126141795852943,
+                "4": -1.488370383475788
+            },
+            "2": {
+                "0": -3.9571301937257823,
+                "1": -2.4207019828364102,
+                "2": -2.3327176170254904,
+                "3": -2.3013359089192393,
+                "4": -2.285308426242916
+            },
+            "3": {
+                "0": -5.305412299214132,
+                "1": -3.219276706834754,
+                "2": -2.9887100606098054,
+                "3": -2.905666256328555,
+                "4": -2.863129354286061
+            },
+            "4": {
+                "0": -6.683600379728547,
+                "1": -3.8980943556890035,
+                "2": -3.685245679163507,
+                "3": -3.623583131783464,
+                "4": -3.5919231333385477
+            }
+        }
+    }
+}

@@ -1,0 +1,48 @@
+{
+    "type": "analytic",
+    "plot_format": "2d",
+    "band_structure": false,
+    "observable": "E",
+    "parameters": {
+        "model": "ham-graph-gnp_k-3",
+        "lattice": null,
+        "qubit_operator": "/Users/adamgodel/hamlib/binaryoptimization/maxcut/random/ham-graph-gnp_k-3.zip",
+        "keys": [
+            "gnp-k_3_n-4_rinst-00",
+            "gnp-k_3_n-5_rinst-00",
+            "gnp-k_3_n-6_rinst-00",
+            "gnp-k_3_n-7_rinst-00",
+            "gnp-k_3_n-8_rinst-00",
+            "gnp-k_3_n-9_rinst-00",
+            "gnp-k_3_n-10_rinst-00",
+            "gnp-k_3_n-12_rinst-00"
+        ],
+        "extremum": "max",
+        "model_params": {}
+    },
+    "x_param": "n",
+    "y_param": null,
+    "x_values": [
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0,
+        12.0
+    ],
+    "y_values": [],
+    "result": {
+        "analytic": {
+            "0": 4.0,
+            "1": 6.0,
+            "2": 9.0,
+            "3": 12.0,
+            "4": 14.0,
+            "5": 18.0,
+            "6": 20.0,
+            "7": 30.0
+        }
+    }
+}

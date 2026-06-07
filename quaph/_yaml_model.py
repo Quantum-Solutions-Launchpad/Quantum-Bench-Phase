@@ -8,7 +8,7 @@ import yaml
 from asteval import Interpreter
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from quaph._model import Model, Observable
+from quaph._model import Model, Observable, default_energy_observable
 
 
 _QISKIT_OPTIMIZERS = (
@@ -23,6 +23,10 @@ _QISKIT_MAPPERS = (
 _QISKIT_ANSATZES = (
     "excitation_preserving", "efficient_su2", "real_amplitudes",
     "pauli_two_design", "n_local", "two_local",
+)
+
+_INITIAL_STATES = (
+    "hartree_fock", "uniform", "computational_zero", "vqe_informed",
 )
 
 
@@ -72,19 +76,36 @@ class HoppingTerm(BaseModel):
     spin_channels: list[Literal["up", "down"]] | None = None
 
 
-class DensityDensityOnsiteTerm(BaseModel):
+class DensityDensityTerm(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    kind: Literal["density_density_onsite"]
+    kind: Literal["density_density"]
+    sublattice: str | None = None
+    from_: str | None = Field(default=None, alias="from")
+    to: str | None = None
+    offsets: list[list[int]] | None = None
     coefficient: str
 
+    @model_validator(mode="after")
+    def _check_variant(self) -> "DensityDensityTerm":
+        bond_fields_set = sum(
+            x is not None for x in (self.from_, self.to, self.offsets)
+        )
+        if bond_fields_set == 0:
+            return self
+        if bond_fields_set != 3:
+            raise ValueError(
+                "density_density bond variant requires all of from/to/offsets; "
+                "omit them (and optionally set 'sublattice') for the onsite variant"
+            )
+        if self.sublattice is not None:
+            raise ValueError(
+                "density_density: cannot combine 'sublattice' (onsite) with from/to/offsets (bond)"
+            )
+        return self
 
-class DensityDensityBondTerm(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    kind: Literal["density_density_bond"]
-    from_: str = Field(alias="from")
-    to: str
-    offsets: list[list[int]]
-    coefficient: str
+    @property
+    def is_onsite(self) -> bool:
+        return self.from_ is None
 
 
 class OptimizerSpec(BaseModel):
@@ -133,6 +154,15 @@ class AnsatzSpec(BaseModel):
         return v
 
 
+class InitialStateSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["hartree_fock", "uniform", "computational_zero", "vqe_informed"]
+    vqe_ansatz: AnsatzSpec | None = None
+    vqe_n_layers: int = 1
+    vqe_max_iters: int = 100
+    vqe_optimizer: OptimizerSpec | None = None
+
+
 class ObservableSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
     display_name: str
@@ -147,9 +177,8 @@ class BlochSpec(BaseModel):
     entries: dict[str, str]
 
 
-HamiltonianTerm = Annotated[Union[OnsiteTerm, HoppingTerm], Field(discriminator="kind")]
-InteractionTerm = Annotated[
-    Union[DensityDensityOnsiteTerm, DensityDensityBondTerm],
+HamiltonianTerm = Annotated[
+    Union[OnsiteTerm, HoppingTerm, DensityDensityTerm],
     Field(discriminator="kind"),
 ]
 
@@ -165,11 +194,10 @@ class YamlModelSpec(BaseModel):
     sublattices: list[str]
     parameters: dict[str, ParameterSpec]
     terms: list[HamiltonianTerm] = Field(default_factory=list)
-    interaction: list[InteractionTerm] = Field(default_factory=list)
-    mean_field_correction: str | None = None
     optimizer: OptimizerSpec | None = None
     mapper: MapperSpec | None = None
     ansatz: AnsatzSpec | None = None
+    iqpe_initial_state: InitialStateSpec | None = None
     bloch_hamiltonian: BlochSpec | None = None
     lattice_vectors: list[list[float]] | None = None
     sublattice_positions: dict[str, list[float]] | None = None
@@ -190,6 +218,8 @@ class YamlModelSpec(BaseModel):
             if isinstance(t, OnsiteTerm):
                 if t.sublattice not in known_sub:
                     raise ValueError(f"onsite term references unknown sublattice '{t.sublattice}'")
+                if t.spin_channels is not None and self.spin != 2:
+                    raise ValueError(f"{t.kind} term has spin_channels but model spin={self.spin}")
             elif isinstance(t, HoppingTerm):
                 if t.from_ not in known_sub:
                     raise ValueError(f"hopping term 'from' references unknown sublattice '{t.from_}'")
@@ -201,17 +231,29 @@ class YamlModelSpec(BaseModel):
                             f"hopping offset {off} has length {len(off)} but n_dims={self.n_dims}"
                         )
                 if t.spin_channels is not None and self.spin != 2:
-                    raise ValueError("spin_channels requires spin=2")
-            if t.spin_channels is not None and self.spin != 2:
-                raise ValueError(f"{t.kind} term has spin_channels but model spin={self.spin}")
-        for t in self.interaction:
-            if isinstance(t, DensityDensityOnsiteTerm) and self.spin != 2:
-                raise ValueError("density_density_onsite requires spin=2")
-            if isinstance(t, DensityDensityBondTerm):
-                if t.from_ not in known_sub:
-                    raise ValueError(f"density_density_bond 'from' references unknown sublattice '{t.from_}'")
-                if t.to not in known_sub:
-                    raise ValueError(f"density_density_bond 'to' references unknown sublattice '{t.to}'")
+                    raise ValueError(f"{t.kind} term has spin_channels but model spin={self.spin}")
+            elif isinstance(t, DensityDensityTerm):
+                if t.is_onsite:
+                    if self.spin != 2:
+                        raise ValueError("density_density onsite variant requires spin=2")
+                    if t.sublattice is not None and t.sublattice not in known_sub:
+                        raise ValueError(
+                            f"density_density 'sublattice' references unknown sublattice '{t.sublattice}'"
+                        )
+                else:
+                    if t.from_ not in known_sub:
+                        raise ValueError(
+                            f"density_density 'from' references unknown sublattice '{t.from_}'"
+                        )
+                    if t.to not in known_sub:
+                        raise ValueError(
+                            f"density_density 'to' references unknown sublattice '{t.to}'"
+                        )
+                    for off in t.offsets:
+                        if len(off) != self.n_dims:
+                            raise ValueError(
+                                f"density_density offset {off} has length {len(off)} but n_dims={self.n_dims}"
+                            )
         if self.bloch_hamiltonian is not None:
             n = self.sites_per_cell
             if self.bloch_hamiltonian.shape != [n, n]:
@@ -297,6 +339,8 @@ def _build_hamiltonian_matrix(spec: YamlModelSpec):
             return (_flat_cell_index(cell, lat) * sites_per_cell + sub) * spin + s
 
         for term in spec.terms:
+            if isinstance(term, DensityDensityTerm):
+                continue
             if isinstance(term, OnsiteTerm):
                 coef = complex(_eval_expr(term.coefficient, params))
                 sub = sub_index[term.sublattice]
@@ -334,8 +378,13 @@ def _resolve_spin_channels(spec_channels: list[str] | None, spin: int) -> list[i
     return [mapping[c] for c in spec_channels]
 
 
+def _dd_terms(spec: YamlModelSpec) -> list[DensityDensityTerm]:
+    return [t for t in spec.terms if isinstance(t, DensityDensityTerm)]
+
+
 def _build_interaction_hamiltonian(spec: YamlModelSpec):
-    if not spec.interaction:
+    dd = _dd_terms(spec)
+    if not dd:
         return None
     from qiskit_nature.second_q.operators import FermionicOp
     sites_per_cell = spec.sites_per_cell
@@ -354,19 +403,23 @@ def _build_interaction_hamiltonian(spec: YamlModelSpec):
         def orbital(cell, sub, s):
             return (_flat_cell_index(cell, lat) * sites_per_cell + sub) * spin + s
 
-        for term in spec.interaction:
+        for term in dd:
             coef = complex(_eval_expr(term.coefficient, params))
             if coef == 0:
                 continue
-            if isinstance(term, DensityDensityOnsiteTerm):
-                for site in range(n_sites):
-                    up = site * spin + 0
-                    dn = site * spin + 1
-                    op += FermionicOp(
-                        {f"+_{up} -_{up} +_{dn} -_{dn}": coef},
-                        num_spin_orbitals=num_so,
-                    )
-            elif isinstance(term, DensityDensityBondTerm):
+            if term.is_onsite:
+                target_subs = (list(range(sites_per_cell))
+                               if term.sublattice is None
+                               else [sub_index[term.sublattice]])
+                for cell in _iter_cells(lat):
+                    for sub in target_subs:
+                        up = orbital(cell, sub, 0)
+                        dn = orbital(cell, sub, 1)
+                        op += FermionicOp(
+                            {f"+_{up} -_{up} +_{dn} -_{dn}": coef},
+                            num_spin_orbitals=num_so,
+                        )
+            else:
                 src = sub_index[term.from_]
                 dst = sub_index[term.to]
                 for cell in _iter_cells(lat):
@@ -389,10 +442,11 @@ def _build_interaction_hamiltonian(spec: YamlModelSpec):
 
 
 def _build_mean_field_correction(spec: YamlModelSpec):
-    if spec.mean_field_correction is None:
+    dd = _dd_terms(spec)
+    if not dd:
         return None
-    expr = spec.mean_field_correction
     sites_per_cell = spec.sites_per_cell
+    spin = spec.spin
 
     def mean_field_correction(lattice, n_occ, **params):
         lat = tuple(lattice)
@@ -400,10 +454,19 @@ def _build_mean_field_correction(spec: YamlModelSpec):
         for L in lat:
             n_cells *= L
         n_sites = n_cells * sites_per_cell
-        names = dict(params)
-        names["n_sites"] = n_sites
-        names["n_occ"] = n_occ
-        return float(np.real(_eval_expr(expr, names)))
+        rho = n_occ / (spin * n_sites)
+        total = 0.0
+        for term in dd:
+            coef = float(np.real(_eval_expr(term.coefficient, params)))
+            if coef == 0.0:
+                continue
+            if term.is_onsite:
+                n_target = n_sites if term.sublattice is None else n_cells
+                total += coef * n_target * rho * rho
+            else:
+                n_bonds_dir = n_cells * len(term.offsets)
+                total += coef * n_bonds_dir * (spin * spin) * rho * rho
+        return float(total)
 
     mean_field_correction.__name__ = f"_yaml_mf_{spec.name.replace('-', '_')}"
     return mean_field_correction
@@ -412,20 +475,24 @@ def _build_mean_field_correction(spec: YamlModelSpec):
 def _build_optimizer_factory(spec: YamlModelSpec):
     if spec.optimizer is None:
         return None
+    return build_optimizer_factory(spec.optimizer, name=spec.name)
+
+
+def build_optimizer_factory(optimizer_spec: OptimizerSpec, *, name: str):
     import qiskit_algorithms.optimizers as qopt
-    cls = getattr(qopt, spec.optimizer.type, None)
+    cls = getattr(qopt, optimizer_spec.type, None)
     if cls is None:
         raise ValueError(
-            f"qiskit_algorithms.optimizers has no '{spec.optimizer.type}'"
+            f"qiskit_algorithms.optimizers has no '{optimizer_spec.type}'"
         )
-    raw_kwargs = dict(spec.optimizer.kwargs)
+    raw_kwargs = dict(optimizer_spec.kwargs)
 
     def get_optimizer(max_iters):
         runtime = {"max_iters": max_iters}
         resolved = _resolve_runtime_kwargs(raw_kwargs, runtime, context="optimizer")
         return cls(**resolved)
 
-    get_optimizer.__name__ = f"_yaml_opt_{spec.name.replace('-', '_')}"
+    get_optimizer.__name__ = f"_opt_{name.replace('-', '_')}"
     return get_optimizer
 
 
@@ -474,15 +541,19 @@ def _build_mapper_factory(spec: YamlModelSpec):
 def _build_ansatz_factory(spec: YamlModelSpec):
     if spec.ansatz is None:
         return None
+    return build_ansatz_factory(spec.ansatz, name=spec.name)
+
+
+def build_ansatz_factory(ansatz_spec: AnsatzSpec, *, name: str):
     import qiskit.circuit.library as qlib
     from qiskit import QuantumCircuit
-    func = getattr(qlib, spec.ansatz.type, None)
+    func = getattr(qlib, ansatz_spec.type, None)
     if func is None:
         raise ValueError(
-            f"qiskit.circuit.library has no '{spec.ansatz.type}'"
+            f"qiskit.circuit.library has no '{ansatz_spec.type}'"
         )
-    raw_kwargs = dict(spec.ansatz.kwargs)
-    prefix_kind = spec.ansatz.initial_state_prefix
+    raw_kwargs = dict(ansatz_spec.kwargs)
+    prefix_kind = ansatz_spec.initial_state_prefix
 
     def get_vqe_ansatz(n_qubits: int, n_layers: int, n_occ: int, spin: int):
         n_sites = n_qubits // spin if spin else n_qubits
@@ -503,8 +574,49 @@ def _build_ansatz_factory(spec: YamlModelSpec):
             return qc
         return body
 
-    get_vqe_ansatz.__name__ = f"_yaml_ansatz_{spec.name.replace('-', '_')}"
+    get_vqe_ansatz.__name__ = f"_ansatz_{name.replace('-', '_')}"
     return get_vqe_ansatz
+
+
+def build_initial_state_factory(spec: InitialStateSpec, *, name: str):
+    from quaph._core import _hf_initial_state, _uniform_initial, _zero_initial
+    from quaph._vqe import _vqe_initial_state
+
+    kind = spec.type
+
+    if kind == "vqe_informed":
+        vqe_ansatz_spec = spec.vqe_ansatz or AnsatzSpec(
+            type="efficient_su2", kwargs={"reps": "@n_layers"}, initial_state_prefix="hartree_fock",
+        )
+        vqe_optimizer_spec = spec.vqe_optimizer or OptimizerSpec(
+            type="SPSA", kwargs={"maxiter": "@max_iters"},
+        )
+        vqe_n_layers = spec.vqe_n_layers
+        vqe_max_iters = spec.vqe_max_iters
+        get_ansatz = build_ansatz_factory(vqe_ansatz_spec, name=f"{name}_vqe_init")
+        get_optimizer = build_optimizer_factory(vqe_optimizer_spec, name=f"{name}_vqe_init")
+
+    def get_initial_state(hamiltonian, *, n_occ: int = 0, spin: int = 1, mapper=None):
+        n_qubits = hamiltonian.num_qubits
+        if kind == "hartree_fock":
+            n_sites = n_qubits // spin if spin else n_qubits
+            return _hf_initial_state(n_sites, spin, n_occ, mapper)
+        if kind == "uniform":
+            return _uniform_initial(n_qubits)
+        if kind == "computational_zero":
+            return _zero_initial(n_qubits)
+        # vqe_informed
+        ansatz = get_ansatz(n_qubits, vqe_n_layers, n_occ, spin)
+        return _vqe_initial_state(hamiltonian, ansatz, get_optimizer, vqe_max_iters)
+
+    get_initial_state.__name__ = f"_initial_state_{name.replace('-', '_')}"
+    return get_initial_state
+
+
+def _build_initial_state_factory(spec: YamlModelSpec):
+    if spec.iqpe_initial_state is None:
+        return None
+    return build_initial_state_factory(spec.iqpe_initial_state, name=spec.name)
 
 
 def _build_bloch_hamiltonian(spec: YamlModelSpec):
@@ -545,6 +657,8 @@ def _build_auto_bloch_hamiltonian(spec: YamlModelSpec):
     param_names = list(spec.parameters)
 
     for t in spec.terms:
+        if isinstance(t, DensityDensityTerm):
+            continue
         if t.spin_channels is not None:
             return None
 
@@ -567,6 +681,8 @@ def _build_auto_bloch_hamiltonian(spec: YamlModelSpec):
         H = np.zeros((n, n), dtype=complex)
         k_vec = np.array(ks, dtype=float) if use_cartesian else None
         for term in spec.terms:
+            if isinstance(term, DensityDensityTerm):
+                continue
             coef = complex(_eval_expr(term.coefficient, params))
             if isinstance(term, OnsiteTerm):
                 a = sub_index[term.sublattice]
@@ -663,8 +779,6 @@ def build_tight_binding_model(
     sublattices,
     parameters: dict,
     terms: list,
-    interaction: list | None = None,
-    mean_field_correction: str | None = None,
     optimizer: dict | None = None,
     mapper: dict | None = None,
     ansatz: dict | None = None,
@@ -734,10 +848,6 @@ def build_tight_binding_model(
         "parameters": parameters,
         "terms": terms,
     }
-    if interaction is not None:
-        data["interaction"] = interaction
-    if mean_field_correction is not None:
-        data["mean_field_correction"] = mean_field_correction
     if optimizer is not None:
         data["optimizer"] = optimizer
     if mapper is not None:
@@ -756,8 +866,121 @@ def build_tight_binding_model(
     return spec_to_model(spec)
 
 
+def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Observable] | None:
+    if not _dd_terms(spec):
+        return None
+
+    import math
+
+    sites_per_cell = spec.sites_per_cell
+
+    def _mb_result_cached(model, lattice, n_occ, params):
+        """Returns (eigvals, ground_state_vec_in_sector, sector_mask)."""
+        key = (tuple(lattice), int(n_occ), tuple(sorted(params.items())))
+        cache = getattr(model, "_mb_cache", None)
+        if cache is None:
+            cache = {}
+            model._mb_cache = cache
+        if key in cache:
+            return cache[key]
+        n_sites = math.prod(lattice) * model.sites_per_cell
+        fermionic_op = model.fermionic_hamiltonian(lattice, **params)
+        mapper = model.get_mapper(n_sites, model.spin, n_occ)
+        qubit_op = mapper.map(fermionic_op)
+        H_mb = qubit_op.to_matrix()
+        n_qubits = qubit_op.num_qubits
+        occ_counts = np.array([bin(i).count('1') for i in range(2**n_qubits)])
+        mask = occ_counts == n_occ
+        H_sector = H_mb[np.ix_(mask, mask)]
+        evs, vecs = np.linalg.eigh(H_sector)
+        result = (evs, vecs[:, 0], mask)
+        cache[key] = result
+        return result
+
+    def _spin_sector_expectation(model, lattice, n_occ, psi, mask, *, stagger: bool):
+        from qiskit_nature.second_q.operators import FermionicOp
+        lat = tuple(lattice)
+        n_sites = math.prod(lat) * model.sites_per_cell
+        num_so = n_sites * model.spin
+        terms_dict: dict[str, complex] = {}
+        for s in range(n_sites):
+            sign = (+1.0 if (s % sites_per_cell) % 2 == 0 else -1.0) if stagger else +1.0
+            up, dn = s * 2, s * 2 + 1
+            terms_dict[f"+_{up} -_{up}"] = terms_dict.get(f"+_{up} -_{up}", 0.0) + sign / n_sites
+            terms_dict[f"+_{dn} -_{dn}"] = terms_dict.get(f"+_{dn} -_{dn}", 0.0) - sign / n_sites
+        spin_op = FermionicOp(terms_dict, num_spin_orbitals=num_so)
+        mapper = model.get_mapper(n_sites, model.spin, n_occ)
+        qubit_op = mapper.map(spin_op)
+        Op_sector = qubit_op.to_matrix()[np.ix_(mask, mask)]
+        return float(abs(np.real(psi.conj() @ Op_sector @ psi)))
+
+    def _spin_fermionic_op(model, lattice, *, stagger: bool):
+        from qiskit_nature.second_q.operators import FermionicOp
+        lat = tuple(lattice)
+        n_sites = math.prod(lat) * model.sites_per_cell
+        num_so = n_sites * model.spin
+        terms_dict: dict[str, complex] = {}
+        for s in range(n_sites):
+            sign = (+1.0 if (s % sites_per_cell) % 2 == 0 else -1.0) if stagger else +1.0
+            up, dn = s * 2, s * 2 + 1
+            terms_dict[f"+_{up} -_{up}"] = terms_dict.get(f"+_{up} -_{up}", 0.0) + sign / n_sites
+            terms_dict[f"+_{dn} -_{dn}"] = terms_dict.get(f"+_{dn} -_{dn}", 0.0) - sign / n_sites
+        return FermionicOp(terms_dict, num_spin_orbitals=num_so)
+
+    def _e_mb(model, lattice, H, eigvals, eigvecs, n_occ, params):
+        evs, _, _ = _mb_result_cached(model, lattice, n_occ, params)
+        return float(evs[0]) if len(evs) > 0 else float('nan')
+
+    def _gap_mb(model, lattice, H, eigvals, eigvecs, n_occ, params):
+        evs, _, _ = _mb_result_cached(model, lattice, n_occ, params)
+        if len(evs) < 2:
+            return 0.0
+        return float(evs[1] - evs[0])
+
+    def _m_stag(model, lattice, H, eigvals, eigvecs, n_occ, params):
+        _, psi, mask = _mb_result_cached(model, lattice, n_occ, params)
+        return _spin_sector_expectation(model, lattice, n_occ, psi, mask, stagger=True)
+
+    def _m_total(model, lattice, H, eigvals, eigvecs, n_occ, params):
+        _, psi, mask = _mb_result_cached(model, lattice, n_occ, params)
+        return _spin_sector_expectation(model, lattice, n_occ, psi, mask, stagger=False)
+
+    def _m_stag_quantum_op(model, lattice, **params):
+        return _spin_fermionic_op(model, lattice, stagger=True)
+
+    def _m_total_quantum_op(model, lattice, **params):
+        return _spin_fermionic_op(model, lattice, stagger=False)
+
+    return {
+        "E": Observable(
+            name="E", display_name="E",
+            analytic=_e_mb,
+            analytic_bloch=default_energy_observable().analytic_bloch,
+        ),
+        "gap": Observable(
+            name="gap", display_name=r"\Delta_{\mathrm{gap}}",
+            analytic=_gap_mb,
+        ),
+        "M_stag": Observable(
+            name="M_stag", display_name=r"|m_{\mathrm{stag}}|",
+            analytic=_m_stag,
+            quantum_operator=_m_stag_quantum_op,
+        ),
+        "M_total": Observable(
+            name="M_total", display_name=r"|m_{\mathrm{total}}|",
+            analytic=_m_total,
+            quantum_operator=_m_total_quantum_op,
+        ),
+    }
+
+
 def spec_to_model(spec: YamlModelSpec) -> Model:
     param_labels = {k: v.label for k, v in spec.parameters.items()}
+    observables = _build_observables(spec) or {}
+    int_obs = _build_interacting_analytic_observables(spec)
+    if int_obs:
+        for k, v in int_obs.items():
+            observables.setdefault(k, v)
     return Model(
         name=spec.name,
         display_name=spec.display_name,
@@ -771,11 +994,12 @@ def spec_to_model(spec: YamlModelSpec) -> Model:
         get_optimizer=_build_optimizer_factory(spec),
         get_mapper=_build_mapper_factory(spec),
         get_vqe_ansatz=_build_ansatz_factory(spec),
+        get_iqpe_initial_state=_build_initial_state_factory(spec),
         mean_field_correction=_build_mean_field_correction(spec),
         bloch_hamiltonian=(
             _build_bloch_hamiltonian(spec)
             if spec.bloch_hamiltonian is not None
             else _build_auto_bloch_hamiltonian(spec)
         ),
-        observables=_build_observables(spec),
+        observables=observables or None,
     )

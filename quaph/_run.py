@@ -3,21 +3,34 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
+import tempfile
+from datetime import datetime
 from dataclasses import dataclass, field
 
 import numpy as np
 from joblib import Parallel, delayed
 
 from quaph._model import Model, ModelCapabilityError
-from quaph._core import (
-    resolve_sweep,
-    analytic, vqe, iqpe,
-    vqe_other_benchmarks, iqpe_other_benchmarks,
-    analytic_bands, vqe_bloch, iqpe_bloch,
-    vqe_bloch_other_benchmarks, iqpe_bloch_other_benchmarks,
+from quaph._core import resolve_sweep
+from quaph._hamlib import (
+    list_hamlib_keys, load_hamlib_operator, parse_key_params,
 )
 from quaph._plotting import plot_analytic, plot_simulated
 from quaph._registry import get_model as _get_model
+from quaph._method import (
+    Method, METHOD_ORDER, CellContext, build_method, get_method_class,
+)
+
+
+# Marker styling for non-surface comparison series (VQE/IQPE handled natively by
+# plot_simulated; everything else is rendered through extra_series).
+_METHOD_STYLE = {
+    "dmrg": {"color": "#D55E00", "marker": "D"},
+    "vqe": {"color": "#0072B2", "marker": "o"},
+    "iqpe": {"color": "#6DBF82", "marker": "^"},
+    "analytic": {"color": "#888888", "marker": "s"},
+}
 
 
 def _resolve_model(model) -> Model:
@@ -50,20 +63,6 @@ def _resolve_lattice(model: Model, lattice) -> tuple[int, ...]:
     return lat
 
 
-def _lattice_tag(lattice) -> str:
-    if lattice is None:
-        return "band-structure"
-    return "x".join(str(x) for x in lattice)
-
-
-def _log_subdir(log_dir, model_name, lattice):
-    return os.path.join(log_dir, model_name, _lattice_tag(lattice))
-
-
-def _plot_subdir(plot_dir, model_name, lattice):
-    return os.path.join(plot_dir, model_name, _lattice_tag(lattice))
-
-
 def _is_band_structure_axes(model, x_param, y_param) -> bool:
     return (x_param in model.momentum_axes) or (y_param in model.momentum_axes)
 
@@ -88,17 +87,42 @@ def _label_for(model, param: str) -> str:
     return f"${model.param_labels.get(param, param)}$"
 
 
+def _opt_lattice(lat):
+    return tuple(lat) if lat else None
+
+
 def _observable_label(model, observable: str) -> str:
     obs = model.get_observable(observable)
     return f"${obs.display_name}$"
 
 
-def _file_tag(run_type: str, plot_format: str, x_param: str, y_param: str | None,
-              observable: str | None = None) -> str:
-    obs = f"-{observable}" if observable and observable != "E" else ""
-    if y_param is None:
-        return f"{run_type}{obs}-{plot_format}-{x_param}"
-    return f"{run_type}{obs}-{plot_format}-{x_param}-vs-{y_param}"
+def _result_labels(model_name, x_param, y_param):
+    from quaph._registry import get_model
+    try:
+        model = get_model(model_name)
+    except Exception:
+        x_label = "Instance" if x_param == "instance" else f"${x_param}$"
+        y_label = f"${y_param}$" if y_param else "$E$"
+        return x_label, y_label, False, False
+    x_label = _label_for(model, x_param)
+    y_label = _label_for(model, y_param) if y_param else "$E$"
+    x_is_momentum = x_param in model.momentum_axes
+    y_is_momentum = bool(y_param) and y_param in model.momentum_axes
+    return x_label, y_label, x_is_momentum, y_is_momentum
+
+
+def _safe_observable_label(model_name, observable: str) -> str:
+    from quaph._registry import get_model
+    try:
+        return f"${get_model(model_name).get_observable(observable).display_name}$"
+    except Exception:
+        return "$E$"
+
+
+def _derived_paths(log_path):
+    """Sidecar raw + progress journal paths derived from a user's log_path."""
+    base = os.path.splitext(log_path)[0]
+    return f"{base}.raw-data.json", f"{base}.progress.jsonl"
 
 
 def _gate_momentum(model, x_param, y_param):
@@ -116,41 +140,55 @@ def _gate_momentum(model, x_param, y_param):
             )
 
 
+# ----------------------------------------------------------------- method setup
+def _normalize_methods(method) -> list[Method]:
+    if method is None:
+        raise ValueError("run() requires method=<Method or list of Methods>.")
+    if isinstance(method, (Method, str)):
+        items = [method]
+    else:
+        items = list(method)
+    if not items:
+        raise ValueError("run() requires at least one simulation method.")
+    seen = {Method.coerce(m) for m in items}
+    return [m for m in METHOD_ORDER if m in seen]
+
+
+def _build_method_objects(methods, method_params):
+    method_params = method_params or {}
+    objs = {}
+    for m in methods:
+        params = method_params.get(m)
+        if params is None:
+            params = method_params.get(m.value, {})
+        objs[m] = build_method(m, params)
+    return objs
+
+
+# ----------------------------------------------------------------------- result
 @dataclass
 class AnalyticResult:
-    """Result of a classical (exact-diagonalization) sweep.
-
-    .. todo:: Document the data layout (``energies`` shape for 1D vs. 2D
-       sweeps and band-structure runs) and the JSON log schema. Individual
-       field meanings are listed in the autodoc-generated attribute table
-       below.
-    """
     model_name: str
-    lattice: tuple[int, ...]
+    lattice: tuple[int, ...] | None
     x_param: str
     y_param: str | None
     x_values: list
     y_values: list
-    energies: np.ndarray
-    plot_format: str = "3d"
+    methods: list[str]
+    grids: dict[str, np.ndarray]
     band_structure: bool = False
+    analytic_bands: np.ndarray | None = None
+    plot_format: str = "3d"
+    observable: str = "E"
+    extremum: str = "min"
+    backend_label: str = "ideal"
     log_path: str | None = None
+    raw_log_path: str | None = None
     plot_path: str | None = None
+    raw: dict = field(default_factory=dict, repr=False)
     _model_params: dict = field(default_factory=dict, repr=False)
 
     def plot(self, *, hide_plot: bool = False, output_path=None):
-        """Render the sweep as a 2D line, 3D surface, or heatmap.
-
-        .. todo:: Describe plot-format selection and how labels are inferred
-           from the model's ``param_labels``.
-
-        Parameters
-        ----------
-        hide_plot : bool, default False
-            If True, suppress the interactive matplotlib window.
-        output_path : str, optional
-            Destination file (``.pdf``/``.png``); skipped if ``None``.
-        """
         from quaph._registry import get_model
         model = get_model(self.model_name)
         x_label = _label_for(model, self.x_param)
@@ -158,22 +196,14 @@ class AnalyticResult:
         x_is_momentum = self.x_param in model.momentum_axes
         y_is_momentum = bool(self.y_param) and self.y_param in model.momentum_axes
         return plot_analytic(
-            self.x_values, self.y_values, x_label, y_label, self.energies,
-            plot_format=self.plot_format,
-            output_path=output_path, hide_plot=hide_plot,
-            x_is_momentum=x_is_momentum, y_is_momentum=y_is_momentum,
+            rr.x_values, rr.y_values, x_label, y_label if rr.y_param else z_label, Z,
+            plot_format=plot_format, output_path=output_path, hide_plot=hide_plot,
+            x_is_momentum=x_is_mom, y_is_momentum=y_is_mom, z_label=z_label,
         )
 
 
 @dataclass
 class SimulatedResult:
-    """Result of a quantum-simulated sweep (VQE and/or IQPE) alongside the analytic baseline.
-
-    .. todo:: Document each field, the meaning of ``vqe_best_energies`` /
-       ``iqpe_best_energies`` (best-of-reps), and the layout of ``raw``.
-       Individual field types are listed in the autodoc-generated attribute
-       table below.
-    """
     model_name: str
     lattice: tuple[int, ...]
     x_param: str
@@ -194,20 +224,6 @@ class SimulatedResult:
 
     def plot(self, *, hide_plot: bool = False, output_path=None,
              hide_legend: bool = False):
-        """Render analytic baseline against VQE / IQPE estimates.
-
-        .. todo:: Describe how each method's curve/surface is rendered and
-           when to use ``hide_legend``.
-
-        Parameters
-        ----------
-        hide_plot : bool, default False
-            Suppress the interactive matplotlib window.
-        output_path : str, optional
-            Destination file path.
-        hide_legend : bool, default False
-            Omit the legend on the rendered figure.
-        """
         from quaph._registry import get_model
         model = get_model(self.model_name)
         x_label = _label_for(model, self.x_param)
@@ -226,95 +242,86 @@ class SimulatedResult:
 
 
 def load_result(path: str) -> AnalyticResult | SimulatedResult:
-    """Deserialize a JSON log written by one of the ``run_*`` functions.
-
-    .. todo:: Document the JSON schema and the dispatch on ``type``
-       (``"analytic"`` / ``"simulated-ideal"`` / ``"simulated-noisy"``).
-
-    Parameters
-    ----------
-    path : str
-        Path to the summary JSON log.
-
-    Returns
-    -------
-    AnalyticResult or SimulatedResult
-        Reconstructed result object suitable for ``.plot()``.
-
-    Raises
-    ------
-    ValueError
-        If the log's ``type`` field is unrecognized.
-    """
     with open(path) as f:
         data = json.load(f)
 
-    result_type = data.get("type", "")
+    if data.get("type") != "run":
+        raise ValueError(
+            f"Unrecognized log file type {data.get('type')!r} in {path}. "
+            "Expected a unified 'run' log (regenerate with the current API)."
+        )
+
     x_vals = data["x_values"]
-    y_vals = data.get("y_values", [])
-    is_1d = y_vals is None or len(y_vals) == 0
+    y_vals = data.get("y_values", []) or []
+    is_1d = len(y_vals) == 0
     nx = len(x_vals)
-    ny = len(y_vals) if not is_1d else 0
+    ny = len(y_vals) if not is_1d else 1
     band_structure = bool(data.get("band_structure", False))
     plot_format = data.get("plot_format", "2d" if is_1d else "3d")
+    methods = list(data["methods"])
 
-    def _read_grid(block):
-        if is_1d:
-            return np.array([block[str(ix)] for ix in range(nx)])
-        return np.array([[block[str(ix)][str(iy)] for iy in range(ny)] for ix in range(nx)])
+    def _scalar_grid(block):
+        arr = np.full((nx, ny), np.nan)
+        for ix in range(nx):
+            col = block[str(ix)]
+            if is_1d:
+                arr[ix, 0] = col
+            else:
+                for iy in range(ny):
+                    arr[ix, iy] = col[str(iy)]
+        return _squeeze_scalar(arr, is_1d)
 
-    if result_type == "analytic":
-        energies = _read_grid(data["result"]["analytic"])
-        return AnalyticResult(
-            model_name=data["parameters"]["model"],
-            lattice=tuple(data["parameters"]["lattice"]),
-            x_param=data["x_param"],
-            y_param=data.get("y_param"),
-            x_values=x_vals,
-            y_values=y_vals if not is_1d else [],
-            energies=energies,
-            plot_format=plot_format,
-            band_structure=band_structure,
-            log_path=path,
-            _model_params=data["parameters"].get("model_params", {}),
-        )
-    elif result_type in ("simulated-ideal", "simulated-noisy"):
-        analytic_arr = _read_grid(data["result"]["analytic"])
-        if band_structure:
-            analytic_bands_arr = analytic_arr
-            Z_exact = analytic_arr[..., 0]
+    def _bands_grid(block):
+        probe = block["0"] if is_1d else block["0"]["0"]
+        nb = len(probe)
+        arr = np.full((nx, ny, nb), np.nan)
+        for ix in range(nx):
+            col = block[str(ix)]
+            if is_1d:
+                arr[ix, 0, :] = col
+            else:
+                for iy in range(ny):
+                    arr[ix, iy, :] = col[str(iy)]
+        return _squeeze_bands(arr, is_1d)
+
+    grids = {}
+    analytic_bands = None
+    for m in methods:
+        block = data["result"][m]
+        if band_structure and m == "analytic":
+            analytic_bands = _bands_grid(block)
+            grids[m] = analytic_bands[..., 0]
         else:
-            analytic_bands_arr = None
-            Z_exact = analytic_arr
-        Z_vqe = _read_grid(data["result"]["vqe"]) if "vqe" in data["result"] else None
-        Z_iqpe = _read_grid(data["result"]["iqpe"]) if "iqpe" in data["result"] else None
-        return SimulatedResult(
-            model_name=data["parameters"]["model"],
-            lattice=tuple(data["parameters"]["lattice"]),
-            x_param=data["x_param"],
-            y_param=data.get("y_param"),
-            x_values=x_vals,
-            y_values=y_vals if not is_1d else [],
-            analytic_energies=Z_exact,
-            vqe_best_energies=Z_vqe,
-            iqpe_best_energies=Z_iqpe,
-            plot_format=plot_format,
-            band_structure=band_structure,
-            analytic_bands=analytic_bands_arr,
-            raw=data,
-            summary_log_path=path,
-            _model_params=data["parameters"].get("model_params", {}),
-        )
-    else:
-        raise ValueError(
-            f"Unrecognized log file type '{result_type}' in {path}. "
-            "Expected 'analytic', 'simulated-ideal', or 'simulated-noisy'."
-        )
+            grids[m] = _scalar_grid(block)
+
+    params = data.get("parameters", {})
+    return RunResult(
+        model_name=params.get("model"),
+        lattice=_opt_lattice(params.get("lattice")),
+        x_param=data["x_param"],
+        y_param=data.get("y_param"),
+        x_values=x_vals,
+        y_values=y_vals if not is_1d else [],
+        methods=methods,
+        grids=grids,
+        band_structure=band_structure,
+        analytic_bands=analytic_bands,
+        plot_format=plot_format,
+        observable=data.get("observable", "E"),
+        extremum=data.get("extremum", "min"),
+        backend_label=data.get("backend", "ideal"),
+        log_path=path,
+        raw=data,
+        _model_params=params.get("model_params", {}),
+    )
 
 
-def run_analytic(
-    model,
+# ----------------------------------------------------------- public entry point
+def run(
+    model=None,
     *,
+    method,
+    method_params: dict | None = None,
     lattice=None,
     x_param: str | None = None,
     x_range=None,
@@ -323,67 +330,38 @@ def run_analytic(
     n_occ: int | None = None,
     model_params: dict | None = None,
     observable: str = "E",
-    log_dir=None,
-    plot_dir=None,
+    backend=None,
+    qubit_operator: str | None = None,
+    extremum: str = "min",
+    select=None,
+    log_path=None,
+    plot_path=None,
     hide_plot: bool = False,
+    hide_legend: bool = False,
     heatmap: bool = False,
 ) -> AnalyticResult:
-    """Sweep a model's parameter space analytically using diagonalization.
-
-    .. todo:: Describe sweep-axis semantics (``n_occ`` vs. parameter vs.
-       momentum), how ``lattice`` is required for real-space runs and
-       forbidden for band-structure runs, and the resulting log/plot paths.
-
-    Parameters
-    ----------
-    model : str or Model
-        Registered model name or a :class:`Model` instance.
-    lattice : tuple[int, ...], optional
-        Lattice extents; required for real-space runs, omit for momentum-space.
-    x_param, y_param : str, optional
-        Sweep axes. At least one of them must be provided.
-        Either ``"n_occ"``, a model parameter, or a momentum axis
-        (``"k"``, ``"kx"``, ``"ky"``, ``"kz"``).
-    x_range, y_range : tuple, optional
-        ``(start, stop, step)`` for non-``n_occ`` axes.
-    n_occ : int, optional
-        Fixed occupation when not swept; defaults to half-filling.
-    model_params : dict, optional
-        Fixed model parameters not on a sweep axis.
-    observable : str, default "E"
-        Observable key registered on the model.
-    log_dir, plot_dir : str, optional
-        Output directories for JSON log and PDF plot.
-    hide_plot : bool, default False
-        Suppress the matplotlib window.
-    heatmap : bool, default False
-        Render 2D sweeps as a heatmap instead of a 3D surface.
-
-    Returns
-    -------
-    AnalyticResult
-        Sweep result with attached log and plot paths.
-
-    Raises
-    ------
-    ValueError
-        For inconsistent axis/lattice combinations or missing ranges.
-    ModelCapabilityError
-        If a requested momentum axis is unavailable on this model.
-    """
     model = _resolve_model(model)
     _ = model._build_H_matrix
     _ = model.get_observable(observable)
 
-    x_param, x_range, y_param, y_range, is_1d = _normalize_sweep_axes(x_param, x_range, y_param, y_range)
+    x_param, x_range, y_param, y_range, is_1d = _normalize_sweep_axes(
+        x_param, x_range, y_param, y_range
+    )
     if heatmap and is_1d:
         raise ValueError("heatmap=True requires both x and y sweep axes; provide y_param/y_range.")
+    if heatmap and len(methods) != 1:
+        raise ValueError("heatmap=True requires exactly one simulation method.")
     _gate_momentum(model, x_param, y_param)
 
     is_band_structure_run = _is_band_structure_axes(model, x_param, y_param)
     if is_band_structure_run:
         if lattice is not None:
             raise ValueError("lattice and momentum-space sweep axes are mutually exclusive; omit lattice for band-structure runs.")
+        for m in methods:
+            if not method_objs[m].SUPPORTS_BAND_STRUCTURE:
+                raise ValueError(
+                    f"Method '{m.value}' does not support band-structure (momentum-space) runs."
+                )
     else:
         lattice = _resolve_lattice(model, lattice)
 
@@ -394,6 +372,14 @@ def run_analytic(
             raise ValueError(
                 f"'{axis}' is the active sweep axis and cannot be set as a fixed value in model_params. "
                 f"Override the sweep with x_param/y_param instead."
+            )
+
+    if Method.IQPE in methods and observable != "E":
+        from quaph._iqpe import iqpe_supports_observable
+        if not iqpe_supports_observable(model, observable):
+            raise ValueError(
+                f"IQPE cannot measure observable '{observable}'; only 'E' and energy "
+                f"composites (e.g. charge_gap) are supported. Drop IQPE or use VQE."
             )
 
     params = dict(model_params or {})
@@ -412,9 +398,11 @@ def run_analytic(
         y_vals, y_kind = [], "none"
     else:
         y_vals, _y_label_default, y_kind = resolve_sweep(y_param, y_range, n_orbitals, momentum_axes)
+    nx = len(x_vals)
+    ny = 1 if is_1d else len(y_vals)
 
-    is_band_structure = (x_kind == "momentum") or (y_kind == "momentum")
-    if is_band_structure:
+    is_band = (x_kind == "momentum") or (y_kind == "momentum")
+    if is_band:
         if x_kind == "n_occ" or y_kind == "n_occ" or n_occ is not None:
             raise ValueError("n_occ is not meaningful for band-structure (momentum-space) runs.")
         _ = model.bloch_hamiltonian
@@ -425,190 +413,28 @@ def run_analytic(
                     f"sweep axis nor fixed in model_params. Pin it explicitly to a value."
                 )
 
-    x_label = _label_for(model, x_param)
-    obs_label = _observable_label(model, observable)
-    y_label = _label_for(model, y_param) if not is_1d else obs_label
-
     plot_format = "2d" if is_1d else ("heatmap" if heatmap else "3d")
 
-    if is_band_structure:
-        probe_k = []
-        for a in momentum_axes:
-            if a == x_param:
-                probe_k.append(x_vals[0])
-            elif a == y_param:
-                probe_k.append(y_vals[0])
-            else:
-                probe_k.append(params[a])
-        probe_params = {k: v for k, v in params.items() if k not in momentum_axes}
-        n_bands = model.bloch_hamiltonian(*probe_k, **probe_params).shape[0]
-        Z_shape = (len(x_vals), n_bands) if is_1d else (len(x_vals), len(y_vals), n_bands)
-    else:
-        n_bands = 1
-        Z_shape = (len(x_vals),) if is_1d else (len(x_vals), len(y_vals))
-    Z = np.full(Z_shape, np.nan)
+    if task_count < 1:
+        raise ValueError("task_count must be at least 1")
+    if task_index is not None and not 0 <= task_index < task_count:
+        raise ValueError("task_index must satisfy 0 <= task_index < task_count")
 
-    def _eval_cell(xv, yv=None):
-        cell_params = params.copy()
-        n_occ_val = fixed_n_occ
-        if x_kind == "n_occ":
-            n_occ_val = int(xv)
-        else:
-            cell_params[x_param] = xv
-        if yv is not None:
-            if y_kind == "n_occ":
-                n_occ_val = int(yv)
-            else:
-                cell_params[y_param] = yv
-        if is_band_structure:
-            k_tuple = tuple(cell_params.pop(a) for a in momentum_axes)
-            return analytic_bands(model, k_tuple, cell_params, observable=observable)
-        return analytic(model, lattice, n_occ_val, cell_params, observable=observable)
+    use_parallel = any(method_objs[m].WANTS_PARALLEL for m in methods)
 
-    if is_1d:
-        for ix, xv in enumerate(x_vals):
-            Z[ix] = _eval_cell(xv)
-    else:
-        for ix, xv in enumerate(x_vals):
-            for iy, yv in enumerate(y_vals):
-                Z[ix, iy] = _eval_cell(xv, yv)
+    raw_data_path = None
+    progress_path = None
+    if log_path is not None:
+        os.makedirs(os.path.dirname(os.path.abspath(log_path)), exist_ok=True)
+        # Raw sidecar + progress journal only matter for expensive parallel runs
+        # (benchmarks, resume, sharding); analytic-only runs need just the summary.
+        if use_parallel:
+            raw_data_path, progress_path = _derived_paths(log_path)
 
-    if is_1d:
-        if is_band_structure:
-            analytic_block = {ix: Z[ix, :].tolist() for ix in range(len(x_vals))}
-        else:
-            analytic_block = {ix: float(Z[ix]) for ix in range(len(x_vals))}
-    else:
-        if is_band_structure:
-            analytic_block = {ix: {iy: Z[ix, iy, :].tolist() for iy in range(len(y_vals))} for ix in range(len(x_vals))}
-        else:
-            analytic_block = {ix: {iy: float(Z[ix, iy]) for iy in range(len(y_vals))} for ix in range(len(x_vals))}
-
-    tag = _file_tag("analytic", plot_format, x_param, y_param, observable=observable)
-
-    log_path = None
-    if log_dir is not None:
-        subdir = _log_subdir(log_dir, model.name, lattice)
-        os.makedirs(subdir, exist_ok=True)
-        log_path = os.path.join(subdir, f"{tag}.json")
-        log_data = {
-            "type": "analytic",
-            "plot_format": plot_format,
-            "band_structure": is_band_structure,
-            "observable": observable,
-            "parameters": {
-                "model": model.name,
-                "lattice": list(lattice) if lattice is not None else None,
-                "model_params": {k: float(v) for k, v in params.items()},
-            },
-            "x_param": x_param,
-            "y_param": y_param,
-            "x_values": x_vals,
-            "y_values": y_vals,
-            "result": {"analytic": analytic_block},
-        }
-        if is_band_structure:
-            log_data["n_bands"] = n_bands
-        with open(log_path, "w") as f:
-            json.dump(log_data, f, indent=4)
-
-    plot_path = None
-    if plot_dir is not None:
-        subdir = _plot_subdir(plot_dir, model.name, lattice)
-        os.makedirs(subdir, exist_ok=True)
-        plot_path = os.path.join(subdir, f"{tag}.pdf")
-
-    if plot_path is not None or not hide_plot:
-        plot_analytic(
-            x_vals, y_vals, x_label, y_label, Z,
-            plot_format=plot_format,
-            output_path=plot_path, hide_plot=hide_plot,
-            x_is_momentum=(x_kind == "momentum"),
-            y_is_momentum=(y_kind == "momentum"),
-            z_label=obs_label,
-        )
-
-    return AnalyticResult(
-        model_name=model.name,
-        lattice=lattice,
-        x_param=x_param,
-        y_param=y_param,
-        x_values=x_vals,
-        y_values=y_vals,
-        energies=Z,
-        plot_format=plot_format,
-        band_structure=is_band_structure,
-        log_path=log_path,
-        plot_path=plot_path,
-        _model_params=params,
-    )
-
-
-def _run_simulated(
-    model: Model,
-    simulation_tag: str,
-    backend,
-    *,
-    lattice: tuple[int, ...],
-    x_param: str,
-    x_range,
-    y_param: str | None,
-    y_range,
-    n_occ: int | None,
-    model_params: dict,
-    vqe_iters: int | None,
-    vqe_layers: int | None,
-    vqe_reps: int,
-    iqpe_time: float | None,
-    iqpe_trot: int | None,
-    iqpe_iters: int | None,
-    iqpe_reps: int,
-    log_dir,
-    plot_dir,
-    hide_plot: bool,
-    hide_legend: bool,
-    is_1d: bool,
-) -> SimulatedResult:
-    do_vqe = vqe_reps > 0
-    do_iqpe = iqpe_reps > 0
-
-    spin = model.spin
-    if lattice is not None:
-        n_sites = math.prod(lattice) * model.sites_per_cell
-        n_orbitals = n_sites * spin
-    else:
-        n_sites = 0
-        n_orbitals = 0
-    fixed_n_occ = n_occ if n_occ is not None else (n_orbitals // 2 if n_orbitals else 0)
-    mapper = model.get_mapper(n_sites, spin, fixed_n_occ)
-    momentum_axes = model.momentum_axes
-
-    x_vals, _x_label_default, x_kind = resolve_sweep(x_param, x_range, n_orbitals, momentum_axes)
-    if is_1d:
-        y_vals, y_kind = [], "none"
-    else:
-        y_vals, _y_label_default, y_kind = resolve_sweep(y_param, y_range, n_orbitals, momentum_axes)
-    nx = len(x_vals)
-    ny = 1 if is_1d else len(y_vals)
-    plot_format = "2d" if is_1d else "3d"
-
-    is_band_structure = (x_kind == "momentum") or (y_kind == "momentum")
-    if is_band_structure:
-        if x_kind == "n_occ" or y_kind == "n_occ" or n_occ is not None:
-            raise ValueError("n_occ is not meaningful for band-structure (momentum-space) runs.")
-        _ = model.bloch_hamiltonian
-        for k_axis in momentum_axes:
-            if k_axis not in (x_param, y_param) and k_axis not in model_params:
-                raise ValueError(
-                    f"Model '{model.name}' has momentum axis '{k_axis}' that is neither the active "
-                    f"sweep axis nor fixed in model_params. Pin it explicitly to a value."
-                )
-
-    x_label = _label_for(model, x_param)
-    y_label = _label_for(model, y_param) if not is_1d else "$E$"
+    raw_cells = {m.value: {str(ix): {} for ix in range(nx)} for m in methods}
 
     def cell_params_and_nocc(ix, iy):
-        cp = model_params.copy()
+        cp = params.copy()
         n_occ_val = fixed_n_occ
         xv = x_vals[ix]
         if x_kind == "n_occ":
@@ -623,265 +449,252 @@ def _run_simulated(
                 cp[y_param] = yv
         return cp, n_occ_val
 
-    def split_k_and_params(cp):
-        k_tuple = tuple(cp.pop(a) for a in momentum_axes)
-        return k_tuple, cp
+    def compute_one(method_value, ix, iy, tmp_dir):
+        m_obj = method_objs[Method.coerce(method_value)]
+        cp, n_occ_val = cell_params_and_nocc(ix, iy)
+        label = f"{x_param}={x_vals[ix]}" + ("" if is_1d else f", {y_param}={y_vals[iy]}")
+        ctx = CellContext(
+            ix=ix, iy=iy, cell_index=ix * ny + iy,
+            n_sites=n_sites, spin=spin, n_orbitals=n_orbitals,
+            raw_dir=tmp_dir, tmp_dir=tmp_dir, label=label,
+        )
+        if is_band:
+            k_tuple = tuple(cp.pop(a) for a in momentum_axes)
+            return m_obj.compute_bloch_cell(model, k_tuple, cp, observable, backend=backend, ctx=ctx)
+        ctx.mapper = model.get_mapper(n_sites, spin, n_occ_val)
+        return m_obj.compute_cell(model, lattice, n_occ_val, cp, observable, backend=backend, ctx=ctx)
 
-    def tagged_job(tag, func, *a, **kw):
-        return tag, func(*a, **kw)
+    def run_job(tag_tuple, tmp_dir):
+        return tag_tuple, compute_one(*tag_tuple, tmp_dir=tmp_dir)
 
-    jobs = []
-    for ix in range(nx):
-        for iy in range(ny):
-            cp, n_occ_val = cell_params_and_nocc(ix, iy)
-            if is_band_structure:
-                k_tuple, cp_no_k = split_k_and_params(cp)
-                jobs.append(delayed(tagged_job)(
-                    ("analytic", ix, iy), analytic_bands, model, k_tuple, cp_no_k
-                ))
-                if do_iqpe:
-                    for rep in range(1, iqpe_reps + 1):
-                        jobs.append(delayed(tagged_job)(
-                            ("iqpe", ix, iy, rep), iqpe_bloch,
-                            k_tuple, cp_no_k, model.bloch_hamiltonian,
-                            iqpe_time, iqpe_trot, iqpe_iters, rep,
-                            backend=backend
-                        ))
-                    jobs.append(delayed(tagged_job)(
-                        ("iqpe_bench", ix, iy), iqpe_bloch_other_benchmarks,
-                        k_tuple, cp_no_k, model.bloch_hamiltonian,
-                        iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps,
-                        backend=backend
-                    ))
-                if do_vqe:
-                    for rep in range(1, vqe_reps + 1):
-                        jobs.append(delayed(tagged_job)(
-                            ("vqe", ix, iy, rep), vqe_bloch,
-                            k_tuple, cp_no_k, model.bloch_hamiltonian, model.get_optimizer,
-                            vqe_iters, vqe_layers, rep,
-                            backend=backend
-                        ))
-                    jobs.append(delayed(tagged_job)(
-                        ("vqe_bench", ix, iy), vqe_bloch_other_benchmarks,
-                        k_tuple, cp_no_k, model.bloch_hamiltonian,
-                        vqe_iters, vqe_layers, vqe_reps,
-                        backend=backend
-                    ))
-                continue
+    all_tags = [(m.value, ix, iy) for m in methods for ix in range(nx) for iy in range(ny)]
 
-            jobs.append(delayed(tagged_job)(
-                ("analytic", ix, iy), analytic, model, lattice, n_occ_val, cp
-            ))
-            if do_iqpe:
-                for rep in range(1, iqpe_reps + 1):
-                    jobs.append(delayed(tagged_job)(
-                        ("iqpe", ix, iy, rep), iqpe,
-                        lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
-                        mapper, iqpe_time, iqpe_trot, iqpe_iters, rep,
-                        backend=backend
-                    ))
-                jobs.append(delayed(tagged_job)(
-                    ("iqpe_bench", ix, iy), iqpe_other_benchmarks,
-                    lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
-                    mapper, iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps,
-                    backend=backend
-                ))
-            if do_vqe:
-                for rep in range(1, vqe_reps + 1):
-                    jobs.append(delayed(tagged_job)(
-                        ("vqe", ix, iy, rep), vqe,
-                        lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian, model.get_optimizer,
-                        model.get_vqe_ansatz,
-                        mapper, vqe_iters, vqe_layers, rep,
-                        backend=backend
-                    ))
-                jobs.append(delayed(tagged_job)(
-                    ("vqe_bench", ix, iy), vqe_other_benchmarks,
-                    lattice, n_sites, spin, n_occ_val, cp, model.fermionic_hamiltonian,
-                    model.get_vqe_ansatz,
-                    mapper, vqe_iters, vqe_layers, vqe_reps,
-                    backend=backend
-                ))
+    def apply(tag_tuple, cell):
+        mv, ix, iy = tag_tuple
+        raw_cells[mv][str(ix)][str(iy)] = cell
 
-    raw_tag = _file_tag(f"simulated-{simulation_tag}", plot_format, x_param, y_param)
-    raw_data_path = None
-    if log_dir is not None:
-        log_subdir = _log_subdir(log_dir, model.name, lattice)
-        os.makedirs(os.path.join(log_subdir, "raw-data"), exist_ok=True)
-        raw_data_path = os.path.join(log_subdir, "raw-data", f"{raw_tag}.json")
+    def append_progress(tag_tuple, cell):
+        if no_progress_log or progress_path is None:
+            return
+        record = {
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "tag": list(tag_tuple),
+            "cell": cell,
+        }
+        payload = (json.dumps(record) + "\n").encode()
+        fd = os.open(progress_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
+        try:
+            os.write(fd, payload)
+        finally:
+            os.close(fd)
 
-    def empty_cell():
-        cell = {"analytic": None}
-        if do_vqe:
-            cell["vqe"] = {"repetitions": [], "num_queries": None, "circuit_depth": None}
-        if do_iqpe:
-            cell["iqpe"] = {"repetitions": [], "iteration_energies": [], "num_queries": None, "circuit_depth": None}
-        return cell
+    def load_progress():
+        if progress_path is None:
+            raise ValueError("log_path is required for aggregate_only")
+        if not os.path.exists(progress_path):
+            raise FileNotFoundError(f"Progress file does not exist: {progress_path}")
+        with open(progress_path) as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                record = json.loads(line)
+                apply(tuple(record["tag"]), record["cell"])
 
-    parameters = {
-        "model": model.name,
-        "lattice": list(lattice),
-        "simulation": simulation_tag,
-        "model_params": {k: float(v) for k, v in model_params.items()},
-    }
-    if do_vqe:
-        parameters["vqe"] = {"iters": vqe_iters, "layers": vqe_layers, "reps": vqe_reps}
-    if do_iqpe:
-        parameters["iqpe"] = {"time": iqpe_time, "trot": iqpe_trot, "iters": iqpe_iters, "reps": iqpe_reps}
+    def validate_complete():
+        missing = []
+        for m in methods:
+            for ix in range(nx):
+                for iy in range(ny):
+                    if str(iy) not in raw_cells[m.value].get(str(ix), {}):
+                        missing.append(f"{m.value}:{ix},{iy}")
+        if missing:
+            raise RuntimeError("Missing results before aggregation: " + ", ".join(missing[:20]))
 
-    raw_data = {
-        "parameters": parameters,
-        "plot_format": plot_format,
-        "band_structure": is_band_structure,
-        "x_param": x_param, "y_param": y_param,
-        "x_values": x_vals, "y_values": y_vals,
-        "grid": {
-            str(ix): {str(iy): empty_cell() for iy in range(ny)}
-            for ix in range(nx)
-        },
-    }
+    method_params_summary = {m.value: method_objs[m].parameter_summary() for m in methods}
 
-    if raw_data_path is not None:
-        with open(raw_data_path, "w") as f:
-            json.dump(raw_data, f, indent=4)
+    def build_raw():
+        return {
+            "type": "run",
+            "methods": [m.value for m in methods],
+            "backend": backend_label,
+            "plot_format": plot_format,
+            "band_structure": is_band,
+            "observable": observable,
+            "extremum": "min",
+            "x_param": x_param, "y_param": y_param,
+            "x_values": x_vals, "y_values": y_vals,
+            "parameters": {
+                "model": model.name,
+                "lattice": list(lattice) if lattice is not None else None,
+                "model_params": {k: float(v) for k, v in params.items()},
+                "method_params": method_params_summary,
+            },
+            "cells": raw_cells,
+        }
+
+    if raw_data_path is not None and not no_progress_log and (
+        prepare_only or (task_index is None and not aggregate_only)
+    ):
+        with open(progress_path, "w") as f:
+            f.write("")
+
+    def empty_result():
+        grids = {m.value: _squeeze_scalar(np.full((nx, ny), np.nan), is_1d) for m in methods}
+        return RunResult(
+            model_name=model.name, lattice=lattice, x_param=x_param, y_param=y_param,
+            x_values=x_vals, y_values=y_vals if not is_1d else [],
+            methods=[m.value for m in methods], grids=grids,
+            band_structure=is_band, plot_format=plot_format, observable=observable,
+            backend_label=backend_label, raw=build_raw(), raw_log_path=raw_data_path,
+            _model_params=params,
+        )
+
+    if prepare_only:
+        if raw_data_path is not None:
+            with open(raw_data_path, "w") as f:
+                json.dump(build_raw(), f, indent=4)
+        return empty_result()
 
     def init_worker_logging():
         from quaph._core import setup_logging as _sl
         _sl()
 
-    for tag, result in Parallel(n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging)(jobs):
-        ix, iy = str(tag[1]), str(tag[2])
-        cell = raw_data["grid"][ix][iy]
-        if tag[0] == "analytic":
-            cell["analytic"] = result
-        elif tag[0] == "iqpe":
-            energy, iter_energies = result
-            cell["iqpe"]["repetitions"].append(energy)
-            cell["iqpe"]["iteration_energies"].append(iter_energies)
-        elif tag[0] == "vqe":
-            cell["vqe"]["repetitions"].append(result)
-        elif tag[0] == "iqpe_bench":
-            num_q, (total, two_q) = result
-            cell["iqpe"]["num_queries"] = num_q
-            cell["iqpe"]["circuit_depth"] = {"total": total, "two_qubit": two_q}
-        elif tag[0] == "vqe_bench":
-            num_q, (total, two_q) = result
-            cell["vqe"]["num_queries"] = num_q
-            cell["vqe"]["circuit_depth"] = {"total": total, "two_qubit": two_q}
-        if raw_data_path is not None:
-            with open(raw_data_path, "w") as f:
-                json.dump(raw_data, f, indent=4)
+    def jobs_per_shard():
+        value = os.environ.get("QUAPH_JOBS_PER_SHARD") or "1"
+        try:
+            return max(1, int(value))
+        except ValueError:
+            return 1
 
-    from loguru import logger
-
-    if is_band_structure:
-        probe_k = []
-        for a in momentum_axes:
-            if a == x_param:
-                probe_k.append(x_vals[0])
-            elif a == y_param:
-                probe_k.append(y_vals[0])
-            else:
-                probe_k.append(model_params[a])
-        probe_params = {k: v for k, v in model_params.items() if k not in momentum_axes}
-        n_bands = model.bloch_hamiltonian(*probe_k, **probe_params).shape[0]
-        Z_exact_bands = np.full((nx, ny, n_bands), np.nan)
-        Z_exact = np.full((nx, ny), np.nan)
+    if aggregate_only:
+        load_progress()
     else:
-        n_bands = 1
-        Z_exact_bands = None
-        Z_exact = np.full((nx, ny), np.nan)
-    Z_vqe = np.full((nx, ny), np.nan) if do_vqe else None
-    Z_iqpe = np.full((nx, ny), np.nan) if do_iqpe else None
+        if task_index is None:
+            selected = all_tags
+            n_jobs = -1
+        else:
+            init_worker_logging()
+            selected = [t for i, t in enumerate(all_tags) if i % task_count == task_index]
+            n_jobs = jobs_per_shard()
 
-    for ix in range(nx):
-        for iy in range(ny):
-            cell = raw_data["grid"][str(ix)][str(iy)]
-            if is_band_structure:
-                bands = np.array(cell["analytic"], dtype=float)
-                Z_exact_bands[ix, iy, :] = bands
-                Z_exact[ix, iy] = bands[0]
+        with tempfile.TemporaryDirectory(prefix="quaph-run-") as tmp_dir:
+            if use_parallel:
+                results = Parallel(
+                    n_jobs=n_jobs, return_as="generator_unordered",
+                    initializer=init_worker_logging,
+                )(delayed(run_job)(t, tmp_dir) for t in selected)
             else:
-                Z_exact[ix, iy] = cell["analytic"]
-            loc = f"{x_param}={x_vals[ix]}" + ("" if is_1d else f", {y_param}={y_vals[iy]}")
-            if do_iqpe:
-                Z_iqpe[ix, iy] = min(cell["iqpe"]["repetitions"], key=lambda e: abs(e - Z_exact[ix, iy]))
-                logger.info(f"IQPE ({loc}) = {Z_iqpe[ix, iy]}")
-            if do_vqe:
-                Z_vqe[ix, iy] = min(cell["vqe"]["repetitions"], key=lambda e: abs(e - Z_exact[ix, iy]))
-                logger.info(f"VQE  ({loc}) = {Z_vqe[ix, iy]}")
+                # Cheap cells (analytic): joblib's per-task pickling overhead
+                # dominates, so run in-process.
+                results = (run_job(t, tmp_dir) for t in selected)
+            for tag_tuple, cell in results:
+                if use_parallel:
+                    append_progress(tag_tuple, cell)
+                apply(tag_tuple, cell)
+                # Incremental snapshots only for expensive parallel runs; for
+                # large cheap grids a per-cell full dump would be O(n^2).
+                if use_parallel and raw_data_path is not None and task_index is None:
+                    with open(raw_data_path, "w") as f:
+                        json.dump(build_raw(), f, indent=4)
 
-    def _cell_scalar(arr, ix, iy):
-        return float(arr[ix, iy])
+        if task_index is not None:
+            return empty_result()
 
-    def _cell_bands(arr, ix, iy):
-        return arr[ix, iy, :].tolist()
+    validate_complete()
 
-    def _build_block(arr, *, bands: bool):
-        getter = _cell_bands if bands else _cell_scalar
+    # --------------------------------------------------------------- reduce grids
+    n_bands = 1
+    analytic_bands = None
+    grids_full = {}
+    for m in methods:
+        m_obj = method_objs[m]
+        if is_band and m == Method.ANALYTIC:
+            probe = raw_cells["analytic"]["0"]["0"]["bands"]
+            n_bands = len(probe)
+            arr = np.full((nx, ny, n_bands), np.nan)
+            for ix in range(nx):
+                for iy in range(ny):
+                    arr[ix, iy, :] = m_obj.reduce(raw_cells["analytic"][str(ix)][str(iy)])
+            analytic_bands = arr
+            grids_full[m.value] = arr[..., 0]
+        else:
+            arr = np.full((nx, ny), np.nan)
+            for ix in range(nx):
+                for iy in range(ny):
+                    val = m_obj.reduce(raw_cells[m.value][str(ix)][str(iy)], extremum="min")
+                    arr[ix, iy] = val
+            grids_full[m.value] = arr
+            for ix in range(nx):
+                for iy in range(ny):
+                    loc = f"{x_param}={x_vals[ix]}" + ("" if is_1d else f", {y_param}={y_vals[iy]}")
+                    logger.info(f"{m_obj.LABEL} ({loc}) = {arr[ix, iy]}")
+
+    # --------------------------------------------------------------- result block
+    def scalar_block(arr):
         if is_1d:
-            return {ix: getter(arr, ix, 0) for ix in range(nx)}
-        return {ix: {iy: getter(arr, ix, iy) for iy in range(ny)} for ix in range(nx)}
+            return {ix: float(arr[ix, 0]) for ix in range(nx)}
+        return {ix: {iy: float(arr[ix, iy]) for iy in range(ny)} for ix in range(nx)}
 
-    if is_band_structure:
-        analytic_block = _build_block(Z_exact_bands, bands=True)
-    else:
-        analytic_block = _build_block(Z_exact, bands=False)
-    result_block = {"analytic": analytic_block}
-
-    num_queries_block = {}
-    depth_total_block = {}
-    depth_two_q_block = {}
-
-    def _bench_block(method: str, key: str):
+    def bands_block(arr):
         if is_1d:
-            return {ix: raw_data["grid"][str(ix)]["0"][method][key] for ix in range(nx)}
-        return {ix: {iy: raw_data["grid"][str(ix)][str(iy)][method][key] for iy in range(ny)} for ix in range(nx)}
+            return {ix: arr[ix, 0, :].tolist() for ix in range(nx)}
+        return {ix: {iy: arr[ix, iy, :].tolist() for iy in range(ny)} for ix in range(nx)}
 
-    def _depth_block(method: str, sub: str):
-        def get(ix, iy):
-            return raw_data["grid"][str(ix)][str(iy)][method]["circuit_depth"][sub]
-        if is_1d:
-            return {ix: get(ix, 0) for ix in range(nx)}
-        return {ix: {iy: get(ix, iy) for iy in range(ny)} for ix in range(nx)}
-
-    if do_iqpe:
-        result_block["iqpe"] = _build_block(Z_iqpe, bands=False)
-        num_queries_block["iqpe"] = _bench_block("iqpe", "num_queries")
-        depth_total_block["iqpe"] = _depth_block("iqpe", "total")
-        depth_two_q_block["iqpe"] = _depth_block("iqpe", "two_qubit")
-    if do_vqe:
-        result_block["vqe"] = _build_block(Z_vqe, bands=False)
-        num_queries_block["vqe"] = _bench_block("vqe", "num_queries")
-        depth_total_block["vqe"] = _depth_block("vqe", "total")
-        depth_two_q_block["vqe"] = _depth_block("vqe", "two_qubit")
+    result_block = {}
+    for m in methods:
+        if is_band and m == Method.ANALYTIC:
+            result_block[m.value] = bands_block(analytic_bands)
+        else:
+            result_block[m.value] = scalar_block(grids_full[m.value])
 
     summary = {
-        "type": f"simulated-{simulation_tag}",
+        "type": "run",
+        "methods": [m.value for m in methods],
+        "backend": backend_label,
         "plot_format": plot_format,
-        "band_structure": is_band_structure,
-        "parameters": raw_data["parameters"],
+        "band_structure": is_band,
+        "observable": observable,
+        "extremum": "min",
         "x_param": x_param, "y_param": y_param,
         "x_values": x_vals, "y_values": y_vals,
+        "parameters": {
+            "model": model.name,
+            "lattice": list(lattice) if lattice is not None else None,
+            "model_params": {k: float(v) for k, v in params.items()},
+            "method_params": method_params_summary,
+        },
         "result": result_block,
     }
-    if is_band_structure:
+    if is_band:
         summary["n_bands"] = n_bands
-    if do_vqe or do_iqpe:
-        summary["num_queries"] = num_queries_block
-        summary["circuit_depth"] = {"total": depth_total_block, "two_qubit": depth_two_q_block}
 
-    summary_path = None
-    if log_dir is not None:
-        summary_path = os.path.join(log_subdir, f"{raw_tag}.json")
-        with open(summary_path, "w") as f:
+    if raw_data_path is not None:
+        with open(raw_data_path, "w") as f:
+            json.dump(build_raw(), f, indent=4)
+
+    if log_path is not None:
+        os.makedirs(os.path.dirname(os.path.abspath(log_path)), exist_ok=True)
+        with open(log_path, "w") as f:
             json.dump(summary, f, indent=4)
 
-    plot_path = None
-    if plot_dir is not None:
-        plot_subdir = _plot_subdir(plot_dir, model.name, lattice)
-        os.makedirs(plot_subdir, exist_ok=True)
-        plot_path = os.path.join(plot_subdir, f"{raw_tag}.pdf")
+    # squeeze grids for the result object
+    grids_out = {}
+    for m in methods:
+        if is_band and m == Method.ANALYTIC:
+            grids_out[m.value] = _squeeze_bands(analytic_bands, is_1d)[..., 0] if is_1d else analytic_bands[..., 0]
+        else:
+            grids_out[m.value] = _squeeze_scalar(grids_full[m.value], is_1d)
+    analytic_bands_out = _squeeze_bands(analytic_bands, is_1d) if analytic_bands is not None else None
+
+    result = RunResult(
+        model_name=model.name, lattice=lattice, x_param=x_param, y_param=y_param,
+        x_values=x_vals, y_values=y_vals if not is_1d else [],
+        methods=[m.value for m in methods], grids=grids_out,
+        band_structure=is_band, analytic_bands=analytic_bands_out,
+        plot_format=plot_format, observable=observable, extremum="min",
+        backend_label=backend_label, log_path=log_path, raw_log_path=raw_data_path,
+        plot_path=plot_path, raw=summary, _model_params=params,
+    )
 
     if plot_path is not None or not hide_plot:
         if is_band_structure:
@@ -996,50 +809,6 @@ def run_simulated_ideal(
     hide_plot: bool = False,
     hide_legend: bool = False,
 ) -> SimulatedResult:
-    """Run VQE and/or IQPE on an ideal (noise-free) simulator and compare to analytic.
-
-    .. todo:: Describe when to enable VQE vs. IQPE, parameter guidance for
-       each, and how the best-of-reps energy is selected per cell.
-
-    Parameters
-    ----------
-    model : str or Model
-        Registered model name or :class:`Model` instance.
-    lattice : tuple[int, ...], optional
-        Lattice extents; required for real-space runs.
-    x_param, y_param : str, optional
-        Sweep axes (see :func:`run_analytic`).
-    x_range, y_range : tuple, optional
-        ``(start, stop, step)`` for non-``n_occ`` axes.
-    n_occ : int, optional
-        Fixed occupation; defaults to half-filling.
-    model_params : dict, optional
-        Fixed model parameters off the sweep axes.
-    vqe_iters : int, optional
-        VQE optimizer iterations; enables VQE when set.
-    vqe_layers : int, optional
-        Number of ansatz layers.
-    vqe_reps : int, optional
-        Number of repetitions per cell (best result kept).
-    iqpe_time : float, optional
-        Trotter evolution time; enables IQPE when set.
-    iqpe_trot : int, optional
-        Trotter steps.
-    iqpe_iters : int, optional
-        IQPE iterations (phase-estimation precision bits).
-    iqpe_reps : int, optional
-        Repetitions per cell.
-    log_dir, plot_dir : str, optional
-        Output directories.
-    hide_plot : bool, default False
-        Suppress matplotlib display.
-    hide_legend : bool, default False
-        Omit the legend on the plot.
-
-    Returns
-    -------
-    SimulatedResult
-    """
     (model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
      vqe_reps, iqpe_reps) = _prep_simulated_kwargs(
         model, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
@@ -1082,42 +851,6 @@ def run_simulated_noisy(
     hide_plot: bool = False,
     hide_legend: bool = False,
 ) -> SimulatedResult:
-    """Run VQE and/or IQPE on a noisy backend (Qiskit Aer or IBM Runtime).
-
-    .. todo:: Describe how to construct a noise model or attach an
-       :class:`IBMBackend`, expected runtime caveats, and what changes
-       relative to :func:`run_simulated_ideal`.
-
-    Parameters
-    ----------
-    model : str or Model
-        Registered model name or :class:`Model` instance.
-    backend : object, optional
-        A Qiskit backend (e.g. ``AerSimulator`` with a noise model or an
-        IBM runtime backend). Defaults to ``FakeSherbrooke``.
-    lattice : tuple[int, ...], optional
-        Lattice extents.
-    x_param, y_param : str, optional
-        Sweep axes (see :func:`run_analytic`).
-    x_range, y_range : tuple, optional
-        ``(start, stop, step)`` for non-``n_occ`` axes.
-    n_occ : int, optional
-        Fixed occupation; defaults to half-filling.
-    model_params : dict, optional
-        Fixed model parameters off the sweep axes.
-    vqe_iters, vqe_layers, vqe_reps : int, optional
-        VQE configuration; setting any enables VQE.
-    iqpe_time, iqpe_trot, iqpe_iters, iqpe_reps : optional
-        IQPE configuration; setting any enables IQPE.
-    log_dir, plot_dir : str, optional
-        Output directories.
-    hide_plot, hide_legend : bool, default False
-        Display controls for the rendered figure.
-
-    Returns
-    -------
-    SimulatedResult
-    """
     if backend is None:
         from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
         backend = FakeSherbrooke()

@@ -262,13 +262,21 @@ def plot_simulated(
     hide_plot: bool = False,
     x_is_momentum: bool = False,
     y_is_momentum: bool = False,
+    vqe_label: str = "VQE",
+    iqpe_label: str = "IQPE",
+    surface_label: str = "Analytic",
+    extra_series: list[dict] | None = None,
 ):
+    extra_series = extra_series or []
     if plot_format == "2d":
         return _plot_simulated_2d(
             x_vals, x_label, Z_exact, Z_vqe, Z_iqpe,
             x_is_momentum=x_is_momentum,
             hide_legend=hide_legend,
             output_path=output_path, hide_plot=hide_plot,
+            vqe_label=vqe_label, iqpe_label=iqpe_label,
+            surface_label=surface_label,
+            extra_series=extra_series,
         )
     if Z_exact.ndim == 3:
         return _plot_band_structure_3d(
@@ -277,6 +285,7 @@ def plot_simulated(
             x_is_momentum=x_is_momentum, y_is_momentum=y_is_momentum,
             hide_legend=hide_legend,
             output_path=output_path, hide_plot=hide_plot,
+            vqe_label=vqe_label, iqpe_label=iqpe_label,
         )
     _apply_rcparams()
 
@@ -305,8 +314,8 @@ def plot_simulated(
     z_clip = float(np.nanmin(Z_exact))
     x_flat, y_flat = X_grid.ravel(), Y_grid.ravel()
 
-    hover_series = [{"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z_exact.ravel(), "label": "Analytic"}]
-    legend_handles = [mpatches.Patch(label="Analytic")]
+    hover_series = [{"xs": X_grid.ravel(), "ys": Y_grid.ravel(), "zs": Z_exact.ravel(), "label": surface_label}]
+    legend_handles = [mpatches.Patch(label=surface_label)]
     handler_map = {legend_handles[0]: _GradientPatchHandler(cmap_obj)}
 
     if Z_vqe is not None:
@@ -315,9 +324,9 @@ def plot_simulated(
         ax.scatter(x_flat[vqe_mask], y_flat[vqe_mask], vqe_flat[vqe_mask],
                    color="#0072B2", marker="o", s=45, depthshade=True, zorder=6)
         legend_handles.append(Line2D([0], [0], marker="o", color="w",
-                                     markerfacecolor="#0072B2", markersize=14, label="VQE"))
+                                     markerfacecolor="#0072B2", markersize=14, label=vqe_label))
         hover_series.append({"xs": x_flat[vqe_mask], "ys": y_flat[vqe_mask],
-                             "zs": vqe_flat[vqe_mask], "label": "VQE"})
+                             "zs": vqe_flat[vqe_mask], "label": vqe_label})
 
     if Z_iqpe is not None:
         iqpe_flat = Z_iqpe.ravel()
@@ -325,9 +334,23 @@ def plot_simulated(
         ax.scatter(x_flat[iqpe_mask], y_flat[iqpe_mask], iqpe_flat[iqpe_mask],
                    color="#6DBF82", marker="^", s=45, depthshade=True, zorder=6)
         legend_handles.append(Line2D([0], [0], marker="^", color="w",
-                                     markerfacecolor="#6DBF82", markersize=14, label="IQPE"))
+                                     markerfacecolor="#6DBF82", markersize=14, label=iqpe_label))
         hover_series.append({"xs": x_flat[iqpe_mask], "ys": y_flat[iqpe_mask],
-                             "zs": iqpe_flat[iqpe_mask], "label": "IQPE"})
+                             "zs": iqpe_flat[iqpe_mask], "label": iqpe_label})
+
+    for series in extra_series:
+        values = np.asarray(series["values"], dtype=float).ravel()
+        mask = values >= z_clip
+        color = series.get("color", "#D55E00")
+        marker = series.get("marker", "D")
+        label = series.get("label", "Series")
+        size = series.get("size", 45)
+        ax.scatter(x_flat[mask], y_flat[mask], values[mask],
+                   color=color, marker=marker, s=size, depthshade=True, zorder=6)
+        legend_handles.append(Line2D([0], [0], marker=marker, color="w",
+                                     markerfacecolor=color, markersize=14, label=label))
+        hover_series.append({"xs": x_flat[mask], "ys": y_flat[mask],
+                             "zs": values[mask], "label": label})
 
     ax.set_zlim(bottom=z_clip)
 
@@ -367,6 +390,8 @@ def _plot_band_structure_3d(
     hide_legend: bool = False,
     output_path=None,
     hide_plot: bool = False,
+    vqe_label: str = "VQE",
+    iqpe_label: str = "IQPE",
 ):
     _apply_rcparams()
     fig = plt.figure(figsize=(10, 7.5))
@@ -406,17 +431,17 @@ def _plot_band_structure_3d(
         ax.scatter(X_grid.ravel(), Y_grid.ravel(), vqe_flat,
                    color="#0072B2", marker="o", s=45, depthshade=True, zorder=6)
         legend_handles.append(Line2D([0], [0], marker="o", color="w",
-                                     markerfacecolor="#0072B2", markersize=14, label="VQE"))
+                                     markerfacecolor="#0072B2", markersize=14, label=vqe_label))
         hover_series.append({"xs": X_grid.ravel(), "ys": Y_grid.ravel(),
-                             "zs": vqe_flat, "label": "VQE"})
+                             "zs": vqe_flat, "label": vqe_label})
     if iqpe is not None:
         iqpe_flat = iqpe.ravel()
         ax.scatter(X_grid.ravel(), Y_grid.ravel(), iqpe_flat,
                    color="#6DBF82", marker="^", s=45, depthshade=True, zorder=6)
         legend_handles.append(Line2D([0], [0], marker="^", color="w",
-                                     markerfacecolor="#6DBF82", markersize=14, label="IQPE"))
+                                     markerfacecolor="#6DBF82", markersize=14, label=iqpe_label))
         hover_series.append({"xs": X_grid.ravel(), "ys": Y_grid.ravel(),
-                             "zs": iqpe_flat, "label": "IQPE"})
+                             "zs": iqpe_flat, "label": iqpe_label})
 
     ax.set_xlabel(x_label, labelpad=12)
     ax.set_ylabel(y_label, labelpad=12)
@@ -546,7 +571,12 @@ def _plot_simulated_2d(
     hide_legend: bool = False,
     output_path=None,
     hide_plot: bool = False,
+    vqe_label: str = "VQE",
+    iqpe_label: str = "IQPE",
+    surface_label: str = "Analytic",
+    extra_series: list[dict] | None = None,
 ):
+    extra_series = extra_series or []
     _apply_rcparams()
     fig, ax = plt.subplots(figsize=(9, 6))
 
@@ -573,15 +603,25 @@ def _plot_simulated_2d(
         )
         color = cmap_obj(0.5)
         ax.plot(x_arr, Z_exact, color=color, linewidth=1.8, alpha=0.9,
-                label="Analytic", zorder=4)
+                label=surface_label, zorder=4)
         ax.scatter(x_arr, Z_exact, color=color, s=20, alpha=0.5, zorder=5)
 
     if Z_vqe is not None:
         ax.scatter(x_arr, Z_vqe, color="#0072B2", marker="o", s=45,
-                   label="VQE", zorder=6)
+                   label=vqe_label, zorder=6)
     if Z_iqpe is not None:
         ax.scatter(x_arr, Z_iqpe, color="#6DBF82", marker="^", s=45,
-                   label="IQPE", zorder=6)
+                   label=iqpe_label, zorder=6)
+    for series in extra_series:
+        ax.scatter(
+            x_arr,
+            np.asarray(series["values"], dtype=float),
+            color=series.get("color", "#D55E00"),
+            marker=series.get("marker", "D"),
+            s=series.get("size", 45),
+            label=series.get("label", "Series"),
+            zorder=6,
+        )
 
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel("$E$", labelpad=8)

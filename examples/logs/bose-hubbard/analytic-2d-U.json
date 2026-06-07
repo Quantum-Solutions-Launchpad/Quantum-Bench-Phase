@@ -1,0 +1,39 @@
+{
+    "type": "analytic",
+    "plot_format": "2d",
+    "band_structure": false,
+    "observable": "E",
+    "parameters": {
+        "model": "BH_D-1_d-4",
+        "lattice": null,
+        "qubit_operator": "/Users/adamgodel/hamlib/condensedmatter/bosehubbard/BH_D-1_d-4.zip",
+        "keys": [
+            "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-2_enc-stdbinary_d-4",
+            "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-10_enc-stdbinary_d-4",
+            "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-20_enc-stdbinary_d-4",
+            "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-30_enc-stdbinary_d-4",
+            "bh_graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-40_enc-stdbinary_d-4"
+        ],
+        "extremum": "min",
+        "model_params": {}
+    },
+    "x_param": "U",
+    "y_param": null,
+    "x_values": [
+        2.0,
+        10.0,
+        20.0,
+        30.0,
+        40.0
+    ],
+    "y_values": [],
+    "result": {
+        "analytic": {
+            "0": -3.9571301937257823,
+            "1": -2.4207019828364102,
+            "2": -2.3327176170254904,
+            "3": -2.3013359089192393,
+            "4": -2.285308426242916
+        }
+    }
+}
