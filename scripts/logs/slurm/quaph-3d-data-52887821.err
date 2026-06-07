@@ -1,0 +1,8 @@
+/var/spool/slurmd/job52887821/slurm_script: line 12: /pscratch/sd/m/mbao202/NNL-P7/scripts/slurm/realspace_simulated.sh: No such file or directory
+/var/spool/slurmd/job52887821/slurm_script: line 13: setup_realspace_env: command not found
+/var/spool/slurmd/job52887821/slurm_script: line 94: run_sharded_config: command not found
+/var/spool/slurmd/job52887821/slurm_script: line 94: run_sharded_config: command not found
+/var/spool/slurmd/job52887821/slurm_script: line 94: run_sharded_config: command not found
+/var/spool/slurmd/job52887821/slurm_script: line 94: run_sharded_config: command not found
+/var/spool/slurmd/job52887821/slurm_script: line 94: run_sharded_config: command not found
+/var/spool/slurmd/job52887821/slurm_script: line 94: run_sharded_config: command not found

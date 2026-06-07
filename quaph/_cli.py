@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
 from quaph._registry import get_model, register_model_from_file, remove_model
 from quaph._run import run_analytic, run_simulated_ideal, run_simulated_noisy
+from quaph._dmrg import run_dmrg_itensor
+from quaph._compare import run_compare
 from quaph._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS, _INITIAL_STATES
 
 
@@ -87,6 +90,55 @@ def _add_sim_optional(parser):
     parser.add_argument("--vqe-reps", type=int, default=None, metavar="N")
     parser.add_argument("--iqpe-reps", type=int, default=None, metavar="N")
     parser.add_argument("--hide-legend", action="store_true", default=False)
+    parser.add_argument("--task-index", type=int, default=None, metavar="N")
+    parser.add_argument("--task-count", type=int, default=1, metavar="N")
+    parser.add_argument("--prepare-only", action="store_true", default=False)
+    parser.add_argument("--aggregate-only", action="store_true", default=False)
+    parser.add_argument("--no-progress-log", action="store_true", default=False)
+
+
+def _add_dmrg_args(parser):
+    parser.add_argument("--julia", default="julia", metavar="PATH",
+                        help="Julia executable to use for ITensorMPS DMRG")
+    parser.add_argument("--julia-module", default="julia/1.11.7", metavar="NAME",
+                        help="Environment module to load if --julia is not on PATH")
+    parser.add_argument("--julia-project", default=None, metavar="PATH",
+                        help="Julia project containing ITensors, ITensorMPS, and JSON")
+    parser.add_argument("--dmrg-script", default=None, metavar="PATH",
+                        help="Override the bundled Julia DMRG bridge script")
+    parser.add_argument("--nsweeps", type=int, default=4, metavar="N")
+    parser.add_argument("--maxdims", default="20,50,100,200", metavar="LIST")
+    parser.add_argument("--cutoff", type=float, default=1e-9, metavar="F")
+    parser.add_argument("--seed", type=int, default=1234, metavar="N")
+    parser.add_argument("--conserve-qns", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--task-index", type=int, default=None, metavar="N")
+    parser.add_argument("--task-count", type=int, default=1, metavar="N")
+    parser.add_argument("--prepare-only", action="store_true", default=False)
+    parser.add_argument("--aggregate-only", action="store_true", default=False)
+    parser.add_argument("--no-progress-log", action="store_true", default=False)
+
+
+def _add_compare_args(parser):
+    parser.add_argument("--algorithms", nargs="+", default=["exact", "vqe", "iqpe", "dmrg"],
+                        choices=["exact", "vqe", "iqpe", "dmrg"],
+                        help="Algorithms to include in the shared comparison plot")
+    parser.add_argument("--quantum-pipeline", choices=["ideal", "noisy"], default="ideal",
+                        help="Simulation pipeline to use for VQE/IQPE in compare runs")
+    _add_sim_required(parser)
+    _add_sim_optional(parser)
+    parser.add_argument("--julia", default="julia", metavar="PATH",
+                        help="Julia executable to use for ITensorMPS DMRG")
+    parser.add_argument("--julia-module", default="julia/1.11.7", metavar="NAME",
+                        help="Environment module to load if --julia is not on PATH")
+    parser.add_argument("--julia-project", default=None, metavar="PATH",
+                        help="Julia project containing ITensors, ITensorMPS, and JSON")
+    parser.add_argument("--dmrg-script", default=None, metavar="PATH",
+                        help="Override the bundled Julia DMRG bridge script")
+    parser.add_argument("--dmrg-nsweeps", type=int, default=4, metavar="N")
+    parser.add_argument("--dmrg-maxdims", default="20,50,100,200", metavar="LIST")
+    parser.add_argument("--dmrg-cutoff", type=float, default=1e-9, metavar="F")
+    parser.add_argument("--dmrg-seed", type=int, default=1234, metavar="N")
+    parser.add_argument("--dmrg-conserve-qns", action=argparse.BooleanOptionalAction, default=True)
 
 
 def _add_operator_args(parser, *, simulated):
@@ -262,6 +314,11 @@ def _dispatch_simulated_ideal(args, model):
         plot_dir=args.plot_dir,
         hide_plot=args.hide_plot,
         hide_legend=args.hide_legend,
+        task_index=args.task_index,
+        task_count=args.task_count,
+        prepare_only=args.prepare_only,
+        aggregate_only=args.aggregate_only,
+        no_progress_log=args.no_progress_log,
     )
 
 
@@ -287,7 +344,98 @@ def _dispatch_simulated_noisy(args, model):
         plot_dir=args.plot_dir,
         hide_plot=args.hide_plot,
         hide_legend=args.hide_legend,
+        task_index=args.task_index,
+        task_count=args.task_count,
+        prepare_only=args.prepare_only,
+        aggregate_only=args.aggregate_only,
+        no_progress_log=args.no_progress_log,
     )
+
+
+def _dispatch_dmrg(args, model):
+    x_param, y_param = _resolve_sweep_axes(args)
+    result = run_dmrg_itensor(
+        model,
+        lattice=tuple(args.lattice) if args.lattice else None,
+        x_param=x_param,
+        x_range=args.x_range,
+        y_param=y_param,
+        y_range=args.y_range,
+        n_occ=args.n_occ,
+        model_params=_collect_model_params(args, model, x_param, y_param),
+        log_dir=args.log_dir,
+        plot_dir=args.plot_dir,
+        hide_plot=args.hide_plot,
+        julia=args.julia,
+        julia_module=args.julia_module,
+        julia_project=args.julia_project,
+        nsweeps=args.nsweeps,
+        maxdims=args.maxdims,
+        cutoff=args.cutoff,
+        seed=args.seed,
+        conserve_qns=args.conserve_qns,
+        script_path=args.dmrg_script,
+        task_index=args.task_index,
+        task_count=args.task_count,
+        prepare_only=args.prepare_only,
+        aggregate_only=args.aggregate_only,
+        no_progress_log=args.no_progress_log,
+    )
+    if "summary_path" in result:
+        print(f"Wrote {result['summary_path']}")
+    elif result.get("type") == "dmrg-shard":
+        print(
+            f"Completed DMRG shard {result['task_index']}/{result['task_count']} "
+            f"({result['num_cells']} cells)"
+        )
+
+
+def _dispatch_compare(args, model):
+    x_param, y_param = _resolve_sweep_axes(args)
+    result = run_compare(
+        model,
+        lattice=tuple(args.lattice) if args.lattice else None,
+        x_param=x_param,
+        x_range=args.x_range,
+        y_param=y_param,
+        y_range=args.y_range,
+        n_occ=args.n_occ,
+        model_params=_collect_model_params(args, model, x_param, y_param),
+        algorithms=args.algorithms,
+        quantum_pipeline=args.quantum_pipeline,
+        vqe_iters=args.vqe_iters,
+        vqe_layers=args.vqe_layers,
+        vqe_reps=args.vqe_reps,
+        iqpe_time=args.iqpe_time,
+        iqpe_trot=args.iqpe_trot,
+        iqpe_iters=args.iqpe_iters,
+        iqpe_reps=args.iqpe_reps,
+        dmrg_julia=args.julia,
+        dmrg_julia_module=args.julia_module,
+        dmrg_julia_project=args.julia_project,
+        dmrg_script=args.dmrg_script,
+        dmrg_nsweeps=args.dmrg_nsweeps,
+        dmrg_maxdims=args.dmrg_maxdims,
+        dmrg_cutoff=args.dmrg_cutoff,
+        dmrg_seed=args.dmrg_seed,
+        dmrg_conserve_qns=args.dmrg_conserve_qns,
+        log_dir=args.log_dir,
+        plot_dir=args.plot_dir,
+        hide_plot=args.hide_plot,
+        hide_legend=args.hide_legend,
+        task_index=args.task_index,
+        task_count=args.task_count,
+        prepare_only=args.prepare_only,
+        aggregate_only=args.aggregate_only,
+        no_progress_log=args.no_progress_log,
+    )
+    if "summary_path" in result:
+        print(f"Wrote {result['summary_path']}")
+    elif result.get("type") == "compare-shard":
+        print(
+            f"Completed compare shard {result['task_index']}/{result['task_count']} "
+            f"for {', '.join(result['algorithms'])}"
+        )
 
 
 def main(argv=None):
@@ -324,6 +472,18 @@ def main(argv=None):
             return 1
         return 0
 
+    if len(argv) >= 2 and argv[0] == "run" and argv[1] in (
+        "real-space-simulated-ideal",
+        "real-space-simulated-noisy",
+    ):
+        scripts_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scripts")
+        if scripts_dir not in sys.path:
+            sys.path.insert(0, scripts_dir)
+        from _real_space_simulated_common import main as run_real_space_simulated
+
+        simulation_tag = "ideal" if argv[1] == "real-space-simulated-ideal" else "noisy"
+        return run_real_space_simulated(simulation_tag, argv=argv[2:])
+
     pre = argparse.ArgumentParser(add_help=False)
     pre.add_argument("command", nargs="?")
     pre.add_argument("subcommand", nargs="?")
@@ -353,11 +513,21 @@ def main(argv=None):
     analytic_parser = run_sub.add_parser("analytic")
     sim_ideal_parser = run_sub.add_parser("simulated-ideal")
     sim_noisy_parser = run_sub.add_parser("simulated-noisy")
+    dmrg_parser = run_sub.add_parser("dmrg")
+    compare_parser = run_sub.add_parser("compare")
 
+    # Fixed a merge conflict, the quantum algo runs can use either a registered model or --qubit-operator;
+    # DMRG and compare still require a registered model.
     for p in (analytic_parser, sim_ideal_parser, sim_noisy_parser):
         p.add_argument("--model", default=None, metavar="MODEL",
                        help="Registered model name (e.g. haldane, hubbard, haldane-hubbard). "
                             "Mutually exclusive with --qubit-operator.")
+
+    for p in (dmrg_parser, compare_parser):
+        p.add_argument("--model", required=True, metavar="MODEL",
+                       help="Registered model name (e.g. haldane, hubbard, haldane-hubbard)")
+
+    for p in (analytic_parser, sim_ideal_parser, sim_noisy_parser, dmrg_parser, compare_parser):
         p.add_argument("--lattice", type=int, nargs="+", default=None, metavar="N",
                        help="Lattice extents per dimension (e.g. --lattice 3 3 for a 3x3 unit-cell grid). Omit for momentum-space band-structure runs.")
         _add_sweep_args(p)
@@ -381,7 +551,10 @@ def main(argv=None):
                             "VQE supports any registered observable; IQPE supports only 'E' "
                             "and energy-based composites.")
 
-    if subcommand in ("analytic", "simulated-ideal", "simulated-noisy") and model_arg:
+    _add_dmrg_args(dmrg_parser)
+    _add_compare_args(compare_parser)
+
+    if subcommand in ("analytic", "simulated-ideal", "simulated-noisy", "dmrg", "compare") and model_arg:
         try:
             model = get_model(model_arg)
         except ValueError as e:
@@ -391,6 +564,8 @@ def main(argv=None):
             "analytic": analytic_parser,
             "simulated-ideal": sim_ideal_parser,
             "simulated-noisy": sim_noisy_parser,
+            "dmrg": dmrg_parser,
+            "compare": compare_parser,
         }[subcommand]
         _add_model_params(target, model)
 
@@ -466,5 +641,9 @@ def main(argv=None):
             _dispatch_simulated_ideal(args, model)
         elif args.subcommand == "simulated-noisy":
             _dispatch_simulated_noisy(args, model)
+        elif args.subcommand == "dmrg":
+            _dispatch_dmrg(args, model)
+        elif args.subcommand == "compare":
+            _dispatch_compare(args, model)
     except ValueError as e:
         parser.error(str(e))
