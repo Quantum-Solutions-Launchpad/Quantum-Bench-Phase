@@ -1,0 +1,66 @@
+{
+  "model": "haldane",
+  "energy": -5.424264059446766,
+  "n_occ": 3,
+  "avg_link_dim": 4.571428571428571,
+  "nsweeps": 4,
+  "format": "quaph_itensor_dmrg_result_v1",
+  "model_params": {
+    "t1": 1.0,
+    "phi": 0.7853981633974483,
+    "M": 0.0,
+    "t2": 0.30000000000000004
+  },
+  "cutoff": 1.0e-9,
+  "lattice": [
+    2,
+    2
+  ],
+  "max_link_dim": 7,
+  "n_sites": 8,
+  "spin": 1,
+  "num_terms": 48,
+  "profile": {
+    "dmrg": {
+      "elapsed_s": 58.806251814,
+      "alloc_bytes": 4.918412144e9
+    },
+    "build_product_mps": {
+      "elapsed_s": 4.96627058,
+      "alloc_bytes": 6.11638432e8
+    },
+    "siteinds": {
+      "elapsed_s": 0.531697149,
+      "alloc_bytes": 3.9167448e7
+    },
+    "build_mpo": {
+      "elapsed_s": 18.817738449,
+      "alloc_bytes": 2.272639024e9
+    },
+    "build_opsum": {
+      "elapsed_s": 0.267173551,
+      "alloc_bytes": 2.756932e7
+    },
+    "build_init_state": {
+      "elapsed_s": 9.0194e-5,
+      "alloc_bytes": 20232.0
+    }
+  },
+  "link_dims": [
+    2,
+    4,
+    7,
+    6,
+    7,
+    4,
+    2
+  ],
+  "conserve_qns": true,
+  "seed": 1270,
+  "maxdims": [
+    20,
+    50,
+    100,
+    200
+  ]
+}

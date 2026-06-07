@@ -1,0 +1,39 @@
+Collecting QuAPH 3D visualizer data
+  job id:      52887821
+  simulation:  ideal
+  configs:     6
+  nodes:       6
+  shards:      
+  log dir:     /pscratch/sd/m/mbao202/NNL-P7/examples/logs
+  plot dir:    /pscratch/sd/m/mbao202/NNL-P7/examples/plots
+Starting config 0/6: haldane, 4-sites, n_occ vs t2
+Starting config 2/6: haldane-hubbard, 4-sites, t2 vs U
+Starting config 1/6: hubbard, 4-sites, n_occ vs U
+Starting config 4/6: hubbard, 6-sites, n_occ vs U
+Starting config 3/6: haldane, 6-sites, n_occ vs t2
+Starting config 5/6: haldane-hubbard, 6-sites, t2 vs U
+Completed config 5 at Wed May 13 06:35:24 PDT 2026
+Completed config 1 at Wed May 13 06:35:24 PDT 2026
+Completed config 2 at Wed May 13 06:35:24 PDT 2026
+Completed config 3 at Wed May 13 06:35:24 PDT 2026
+  summary: /pscratch/sd/m/mbao202/NNL-P7/examples/logs/haldane-hubbard/6-sites/simulated-ideal-t2-vs-U.json
+Completed config 0 at Wed May 13 06:35:24 PDT 2026
+Completed config 4 at Wed May 13 06:35:24 PDT 2026
+  summary: /pscratch/sd/m/mbao202/NNL-P7/examples/logs/hubbard/4-sites/simulated-ideal-n_occ-vs-U.json
+  summary: /pscratch/sd/m/mbao202/NNL-P7/examples/logs/haldane-hubbard/4-sites/simulated-ideal-t2-vs-U.json
+  raw:     /pscratch/sd/m/mbao202/NNL-P7/examples/logs/haldane-hubbard/6-sites/raw-data/simulated-ideal-t2-vs-U.json
+  summary: /pscratch/sd/m/mbao202/NNL-P7/examples/logs/haldane/6-sites/simulated-ideal-n_occ-vs-t2.json
+  summary: /pscratch/sd/m/mbao202/NNL-P7/examples/logs/haldane/4-sites/simulated-ideal-n_occ-vs-t2.json
+  raw:     /pscratch/sd/m/mbao202/NNL-P7/examples/logs/hubbard/4-sites/raw-data/simulated-ideal-n_occ-vs-U.json
+  summary: /pscratch/sd/m/mbao202/NNL-P7/examples/logs/hubbard/6-sites/simulated-ideal-n_occ-vs-U.json
+  raw:     /pscratch/sd/m/mbao202/NNL-P7/examples/logs/haldane-hubbard/4-sites/raw-data/simulated-ideal-t2-vs-U.json
+  plot:    /pscratch/sd/m/mbao202/NNL-P7/examples/plots/haldane-hubbard/6-sites/simulated-ideal-t2-vs-U.pdf
+  raw:     /pscratch/sd/m/mbao202/NNL-P7/examples/logs/haldane/6-sites/raw-data/simulated-ideal-n_occ-vs-t2.json
+  raw:     /pscratch/sd/m/mbao202/NNL-P7/examples/logs/haldane/4-sites/raw-data/simulated-ideal-n_occ-vs-t2.json
+  plot:    /pscratch/sd/m/mbao202/NNL-P7/examples/plots/hubbard/4-sites/simulated-ideal-n_occ-vs-U.pdf
+  raw:     /pscratch/sd/m/mbao202/NNL-P7/examples/logs/hubbard/6-sites/raw-data/simulated-ideal-n_occ-vs-U.json
+  plot:    /pscratch/sd/m/mbao202/NNL-P7/examples/plots/haldane-hubbard/4-sites/simulated-ideal-t2-vs-U.pdf
+  plot:    /pscratch/sd/m/mbao202/NNL-P7/examples/plots/haldane/6-sites/simulated-ideal-n_occ-vs-t2.pdf
+  plot:    /pscratch/sd/m/mbao202/NNL-P7/examples/plots/haldane/4-sites/simulated-ideal-n_occ-vs-t2.pdf
+  plot:    /pscratch/sd/m/mbao202/NNL-P7/examples/plots/hubbard/6-sites/simulated-ideal-n_occ-vs-U.pdf
+All configurations completed at Wed May 13 06:35:24 PDT 2026
