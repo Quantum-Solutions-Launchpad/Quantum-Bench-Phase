@@ -332,6 +332,38 @@ def load_result(path: str) -> RunResult:
     )
 
 
+# ------------------------------------------------- nested op-dict flattening
+def _flatten_op_dict(node, _prefix="") -> dict:
+    """Flatten a nested parameter dict into a flat {key_string: SparsePauliOp} dict.
+
+    The input alternates between string keys (parameter/prefix names) and
+    non-string keys (parameter values), terminating at SparsePauliOp leaves:
+
+        {"stem": {"h": {0.5: {"n": {4: op, 6: op}}}}}
+        → {"stem_h-0.5_n-4": op, "stem_h-0.5_n-6": op}
+
+    A flat dict (values already SparsePauliOp) passes through unchanged.
+    """
+    from qiskit.quantum_info import SparsePauliOp as _SPO
+
+    if isinstance(node, _SPO):
+        return {_prefix: node}
+
+    result: dict = {}
+    first_key = next(iter(node))
+
+    if isinstance(first_key, str):
+        for key, child in node.items():
+            new_prefix = f"{_prefix}_{key}" if _prefix else key
+            result.update(_flatten_op_dict(child, new_prefix))
+    else:
+        for key, child in node.items():
+            val_str = str(int(key)) if isinstance(key, int) else f"{key:g}"
+            result.update(_flatten_op_dict(child, f"{_prefix}-{val_str}"))
+
+    return result
+
+
 # ----------------------------------------------------------- public entry point
 def run(
     model=None,
@@ -347,7 +379,7 @@ def run(
     model_params: dict | None = None,
     observable: str = "E",
     backend=None,
-    qubit_operator: str | list[str] | None = None,
+    qubit_operator: str | list[str] | dict | None = None,
     extremum: str = "min",
     select=None,
     log_path=None,
@@ -378,6 +410,10 @@ def run(
     if qubit_operator is not None:
         if isinstance(qubit_operator, str):
             qubit_operator = [qubit_operator]
+        elif isinstance(qubit_operator, dict):
+            qubit_operator = _flatten_op_dict(qubit_operator)
+        else:
+            qubit_operator = list(qubit_operator)
         return _run_operator_methods(
             qubit_operator, methods, method_objs, backend, backend_label,
             extremum=extremum, select=select, observable=observable,
@@ -876,11 +912,35 @@ def _run_operator_methods(
     if heatmap and len(methods) != 1:
         raise ValueError("heatmap=True requires exactly one simulation method.")
 
-    paths = qubit_operator
-    all_display_keys, key_to_source = collect_keys_multi(paths)
-    if not all_display_keys:
-        raise ValueError(f"No Hamiltonian datasets found in the provided source(s).")
-    display_keys = _filter_keys(all_display_keys, select)
+    if isinstance(qubit_operator, dict):
+        all_display_keys = list(qubit_operator.keys())
+        if not all_display_keys:
+            raise ValueError("qubit_operator dict is empty.")
+        display_keys = _filter_keys(all_display_keys, select)
+        model_name = os.path.commonprefix(display_keys).rstrip("-_") or "custom"
+
+        def _load_op(display_key):
+            return qubit_operator[display_key]
+
+        source_repr = "dict"
+    else:
+        paths = qubit_operator
+        all_display_keys, key_to_source = collect_keys_multi(paths)
+        if not all_display_keys:
+            raise ValueError("No Hamiltonian datasets found in the provided source(s).")
+        display_keys = _filter_keys(all_display_keys, select)
+        if len(paths) == 1:
+            model_name = os.path.splitext(os.path.basename(paths[0]))[0]
+        else:
+            model_name = os.path.commonprefix(
+                [os.path.splitext(os.path.basename(p))[0] for p in paths]
+            ).rstrip("-_") or os.path.splitext(os.path.basename(paths[0]))[0]
+
+        def _load_op(display_key):
+            file_path, actual_key = key_to_source[display_key]
+            return load_hamlib_operator(file_path, actual_key)
+
+        source_repr = paths if len(paths) > 1 else paths[0]
 
     (x_param, x_vals, x_label, y_param, y_vals, y_label, key_grid,
      is_1d) = _resolve_operator_axes(display_keys, x_param, x_range, y_param, y_range)
@@ -888,12 +948,6 @@ def _run_operator_methods(
         raise ValueError("heatmap requires both x and y sweep axes; provide y_param/y_range.")
     nx = len(x_vals)
     ny = 1 if is_1d else len(y_vals)
-    if len(paths) == 1:
-        model_name = os.path.splitext(os.path.basename(paths[0]))[0]
-    else:
-        model_name = os.path.commonprefix(
-            [os.path.splitext(os.path.basename(p))[0] for p in paths]
-        ).rstrip("-_") or os.path.splitext(os.path.basename(paths[0]))[0]
     plot_format = "2d" if is_1d else ("heatmap" if heatmap else "3d")
 
     def cell_key(ix, iy):
@@ -910,8 +964,7 @@ def _run_operator_methods(
         display_key = cell_key(ix, iy)
         if display_key is None:
             return (method_value, ix, iy), None
-        file_path, actual_key = key_to_source[display_key]
-        op = load_hamlib_operator(file_path, actual_key)
+        op = _load_op(display_key)
         m_obj = method_objs[Method.coerce(method_value)]
         cell = m_obj.compute_operator_cell(op, extremum=extremum, backend=backend, label=cell_label(ix, iy), observable=observable)
         return (method_value, ix, iy), cell
@@ -959,7 +1012,7 @@ def _run_operator_methods(
         "parameters": {
             "model": model_name,
             "lattice": None,
-            "qubit_operator": paths if len(paths) > 1 else paths[0],
+            "qubit_operator": source_repr,
             "keys": key_grid,
             "extremum": extremum,
             "model_params": {},
