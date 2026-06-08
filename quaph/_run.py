@@ -15,6 +15,7 @@ from quaph._model import Model, ModelCapabilityError
 from quaph._core import resolve_sweep
 from quaph._hamlib import (
     list_hamlib_keys, load_hamlib_operator, parse_key_params,
+    collect_keys_multi,
 )
 from quaph._plotting import plot_analytic, plot_simulated
 from quaph._registry import get_model as _get_model
@@ -346,7 +347,7 @@ def run(
     model_params: dict | None = None,
     observable: str = "E",
     backend=None,
-    qubit_operator: str | None = None,
+    qubit_operator: str | list[str] | None = None,
     extremum: str = "min",
     select=None,
     log_path=None,
@@ -375,9 +376,11 @@ def run(
     backend_label = "ideal" if backend is None else type(backend).__name__
 
     if qubit_operator is not None:
+        if isinstance(qubit_operator, str):
+            qubit_operator = [qubit_operator]
         return _run_operator_methods(
             qubit_operator, methods, method_objs, backend, backend_label,
-            extremum=extremum, select=select,
+            extremum=extremum, select=select, observable=observable,
             x_param=x_param, x_range=x_range, y_param=y_param, y_range=y_range,
             heatmap=heatmap, log_path=log_path, plot_path=plot_path,
             hide_plot=hide_plot, hide_legend=hide_legend,
@@ -858,7 +861,7 @@ def _resolve_operator_axes(keys, x_param, x_range, y_param, y_range):
 
 def _run_operator_methods(
     qubit_operator, methods, method_objs, backend, backend_label,
-    *, extremum, select, x_param, x_range, y_param, y_range,
+    *, extremum, select, observable, x_param, x_range, y_param, y_range,
     heatmap, log_path, plot_path, hide_plot, hide_legend,
 ):
     from loguru import logger
@@ -873,19 +876,24 @@ def _run_operator_methods(
     if heatmap and len(methods) != 1:
         raise ValueError("heatmap=True requires exactly one simulation method.")
 
-    path = qubit_operator
-    keys = list_hamlib_keys(path)
-    if not keys:
-        raise ValueError(f"No Hamiltonian datasets found in '{path}'.")
-    keys = _filter_keys(keys, select)
+    paths = qubit_operator
+    all_display_keys, key_to_source = collect_keys_multi(paths)
+    if not all_display_keys:
+        raise ValueError(f"No Hamiltonian datasets found in the provided source(s).")
+    display_keys = _filter_keys(all_display_keys, select)
 
     (x_param, x_vals, x_label, y_param, y_vals, y_label, key_grid,
-     is_1d) = _resolve_operator_axes(keys, x_param, x_range, y_param, y_range)
+     is_1d) = _resolve_operator_axes(display_keys, x_param, x_range, y_param, y_range)
     if heatmap and is_1d:
         raise ValueError("heatmap requires both x and y sweep axes; provide y_param/y_range.")
     nx = len(x_vals)
     ny = 1 if is_1d else len(y_vals)
-    model_name = os.path.splitext(os.path.basename(path))[0]
+    if len(paths) == 1:
+        model_name = os.path.splitext(os.path.basename(paths[0]))[0]
+    else:
+        model_name = os.path.commonprefix(
+            [os.path.splitext(os.path.basename(p))[0] for p in paths]
+        ).rstrip("-_") or os.path.splitext(os.path.basename(paths[0]))[0]
     plot_format = "2d" if is_1d else ("heatmap" if heatmap else "3d")
 
     def cell_key(ix, iy):
@@ -899,12 +907,13 @@ def _run_operator_methods(
     raw_cells = {m.value: {str(ix): {} for ix in range(nx)} for m in methods}
 
     def run_job(method_value, ix, iy):
-        key = cell_key(ix, iy)
-        if key is None:
+        display_key = cell_key(ix, iy)
+        if display_key is None:
             return (method_value, ix, iy), None
-        op = load_hamlib_operator(path, key)
+        file_path, actual_key = key_to_source[display_key]
+        op = load_hamlib_operator(file_path, actual_key)
         m_obj = method_objs[Method.coerce(method_value)]
-        cell = m_obj.compute_operator_cell(op, extremum=extremum, backend=backend, label=cell_label(ix, iy))
+        cell = m_obj.compute_operator_cell(op, extremum=extremum, backend=backend, label=cell_label(ix, iy), observable=observable)
         return (method_value, ix, iy), cell
 
     def init_worker_logging():
@@ -943,14 +952,14 @@ def _run_operator_methods(
         "backend": backend_label,
         "plot_format": plot_format,
         "band_structure": False,
-        "observable": "E",
+        "observable": observable,
         "extremum": extremum,
         "x_param": x_param, "y_param": y_param,
         "x_values": x_vals, "y_values": y_vals,
         "parameters": {
             "model": model_name,
             "lattice": None,
-            "qubit_operator": path,
+            "qubit_operator": paths if len(paths) > 1 else paths[0],
             "keys": key_grid,
             "extremum": extremum,
             "model_params": {},

@@ -131,7 +131,7 @@ class SimulationMethod:
             f"{self.METHOD.value} does not support band-structure runs."
         )
 
-    def compute_operator_cell(self, op, *, extremum, backend, label) -> dict:
+    def compute_operator_cell(self, op, *, extremum, backend, label, observable: str = "E") -> dict:
         raise NotImplementedError(
             f"{self.METHOD.value} does not support the qubit-operator path."
         )

@@ -127,13 +127,13 @@ def iqpe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, time_param, n_trot, 
     return _iqpe_sparse(hamiltonian, initial, time_param, n_trot, n_iters, rep, backend=backend, label=label)
 
 
-def iqpe_operator(hamiltonian, time_param, n_trot, n_iters, rep, extremum="min", backend=None, label="", get_initial_state_fn=None):
+def iqpe_operator(hamiltonian, time_param, n_trot, n_iters, rep, extremum="min", backend=None, label="", get_initial_state_fn=None, observable="E"):
     op = hamiltonian * -1 if extremum == "max" else hamiltonian
     if get_initial_state_fn is not None:
         initial = get_initial_state_fn(op)
     else:
         initial = _uniform_initial(hamiltonian.num_qubits)
-    iqpe_label = f"[operator] ({label}, rep={rep})" if label else f"[operator] (rep={rep})"
+    iqpe_label = f"[{observable}] ({label}, rep={rep})" if label else f"[{observable}] (rep={rep})"
     energy, iter_energies = _iqpe_sparse(op, initial, time_param, n_trot, n_iters, rep, backend=backend, label=iqpe_label)
     if extremum == "max":
         energy = -energy
@@ -283,7 +283,7 @@ class IQPEMethod(SimulationMethod):
         }
 
     # ------------------------------------------------------------------- operator
-    def compute_operator_cell(self, op, *, extremum, backend, label):
+    def compute_operator_cell(self, op, *, extremum, backend, label, observable: str = "E"):
         from quaph._yaml_model import InitialStateSpec, build_initial_state_factory
         spec = (
             InitialStateSpec.model_validate(self.initial_state) if self.initial_state
@@ -295,7 +295,7 @@ class IQPEMethod(SimulationMethod):
         for rep in range(1, self.reps + 1):
             energy, iter_energies = iqpe_operator(
                 op, self.time, self.trot, self.iters, rep, extremum, backend, label,
-                get_initial_state,
+                get_initial_state, observable,
             )
             reps.append(float(energy))
             iteration_energies.append(iter_energies)

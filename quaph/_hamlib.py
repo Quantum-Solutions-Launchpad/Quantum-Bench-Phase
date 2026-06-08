@@ -126,6 +126,68 @@ _NUMBER = r"[-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?"
 _TOKEN_RE = re.compile(rf"(?:^|[_-])([A-Za-z][A-Za-z0-9]*)-({_NUMBER})(?=$|[_-])")
 
 
+def _stem_to_parseable(stem: str) -> str:
+    """Normalize a file stem so parse_key_params can extract numeric tokens.
+
+    Converts e.g. 'ES_H10_linear_R1.0_sto-6g_ham' to
+    'ES-H-10-linear-R-1.0-sto-6-g-ham' by replacing underscores with hyphens
+    and inserting hyphens at letter/digit boundaries.
+    """
+    s = stem.replace("_", "-")
+    s = re.sub(r"([A-Za-z])(\d)", r"\1-\2", s)
+    s = re.sub(r"(\d)([A-Za-z])", r"\1-\2", s)
+    s = re.sub(r"-+", "-", s)
+    return s.strip("-")
+
+
+def collect_keys_multi(
+    sources: list[str],
+) -> tuple[list[str], dict[str, tuple[str, str]]]:
+    """Collect Hamiltonian keys from one or more HDF5 sources.
+
+    Returns ``(display_keys, key_to_source)`` where ``key_to_source`` maps
+    each display key to ``(resolved_file_path, actual_hdf5_key)``.
+
+    When a single source is given (or keys are globally unique across all
+    sources), display keys equal the raw HDF5 key names and the behaviour is
+    identical to the existing single-file path.
+
+    When keys collide across files a parseable prefix derived from the file
+    stem is prepended (``"{stem}--{key}"``), so that numeric tokens embedded
+    in filenames (e.g. ``H10``, ``R1.0``) remain discoverable via
+    ``parse_key_params``.
+    """
+    resolved: list[tuple[str, list[str]]] = []
+    for source in sources:
+        path = resolve_hamlib_source(source)
+        resolved.append((path, list_hamlib_keys(path)))
+
+    all_keys_flat = [k for _, keys in resolved for k in keys]
+    has_collision = len(all_keys_flat) != len(set(all_keys_flat))
+
+    display_keys: list[str] = []
+    key_to_source: dict[str, tuple[str, str]] = {}
+
+    for path, keys in resolved:
+        if has_collision:
+            stem = os.path.splitext(os.path.basename(path))[0]
+            prefix = _stem_to_parseable(stem) + "--"
+        else:
+            prefix = ""
+
+        for key in keys:
+            display_key = prefix + key
+            if display_key in key_to_source:
+                raise ValueError(
+                    f"Duplicate display key '{display_key}' after prefixing. "
+                    "File stems may not be distinct enough to disambiguate."
+                )
+            key_to_source[display_key] = (path, key)
+            display_keys.append(display_key)
+
+    return display_keys, key_to_source
+
+
 def parse_key_param(key: str, param: str) -> float | None:
     m = re.search(rf"(?:^|[_-]){re.escape(param)}-({_NUMBER})(?=$|[_-])", key)
     if m is None:
