@@ -14,7 +14,8 @@ _LOG = os.path.join(_HERE, f"logs/{MODEL}/{_LATTICE_TAG}/simulated-ideal-3d-{X_P
 if os.path.exists(_LOG):
     print("Plotting from existing log...")
     result = quaph.load_result(_LOG)
-    result.plot()
+    result.plot(diff=True, diff_format="3d")
+
 else:
     result = quaph.run_simulated_ideal(
         model=MODEL,

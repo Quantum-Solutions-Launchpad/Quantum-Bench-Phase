@@ -17,6 +17,7 @@ from quaph._core import (
     vqe_bloch_other_benchmarks, iqpe_bloch_other_benchmarks,
 )
 from quaph._plotting import plot_analytic, plot_simulated
+from quaph._diff import plot_diff as _plot_diff
 from quaph._registry import get_model as _get_model
 
 
@@ -167,7 +168,8 @@ class SimulatedResult:
     _model_params: dict = field(default_factory=dict, repr=False)
 
     def plot(self, *, hide_plot: bool = False, output_path=None,
-             hide_legend: bool = False):
+             hide_legend: bool = False, diff: bool = False,
+             diff_format: str = "3d"):
         from quaph._registry import get_model
         model = get_model(self.model_name)
         x_label = _label_for(model, self.x_param)
@@ -175,7 +177,7 @@ class SimulatedResult:
         x_is_momentum = self.x_param in model.momentum_axes
         y_is_momentum = bool(self.y_param) and self.y_param in model.momentum_axes
         Z_exact = self.analytic_bands if self.band_structure else self.analytic_energies
-        return plot_simulated(
+        result = plot_simulated(
             self.x_values, self.y_values, x_label, y_label,
             Z_exact, self.vqe_best_energies, self.iqpe_best_energies,
             plot_format=self.plot_format,
@@ -183,6 +185,18 @@ class SimulatedResult:
             output_path=output_path, hide_plot=hide_plot,
             x_is_momentum=x_is_momentum, y_is_momentum=y_is_momentum,
         )
+        if diff and self.summary_log_path is not None:
+            diff_base = output_path.rsplit(".", 1)[0] + "-diff" if output_path else None
+            _plot_diff(
+                self.summary_log_path,
+                method="both",
+                plot_format=diff_format,
+                output_path=diff_base + ".pdf" if diff_base else None,
+                hide_plot=hide_plot,
+                x_is_momentum=x_is_momentum,
+                y_is_momentum=y_is_momentum,
+            )
+        return result
 
 
 def load_result(path: str) -> AnalyticResult | SimulatedResult:
@@ -465,6 +479,7 @@ def _run_simulated(
     hide_plot: bool,
     hide_legend: bool,
     is_1d: bool,
+    plot_diff: bool = False,
 ) -> SimulatedResult:
     do_vqe = vqe_reps > 0
     do_iqpe = iqpe_reps > 0
@@ -801,6 +816,17 @@ def _run_simulated(
             x_is_momentum=(x_kind == "momentum"),
             y_is_momentum=(y_kind == "momentum"),
         )
+        if plot_diff and summary_path is not None:
+            diff_base = plot_path.rsplit(".", 1)[0] + "-diff" if plot_path else None
+            _plot_diff(
+                summary_path,
+                method="both",
+                plot_format=plot_format if plot_format in ("heatmap",) else "3d",
+                output_path=diff_base + ".pdf" if diff_base else None,
+                hide_plot=hide_plot,
+                x_is_momentum=(x_kind == "momentum"),
+                y_is_momentum=(y_kind == "momentum"),
+            )
 
     if is_1d:
         Z_exact_out = Z_exact[:, 0]
@@ -892,6 +918,7 @@ def run_simulated_ideal(
     plot_dir=None,
     hide_plot: bool = False,
     hide_legend: bool = False,
+    plot_diff: bool = False,
 ) -> SimulatedResult:
     (model, lattice, x_param, x_range, y_param, y_range, is_1d, n_occ, params,
      vqe_reps, iqpe_reps) = _prep_simulated_kwargs(
@@ -908,7 +935,7 @@ def run_simulated_ideal(
         iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
         log_dir=log_dir, plot_dir=plot_dir,
         hide_plot=hide_plot, hide_legend=hide_legend,
-        is_1d=is_1d,
+        is_1d=is_1d, plot_diff=plot_diff,
     )
 
 
@@ -934,6 +961,7 @@ def run_simulated_noisy(
     plot_dir=None,
     hide_plot: bool = False,
     hide_legend: bool = False,
+    plot_diff: bool = False,
 ) -> SimulatedResult:
     if backend is None:
         from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
@@ -954,5 +982,5 @@ def run_simulated_noisy(
         iqpe_iters=iqpe_iters, iqpe_reps=iqpe_reps,
         log_dir=log_dir, plot_dir=plot_dir,
         hide_plot=hide_plot, hide_legend=hide_legend,
-        is_1d=is_1d,
+        is_1d=is_1d, plot_diff=plot_diff,
     )

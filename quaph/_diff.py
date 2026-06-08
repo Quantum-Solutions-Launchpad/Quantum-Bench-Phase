@@ -189,14 +189,14 @@ def _diff_3d(
     ny = len(y_vals)
     X_grid, Y_grid = np.meshgrid(x_vals, y_vals, indexing="ij")
 
-    # I think can remove this if we use a good colormap and alpha, but it helps visually to have a faint surface showing the overall error landscape
+    # I think can remove this if we use a good colormap and alpha, but I think it helps visually to have a faint surface showing the overall error landscape
     ax.plot_surface(
         X_grid, Y_grid, Z_err,
         cmap=cmap, norm=norm, alpha=0.10, edgecolor="none",
         rcount=ny, ccount=len(x_vals),
     )
 
-    # One colored line + scatter per y-slice — matches the other 3D style that we hav for other plots
+    # I used one colored line + scatter per y-slice so it matches the other 3D style that we hav for other plots
     for iy, yv in enumerate(y_vals):
         color = cmap(norm(float(np.nanmean(Z_err[:, iy]))))
         ax.plot(x_vals, [yv] * len(x_vals), Z_err[:, iy],
@@ -213,7 +213,6 @@ def _diff_3d(
     ax.set_xlabel(x_label, labelpad=12)
     ax.set_ylabel(y_label, labelpad=12)
     ax.set_zlabel(z_label, labelpad=10)
-    ax.set_title(_make_title(method, meta), pad=14)
 
     if x_is_momentum:
         _format_momentum_ticks(ax, "x", x_vals)
@@ -252,7 +251,6 @@ def _diff_heatmap(
 
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel(y_label, labelpad=8)
-    ax.set_title(_make_title(method, meta), pad=10)
     ax.set_xlim(_pcolormesh_edges(x_arr)[0], _pcolormesh_edges(x_arr)[-1])
     ax.set_ylim(_pcolormesh_edges(y_arr)[0], _pcolormesh_edges(y_arr)[-1])
     for spine in ax.spines.values():
@@ -338,7 +336,6 @@ def _diff_bar_2d(
     z_label = rf"$E_{{\mathrm{{{_method_name(method)}}}}} - E_{{\mathrm{{Analytic}}}}$"
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel(z_label, labelpad=8)
-    ax.set_title(_make_title(method, meta), pad=10)
     ax.grid(True, axis="y", linestyle="--", alpha=0.4)
     for spine in ax.spines.values():
         spine.set_edgecolor("#cfcece")
