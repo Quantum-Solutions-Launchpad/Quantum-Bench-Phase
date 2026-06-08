@@ -125,10 +125,10 @@ def vqe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, get_optimizer_fn, max
     return _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=label)
 
 
-def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_layers, rep, extremum="min", backend=None, label=""):
+def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_layers, rep, extremum="min", backend=None, label="", observable="E"):
     op = hamiltonian * -1 if extremum == "max" else hamiltonian
     ansatz = get_vqe_ansatz_fn(hamiltonian.num_qubits, n_layers, 0, 1)
-    vqe_label = f"[operator] ({label}, rep={rep})" if label else f"[operator] (rep={rep})"
+    vqe_label = f"[{observable}] ({label}, rep={rep})" if label else f"[{observable}] (rep={rep})"
     energy = _vqe_sparse(op, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=vqe_label)
     return -energy if extremum == "max" else energy
 
@@ -241,7 +241,7 @@ class VQEMethod(SimulationMethod):
         }
 
     # ------------------------------------------------------------------- operator
-    def compute_operator_cell(self, op, *, extremum, backend, label):
+    def compute_operator_cell(self, op, *, extremum, backend, label, observable: str = "E"):
         from quaph._yaml_model import (
             AnsatzSpec, OptimizerSpec,
             build_ansatz_factory, build_optimizer_factory,
@@ -261,7 +261,7 @@ class VQEMethod(SimulationMethod):
         for rep in range(1, self.reps + 1):
             energy = vqe_operator(
                 op, get_vqe_ansatz, get_optimizer, self.iters, self.layers, rep,
-                extremum, backend, label,
+                extremum, backend, label, observable,
             )
             reps.append(float(energy))
         return {"repetitions": reps}

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
+from scipy.sparse.linalg import eigsh as _sparse_eigsh
 
 from quaph._core import _fmt_params, logger
 from quaph._method import Method, SimulationMethod, register_method
@@ -32,11 +33,13 @@ def analytic_bands(model, k_tuple, model_params, observable: str = "E"):
     return result
 
 
-def analytic_operator(hamiltonian, extremum="min", label=""):
-    evals = np.linalg.eigvalsh(hamiltonian.to_matrix())
-    result = float(evals.max() if extremum == "max" else evals.min())
+def analytic_operator(hamiltonian, extremum="min", label="", observable="E"):
+    M = hamiltonian.to_matrix(sparse=True)
+    which = "LA" if extremum == "max" else "SA"
+    vals = _sparse_eigsh(M, k=1, which=which, return_eigenvectors=False)
+    result = float(vals[0])
     label_str = f" ({label})" if label else ""
-    logger.info(f"Analytic [operator]{label_str} = {result}")
+    logger.info(f"Analytic [{observable}]{label_str} = {result}")
     return result
 
 
@@ -60,8 +63,8 @@ class AnalyticMethod(SimulationMethod):
         bands = analytic_bands(model, k_tuple, cell_params, observable=observable)
         return {"bands": [float(b) for b in bands]}
 
-    def compute_operator_cell(self, op, *, extremum, backend, label):
-        return {"value": float(analytic_operator(op, extremum, label=label))}
+    def compute_operator_cell(self, op, *, extremum, backend, label, observable: str = "E"):
+        return {"value": float(analytic_operator(op, extremum, label=label, observable=observable))}
 
     def reduce(self, cell, *, extremum="min"):
         if "bands" in cell:

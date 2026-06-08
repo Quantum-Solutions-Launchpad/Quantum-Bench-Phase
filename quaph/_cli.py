@@ -130,11 +130,9 @@ def _add_operator_dict_flags(parser):
 
 
 def _add_operator_args(parser):
-    parser.add_argument("--qubit-operator", dest="qubit_operator", default=None, metavar="SOURCE",
-                        help="HamLib HDF5 source: a local .h5/.hdf5 file, a local .zip archive "
-                             "containing one, or an http(s) URL to either. Choose sweep axes with "
-                             "--x-param/--y-param naming key tokens (e.g. --x-param h --y-param Lx) "
-                             "and narrow multi-family sources with --select.")
+    parser.add_argument("--qubit-operator", dest="qubit_operator", default=None,
+                        nargs="+", metavar="SOURCE",
+                        help="One or more HamLib HDF5 sources (local files, zip archives, or URLs).")
     parser.add_argument("--extremum", choices=["min", "max"], default="min",
                         help="Target eigenvalue for the --qubit-operator path (default: min).")
     parser.add_argument("--select", dest="select", action="append", default=None, metavar="TERMS",
