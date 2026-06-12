@@ -18,6 +18,7 @@ from quaph._hamlib import (
     collect_keys_multi,
 )
 from quaph._plotting import plot_analytic, plot_simulated
+from quaph._diff import plot_diff as _plot_diff
 from quaph._registry import get_model as _get_model
 from quaph._method import (
     Method, METHOD_ORDER, CellContext, build_method, get_method_class,
@@ -189,10 +190,22 @@ class RunResult:
     raw: dict = field(default_factory=dict, repr=False)
     _model_params: dict = field(default_factory=dict, repr=False)
 
-    def plot(self, *, hide_plot: bool = False, output_path=None, hide_legend: bool = False):
-        return _plot_run_result(
-            self, output_path=output_path, hide_plot=hide_plot, hide_legend=hide_legend,
-        )
+  def plot(self, *, hide_plot: bool = False, output_path=None,
+           hide_legend: bool = False, diff: bool = False,
+           diff_format: str = "3d"):
+      result = _plot_run_result(
+          self, output_path=output_path, hide_plot=hide_plot, hide_legend=hide_legend,
+      )
+      if diff and self.log_path is not None:
+          diff_base = output_path.rsplit(".", 1)[0] + "-diff" if output_path else None
+          _plot_diff(
+              self.log_path,
+              method="both",
+              plot_format=diff_format,
+              output_path=diff_base + ".pdf" if diff_base else None,
+              hide_plot=hide_plot,
+          )
+      return result
 
 
 def _squeeze_scalar(arr, is_1d):
