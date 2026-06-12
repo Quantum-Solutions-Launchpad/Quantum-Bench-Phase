@@ -1,0 +1,17 @@
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-05-27T23:21:03.710] error: *** STEP 53480829.7 ON nid006832 CANCELLED AT 2026-05-27T23:21:03 DUE to SIGNAL Terminated ***
+[2026-05-27T23:21:03.711] error: *** STEP 53480829.6 ON nid006832 CANCELLED AT 2026-05-27T23:21:03 DUE to SIGNAL Terminated ***
+[2026-05-27T23:21:03.711] error: *** STEP 53480829.4 ON nid006832 CANCELLED AT 2026-05-27T23:21:03 DUE to SIGNAL Terminated ***
+[2026-05-27T23:21:03.712] error: *** STEP 53480829.1 ON nid006832 CANCELLED AT 2026-05-27T23:21:03 DUE to SIGNAL Terminated ***
+[2026-05-27T23:21:03.712] error: *** STEP 53480829.0 ON nid006832 CANCELLED AT 2026-05-27T23:21:03 DUE to SIGNAL Terminated ***
+[2026-05-27T23:21:03.712] error: *** STEP 53480829.3 ON nid006832 CANCELLED AT 2026-05-27T23:21:03 DUE to SIGNAL Terminated ***
+[2026-05-27T23:21:03.713] error: *** STEP 53480829.2 ON nid006832 CANCELLED AT 2026-05-27T23:21:03 DUE to SIGNAL Terminated ***
+[2026-05-27T23:21:03.713] error: *** STEP 53480829.5 ON nid006832 CANCELLED AT 2026-05-27T23:21:03 DUE to SIGNAL Terminated ***
+[2026-05-27T23:21:03.714] error: *** JOB 53480829 ON nid006832 CANCELLED AT 2026-05-27T23:21:03 DUE to SIGNAL Terminated ***

@@ -15,6 +15,8 @@ class Observable:
     analytic: Callable[..., float]
     analytic_bloch: Callable[..., Any] | None = None
     operator: Any = None
+    quantum_operator: Callable[..., Any] | None = None
+    quantum_composite: Callable[..., float] | None = None
 
 
 def _default_energy_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
@@ -57,11 +59,17 @@ def _default_kinetic_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params
     return float(__import__("numpy").sum(eigvals[:n_occ]))
 
 
+def _default_kinetic_quantum_operator(model, lattice, **params):
+    H = model._hamiltonian_matrix_fn(lattice, **params)
+    return matrix_to_fermionic_op(H)
+
+
 def default_kinetic_observable() -> "Observable":
     return Observable(
         name="kinetic_energy",
         display_name=r"E_{\mathrm{kin}}",
         analytic=_default_kinetic_analytic,
+        quantum_operator=_default_kinetic_quantum_operator,
     )
 
 
@@ -71,11 +79,18 @@ def _default_interaction_analytic(model, lattice, H, eigvals, eigvecs, n_occ, pa
     return float(model._mean_field_correction_fn(lattice, n_occ, **params))
 
 
+def _default_interaction_quantum_operator(model, lattice, **params):
+    if model._interaction_hamiltonian_fn is None:
+        return None
+    return model._interaction_hamiltonian_fn(lattice, **params)
+
+
 def default_interaction_observable() -> "Observable":
     return Observable(
         name="interaction_energy",
         display_name=r"E_{\mathrm{int}}",
         analytic=_default_interaction_analytic,
+        quantum_operator=_default_interaction_quantum_operator,
     )
 
 
@@ -88,11 +103,57 @@ def _default_density_variance_analytic(model, lattice, H, eigvals, eigvecs, n_oc
     return float(np.var(rho_diag))
 
 
+def _default_density_variance_composite(model, lattice, n_occ, params, mapper, n_orbitals, evaluator):
+    import numpy as np
+    from qiskit_nature.second_q.operators import FermionicOp
+    n_ops_qubit = [
+        mapper.map(FermionicOp({f"+_{i} -_{i}": 1.0}, num_spin_orbitals=n_orbitals))
+        for i in range(n_orbitals)
+    ]
+    _, densities = evaluator(n_occ, observable_qubit_ops=n_ops_qubit)
+    return float(np.var(np.asarray(densities)))
+
+
 def default_density_variance_observable() -> "Observable":
     return Observable(
         name="density_variance",
         display_name=r"\mathrm{Var}(\langle n_i \rangle)",
         analytic=_default_density_variance_analytic,
+        quantum_composite=_default_density_variance_composite,
+    )
+
+
+def _default_charge_gap_analytic(model, lattice, H, eigvals, eigvecs, n_occ, params):
+    import numpy as np
+    if n_occ <= 0 or n_occ >= len(eigvals):
+        return 0.0
+    single_particle = float(eigvals[n_occ] - eigvals[n_occ - 1])
+    if model._mean_field_correction_fn is None:
+        return single_particle
+    mf = model._mean_field_correction_fn
+    second_diff = float(
+        mf(lattice, n_occ + 1, **params)
+        + mf(lattice, n_occ - 1, **params)
+        - 2 * mf(lattice, n_occ, **params)
+    )
+    return single_particle + second_diff
+
+
+def _default_charge_gap_composite(model, lattice, n_occ, params, mapper, n_orbitals, evaluator):
+    if n_occ <= 0 or n_occ >= n_orbitals:
+        return 0.0
+    E_minus = evaluator(n_occ - 1)
+    E_zero = evaluator(n_occ)
+    E_plus = evaluator(n_occ + 1)
+    return float(E_plus + E_minus - 2 * E_zero)
+
+
+def default_charge_gap_observable() -> "Observable":
+    return Observable(
+        name="charge_gap",
+        display_name=r"\Delta_{\mathrm{c}}",
+        analytic=_default_charge_gap_analytic,
+        quantum_composite=_default_charge_gap_composite,
     )
 
 
@@ -124,6 +185,7 @@ class Model:
         get_optimizer: Callable | None = None,
         get_mapper: Callable | None = None,
         get_vqe_ansatz: Callable | None = None,
+        get_iqpe_initial_state: Callable | None = None,
         mean_field_correction: Callable | None = None,
         bloch_hamiltonian: Callable | None = None,
         observables: dict[str, "Observable"] | None = None,
@@ -169,6 +231,7 @@ class Model:
         self._get_optimizer_fn = get_optimizer
         self._get_mapper_fn = get_mapper
         self._get_vqe_ansatz_fn = get_vqe_ansatz
+        self._get_iqpe_initial_state_fn = get_iqpe_initial_state
         self._mean_field_correction_fn = mean_field_correction
         self._bloch_hamiltonian_fn = bloch_hamiltonian
 
@@ -178,6 +241,7 @@ class Model:
             "kinetic_energy": default_kinetic_observable(),
             "interaction_energy": default_interaction_observable(),
             "density_variance": default_density_variance_observable(),
+            "charge_gap": default_charge_gap_observable(),
         }
         if observables:
             for obs_name, obs in observables.items():
@@ -236,6 +300,18 @@ class Model:
                 inplace=True,
             )
             return qc
+        return default
+
+    @property
+    def get_iqpe_initial_state(self):
+        if self._get_iqpe_initial_state_fn is not None:
+            return self._get_iqpe_initial_state_fn
+        from quaph._core import _hf_initial_state
+
+        def default(hamiltonian, *, n_occ: int = 0, spin: int = 1, mapper=None):
+            n_qubits = hamiltonian.num_qubits
+            n_sites = n_qubits // spin if spin else n_qubits
+            return _hf_initial_state(n_sites, spin, n_occ, mapper)
         return default
 
     @property

@@ -9,9 +9,7 @@ from quaph._yaml_model import load_yaml_model
 
 _BUILTIN_NAMES = frozenset({
     "haldane", "hubbard", "haldane-hubbard",
-    "ssh", "rice-mele", "qwz", "kane-mele", "bhz", "lieb",
-    "kane-mele-hubbard", "extended-hubbard", "ionic-hubbard",
-    "t-V", "hubbard-triangular",
+    "ssh", "kane-mele", "kane-mele-lc"
 })
 
 _MODELS: dict[str, Model] = {}

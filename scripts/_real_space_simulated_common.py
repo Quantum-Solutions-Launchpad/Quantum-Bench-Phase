@@ -1,5 +1,6 @@
 import argparse
 import json
+import math
 import os
 import sys
 from datetime import datetime
@@ -18,11 +19,27 @@ from quaph._registry import get_model
 
 
 def _model_param_names(model):
-    names = list(model.DEFAULT_PARAMS.keys())
-    for name in model.PARAM_LABELS:
-        if name not in names:
-            names.append(name)
-    return names
+    return list(model.param_labels)
+
+
+def _default_param_value(name):
+    if name in ("t", "t1"):
+        return 1.0
+    if name == "phi":
+        return math.pi / 4
+    return 0.0
+
+
+def _legacy_lattice(model, n_sites):
+    if n_sites % model.sites_per_cell != 0:
+        raise ValueError(
+            f"n-sites={n_sites} is not divisible by sites_per_cell={model.sites_per_cell} "
+            f"for model '{model.name}'."
+        )
+    unit_cells = n_sites // model.sites_per_cell
+    if model.n_dims == 1:
+        return (unit_cells,)
+    return (unit_cells,) + (1,) * (model.n_dims - 1)
 
 
 def _file_suffix(model_name, params):
@@ -38,7 +55,7 @@ def _file_suffix(model_name, params):
     return "-".join(parts)
 
 
-def main(simulation_tag, backend=None):
+def main(simulation_tag, backend=None, argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, required=True)
     parser.add_argument("--n-sites", type=int, default=6)
@@ -55,18 +72,19 @@ def main(simulation_tag, backend=None):
     parser.add_argument("--aggregate-only", action="store_true")
     parser.add_argument("--no-progress-log", action="store_true")
     parser.add_argument("--no-debug", action="store_true")
-    args, _ = parser.parse_known_args()
+    args, _ = parser.parse_known_args(argv)
 
     model = get_model(args.model)
     for param_name in _model_param_names(model):
-        default_val = model.DEFAULT_PARAMS.get(param_name, 0.0)
+        default_val = _default_param_value(param_name)
         parser.add_argument(f"--{param_name}", type=type(default_val), default=default_val)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     model_params = {k: getattr(args, k) for k in _model_param_names(model)}
     n_sites = args.n_sites
-    spin = 2
-    mapper = JordanWignerMapper()
+    lattice = _legacy_lattice(model, n_sites)
+    spin = model.spin
+    mapper = model.get_mapper(n_sites, spin, n_sites * spin // 2) if hasattr(model, "get_mapper") else JordanWignerMapper()
     vqe_iters, vqe_layers, vqe_reps = args.vqe_iters, args.vqe_layers, args.vqe_reps
     time_param, iqpe_trot, iqpe_iters, iqpe_reps = args.iqpe_time, args.iqpe_trot, args.iqpe_iters, args.iqpe_reps
 
@@ -80,31 +98,32 @@ def main(simulation_tag, backend=None):
 
     jobs = []
     for n_occ in range(spin * n_sites + 1):
-        jobs.append(delayed(tagged_job)(("exact", n_occ), analytic, model, n_sites, n_occ, model_params))
+        mapper = model.get_mapper(n_sites, spin, n_occ) if hasattr(model, "get_mapper") else JordanWignerMapper()
+        jobs.append(delayed(tagged_job)(("exact", n_occ), analytic, model, lattice, n_occ, model_params))
         for rep in range(1, iqpe_reps + 1):
             jobs.append(delayed(tagged_job)(
                 ("iqpe", n_occ, rep), iqpe,
-                n_sites, n_occ, model_params, model.fermionic_hamiltonian,
+                lattice, n_sites, spin, n_occ, model_params, model.fermionic_hamiltonian,
                 mapper, time_param, iqpe_trot, iqpe_iters, rep,
                 **maybe_backend({})
             ))
         for rep in range(1, vqe_reps + 1):
             jobs.append(delayed(tagged_job)(
                 ("vqe", n_occ, rep), vqe,
-                n_sites, n_occ, model_params, model.fermionic_hamiltonian, model.get_optimizer,
-                mapper, vqe_iters, vqe_layers, rep,
+                lattice, n_sites, spin, n_occ, model_params, model.fermionic_hamiltonian, model.get_optimizer,
+                model.get_vqe_ansatz, mapper, vqe_iters, vqe_layers, rep,
                 **maybe_backend({})
             ))
         jobs.append(delayed(tagged_job)(
             ("iqpe_bench", n_occ), iqpe_other_benchmarks,
-            n_sites, n_occ, model_params, model.fermionic_hamiltonian,
+            lattice, n_sites, spin, n_occ, model_params, model.fermionic_hamiltonian,
             mapper, time_param, iqpe_trot, iqpe_iters, iqpe_reps,
             **maybe_backend({})
         ))
         jobs.append(delayed(tagged_job)(
             ("vqe_bench", n_occ), vqe_other_benchmarks,
-            n_sites, n_occ, model_params, model.fermionic_hamiltonian,
-            mapper, vqe_iters, vqe_layers, vqe_reps,
+            lattice, n_sites, spin, n_occ, model_params, model.fermionic_hamiltonian,
+            model.get_vqe_ansatz, mapper, vqe_iters, vqe_layers, vqe_reps,
             **maybe_backend({})
         ))
 
@@ -198,6 +217,13 @@ def main(simulation_tag, backend=None):
         if missing:
             raise RuntimeError("Missing results before aggregation: " + ", ".join(missing[:20]))
 
+    def jobs_per_shard():
+        value = os.environ.get("QUAPH_JOBS_PER_SHARD") or "1"
+        try:
+            return max(1, int(value))
+        except ValueError:
+            return 1
+
     def write_outputs():
         validate_complete()
 
@@ -286,7 +312,11 @@ def main(simulation_tag, backend=None):
     else:
         init_worker_logging()
         shard_jobs = [job for idx, job in enumerate(jobs) if idx % args.task_count == args.task_index]
-        job_results = Parallel(n_jobs=1, return_as="generator_unordered")(shard_jobs)
+        job_results = Parallel(
+            n_jobs=jobs_per_shard(),
+            return_as="generator_unordered",
+            initializer=init_worker_logging,
+        )(shard_jobs)
 
     for tag, result in job_results:
         append_progress(tag, result)

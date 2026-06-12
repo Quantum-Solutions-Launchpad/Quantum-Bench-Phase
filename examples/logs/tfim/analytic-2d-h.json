@@ -1,0 +1,51 @@
+{
+    "type": "analytic",
+    "plot_format": "2d",
+    "band_structure": false,
+    "observable": "E",
+    "parameters": {
+        "model": "tfim",
+        "lattice": null,
+        "qubit_operator": "/Users/adamgodel/hamlib/condensedmatter/tfim/tfim.zip",
+        "keys": [
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-8_h-0",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-8_h-0.1",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-8_h-0.5",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-8_h-1",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-8_h-2",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-8_h-3",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-8_h-4",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-8_h-5",
+            "graph-1D-grid-nonpbc-qubitnodes_Lx-8_h-6"
+        ],
+        "extremum": "min",
+        "model_params": {}
+    },
+    "x_param": "h",
+    "y_param": null,
+    "x_values": [
+        0.0,
+        0.1,
+        0.5,
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0
+    ],
+    "y_values": [],
+    "result": {
+        "analytic": {
+            "0": -7.0,
+            "1": -7.025018814833002,
+            "2": -7.640592553590093,
+            "3": -9.837951447459453,
+            "4": -16.885141493208202,
+            "5": -24.586275728865992,
+            "6": -32.4387322371757,
+            "7": -40.350628769121556,
+            "8": -48.2920298688953
+        }
+    }
+}

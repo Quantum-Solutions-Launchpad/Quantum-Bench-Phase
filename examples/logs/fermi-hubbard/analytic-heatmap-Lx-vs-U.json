@@ -1,0 +1,116 @@
+{
+    "type": "analytic",
+    "plot_format": "heatmap",
+    "band_structure": false,
+    "observable": "E",
+    "parameters": {
+        "model": "FH_D-1",
+        "lattice": null,
+        "qubit_operator": "/Users/adamgodel/hamlib/condensedmatter/fermihubbard/FH_D-1.zip",
+        "keys": [
+            [
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-2_U-0_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-2_U-2_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-2_U-4_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-2_U-6_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-2_U-8_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-2_U-12_enc-jw"
+            ],
+            [
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-3_U-0_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-3_U-2_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-3_U-4_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-3_U-6_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-3_U-8_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-3_U-12_enc-jw"
+            ],
+            [
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-0_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-2_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-4_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-6_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-8_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-4_U-12_enc-jw"
+            ],
+            [
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-5_U-0_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-5_U-2_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-5_U-4_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-5_U-6_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-5_U-8_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-5_U-12_enc-jw"
+            ],
+            [
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-6_U-0_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-6_U-2_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-6_U-4_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-6_U-6_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-6_U-8_enc-jw",
+                "fh-graph-1D-grid-nonpbc-qubitnodes_Lx-6_U-12_enc-jw"
+            ]
+        ],
+        "extremum": "min",
+        "model_params": {}
+    },
+    "x_param": "Lx",
+    "y_param": "U",
+    "x_values": [
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0
+    ],
+    "y_values": [
+        0.0,
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        12.0
+    ],
+    "result": {
+        "analytic": {
+            "0": {
+                "0": -2.0,
+                "1": -1.2360679774997896,
+                "2": -1.0,
+                "3": -1.0,
+                "4": -1.0,
+                "5": -1.0
+            },
+            "1": {
+                "0": -2.8284271247461894,
+                "1": -2.279452315768602,
+                "2": -1.999999999999989,
+                "3": -1.8472734917475264,
+                "4": -1.7548074914000726,
+                "5": -1.6509520245550195
+            },
+            "2": {
+                "0": -4.472135954999575,
+                "1": -3.0695353593424244,
+                "2": -2.624942271510865,
+                "3": -2.5222450421032643,
+                "4": -2.460921421676659,
+                "5": -2.392464495765016
+            },
+            "3": {
+                "0": -5.464101615137759,
+                "1": -4.166040109383523,
+                "2": -3.4916300891540777,
+                "3": -3.298785406916268,
+                "4": -3.179998118958054,
+                "5": -3.044953998035362
+            },
+            "4": {
+                "0": -6.987918414869877,
+                "1": -5.017468463489204,
+                "2": -4.422071147758806,
+                "3": -4.078756244607116,
+                "4": -3.864874504540586,
+                "5": -3.727349595556106
+            }
+        }
+    }
+}
