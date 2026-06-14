@@ -190,23 +190,22 @@ class RunResult:
     raw: dict = field(default_factory=dict, repr=False)
     _model_params: dict = field(default_factory=dict, repr=False)
 
-  def plot(self, *, hide_plot: bool = False, output_path=None,
-           hide_legend: bool = False, diff: bool = False,
-           diff_format: str = "3d"):
-      result = _plot_run_result(
-          self, output_path=output_path, hide_plot=hide_plot, hide_legend=hide_legend,
-      )
-      if diff and self.log_path is not None:
-          diff_base = output_path.rsplit(".", 1)[0] + "-diff" if output_path else None
-          _plot_diff(
-              self.log_path,
-              method="both",
-              plot_format=diff_format,
-              output_path=diff_base + ".pdf" if diff_base else None,
-              hide_plot=hide_plot,
-          )
-      return result
-
+    def plot(self, *, hide_plot: bool = False, output_path=None,
+            hide_legend: bool = False, diff: bool = False,
+            diff_format: str = "3d"):
+        result = _plot_run_result(
+            self, output_path=output_path, hide_plot=hide_plot, hide_legend=hide_legend,
+        )
+        if diff and self.log_path is not None:
+            diff_base = output_path.rsplit(".", 1)[0] + "-diff" if output_path else None
+            _plot_diff(
+                self.log_path,
+                method="both",
+                plot_format=diff_format,
+                output_path=diff_base + ".pdf" if diff_base else None,
+                hide_plot=hide_plot,
+            )
+        return result
 
 def _squeeze_scalar(arr, is_1d):
     arr = np.asarray(arr, dtype=float)
