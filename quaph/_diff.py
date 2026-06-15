@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-import json
-
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.cm as mcm
 from matplotlib.patches import Patch
 from matplotlib.colors import LinearSegmentedColormap, Normalize, TwoSlopeNorm
 
@@ -15,115 +12,6 @@ from quaph._plotting import (
 )
 from quaph._interactive import attach_hover, lock_camera_azimuth
 
-def _load_grid(path: str, source: str) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    with open(path) as fh:
-        raw = json.load(fh)
-
-    x_vals = np.asarray(raw["x_values"], dtype=float)
-    y_vals = np.asarray(raw["y_values"], dtype=float)
-    nx, ny = len(x_vals), len(y_vals)
-
-    block = raw["result"][source]
-    analytic_block = raw["result"].get("analytic")
-
-    Z = np.full((nx, ny), np.nan)
-    for xi_str, row in block.items():
-        xi = int(xi_str)
-        for yi_str, val in row.items():
-            yi = int(yi_str)
-            if source in ("vqe", "iqpe") and isinstance(val, list) and analytic_block is not None:
-                analytic_val = float(analytic_block[xi_str][yi_str])
-                Z[xi, yi] = min(val, key=lambda e: abs(e - analytic_val))
-            else:
-                Z[xi, yi] = float(val)
-
-    return x_vals, y_vals, Z
-
-
-def _read_meta(path: str) -> dict:
-    with open(path) as fh:
-        raw = json.load(fh)
-    return {
-        "model": raw.get("parameters", {}).get("model", ""),
-        "lattice": raw.get("parameters", {}).get("lattice", []),
-        "x_param": raw.get("x_param", "x"),
-        "y_param": raw.get("y_param", "y"),
-        "available": list(raw.get("result", {}).keys()),
-    }
-
-
-def _param_label(param: str) -> str:
-    label_map = {
-        "n_occ": r"$N_{\mathrm{occ}}$",
-        "t2": r"$t_2$",
-        "t1": r"$t_1$",
-        "phi": r"$\phi$",
-        "M": r"$M$",
-        "U": r"$U$",
-        "kx": r"$k_x$",
-        "ky": r"$k_y$",
-        "k": r"$k$",
-    }
-    return label_map.get(param, f"${param}$")
-
-
-def _method_name(method: str) -> str:
-    return {"vqe": "VQE", "iqpe": "IQPE"}.get(method, method.upper())
-
-
-def _out_path(base: str | None, method: str) -> str | None:
-    if base is None:
-        return None
-    if "." in base:
-        stem, ext = base.rsplit(".", 1)
-        return f"{stem}-{method}.{ext}"
-    return f"{base}-{method}"
-
-def plot_diff(
-    path: str,
-    *,
-    method: str = "both",
-    plot_format: str = "3d",
-    output_path: str | None = None,
-    hide_plot: bool = False,
-    x_is_momentum: bool = False,
-    y_is_momentum: bool = False,
-):
-    _apply_rcparams()
-
-    meta = _read_meta(path)
-    x_label = _param_label(meta["x_param"])
-    y_label = _param_label(meta["y_param"])
-
-    x_vals, y_vals, Z_analytic = _load_grid(path, "analytic")
-
-    methods = ["vqe", "iqpe"] if method == "both" else [method]
-    methods = [m for m in methods if m in meta["available"]]
-
-    figs = []
-    for m in methods:
-        x_vals, y_vals, Z_method = _load_grid(path, m)
-        Z_err = Z_method - Z_analytic
-
-        shared = dict(
-            x_label=x_label, y_label=y_label,
-            method=m, meta=meta,
-            x_is_momentum=x_is_momentum,
-            y_is_momentum=y_is_momentum,
-            output_path=_out_path(output_path, m),
-            hide_plot=hide_plot,
-        )
-
-        if plot_format == "heatmap":
-            fig = _diff_heatmap(x_vals, y_vals, Z_err, **shared)
-        elif plot_format == "bar_2d":
-            fig = _diff_bar_2d(x_vals, y_vals, Z_err, **shared)
-        else:
-            fig = _diff_3d(x_vals, y_vals, Z_err, **shared)
-
-        figs.append(fig)
-
-    return figs if len(figs) > 1 else figs[0] if figs else None
 
 def _diff_cmap_and_norm(Z: np.ndarray):
     finite = Z[np.isfinite(Z)]
@@ -156,21 +44,9 @@ def _pcolormesh_edges(a: np.ndarray) -> np.ndarray:
     return np.concatenate([[a[0] - d[0]], a[:-1] + d, [a[-1] + d[-1]]])
 
 
-def _make_title(method: str, meta: dict) -> str:
-    m = meta.get("model", "")
-    lattice = meta.get("lattice", [])
-    lattice_str = "×".join(str(x) for x in lattice) if lattice else ""
-    parts = []
-    if m:
-        parts.append(m.capitalize())
-    if lattice_str:
-        parts.append(f"{lattice_str}")
-    parts.append(f"{_method_name(method)} − Analytic")
-    return ",  ".join(parts)
-
 def _diff_3d(
     x_vals, y_vals, Z_err,
-    *, x_label, y_label, method, meta,
+    *, x_label, y_label, z_label, hover_label,
     x_is_momentum, y_is_momentum,
     output_path, hide_plot,
 ):
@@ -209,7 +85,6 @@ def _diff_3d(
         color="#888888", alpha=0.08, edgecolor="none",
     )
 
-    z_label = rf"$E_{{\mathrm{{{_method_name(method)}}}}} - E_{{\mathrm{{Analytic}}}}$"
     ax.set_xlabel(x_label, labelpad=12)
     ax.set_ylabel(y_label, labelpad=12)
     ax.set_zlabel(z_label, labelpad=10)
@@ -222,14 +97,14 @@ def _diff_3d(
     plt.tight_layout()
     attach_hover(fig, ax, [
         {"xs": X_grid.ravel(), "ys": Y_grid.ravel(),
-         "zs": Z_err.ravel(), "label": f"{_method_name(method)} − Analytic"},
+         "zs": Z_err.ravel(), "label": hover_label},
     ])
     lock_camera_azimuth(fig, ax)
     return _save_and_show(fig, output_path, hide_plot)
 
 def _diff_heatmap(
     x_vals, y_vals, Z_err,
-    *, x_label, y_label, method, meta,
+    *, x_label, y_label, z_label,
     x_is_momentum, y_is_momentum,
     output_path, hide_plot,
 ):
@@ -244,7 +119,6 @@ def _diff_heatmap(
         cmap=cmap, norm=norm, shading="auto", rasterized=True,
     )
 
-    z_label = rf"$E_{{\mathrm{{{_method_name(method)}}}}} - E_{{\mathrm{{Analytic}}}}$"
     cbar = fig.colorbar(mesh, ax=ax, pad=0.02, fraction=0.045)
     cbar.set_label(z_label, labelpad=10)
     cbar.outline.set_edgecolor("#cccccc")
@@ -267,7 +141,7 @@ def _diff_heatmap(
 
 def _diff_bar_2d(
     x_vals, y_vals, Z_err,
-    *, x_label, y_label, method, meta,
+    *, x_label, y_label, z_label,
     x_is_momentum, y_is_momentum,
     output_path, hide_plot,
 ):
@@ -333,7 +207,6 @@ def _diff_bar_2d(
         ax.legend(handles=handles, loc="best", fontsize=9,
                   frameon=True, framealpha=0.9, edgecolor="#cccccc")
 
-    z_label = rf"$E_{{\mathrm{{{_method_name(method)}}}}} - E_{{\mathrm{{Analytic}}}}$"
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel(z_label, labelpad=8)
     ax.grid(True, axis="y", linestyle="--", alpha=0.4)

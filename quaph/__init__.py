@@ -10,7 +10,6 @@ from quaph._registry import (
 )
 from quaph._yaml_model import build_tight_binding_model
 from quaph._hamlib import load_hamlib_operator, list_hamlib_keys
-from quaph._diff import plot_diff
 from quaph._method import Method
 from quaph._run import (
     run,
@@ -32,5 +31,4 @@ __all__ = [
     "run",
     "load_result",
     "RunResult",
-    "plot_doff",
 ]
