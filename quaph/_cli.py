@@ -230,6 +230,7 @@ def _dispatch_run(args):
             y_param=args.y_param, y_range=args.y_range,
             log_path=args.log_path, plot_path=args.plot_path,
             hide_plot=args.hide_plot, hide_legend=args.hide_legend, heatmap=args.heatmap,
+            diff=args.diff, diff_format=args.diff_format,
         )
         return
 
@@ -245,6 +246,7 @@ def _dispatch_run(args):
         observable=args.observable,
         log_path=args.log_path, plot_path=args.plot_path,
         hide_plot=args.hide_plot, hide_legend=args.hide_legend, heatmap=args.heatmap,
+        diff=args.diff, diff_format=args.diff_format,
         task_index=args.task_index, task_count=args.task_count,
         prepare_only=args.prepare_only, aggregate_only=args.aggregate_only,
         no_progress_log=args.no_progress_log,
@@ -303,6 +305,11 @@ def main(argv=None):
     plot_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
     plot_parser.add_argument("--output", default=None, metavar="PATH", help="Output PDF path")
     plot_parser.add_argument("--hide-legend", action="store_true", default=False)
+    plot_parser.add_argument("--diff", action="store_true", default=False,
+                             help="Also produce a difference plot for every pair of methods.")
+    plot_parser.add_argument("--diff-format", dest="diff_format", default="3d",
+                             choices=["3d", "heatmap", "bar_2d"],
+                             help="Plot format for --diff plots (default: 3d).")
 
     run_parser = sub.add_parser("run", help="Run one or more simulation methods over a sweep")
     run_parser.add_argument("--model", default=None, metavar="MODEL",
@@ -370,7 +377,8 @@ def main(argv=None):
             result = load_result(args.path)
         except Exception as e:
             parser.error(str(e))
-        result.plot(hide_plot=args.hide_plot, output_path=args.output, hide_legend=args.hide_legend)
+        result.plot(hide_plot=args.hide_plot, output_path=args.output, hide_legend=args.hide_legend,
+                    diff=args.diff, diff_format=args.diff_format)
         return
 
     if args.command == "run":

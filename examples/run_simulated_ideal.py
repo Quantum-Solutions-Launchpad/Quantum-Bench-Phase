@@ -16,7 +16,8 @@ _PLOT = os.path.join(_HERE, "plots", MODEL, "sim-ideal-t2-vs-U.pdf")
 if os.path.exists(_LOG):
     print("Plotting from existing log...")
     result = quaph.load_result(_LOG)
-    result.plot()
+    result.plot(diff=True, diff_format="3d")
+
 else:
     result = quaph.run(
         model=MODEL,

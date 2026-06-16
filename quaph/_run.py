@@ -19,6 +19,7 @@ from quaph._hamlib import (
     collect_keys_multi,
 )
 from quaph._plotting import plot_analytic, plot_simulated
+from quaph._diff import _diff_3d, _diff_heatmap, _diff_bar_2d
 from quaph._registry import get_model as _get_model
 from quaph._method import (
     Method, METHOD_ORDER, CellContext, build_method, get_method_class,
@@ -190,11 +191,22 @@ class RunResult:
     raw: dict = field(default_factory=dict, repr=False)
     _model_params: dict = field(default_factory=dict, repr=False)
 
-    def plot(self, *, hide_plot: bool = False, output_path=None, hide_legend: bool = False):
-        return _plot_run_result(
+    def plot(self, *, hide_plot: bool = False, output_path=None,
+            hide_legend: bool = False, diff: bool = False,
+            diff_format: str = "3d"):
+        result = _plot_run_result(
             self, output_path=output_path, hide_plot=hide_plot, hide_legend=hide_legend,
         )
-
+        if diff:
+            x_label, y_label, x_is_mom, y_is_mom = _result_labels(
+                self.model_name, self.x_param, self.y_param
+            )
+            _plot_diffs(
+                self, x_label=x_label, y_label=y_label,
+                x_is_momentum=x_is_mom, y_is_momentum=y_is_mom,
+                plot_format=diff_format, output_path=output_path, hide_plot=hide_plot,
+            )
+        return result
 
 def _squeeze_scalar(arr, is_1d):
     arr = np.asarray(arr, dtype=float)
@@ -256,6 +268,52 @@ def _plot_run_result(rr: RunResult, *, output_path, hide_plot, hide_legend):
         x_is_momentum=x_is_mom, y_is_momentum=y_is_mom,
         surface_label=surface_label, extra_series=extra_series,
     )
+
+
+def _diff_output_path(base, tag):
+    """Insert a ``-diff-<tag>`` suffix before the extension of an output path."""
+    if base is None:
+        return None
+    if "." in os.path.basename(base):
+        stem, ext = base.rsplit(".", 1)
+        return f"{stem}-diff-{tag}.{ext}"
+    return f"{base}-diff-{tag}"
+
+
+def _plot_diffs(rr: RunResult, *, x_label, y_label, x_is_momentum, y_is_momentum,
+                plot_format, output_path, hide_plot):
+    """Render a difference plot for every pair of methods in ``rr``.
+
+    Each plot shows ``E_b - E_a`` where ``a`` precedes ``b`` in METHOD_ORDER, so
+    quantum methods are differenced against the analytic reference by convention.
+    Produced in addition to (not in place of) the normal plots.
+    """
+    from itertools import combinations
+
+    methods = [Method.coerce(m) for m in rr.methods]
+    figs = []
+    for a, b in combinations(methods, 2):
+        Z_err = np.asarray(rr.grids[b.value], dtype=float) - np.asarray(rr.grids[a.value], dtype=float)
+        if Z_err.ndim == 1:
+            Z_err = Z_err[:, None]
+        la = get_method_class(a).LABEL
+        lb = get_method_class(b).LABEL
+        z_label = rf"$E_{{\mathrm{{{lb}}}}} - E_{{\mathrm{{{la}}}}}$"
+        shared = dict(
+            x_label=x_label, y_label=y_label, z_label=z_label,
+            x_is_momentum=x_is_momentum, y_is_momentum=y_is_momentum,
+            output_path=_diff_output_path(output_path, f"{b.value}-{a.value}"),
+            hide_plot=hide_plot,
+        )
+        if plot_format == "heatmap":
+            fig = _diff_heatmap(rr.x_values, rr.y_values, Z_err, **shared)
+        elif plot_format == "bar_2d":
+            fig = _diff_bar_2d(rr.x_values, rr.y_values, Z_err, **shared)
+        else:
+            fig = _diff_3d(rr.x_values, rr.y_values, Z_err,
+                           hover_label=f"{lb} − {la}", **shared)
+        figs.append(fig)
+    return figs
 
 
 def load_result(path: str) -> RunResult:
@@ -388,6 +446,8 @@ def run(
     hide_plot: bool = False,
     hide_legend: bool = False,
     heatmap: bool = False,
+    diff: bool = False,
+    diff_format: str = "3d",
     task_index: int | None = None,
     task_count: int = 1,
     prepare_only: bool = False,
@@ -426,6 +486,7 @@ def run(
             x_param=x_param, x_range=x_range, y_param=y_param, y_range=y_range,
             heatmap=heatmap, log_path=log_path, plot_path=plot_path,
             hide_plot=hide_plot, hide_legend=hide_legend,
+            diff=diff, diff_format=diff_format,
         )
 
     return _run_model_methods(
@@ -434,6 +495,7 @@ def run(
         y_param=y_param, y_range=y_range, n_occ=n_occ, model_params=model_params,
         observable=observable, log_path=log_path, plot_path=plot_path,
         hide_plot=hide_plot, hide_legend=hide_legend, heatmap=heatmap,
+        diff=diff, diff_format=diff_format,
         task_index=task_index, task_count=task_count,
         prepare_only=prepare_only, aggregate_only=aggregate_only,
         no_progress_log=no_progress_log,
@@ -445,6 +507,7 @@ def _run_model_methods(
     model, methods, method_objs, backend, backend_label,
     *, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
     observable, log_path, plot_path, hide_plot, hide_legend, heatmap,
+    diff, diff_format,
     task_index, task_count, prepare_only, aggregate_only, no_progress_log,
 ):
     from loguru import logger
@@ -807,6 +870,13 @@ def _run_model_methods(
 
     if plot_path is not None or not hide_plot:
         _plot_run_result(result, output_path=plot_path, hide_plot=hide_plot, hide_legend=hide_legend)
+        if diff:
+            x_label, y_label, x_is_mom, y_is_mom = _result_labels(result.model_name, x_param, y_param)
+            _plot_diffs(
+                result, x_label=x_label, y_label=y_label,
+                x_is_momentum=x_is_mom, y_is_momentum=y_is_mom,
+                plot_format=diff_format, output_path=plot_path, hide_plot=hide_plot,
+            )
 
     return result
 
@@ -1048,6 +1118,12 @@ def _run_operator_methods(
         y_lab = y_label or "$E$"
         _plot_operator_result(result, x_lab, y_lab, methods,
                               output_path=plot_path, hide_plot=hide_plot, hide_legend=hide_legend)
+        if diff:
+            _plot_diffs(
+                result, x_label=x_lab, y_label=y_lab,
+                x_is_momentum=False, y_is_momentum=False,
+                plot_format=diff_format, output_path=plot_path, hide_plot=hide_plot,
+            )
 
     return result
 
