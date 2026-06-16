@@ -9,17 +9,20 @@ from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import efficient_su2
 from qiskit.quantum_info import SparsePauliOp
 from qiskit_ibm_runtime import Session, Estimator
-from qiskit_aer import AerSimulator
-from qiskit_aer.noise import NoiseModel
 
 from quaph._core import _fmt_params, _make_simulator, logger
 from quaph._method import Method, ParamSpec, SimulationMethod, register_method
+
+
+def _isa(op, circ):
+    return op.apply_layout(circ.layout) if circ.layout is not None else op
 
 
 # --------------------------------------------------------------------- solvers
 def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend=None) -> QuantumCircuit:
     simulator = _make_simulator(backend)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
+    isa_hamiltonian = _isa(hamiltonian, ansatz_circuit)
 
     with Session(backend=simulator) as session:
         estimator = Estimator(mode=session)
@@ -29,7 +32,7 @@ def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend
         def cost_func(params):
             if cost_history["iters"] >= max_iters and cost_history["prev"] is not None:
                 return cost_history["prev"]
-            pub = (ansatz_circuit, [hamiltonian], [params])
+            pub = (ansatz_circuit, [isa_hamiltonian], [params])
             result = estimator.run(pubs=[pub]).result()
             energy = float(result[0].data.evs[0])
             cost_history["iters"] += 1
@@ -46,6 +49,7 @@ def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend
 def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=None, label="", observable_qubit_ops=None):
     simulator = _make_simulator(backend)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
+    isa_hamiltonian = _isa(hamiltonian, ansatz_circuit)
 
     with Session(backend=simulator) as session:
         estimator = Estimator(mode=session)
@@ -56,7 +60,7 @@ def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=N
         def cost_func(params):
             if cost_history["iters"] >= max_iters:
                 return cost_history["cost_history"][-1]
-            pub = (ansatz_circuit, [hamiltonian], [params])
+            pub = (ansatz_circuit, [isa_hamiltonian], [params])
             result = estimator.run(pubs=[pub]).result()
             energy = result[0].data.evs[0]
             cost_history["iters"] += 1
@@ -74,7 +78,7 @@ def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=N
         optimal_params = np.asarray(res.x)
         observable_values = []
         for op in observable_qubit_ops:
-            pub = (ansatz_circuit, [op], [optimal_params])
+            pub = (ansatz_circuit, [_isa(op, ansatz_circuit)], [optimal_params])
             result = estimator.run(pubs=[pub]).result()
             observable_values.append(float(result[0].data.evs[0]))
         return energy, observable_values
@@ -134,11 +138,7 @@ def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_
 
 
 def vqe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
-    if backend:
-        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
-        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
-    else:
-        simulator = AerSimulator()
+    simulator = _make_simulator(backend)
 
     ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
     ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
@@ -155,11 +155,7 @@ def vqe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_
 
 
 def vqe_bloch_other_benchmarks(k_tuple, model_params, bloch_hamiltonian_fn, max_iters, n_layers, vqe_reps=1, backend=None):
-    if backend:
-        noise_model = NoiseModel.from_backend(backend)
-        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
-    else:
-        simulator = AerSimulator()
+    simulator = _make_simulator(backend)
 
     H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
     hamiltonian = SparsePauliOp.from_operator(H_matrix)

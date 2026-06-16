@@ -12,6 +12,7 @@ import numpy as np
 from joblib import Parallel, delayed
 
 from quaph._model import Model, ModelCapabilityError
+from quaph._backend import resolve_backend, backend_label as _backend_label
 from quaph._core import resolve_sweep
 from quaph._hamlib import (
     list_hamlib_keys, load_hamlib_operator, parse_key_params,
@@ -397,7 +398,11 @@ def run(
 
     ``method`` is a :class:`~quaph.Method` (or list of them). ``method_params`` is
     a dict keyed by method enum/value holding that method's parameters. ``backend``
-    selects ideal (``None``) vs. noisy execution for the quantum methods.
+    selects how the quantum methods run: ``None`` for ideal simulation, a fake
+    backend (object or name, e.g. ``"FakeSherbrooke"``) for local noisy
+    simulation, or a real IBM device for hardware execution -- given as a device
+    name (e.g. ``"ibm_brisbane"``), ``"least_busy"``, or an ``IBMBackend`` object,
+    and requiring configured Qiskit Runtime credentials.
 
     ``log_path`` / ``plot_path`` are the exact JSON / PDF files to write (both the
     containing directory and the file name are chosen by the caller); parent
@@ -405,7 +410,8 @@ def run(
     """
     methods = _normalize_methods(method)
     method_objs = _build_method_objects(methods, method_params)
-    backend_label = "ideal" if backend is None else type(backend).__name__
+    backend = resolve_backend(backend)
+    backend_label = _backend_label(backend)
 
     if qubit_operator is not None:
         if isinstance(qubit_operator, str):

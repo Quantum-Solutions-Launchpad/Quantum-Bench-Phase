@@ -212,19 +212,7 @@ def _collect_method_params(args, methods):
 
 
 def _resolve_backend(args):
-    if getattr(args, "noisy", False) and getattr(args, "backend", None):
-        raise ValueError("--noisy and --backend are mutually exclusive.")
-    name = getattr(args, "backend", None)
-    if name:
-        from qiskit_ibm_runtime import fake_provider
-        try:
-            return getattr(fake_provider, name)()
-        except AttributeError:
-            raise ValueError(f"Unknown fake backend '{name}'.")
-    if getattr(args, "noisy", False):
-        from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
-        return FakeSherbrooke()
-    return None
+    return getattr(args, "backend", None)
 
 
 def _dispatch_run(args):
@@ -328,10 +316,10 @@ def main(argv=None):
                             help="Observable to compute per cell (default: 'E').")
     run_parser.add_argument("--heatmap", action="store_true", default=False,
                             help="Render as a 2D heatmap (one method + both sweep axes).")
-    run_parser.add_argument("--noisy", action="store_true", default=False,
-                            help="Use the FakeSherbrooke noise model for VQE/IQPE.")
     run_parser.add_argument("--backend", default=None, metavar="NAME",
-                            help="Named qiskit fake backend for VQE/IQPE noise (e.g. FakeSherbrooke).")
+                            help="VQE/IQPE execution backend: a fake backend for local noise "
+                                 "(e.g. FakeSherbrooke), a real IBM device (e.g. ibm_brisbane), "
+                                 "or least_busy. Omit for ideal simulation.")
     _add_sweep_args(run_parser)
     _add_output_args(run_parser)
     _add_distribution_args(run_parser)

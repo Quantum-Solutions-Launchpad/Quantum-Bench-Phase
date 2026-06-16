@@ -9,18 +9,16 @@ from qiskit.circuit import QuantumRegister, ClassicalRegister
 from qiskit.circuit.library import PauliEvolutionGate
 from qiskit.synthesis import SuzukiTrotter
 from qiskit.quantum_info import SparsePauliOp
-from qiskit_aer.primitives import Sampler
-from qiskit_aer import AerSimulator
-from qiskit_aer.noise import NoiseModel
 
+from quaph._backend import make_iqpe_sampler
 from quaph._core import (
-    _fmt_params, _hf_initial_state, _make_sampler, _uniform_initial, logger,
+    _fmt_params, _hf_initial_state, _make_simulator, _uniform_initial, logger,
 )
 from quaph._method import Method, ParamSpec, SimulationMethod, register_method
 
 
 # --------------------------------------------------------------------- solvers
-def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler: Sampler, label: str = ""):
+def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler, label: str = ""):
     omega_coef = 0
     iteration_phases = []
 
@@ -29,9 +27,7 @@ def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, nu
 
         qc = construct_iqpe_circuit(unitary, state_preparation, k, -2 * np.pi * omega_coef)
 
-        sampler_job = sampler.run([qc])
-        result = sampler_job.result().quasi_dists[0]
-        x = 1 if result.get(1, 0) > result.get(0, 0) else 0
+        x = sampler.sample_bit(qc)
 
         omega_coef = omega_coef + x / 2
         iteration_phases.append(omega_coef)
@@ -66,9 +62,9 @@ def _iqpe_sparse(hamiltonian, initial, time_param, n_trot, n_iters, rep, backend
     np.seterr(all='ignore')
     st = SuzukiTrotter(reps=n_trot)
     evolution = PauliEvolutionGate(hamiltonian, time=time_param, synthesis=st)
-    sampler = _make_sampler(backend)
 
-    phase, iteration_phases = iqpe_estimate(evolution, initial, n_iters, sampler, label)
+    with make_iqpe_sampler(backend) as sampler:
+        phase, iteration_phases = iqpe_estimate(evolution, initial, n_iters, sampler, label)
     res = float(-2 * np.pi * phase / time_param)
     iter_energies = [float(-2 * np.pi * p / time_param) for p in iteration_phases]
     logger.debug(f"IQPE {label} = {res}")
@@ -143,11 +139,7 @@ def iqpe_operator(hamiltonian, time_param, n_trot, n_iters, rep, extremum="min",
 
 def iqpe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, iqpe_reps, backend=None):
     np.seterr(all='ignore')
-    if backend:
-        noise_model = NoiseModel.from_backend(backend) if backend else NoiseModel()
-        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
-    else:
-        simulator = AerSimulator()
+    simulator = _make_simulator(backend)
 
     fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
@@ -172,11 +164,7 @@ def iqpe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic
 
 def iqpe_bloch_other_benchmarks(k_tuple, model_params, bloch_hamiltonian_fn, time_param, n_trot, n_iters, iqpe_reps, backend=None):
     np.seterr(all='ignore')
-    if backend:
-        noise_model = NoiseModel.from_backend(backend)
-        simulator = AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
-    else:
-        simulator = AerSimulator()
+    simulator = _make_simulator(backend)
 
     H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
     hamiltonian = SparsePauliOp.from_operator(H_matrix)

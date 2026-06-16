@@ -41,8 +41,10 @@ Commands:
                        Run one or more simulation methods over a parameter sweep.
                        Methods: analytic, vqe, iqpe, dmrg (choose any combination).
                        Per-method flags are prefixed, e.g. --vqe-iters 200
-                       --vqe-layers 2 --iqpe-time 0.2 --dmrg-nsweeps 4. Add --noisy
-                       (or --backend NAME) to run vqe/iqpe under a noise model.
+                       --vqe-layers 2 --iqpe-time 0.2 --dmrg-nsweeps 4. Add
+                       --backend NAME to run vqe/iqpe under a noise model
+                       (e.g. FakeSherbrooke) or on a real IBM device (ibm_brisbane,
+                       least_busy).
     OR
   run --qubit-operator SOURCE --method M [M ...] [--extremum min|max] [...]
                        Sweep a HamLib HDF5 file's Hamiltonians instead of a
