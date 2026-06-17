@@ -17,7 +17,9 @@ from quaph._hamlib import (
     list_hamlib_keys, load_hamlib_operator, parse_key_params,
     collect_keys_multi,
 )
+from quaph._geometry import apply_geometry_to_hamiltonian, geometry_projection, normalize_geometry
 from quaph._plotting import plot_analytic, plot_simulated
+from quaph._profiles import apply_profiles_to_hamiltonian, profile_metadata
 from quaph._diff import _diff_3d, _diff_heatmap, _diff_bar_2d
 from quaph._registry import get_model as _get_model
 from quaph._method import (
@@ -119,6 +121,79 @@ def _safe_observable_label(model_name, observable: str) -> str:
         return f"${get_model(model_name).get_observable(observable).display_name}$"
     except Exception:
         return "$E$"
+
+
+def _normalize_boundary(boundary: str | None) -> str:
+    if boundary is None:
+        return "periodic"
+    mode = str(boundary).strip().lower().replace("-", "_").replace(" ", "_")
+    aliases = {
+        "pbc": "periodic",
+        "periodic_boundary": "periodic",
+        "periodic_boundary_condition": "periodic",
+        "open": "hard_wall",
+        "obc": "hard_wall",
+        "hardwall": "hard_wall",
+        "hard_wall_boundary": "hard_wall",
+        "hard_wall_boundary_condition": "hard_wall",
+    }
+    mode = aliases.get(mode, mode)
+    if mode not in ("periodic", "hard_wall"):
+        raise ValueError(
+            f"unsupported boundary mode {boundary!r}; expected 'periodic' or 'hard_wall'."
+        )
+    return mode
+
+
+def _with_boundary(params: dict | None, boundary: str | None) -> dict:
+    out = dict(params or {})
+    requested = _normalize_boundary(boundary)
+    existing_key = "boundary" if "boundary" in out else "boundary_condition" if "boundary_condition" in out else None
+    if existing_key is not None:
+        existing = _normalize_boundary(out[existing_key])
+        if requested != "periodic" and existing != requested:
+            raise ValueError(
+                f"conflicting boundary settings: boundary={requested!r}, "
+                f"model_params[{existing_key!r}]={existing!r}."
+            )
+        out.pop("boundary_condition", None)
+        out["boundary"] = existing
+    elif requested != "periodic":
+        out["boundary"] = requested
+    return out
+
+
+def _serialize_model_params(params: dict) -> dict:
+    serial = {}
+    for k, v in params.items():
+        if isinstance(v, (int, float, np.integer, np.floating)):
+            serial[k] = float(v)
+        else:
+            serial[k] = v
+    return serial
+
+
+def _analytic_projected_cell(model, lattice, n_occ, model_params, observable, projection, profile_kwargs):
+    from loguru import logger
+    from quaph._core import _fmt_params
+
+    H_full = model._build_H_matrix(lattice, **model_params)
+    H = apply_geometry_to_hamiltonian(H_full, projection)
+    H = apply_profiles_to_hamiltonian(
+        H,
+        model,
+        projection,
+        model_params,
+        **profile_kwargs,
+    )
+    eigvals, eigvecs = np.linalg.eigh(H)
+    obs = model.get_observable(observable)
+    result = float(obs.analytic(model, lattice, H, eigvals, eigvecs, n_occ, model_params))
+    logger.info(
+        f"Analytic [{observable}] ({_fmt_params(lattice, n_occ, model_params)}, "
+        f"geometry={projection.geometry}, active_sites={int(projection.site_mask.sum())}) = {result}"
+    )
+    return result
 
 
 def _derived_paths(log_path):
@@ -429,6 +504,20 @@ def run(
     method,
     method_params: dict | None = None,
     lattice=None,
+    boundary: str | None = None,
+    geometry: str | None = None,
+    radius: float | None = None,
+    center=None,
+    potential_profile: str | None = None,
+    potential_radius: float | None = None,
+    potential_v0: float | None = None,
+    potential_xi: float | None = None,
+    mass_profile: str | None = None,
+    mass_radius: float | None = None,
+    mass_inner: float | None = None,
+    mass_outer: float | None = None,
+    mass_xi: float | None = None,
+    profile_center=None,
     x_param: str | None = None,
     x_range=None,
     y_param: str | None = None,
@@ -487,6 +576,12 @@ def run(
         model, methods, method_objs, backend, backend_label,
         lattice=lattice, x_param=x_param, x_range=x_range,
         y_param=y_param, y_range=y_range, n_occ=n_occ, model_params=model_params,
+        boundary=boundary, geometry=geometry, radius=radius, center=center,
+        potential_profile=potential_profile, potential_radius=potential_radius,
+        potential_v0=potential_v0, potential_xi=potential_xi,
+        mass_profile=mass_profile, mass_radius=mass_radius,
+        mass_inner=mass_inner, mass_outer=mass_outer, mass_xi=mass_xi,
+        profile_center=profile_center,
         observable=observable, log_path=log_path, plot_path=plot_path,
         hide_plot=hide_plot, hide_legend=hide_legend, heatmap=heatmap,
         diff=diff, diff_format=diff_format,
@@ -500,6 +595,9 @@ def run(
 def _run_model_methods(
     model, methods, method_objs, backend, backend_label,
     *, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
+    boundary, geometry, radius, center,
+    potential_profile, potential_radius, potential_v0, potential_xi,
+    mass_profile, mass_radius, mass_inner, mass_outer, mass_xi, profile_center,
     observable, log_path, plot_path, hide_plot, hide_legend, heatmap,
     diff, diff_format,
     task_index, task_count, prepare_only, aggregate_only, no_progress_log,
@@ -519,17 +617,56 @@ def _run_model_methods(
         raise ValueError("heatmap=True requires exactly one simulation method.")
     _gate_momentum(model, x_param, y_param)
 
+    params = _with_boundary(model_params, boundary)
+    geometry_mode = normalize_geometry(geometry)
+    profile_kwargs = dict(
+        potential_profile=potential_profile,
+        potential_radius=potential_radius,
+        potential_v0=potential_v0,
+        potential_xi=potential_xi,
+        mass_profile=mass_profile,
+        mass_radius=mass_radius,
+        mass_inner=mass_inner,
+        mass_outer=mass_outer,
+        mass_xi=mass_xi,
+        profile_center=profile_center,
+    )
+    profile_info = profile_metadata(**profile_kwargs)
+    has_profiles = (
+        profile_info["potential_profile"] != "none"
+        or profile_info["mass_profile"] != "none"
+    )
+
     is_band_structure_run = _is_band_structure_axes(model, x_param, y_param)
     if is_band_structure_run:
         if lattice is not None:
             raise ValueError("lattice and momentum-space sweep axes are mutually exclusive; omit lattice for band-structure runs.")
+        if geometry_mode != "rectangle":
+            raise ValueError("disk geometry is only supported for real-space lattice runs, not momentum-space band-structure runs.")
+        if _normalize_boundary(params.get("boundary")) != "periodic":
+            raise ValueError("hard-wall boundary is only supported for real-space lattice runs, not momentum-space band-structure runs.")
+        if has_profiles:
+            raise ValueError("radial potential/mass profiles are only supported for real-space lattice runs.")
         for m in methods:
             if not method_objs[m].SUPPORTS_BAND_STRUCTURE:
                 raise ValueError(
                     f"Method '{m.value}' does not support band-structure (momentum-space) runs."
                 )
+        projection = None
     else:
         lattice = _resolve_lattice(model, lattice)
+        projection = geometry_projection(
+            model,
+            lattice,
+            geometry=geometry_mode,
+            radius=radius,
+            center=center,
+        )
+        if (projection.geometry != "rectangle" or has_profiles) and methods != [Method.ANALYTIC]:
+            raise ValueError(
+                "disk geometry and radial profile diagnostics are currently supported for "
+                "single-method analytic real-space runs. Use method='analytic'."
+            )
 
     for axis in (x_param, y_param):
         if axis is None:
@@ -548,9 +685,11 @@ def _run_model_methods(
                 f"composites (e.g. charge_gap) are supported. Drop IQPE or use VQE."
             )
 
-    params = dict(model_params or {})
     spin = model.spin
-    if lattice is not None:
+    if projection is not None:
+        n_sites = int(projection.site_mask.sum())
+        n_orbitals = n_sites * spin
+    elif lattice is not None:
         n_sites = math.prod(lattice) * model.sites_per_cell
         n_orbitals = n_sites * spin
     else:
@@ -627,6 +766,17 @@ def _run_model_methods(
         if is_band:
             k_tuple = tuple(cp.pop(a) for a in momentum_axes)
             return m_obj.compute_bloch_cell(model, k_tuple, cp, observable, backend=backend, ctx=ctx)
+        if projection is not None and (projection.geometry != "rectangle" or has_profiles):
+            value = _analytic_projected_cell(
+                model,
+                lattice,
+                n_occ_val,
+                cp,
+                observable,
+                projection,
+                profile_kwargs,
+            )
+            return {"value": value}
         ctx.mapper = model.get_mapper(n_sites, spin, n_occ_val)
         return m_obj.compute_cell(model, lattice, n_occ_val, cp, observable, backend=backend, ctx=ctx)
 
@@ -692,7 +842,11 @@ def _run_model_methods(
             "parameters": {
                 "model": model.name,
                 "lattice": list(lattice) if lattice is not None else None,
-                "model_params": {k: float(v) for k, v in params.items()},
+                "geometry": projection.geometry if projection is not None else "rectangle",
+                "radius": radius,
+                "center": list(center) if center is not None else None,
+                **profile_info,
+                "model_params": _serialize_model_params(params),
                 "method_params": method_params_summary,
             },
             "cells": raw_cells,
@@ -826,7 +980,11 @@ def _run_model_methods(
         "parameters": {
             "model": model.name,
             "lattice": list(lattice) if lattice is not None else None,
-            "model_params": {k: float(v) for k, v in params.items()},
+            "geometry": projection.geometry if projection is not None else "rectangle",
+            "radius": radius,
+            "center": list(center) if center is not None else None,
+            **profile_info,
+            "model_params": _serialize_model_params(params),
             "method_params": method_params_summary,
         },
         "result": result_block,
