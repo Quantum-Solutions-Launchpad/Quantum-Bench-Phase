@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J quaph-compare-data
+#SBATCH -J qbp-compare-data
 #SBATCH -C cpu
 #SBATCH -q regular
 #SBATCH -N 6

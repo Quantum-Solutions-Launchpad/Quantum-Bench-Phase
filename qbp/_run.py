@@ -11,19 +11,19 @@ from dataclasses import dataclass, field
 import numpy as np
 from joblib import Parallel, delayed
 
-from quaph._model import Model, ModelCapabilityError
-from quaph._backend import resolve_backend, backend_label as _backend_label
-from quaph._core import resolve_sweep
-from quaph._hamlib import (
+from qbp._model import Model, ModelCapabilityError
+from qbp._backend import resolve_backend, backend_label as _backend_label
+from qbp._core import resolve_sweep
+from qbp._hamlib import (
     list_hamlib_keys, load_hamlib_operator, parse_key_params,
     collect_keys_multi,
 )
-from quaph._geometry import apply_geometry_to_hamiltonian, geometry_projection, normalize_geometry
-from quaph._plotting import plot_analytic, plot_simulated
-from quaph._profiles import apply_profiles_to_hamiltonian, profile_metadata
-from quaph._diff import _diff_3d, _diff_heatmap, _diff_bar_2d
-from quaph._registry import get_model as _get_model
-from quaph._method import (
+from qbp._geometry import apply_geometry_to_hamiltonian, geometry_projection, normalize_geometry
+from qbp._plotting import plot_analytic, plot_simulated
+from qbp._profiles import apply_profiles_to_hamiltonian, profile_metadata
+from qbp._diff import _diff_3d, _diff_heatmap, _diff_bar_2d
+from qbp._registry import get_model as _get_model
+from qbp._method import (
     Method, METHOD_ORDER, CellContext, build_method, get_method_class,
 )
 
@@ -102,7 +102,7 @@ def _observable_label(model, observable: str) -> str:
 
 
 def _result_labels(model_name, x_param, y_param):
-    from quaph._registry import get_model
+    from qbp._registry import get_model
     try:
         model = get_model(model_name)
     except Exception:
@@ -117,7 +117,7 @@ def _result_labels(model_name, x_param, y_param):
 
 
 def _safe_observable_label(model_name, observable: str) -> str:
-    from quaph._registry import get_model
+    from qbp._registry import get_model
     try:
         return f"${get_model(model_name).get_observable(observable).display_name}$"
     except Exception:
@@ -176,7 +176,7 @@ def _serialize_model_params(params: dict) -> dict:
 
 def _analytic_projected_cell(model, lattice, n_occ, model_params, observable, projection, profile_kwargs):
     from loguru import logger
-    from quaph._core import _fmt_params
+    from qbp._core import _fmt_params
 
     H_full = model._build_H_matrix(lattice, **model_params)
     H = apply_geometry_to_hamiltonian(H_full, projection)
@@ -545,7 +545,7 @@ def run(
 ) -> RunResult:
     """Run one or more simulation methods over a parameter sweep.
 
-    ``method`` is a :class:`~quaph.Method` (or list of them). ``method_params`` is
+    ``method`` is a :class:`~qbp.Method` (or list of them). ``method_params`` is
     a dict keyed by method enum/value holding that method's parameters. ``backend``
     selects how the quantum methods run: ``None`` for ideal simulation, a fake
     backend (object or name, e.g. ``"FakeSherbrooke"``) for local noisy
@@ -684,7 +684,7 @@ def _run_model_methods(
             )
 
     if Method.IQPE in methods and observable != "E":
-        from quaph._iqpe import iqpe_supports_observable
+        from qbp._iqpe import iqpe_supports_observable
         if not iqpe_supports_observable(model, observable):
             raise ValueError(
                 f"IQPE cannot measure observable '{observable}'; only 'E' and energy "
@@ -882,7 +882,7 @@ def _run_model_methods(
         return empty_result()
 
     def init_worker_logging():
-        from quaph._core import setup_logging as _sl
+        from qbp._core import setup_logging as _sl
         _sl()
 
     def jobs_per_shard():
@@ -903,7 +903,7 @@ def _run_model_methods(
             selected = [t for i, t in enumerate(all_tags) if i % task_count == task_index]
             n_jobs = jobs_per_shard()
 
-        with tempfile.TemporaryDirectory(prefix="quaph-run-") as tmp_dir:
+        with tempfile.TemporaryDirectory(prefix="qbp-run-") as tmp_dir:
             if use_parallel:
                 results = Parallel(
                     n_jobs=n_jobs, return_as="generator_unordered",
@@ -1204,7 +1204,7 @@ def _run_operator_methods(
         return (method_value, ix, iy), cell
 
     def init_worker_logging():
-        from quaph._core import setup_logging as _sl
+        from qbp._core import setup_logging as _sl
         _sl()
 
     all_tags = [(m.value, ix, iy) for m in methods for ix in range(nx) for iy in range(ny)]

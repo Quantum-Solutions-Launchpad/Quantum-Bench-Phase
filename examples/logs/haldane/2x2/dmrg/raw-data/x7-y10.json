@@ -4,7 +4,7 @@
   "n_occ": 7,
   "avg_link_dim": 1.2857142857142858,
   "nsweeps": 4,
-  "format": "quaph_itensor_dmrg_result_v1",
+  "format": "qbp_itensor_dmrg_result_v1",
   "model_params": {
     "t1": 1.0,
     "phi": 0.7853981633974483,

@@ -4,7 +4,7 @@ from typing import Any
 
 import yaml
 
-from quaph._yaml_model import YamlModelSpec
+from qbp._yaml_model import YamlModelSpec
 
 
 class _LiteralStr(str):

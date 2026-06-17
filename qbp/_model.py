@@ -327,7 +327,7 @@ class Model:
     def get_iqpe_initial_state(self):
         if self._get_iqpe_initial_state_fn is not None:
             return self._get_iqpe_initial_state_fn
-        from quaph._core import _hf_initial_state
+        from qbp._core import _hf_initial_state
 
         def default(hamiltonian, *, n_occ: int = 0, spin: int = 1, mapper=None):
             n_qubits = hamiltonian.num_qubits

@@ -8,7 +8,7 @@ import yaml
 from asteval import Interpreter
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from quaph._model import Model, Observable, default_energy_observable
+from qbp._model import Model, Observable, default_energy_observable
 
 
 _QISKIT_OPTIMIZERS = (
@@ -622,8 +622,8 @@ def build_ansatz_factory(ansatz_spec: AnsatzSpec, *, name: str):
 
 
 def build_initial_state_factory(spec: InitialStateSpec, *, name: str):
-    from quaph._core import _hf_initial_state, _uniform_initial, _zero_initial
-    from quaph._vqe import _vqe_initial_state
+    from qbp._core import _hf_initial_state, _uniform_initial, _zero_initial
+    from qbp._vqe import _vqe_initial_state
 
     kind = spec.type
 

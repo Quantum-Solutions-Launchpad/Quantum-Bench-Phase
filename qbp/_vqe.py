@@ -10,8 +10,8 @@ from qiskit.circuit.library import efficient_su2
 from qiskit.quantum_info import SparsePauliOp
 from qiskit_ibm_runtime import Session, Estimator
 
-from quaph._core import _fmt_params, _make_simulator, logger
-from quaph._method import Method, ParamSpec, SimulationMethod, register_method
+from qbp._core import _fmt_params, _make_simulator, logger
+from qbp._method import Method, ParamSpec, SimulationMethod, register_method
 
 
 def _isa(op, circ):
@@ -238,7 +238,7 @@ class VQEMethod(SimulationMethod):
 
     # ------------------------------------------------------------------- operator
     def compute_operator_cell(self, op, *, extremum, backend, label, observable: str = "E"):
-        from quaph._yaml_model import (
+        from qbp._yaml_model import (
             AnsatzSpec, OptimizerSpec,
             build_ansatz_factory, build_optimizer_factory,
         )

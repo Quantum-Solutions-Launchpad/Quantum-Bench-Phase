@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from quaph._realspace import real_space_positions
+from qbp._realspace import real_space_positions
 
 
 @dataclass(frozen=True)

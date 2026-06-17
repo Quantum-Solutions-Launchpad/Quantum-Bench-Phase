@@ -1,10 +1,10 @@
-"""Simulation-method abstraction for QuaPh.
+"""Simulation-method abstraction for qbp.
 
 Each simulation technique (analytic exact diagonalization, VQE, IQPE, DMRG) is a
 :class:`SimulationMethod` subclass living in its own module. A method declares its
 tunable parameters via :class:`ParamSpec` (the single source of truth for both
 Python-dict validation and CLI flag generation) and implements the per-cell
-compute hooks. The orchestrator in :mod:`quaph._run` owns everything shared:
+compute hooks. The orchestrator in :mod:`qbp._run` owns everything shared:
 sweep resolution, the cell grid, parallelism, task distribution, logging, and
 plotting.
 """
@@ -48,7 +48,7 @@ class ParamSpec:
     ``name`` is the key used in the Python ``method_params`` dict. ``cli`` toggles
     whether the CLI auto-generates a ``--<method>-<name>`` flag for it; complex
     dict-valued parameters (ansatz/optimizer/initial_state) set ``cli=False`` and
-    are wired up with bespoke flags in :mod:`quaph._cli`.
+    are wired up with bespoke flags in :mod:`qbp._cli`.
     """
 
     name: str
@@ -169,10 +169,10 @@ def register_method(cls: type[SimulationMethod]) -> type[SimulationMethod]:
 def _ensure_registered() -> None:
     # Import the method modules so they register themselves. Imported lazily to
     # avoid a hard qiskit import when only the analytic/DMRG paths are used.
-    import quaph._analytic  # noqa: F401
-    import quaph._vqe  # noqa: F401
-    import quaph._iqpe  # noqa: F401
-    import quaph._dmrg  # noqa: F401
+    import qbp._analytic  # noqa: F401
+    import qbp._vqe  # noqa: F401
+    import qbp._iqpe  # noqa: F401
+    import qbp._dmrg  # noqa: F401
 
 
 def build_method(method, params: dict | None = None) -> SimulationMethod:

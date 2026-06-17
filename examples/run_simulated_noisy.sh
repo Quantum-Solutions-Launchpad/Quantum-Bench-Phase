@@ -11,9 +11,9 @@ PLOT="$HERE/plots/${MODEL}/sim-noisy-n_occ-vs-U.pdf"
 
 if [ -f "$LOG" ]; then
     echo "Plotting from existing log..."
-    quaph plot "$LOG"
+    qbp plot "$LOG"
 else
-    quaph run \
+    qbp run \
         --model "$MODEL" \
         --method analytic vqe iqpe \
         --noisy \

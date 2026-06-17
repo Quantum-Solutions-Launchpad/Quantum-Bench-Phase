@@ -10,7 +10,7 @@ HAMLIB_PATH="/Users/adamgodel/hamlib/condensedmatter/tfim/tfim.zip"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # 3D surface: ground-state energy vs Lx and h
-quaph run \
+qbp run \
     --method analytic \
     --qubit-operator "$HAMLIB_PATH" \
     --x-param Lx --x-range 4 12 \
@@ -20,7 +20,7 @@ quaph run \
     --plot-path "$HERE/plots/tfim/Lx-vs-h.pdf"
 
 # Heatmap: same data, alternative view
-quaph run \
+qbp run \
     --method analytic \
     --qubit-operator "$HAMLIB_PATH" \
     --x-param Lx --x-range 4 12 \
@@ -31,7 +31,7 @@ quaph run \
     --plot-path "$HERE/plots/tfim/Lx-vs-h-heatmap.pdf"
 
 # 2D line: energy vs transverse field at fixed Lx=8
-quaph run \
+qbp run \
     --method analytic \
     --qubit-operator "$HAMLIB_PATH" \
     --x-param h \

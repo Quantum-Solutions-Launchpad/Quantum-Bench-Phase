@@ -6,8 +6,8 @@ from typing import Any
 
 import numpy as np
 
-from quaph._model import Model
-from quaph._registry import get_model as _get_model
+from qbp._model import Model
+from qbp._registry import get_model as _get_model
 
 
 @dataclass
@@ -319,7 +319,7 @@ def plot_real_space_state_density(
     boundary_mode = _normalize_boundary(params.get("boundary", boundary_mode))
 
     H = model._build_H_matrix(lat, **params)
-    from quaph._geometry import apply_geometry_to_hamiltonian, geometry_projection
+    from qbp._geometry import apply_geometry_to_hamiltonian, geometry_projection
     projection = geometry_projection(
         model,
         lat,
@@ -328,7 +328,7 @@ def plot_real_space_state_density(
         center=center,
     )
     H = apply_geometry_to_hamiltonian(H, projection)
-    from quaph._profiles import apply_profiles_to_hamiltonian, normalize_mass_profile, normalize_potential_profile
+    from qbp._profiles import apply_profiles_to_hamiltonian, normalize_mass_profile, normalize_potential_profile
     H = apply_profiles_to_hamiltonian(
         H,
         model,

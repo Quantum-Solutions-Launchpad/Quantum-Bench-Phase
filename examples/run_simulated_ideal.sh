@@ -13,9 +13,9 @@ PHI=$(python3 -c "import math; print(math.pi/4)")
 
 if [ -f "$LOG" ]; then
     echo "Plotting from existing log..."
-    quaph plot "$LOG"
+    qbp plot "$LOG"
 else
-    quaph run \
+    qbp run \
         --model "$MODEL" \
         --method analytic vqe iqpe \
         --lattice "${LATTICE[@]}" \

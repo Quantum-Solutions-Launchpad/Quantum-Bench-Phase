@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-setup_quaph_slurm_env() {
+setup_qbp_slurm_env() {
     REPO_ROOT="${REPO_ROOT:-/pscratch/sd/m/mbao202/NNL-P7}"
     cd "${REPO_ROOT}" || exit 1
 
@@ -16,18 +16,18 @@ setup_quaph_slurm_env() {
 
     SHARDS="${SHARDS:-${SLURM_NTASKS:-${SLURM_CPUS_ON_NODE:-128}}}"
     CPUS_PER_SHARD="${CPUS_PER_SHARD:-${SLURM_CPUS_PER_TASK:-1}}"
-    export QUAPH_JOBS_PER_SHARD="${QUAPH_JOBS_PER_SHARD:-1}"
+    export QBP_JOBS_PER_SHARD="${QBP_JOBS_PER_SHARD:-1}"
 }
 
-run_quaph_sharded_config() {
+run_qbp_sharded_config() {
     local cmd="$1"
     local pids=()
     local status=0
 
-    quaph run ${cmd} --prepare-only
+    qbp run ${cmd} --prepare-only
     for shard in $(seq 0 $((SHARDS - 1))); do
         srun -N 1 -n 1 -c "${CPUS_PER_SHARD}" --exact \
-            bash -c "quaph run ${cmd} --task-index ${shard} --task-count ${SHARDS}" &
+            bash -c "qbp run ${cmd} --task-index ${shard} --task-count ${SHARDS}" &
         pids+=("$!")
     done
     for pid in "${pids[@]}"; do
@@ -39,5 +39,5 @@ run_quaph_sharded_config() {
         echo "One or more shards failed; skipping aggregation." >&2
         return "${status}"
     fi
-    quaph run ${cmd} --aggregate-only
+    qbp run ${cmd} --aggregate-only
 }

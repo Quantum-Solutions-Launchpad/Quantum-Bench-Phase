@@ -12,8 +12,8 @@ from pathlib import Path
 
 import numpy as np
 
-from quaph._method import Method, ParamSpec, SimulationMethod, register_method
-from quaph._model import Model
+from qbp._method import Method, ParamSpec, SimulationMethod, register_method
+from qbp._model import Model
 
 
 def _complex_payload(value):
@@ -40,7 +40,7 @@ def _export_fermionic_op(model: Model, lattice, n_occ: int, model_params: dict, 
         terms.append({"label": label, "coefficient": _complex_payload(coeff)})
 
     payload = {
-        "format": "quaph_fermionic_op_v1",
+        "format": "qbp_fermionic_op_v1",
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "model": model.name,
         "display_name": model.display_name,
@@ -113,7 +113,7 @@ def _run_julia_dmrg(
         cmd = [julia, *julia_args]
     elif julia_module:
         module_cmd = f"module load {shlex.quote(julia_module)} && exec {shlex.quote(julia)} \"$@\""
-        cmd = ["bash", "-lc", module_cmd, "quaph-julia", *julia_args]
+        cmd = ["bash", "-lc", module_cmd, "qbp-julia", *julia_args]
     else:
         cmd = [julia, *julia_args]
     env = os.environ.copy()

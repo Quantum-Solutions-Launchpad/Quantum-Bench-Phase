@@ -11,7 +11,7 @@ the finite unit-cell grid.
 Python API:
 
 ```python
-quaph.run_analytic(
+qbp.run_analytic(
     model="haldane",
     lattice=(3, 3),
     boundary="hard_wall",
@@ -23,7 +23,7 @@ quaph.run_analytic(
 CLI:
 
 ```bash
-quaph run analytic --model haldane --lattice 3 3 --boundary hard-wall \
+qbp run analytic --model haldane --lattice 3 3 --boundary hard-wall \
   --x-param n_occ --t1 1.0 --t2 0.1 --phi 0.785 --M 0.0
 ```
 
@@ -39,14 +39,14 @@ position is drawn in the model's `x/y` coordinates, and the normalized density
 `|psi_i|^2` is shown with a colorbar.
 
 ```bash
-quaph plot-state --model haldane --lattice 3 3 --boundary hard-wall \
+qbp plot-state --model haldane --lattice 3 3 --boundary hard-wall \
   --t1 1.0 --t2 0.1 --phi 0.785 --M 0.0
 ```
 
 Save the plot instead of opening a window:
 
 ```bash
-quaph plot-state --model haldane --lattice 3 3 --boundary hard-wall \
+qbp plot-state --model haldane --lattice 3 3 --boundary hard-wall \
   --t1 1.0 --t2 0.1 --phi 0.785 --M 0.0 \
   --output examples/plots/haldane/3x3/real-space-density-hard-wall-2d.pdf \
   --hide-plot
@@ -55,7 +55,7 @@ quaph plot-state --model haldane --lattice 3 3 --boundary hard-wall \
 Python API:
 
 ```python
-quaph.plot_real_space_state_density(
+qbp.plot_real_space_state_density(
     model="haldane",
     lattice=(3, 3),
     boundary="hard_wall",
@@ -84,7 +84,7 @@ edge participation = sum |psi_i|^2 over edge sites.
 CLI:
 
 ```bash
-quaph edge-spectrum --model haldane --lattice 6 6 --boundary hard-wall \
+qbp edge-spectrum --model haldane --lattice 6 6 --boundary hard-wall \
   --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.2 \
   --output examples/plots/haldane/6x6/edge-spectrum-hard-wall.pdf \
   --hide-plot
@@ -93,7 +93,7 @@ quaph edge-spectrum --model haldane --lattice 6 6 --boundary hard-wall \
 Python API:
 
 ```python
-quaph.plot_edge_spectrum(
+qbp.plot_edge_spectrum(
     model="haldane",
     lattice=(6, 6),
     boundary="hard_wall",
@@ -112,11 +112,11 @@ states, a future many-body version should plot site occupations such as
 Analytic and real-space diagnostic workflows can also use a disk-shaped domain
 inside a larger parent lattice. The parent lattice is still specified with
 `--lattice`; the disk mask selects active sites by real-space distance from a
-center point. If no center is provided, Quaph uses the center of the parent
+center point. If no center is provided, QBP uses the center of the parent
 lattice bounding box.
 
 ```bash
-quaph plot-state --model haldane --lattice 14 14 --boundary hard-wall \
+qbp plot-state --model haldane --lattice 14 14 --boundary hard-wall \
   --geometry disk --radius 5.5 \
   --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.2 \
   --output examples/plots/haldane/disk/disk-density-hard-wall.pdf \
@@ -126,7 +126,7 @@ quaph plot-state --model haldane --lattice 14 14 --boundary hard-wall \
 The same geometry can be used for edge participation:
 
 ```bash
-quaph edge-spectrum --model haldane --lattice 14 14 --boundary hard-wall \
+qbp edge-spectrum --model haldane --lattice 14 14 --boundary hard-wall \
   --geometry disk --radius 5.5 \
   --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.2 \
   --output examples/plots/haldane/disk/disk-edge-spectrum-hard-wall.pdf \
@@ -136,7 +136,7 @@ quaph edge-spectrum --model haldane --lattice 14 14 --boundary hard-wall \
 And for analytic sweeps:
 
 ```bash
-quaph run analytic --model haldane --lattice 14 14 --boundary hard-wall \
+qbp run analytic --model haldane --lattice 14 14 --boundary hard-wall \
   --geometry disk --radius 5.5 \
   --x-param n_occ --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.2
 ```
@@ -166,7 +166,7 @@ V(r) = 0.5 * V0 * [1 + tanh((r - R) / xi)]
 CLI:
 
 ```bash
-quaph plot-state --model haldane --lattice 18 18 --boundary hard-wall \
+qbp plot-state --model haldane --lattice 18 18 --boundary hard-wall \
   --potential-profile soft-dot --potential-radius 5.5 \
   --potential-v0 3.0 --potential-xi 0.8 \
   --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.2
@@ -178,7 +178,7 @@ so the base model parameter `M` should usually be set to `0.0` when the radial
 profile supplies the full mass:
 
 ```bash
-quaph edge-spectrum --model haldane --lattice 18 18 --boundary hard-wall \
+qbp edge-spectrum --model haldane --lattice 18 18 --boundary hard-wall \
   --mass-profile radial-tanh --mass-radius 5.5 \
   --mass-inner 0.2 --mass-outer 0.8 --mass-xi 0.8 \
   --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.0

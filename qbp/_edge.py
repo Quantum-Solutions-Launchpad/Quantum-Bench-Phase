@@ -6,7 +6,7 @@ from typing import Any
 
 import numpy as np
 
-from quaph._realspace import (
+from qbp._realspace import (
     _normalize_boundary,
     _resolve_lattice,
     _resolve_model,
@@ -171,7 +171,7 @@ def plot_edge_spectrum(
     ref_params["boundary"] = "periodic"
     H_ref = model._build_H_matrix(lat, **ref_params)
 
-    from quaph._geometry import apply_geometry_to_hamiltonian, geometry_projection
+    from qbp._geometry import apply_geometry_to_hamiltonian, geometry_projection
     projection = geometry_projection(
         model,
         lat,
@@ -180,7 +180,7 @@ def plot_edge_spectrum(
         center=center,
     )
     H = apply_geometry_to_hamiltonian(H_full, projection)
-    from quaph._profiles import apply_profiles_to_hamiltonian, normalize_mass_profile, normalize_potential_profile
+    from qbp._profiles import apply_profiles_to_hamiltonian, normalize_mass_profile, normalize_potential_profile
     H = apply_profiles_to_hamiltonian(
         H,
         model,

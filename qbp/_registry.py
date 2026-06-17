@@ -4,8 +4,8 @@ import shutil
 import sys
 from pathlib import Path
 
-from quaph._model import Model
-from quaph._yaml_model import load_yaml_model
+from qbp._model import Model
+from qbp._yaml_model import load_yaml_model
 
 _BUILTIN_NAMES = frozenset({
     "haldane", "hubbard", "haldane-hubbard",
