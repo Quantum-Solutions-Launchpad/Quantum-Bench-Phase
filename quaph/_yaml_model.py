@@ -315,6 +315,38 @@ def _iter_cells(lattice: tuple[int, ...]):
                     yield (i, j, k)
 
 
+def _boundary_mode(params: dict) -> str:
+    raw = params.get("boundary", params.get("boundary_condition", "periodic"))
+    if raw is None:
+        return "periodic"
+    mode = str(raw).strip().lower().replace("-", "_").replace(" ", "_")
+    aliases = {
+        "pbc": "periodic",
+        "periodic_boundary": "periodic",
+        "periodic_boundary_condition": "periodic",
+        "open": "hard_wall",
+        "obc": "hard_wall",
+        "hardwall": "hard_wall",
+        "hard_wall_boundary": "hard_wall",
+        "hard_wall_boundary_condition": "hard_wall",
+    }
+    mode = aliases.get(mode, mode)
+    if mode not in ("periodic", "hard_wall"):
+        raise ValueError(
+            f"unsupported boundary mode {raw!r}; expected 'periodic' or 'hard_wall'."
+        )
+    return mode
+
+
+def _target_cell(cell: tuple[int, ...], offset: list[int], lattice: tuple[int, ...], boundary: str):
+    raw = tuple(c + o for c, o in zip(cell, offset))
+    if boundary == "periodic":
+        return tuple(x % L for x, L in zip(raw, lattice))
+    if any(x < 0 or x >= L for x, L in zip(raw, lattice)):
+        return None
+    return raw
+
+
 def _build_hamiltonian_matrix(spec: YamlModelSpec):
     sub_index = {name: i for i, name in enumerate(spec.sublattices)}
     sites_per_cell = spec.sites_per_cell
@@ -334,6 +366,7 @@ def _build_hamiltonian_matrix(spec: YamlModelSpec):
         n_sites = n_cells * sites_per_cell
         dim = n_sites * spin
         H = np.zeros((dim, dim), dtype=complex)
+        boundary = _boundary_mode(params)
 
         def orbital(cell: tuple[int, ...], sub: int, s: int) -> int:
             return (_flat_cell_index(cell, lat) * sites_per_cell + sub) * spin + s
@@ -356,7 +389,9 @@ def _build_hamiltonian_matrix(spec: YamlModelSpec):
                 channels = _resolve_spin_channels(term.spin_channels, spin)
                 for cell in _iter_cells(lat):
                     for off in term.offsets:
-                        tgt_cell = tuple((c + o) % L for c, o, L in zip(cell, off, lat))
+                        tgt_cell = _target_cell(cell, off, lat, boundary)
+                        if tgt_cell is None:
+                            continue
                         for s in channels:
                             i_orb = orbital(cell, src, s)
                             j_orb = orbital(tgt_cell, dst, s)
@@ -393,6 +428,7 @@ def _build_interaction_hamiltonian(spec: YamlModelSpec):
 
     def interaction(lattice, **params):
         lat = tuple(lattice)
+        boundary = _boundary_mode(params)
         n_cells = 1
         for L in lat:
             n_cells *= L
@@ -424,7 +460,9 @@ def _build_interaction_hamiltonian(spec: YamlModelSpec):
                 dst = sub_index[term.to]
                 for cell in _iter_cells(lat):
                     for off in term.offsets:
-                        tgt_cell = tuple((c + o) % L for c, o, L in zip(cell, off, lat))
+                        tgt_cell = _target_cell(cell, off, lat, boundary)
+                        if tgt_cell is None:
+                            continue
                         for s_a in range(spin):
                             i_orb = orbital(cell, src, s_a)
                             for s_b in range(spin):
@@ -450,6 +488,7 @@ def _build_mean_field_correction(spec: YamlModelSpec):
 
     def mean_field_correction(lattice, n_occ, **params):
         lat = tuple(lattice)
+        boundary = _boundary_mode(params)
         n_cells = 1
         for L in lat:
             n_cells *= L
@@ -464,7 +503,11 @@ def _build_mean_field_correction(spec: YamlModelSpec):
                 n_target = n_sites if term.sublattice is None else n_cells
                 total += coef * n_target * rho * rho
             else:
-                n_bonds_dir = n_cells * len(term.offsets)
+                n_bonds_dir = 0
+                for cell in _iter_cells(lat):
+                    for off in term.offsets:
+                        if _target_cell(cell, off, lat, boundary) is not None:
+                            n_bonds_dir += 1
                 total += coef * n_bonds_dir * (spin * spin) * rho * rho
         return float(total)
 
@@ -939,6 +982,15 @@ def spec_to_model(spec: YamlModelSpec) -> Model:
         n_dims=spec.n_dims,
         lattice_shape=tuple(spec.lattice_shape),
         sites_per_cell=spec.sites_per_cell,
+        sublattices=tuple(spec.sublattices),
+        lattice_vectors=(
+            tuple(tuple(float(x) for x in v) for v in spec.lattice_vectors)
+            if spec.lattice_vectors is not None else None
+        ),
+        sublattice_positions=(
+            {k: tuple(float(x) for x in v) for k, v in spec.sublattice_positions.items()}
+            if spec.sublattice_positions is not None else None
+        ),
         hamiltonian_matrix=_build_hamiltonian_matrix(spec),
         interaction_hamiltonian=_build_interaction_hamiltonian(spec),
         get_optimizer=_build_optimizer_factory(spec),

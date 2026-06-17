@@ -5,6 +5,8 @@ import sys
 
 from quaph._registry import get_model, register_model_from_file, remove_model
 from quaph._run import run, load_result
+from quaph._realspace import plot_real_space_state_density
+from quaph._edge import plot_edge_spectrum
 from quaph._method import Method, METHOD_ORDER, get_method_class
 from quaph._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS, _INITIAL_STATES
 
@@ -70,6 +72,44 @@ def _add_output_args(parser):
                         help="PDF file to write the plot to")
     parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
     parser.add_argument("--hide-legend", action="store_true", default=False)
+
+
+def _add_boundary_args(parser):
+    parser.add_argument("--boundary", choices=["periodic", "hard-wall", "hard_wall", "open"],
+                        default="periodic",
+                        help="Real-space boundary condition for finite-lattice model runs (default: periodic).")
+
+
+def _add_geometry_args(parser):
+    parser.add_argument("--geometry", choices=["rectangle", "disk"], default="rectangle",
+                        help="Finite real-space domain shape inside the parent lattice (default: rectangle).")
+    parser.add_argument("--radius", type=float, default=None,
+                        help="Disk radius; required when --geometry disk.")
+    parser.add_argument("--center", type=float, nargs=2, default=None, metavar=("X", "Y"),
+                        help="Disk center in real-space coordinates. Defaults to the parent lattice center.")
+
+
+def _add_profile_args(parser):
+    parser.add_argument("--potential-profile", choices=["none", "soft-dot", "soft_dot"], default="none",
+                        help="Onsite scalar potential profile (default: none).")
+    parser.add_argument("--potential-radius", type=float, default=None,
+                        help="Radius for the soft-dot potential wall.")
+    parser.add_argument("--potential-v0", type=float, default=None,
+                        help="Outer potential height for the soft-dot profile.")
+    parser.add_argument("--potential-xi", type=float, default=None,
+                        help="Smoothing length for the soft-dot potential.")
+    parser.add_argument("--mass-profile", choices=["none", "radial-step", "radial_step", "radial-tanh", "radial_tanh"], default="none",
+                        help="Radial A/B Semenoff mass profile for Haldane-like models (default: none).")
+    parser.add_argument("--mass-radius", type=float, default=None,
+                        help="Radius for the radial mass interface.")
+    parser.add_argument("--mass-inner", type=float, default=None,
+                        help="Mass value inside the radial mass interface.")
+    parser.add_argument("--mass-outer", type=float, default=None,
+                        help="Mass value outside the radial mass interface.")
+    parser.add_argument("--mass-xi", type=float, default=None,
+                        help="Smoothing length for radial-tanh mass profiles.")
+    parser.add_argument("--profile-center", type=float, nargs=2, default=None, metavar=("X", "Y"),
+                        help="Center for radial potential/mass profiles. Defaults to active geometry center.")
 
 
 def _add_distribution_args(parser):
@@ -240,6 +280,20 @@ def _dispatch_run(args):
     run(
         model, method=methods, method_params=method_params, backend=backend,
         lattice=tuple(args.lattice) if args.lattice else None,
+        boundary=args.boundary,
+        geometry=args.geometry,
+        radius=args.radius,
+        center=args.center,
+        potential_profile=args.potential_profile,
+        potential_radius=args.potential_radius,
+        potential_v0=args.potential_v0,
+        potential_xi=args.potential_xi,
+        mass_profile=args.mass_profile,
+        mass_radius=args.mass_radius,
+        mass_inner=args.mass_inner,
+        mass_outer=args.mass_outer,
+        mass_xi=args.mass_xi,
+        profile_center=args.profile_center,
         x_param=args.x_param, x_range=args.x_range,
         y_param=args.y_param, y_range=args.y_range, n_occ=args.n_occ,
         model_params=_collect_model_params(args, model, args.x_param, args.y_param),
@@ -311,6 +365,44 @@ def main(argv=None):
                              choices=["3d", "heatmap", "bar_2d"],
                              help="Plot format for --diff plots (default: 3d).")
 
+    plot_state_parser = sub.add_parser("plot-state", help="Plot a real-space eigenstate density")
+    plot_state_parser.add_argument("--model", default=None, metavar="MODEL",
+                                   help="Registered model name (e.g. haldane, hubbard, haldane-hubbard).")
+    plot_state_parser.add_argument("--lattice", type=int, nargs="+", required=True, metavar="N",
+                                   help="Lattice extents per dimension (e.g. --lattice 3 3).")
+    _add_boundary_args(plot_state_parser)
+    _add_geometry_args(plot_state_parser)
+    _add_profile_args(plot_state_parser)
+    plot_state_parser.add_argument("--state-index", type=int, default=None,
+                                   help="Eigenstate index after sorting energies ascending. Defaults to the state closest to E=0.")
+    plot_state_parser.add_argument("--n-occ", type=int, default=None,
+                                   help="Select the highest occupied state for this filling, i.e. state index n_occ - 1.")
+    plot_state_parser.add_argument("--view", choices=["2d", "3d"], default="2d",
+                                   help="Density view to render (default: 2d).")
+    plot_state_parser.add_argument("--output", default=None, metavar="PATH",
+                                   help="Output image/PDF path. Omit to show an interactive window.")
+    plot_state_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
+    plot_state_parser.add_argument("--no-bonds", dest="show_bonds", action="store_false", default=True,
+                                   help="Hide hopping bonds in the real-space plot.")
+    plot_state_parser.add_argument("--max-bonds", type=int, default=3000,
+                                   help="Maximum number of bonds to draw (default: 3000).")
+
+    edge_spectrum_parser = sub.add_parser(
+        "edge-spectrum",
+        help="Plot eigenenergies colored by edge participation",
+    )
+    edge_spectrum_parser.add_argument("--model", default=None, metavar="MODEL",
+                                      help="Registered model name (e.g. haldane, hubbard, haldane-hubbard).")
+    edge_spectrum_parser.add_argument("--lattice", type=int, nargs="+", required=True, metavar="N",
+                                      help="Lattice extents per dimension (e.g. --lattice 10 10).")
+    _add_boundary_args(edge_spectrum_parser)
+    edge_spectrum_parser.set_defaults(boundary="hard-wall")
+    _add_geometry_args(edge_spectrum_parser)
+    _add_profile_args(edge_spectrum_parser)
+    edge_spectrum_parser.add_argument("--output", default=None, metavar="PATH",
+                                      help="Output PDF/image path. Omit to show an interactive window.")
+    edge_spectrum_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
+
     run_parser = sub.add_parser("run", help="Run one or more simulation methods over a sweep")
     run_parser.add_argument("--model", default=None, metavar="MODEL",
                             help="Registered model name. Mutually exclusive with --qubit-operator.")
@@ -327,6 +419,9 @@ def main(argv=None):
                             help="VQE/IQPE execution backend: a fake backend for local noise "
                                  "(e.g. FakeSherbrooke), a real IBM device (e.g. ibm_brisbane), "
                                  "or least_busy. Omit for ideal simulation.")
+    _add_boundary_args(run_parser)
+    _add_geometry_args(run_parser)
+    _add_profile_args(run_parser)
     _add_sweep_args(run_parser)
     _add_output_args(run_parser)
     _add_distribution_args(run_parser)
@@ -334,12 +429,17 @@ def main(argv=None):
     _add_method_param_flags(run_parser)
     _add_operator_dict_flags(run_parser)
 
-    if pre_args.command == "run" and pre_args.model:
+    if pre_args.command in ("run", "plot-state", "edge-spectrum") and pre_args.model:
         try:
             model = get_model(pre_args.model)
         except ValueError as e:
             parser.error(str(e))
-        _add_model_params(run_parser, model)
+        target = {
+            "run": run_parser,
+            "plot-state": plot_state_parser,
+            "edge-spectrum": edge_spectrum_parser,
+        }[pre_args.command]
+        _add_model_params(target, model)
 
     args = parser.parse_args(argv)
 
@@ -387,3 +487,66 @@ def main(argv=None):
         except (ValueError, FileNotFoundError, KeyError) as e:
             parser.error(str(e))
         return
+
+    if not args.model:
+        parser.error("one of --model or --qubit-operator is required")
+
+    try:
+        model = get_model(args.model)
+    except ValueError as e:
+        parser.error(str(e))
+
+    try:
+        if args.command == "plot-state":
+            params = _collect_model_params(args, model, None, None)
+            plot_real_space_state_density(
+                model=model,
+                lattice=args.lattice,
+                model_params=params,
+                boundary=args.boundary,
+                geometry=args.geometry,
+                radius=args.radius,
+                center=args.center,
+                potential_profile=args.potential_profile,
+                potential_radius=args.potential_radius,
+                potential_v0=args.potential_v0,
+                potential_xi=args.potential_xi,
+                mass_profile=args.mass_profile,
+                mass_radius=args.mass_radius,
+                mass_inner=args.mass_inner,
+                mass_outer=args.mass_outer,
+                mass_xi=args.mass_xi,
+                profile_center=args.profile_center,
+                state_index=args.state_index,
+                n_occ=args.n_occ,
+                view=args.view,
+                show_bonds=args.show_bonds,
+                max_bonds=args.max_bonds,
+                output_path=args.output,
+                hide_plot=args.hide_plot,
+            )
+        elif args.command == "edge-spectrum":
+            params = _collect_model_params(args, model, None, None)
+            plot_edge_spectrum(
+                model=model,
+                lattice=args.lattice,
+                model_params=params,
+                boundary=args.boundary,
+                geometry=args.geometry,
+                radius=args.radius,
+                center=args.center,
+                potential_profile=args.potential_profile,
+                potential_radius=args.potential_radius,
+                potential_v0=args.potential_v0,
+                potential_xi=args.potential_xi,
+                mass_profile=args.mass_profile,
+                mass_radius=args.mass_radius,
+                mass_inner=args.mass_inner,
+                mass_outer=args.mass_outer,
+                mass_xi=args.mass_xi,
+                profile_center=args.profile_center,
+                output_path=args.output,
+                hide_plot=args.hide_plot,
+            )
+    except ValueError as e:
+        parser.error(str(e))
