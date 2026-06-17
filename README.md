@@ -48,7 +48,7 @@ Save the plot instead of opening a window:
 ```bash
 quaph plot-state --model haldane --lattice 3 3 --boundary hard-wall \
   --t1 1.0 --t2 0.1 --phi 0.785 --M 0.0 \
-  --output examples/plots/haldane/3x3/real-space-density-hard-wall-2d.png \
+  --output examples/plots/haldane/3x3/real-space-density-hard-wall-2d.pdf \
   --hide-plot
 ```
 
@@ -69,3 +69,121 @@ for an exact eigenstate, or `--n-occ N` to plot the highest occupied state
 of the tight-binding matrix; interaction terms remain part of the energy and
 simulation pipeline. Add `--view 3d` when a vertical density-height view is
 useful.
+
+## Edge-Spectrum Diagnostics
+
+Use `edge-spectrum` to identify which single-particle eigenstates are localized
+on a hard-wall boundary. The diagnostic builds the requested real-space
+Hamiltonian, compares its site connectivity against the periodic version, marks
+sites that lost bonds as edge sites, and colors each eigenenergy by
+
+```text
+edge participation = sum |psi_i|^2 over edge sites.
+```
+
+CLI:
+
+```bash
+quaph edge-spectrum --model haldane --lattice 6 6 --boundary hard-wall \
+  --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.2 \
+  --output examples/plots/haldane/6x6/edge-spectrum-hard-wall.pdf \
+  --hide-plot
+```
+
+Python API:
+
+```python
+quaph.plot_edge_spectrum(
+    model="haldane",
+    lattice=(6, 6),
+    boundary="hard_wall",
+    model_params={"t1": 1.0, "t2": 0.1, "phi": 1.5708, "M": 0.2},
+    output_path="examples/plots/haldane/6x6/edge-spectrum-hard-wall.pdf",
+    hide_plot=True,
+)
+```
+
+This is still a single-particle tight-binding diagnostic. For interacting/VQE
+states, a future many-body version should plot site occupations such as
+`<n_i>` from the prepared ground state.
+
+## Disk Geometry
+
+Analytic and real-space diagnostic workflows can also use a disk-shaped domain
+inside a larger parent lattice. The parent lattice is still specified with
+`--lattice`; the disk mask selects active sites by real-space distance from a
+center point. If no center is provided, Quaph uses the center of the parent
+lattice bounding box.
+
+```bash
+quaph plot-state --model haldane --lattice 14 14 --boundary hard-wall \
+  --geometry disk --radius 5.5 \
+  --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.2 \
+  --output examples/plots/haldane/disk/disk-density-hard-wall.pdf \
+  --hide-plot
+```
+
+The same geometry can be used for edge participation:
+
+```bash
+quaph edge-spectrum --model haldane --lattice 14 14 --boundary hard-wall \
+  --geometry disk --radius 5.5 \
+  --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.2 \
+  --output examples/plots/haldane/disk/disk-edge-spectrum-hard-wall.pdf \
+  --hide-plot
+```
+
+And for analytic sweeps:
+
+```bash
+quaph run analytic --model haldane --lattice 14 14 --boundary hard-wall \
+  --geometry disk --radius 5.5 \
+  --x-param n_occ --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.2
+```
+
+This disk implementation projects the parent tight-binding Hamiltonian onto
+the active disk sites. It is currently intended for single-particle analytic
+and diagnostic workflows. Simulated/VQE disk support should be added later by
+building a projected many-body operator.
+
+## Radial Profiles: Soft Confinement and Topological Interfaces
+
+Real-space analytic and diagnostic workflows also support radial onsite
+profiles. These are single-particle tight-binding diagnostics intended to match
+the Haldane-dot phases:
+
+```text
+Phase 2: scalar soft confinement V(r)
+Phase 3: radial Semenoff mass profile M(r)
+```
+
+Soft confinement adds a scalar onsite potential to every active site:
+
+```text
+V(r) = 0.5 * V0 * [1 + tanh((r - R) / xi)]
+```
+
+CLI:
+
+```bash
+quaph plot-state --model haldane --lattice 18 18 --boundary hard-wall \
+  --potential-profile soft-dot --potential-radius 5.5 \
+  --potential-v0 3.0 --potential-xi 0.8 \
+  --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.2
+```
+
+The radial mass profile changes the Haldane/Semenoff mass spatially. It is
+implemented by adding the difference `M(r) - M` to the A/B onsite mass terms,
+so the base model parameter `M` should usually be set to `0.0` when the radial
+profile supplies the full mass:
+
+```bash
+quaph edge-spectrum --model haldane --lattice 18 18 --boundary hard-wall \
+  --mass-profile radial-tanh --mass-radius 5.5 \
+  --mass-inner 0.2 --mass-outer 0.8 --mass-xi 0.8 \
+  --t1 1.0 --t2 0.1 --phi 1.5708 --M 0.0
+```
+
+These profile options can be combined with `--geometry disk` when the desired
+domain is a circular hard-wall dot rather than a rectangular/parallelogram
+flake.

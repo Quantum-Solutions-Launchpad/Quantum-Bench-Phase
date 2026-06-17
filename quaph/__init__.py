@@ -23,6 +23,23 @@ from quaph._realspace import (
     real_space_positions,
     RealSpaceStateResult,
 )
+from quaph._edge import (
+    plot_edge_spectrum,
+    edge_mask_from_missing_bonds,
+    edge_participation_all,
+    inverse_participation_ratio_all,
+    EdgeSpectrumResult,
+)
+from quaph._geometry import (
+    geometry_projection,
+    apply_geometry_to_hamiltonian,
+    GeometryProjection,
+)
+from quaph._profiles import (
+    soft_dot_potential,
+    radial_mass_values,
+    apply_profiles_to_hamiltonian,
+)
 
 __all__ = [
     "Model",
@@ -43,4 +60,15 @@ __all__ = [
     "plot_real_space_state_density",
     "real_space_positions",
     "RealSpaceStateResult",
+    "plot_edge_spectrum",
+    "edge_mask_from_missing_bonds",
+    "edge_participation_all",
+    "inverse_participation_ratio_all",
+    "EdgeSpectrumResult",
+    "geometry_projection",
+    "apply_geometry_to_hamiltonian",
+    "GeometryProjection",
+    "soft_dot_potential",
+    "radial_mass_values",
+    "apply_profiles_to_hamiltonian",
 ]

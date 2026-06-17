@@ -15,6 +15,7 @@ class RealSpaceStateResult:
     model_name: str
     lattice: tuple[int, ...]
     boundary: str
+    geometry: str
     state_index: int
     energy: float
     positions: np.ndarray
@@ -289,6 +290,19 @@ def plot_real_space_state_density(
     *,
     model_params: dict | None = None,
     boundary: str | None = None,
+    geometry: str | None = None,
+    radius: float | None = None,
+    center=None,
+    potential_profile: str | None = None,
+    potential_radius: float | None = None,
+    potential_v0: float | None = None,
+    potential_xi: float | None = None,
+    mass_profile: str | None = None,
+    mass_radius: float | None = None,
+    mass_inner: float | None = None,
+    mass_outer: float | None = None,
+    mass_xi: float | None = None,
+    profile_center=None,
     state_index: int | None = None,
     n_occ: int | None = None,
     view: str = "2d",
@@ -305,16 +319,45 @@ def plot_real_space_state_density(
     boundary_mode = _normalize_boundary(params.get("boundary", boundary_mode))
 
     H = model._build_H_matrix(lat, **params)
+    from quaph._geometry import apply_geometry_to_hamiltonian, geometry_projection
+    projection = geometry_projection(
+        model,
+        lat,
+        geometry=geometry,
+        radius=radius,
+        center=center,
+    )
+    H = apply_geometry_to_hamiltonian(H, projection)
+    from quaph._profiles import apply_profiles_to_hamiltonian, normalize_mass_profile, normalize_potential_profile
+    H = apply_profiles_to_hamiltonian(
+        H,
+        model,
+        projection,
+        params,
+        potential_profile=potential_profile,
+        potential_radius=potential_radius,
+        potential_v0=potential_v0,
+        potential_xi=potential_xi,
+        mass_profile=mass_profile,
+        mass_radius=mass_radius,
+        mass_inner=mass_inner,
+        mass_outer=mass_outer,
+        mass_xi=mass_xi,
+        profile_center=profile_center,
+    )
     eigvals, eigvecs = np.linalg.eigh(H)
     k = _choose_state(eigvals, state_index, n_occ)
 
-    xy = real_space_positions(model, lat)
+    xy = projection.positions
     density = _site_density(eigvecs[:, k], model.spin)
     bonds = _extract_bonds(H, model.spin, max_bonds=max_bonds)
 
     title = (
         f"{model.display_name} real-space eigenstate density | "
-        f"{boundary_mode.replace('_', '-')} | state={k} | E={eigvals[k]:+.6f}"
+        f"{projection.geometry} | {boundary_mode.replace('_', '-')} | "
+        f"V={normalize_potential_profile(potential_profile)} | "
+        f"M={normalize_mass_profile(mass_profile)} | "
+        f"state={k} | E={eigvals[k]:+.6f}"
     )
     view_mode = str(view).strip().lower()
     if view_mode in ("3d", "three_d", "surface"):
@@ -334,6 +377,7 @@ def plot_real_space_state_density(
         model_name=model.name,
         lattice=lat,
         boundary=boundary_mode,
+        geometry=projection.geometry,
         state_index=k,
         energy=float(eigvals[k]),
         positions=xy,

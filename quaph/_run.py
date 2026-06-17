@@ -11,6 +11,7 @@ from joblib import Parallel, delayed
 
 from quaph._model import Model, ModelCapabilityError
 from quaph._core import (
+    _fmt_params,
     resolve_sweep,
     analytic, vqe_fermionic, iqpe_fermionic, vqe_observable, iqpe_observable,
     vqe_other_benchmarks, iqpe_other_benchmarks,
@@ -21,7 +22,9 @@ from quaph._core import (
 from quaph._hamlib import (
     list_hamlib_keys, load_hamlib_operator, parse_key_params,
 )
+from quaph._geometry import apply_geometry_to_hamiltonian, geometry_projection, normalize_geometry
 from quaph._plotting import plot_analytic, plot_simulated
+from quaph._profiles import apply_profiles_to_hamiltonian, profile_metadata
 from quaph._registry import get_model as _get_model
 
 
@@ -168,6 +171,27 @@ def _serialize_model_params(params: dict) -> dict:
         else:
             serial[k] = v
     return serial
+
+
+def _analytic_projected(model, lattice, n_occ, model_params, observable, projection, profile_kwargs=None):
+    from loguru import logger
+    H_full = model._build_H_matrix(lattice, **model_params)
+    H = apply_geometry_to_hamiltonian(H_full, projection)
+    H = apply_profiles_to_hamiltonian(
+        H,
+        model,
+        projection,
+        model_params,
+        **(profile_kwargs or {}),
+    )
+    eigvals, eigvecs = np.linalg.eigh(H)
+    obs = model.get_observable(observable)
+    result = float(obs.analytic(model, lattice, H, eigvals, eigvecs, n_occ, model_params))
+    logger.info(
+        f"Analytic [{observable}] ({_fmt_params(lattice, n_occ, model_params)}, "
+        f"geometry={projection.geometry}, active_sites={int(projection.site_mask.sum())}) = {result}"
+    )
+    return result
 
 
 def _file_tag(run_type: str, plot_format: str, x_param: str, y_param: str | None,
@@ -501,6 +525,19 @@ def run_analytic(
     *,
     lattice=None,
     boundary: str | None = None,
+    geometry: str | None = None,
+    radius: float | None = None,
+    center=None,
+    potential_profile: str | None = None,
+    potential_radius: float | None = None,
+    potential_v0: float | None = None,
+    potential_xi: float | None = None,
+    mass_profile: str | None = None,
+    mass_radius: float | None = None,
+    mass_inner: float | None = None,
+    mass_outer: float | None = None,
+    mass_xi: float | None = None,
+    profile_center=None,
     x_param: str | None = None,
     x_range=None,
     y_param: str | None = None,
@@ -548,11 +585,41 @@ def run_analytic(
             )
 
     params = _with_boundary(model_params, boundary)
+    geometry_mode = normalize_geometry(geometry)
+    profile_kwargs = dict(
+        potential_profile=potential_profile,
+        potential_radius=potential_radius,
+        potential_v0=potential_v0,
+        potential_xi=potential_xi,
+        mass_profile=mass_profile,
+        mass_radius=mass_radius,
+        mass_inner=mass_inner,
+        mass_outer=mass_outer,
+        mass_xi=mass_xi,
+        profile_center=profile_center,
+    )
     spin = model.spin
     if lattice is not None:
-        n_sites = math.prod(lattice) * model.sites_per_cell
+        projection = geometry_projection(
+            model,
+            lattice,
+            geometry=geometry_mode,
+            radius=radius,
+            center=center,
+        )
+        has_profiles = (
+            profile_metadata(**profile_kwargs)["potential_profile"] != "none"
+            or profile_metadata(**profile_kwargs)["mass_profile"] != "none"
+        )
+        if (projection.geometry != "rectangle" or has_profiles) and model._interaction_hamiltonian_fn is not None:
+            raise ValueError(
+                "geometry/profile projections are currently supported for single-particle analytic diagnostics; "
+                "interacting/VQE support requires a projected many-body operator."
+            )
+        n_sites = int(projection.site_mask.sum())
         n_orbitals = n_sites * spin
     else:
+        projection = None
         n_sites = 0
         n_orbitals = 0
     fixed_n_occ = n_occ if n_occ is not None else (n_orbitals // 2 if n_orbitals else 0)
@@ -566,6 +633,8 @@ def run_analytic(
 
     is_band_structure = (x_kind == "momentum") or (y_kind == "momentum")
     if is_band_structure:
+        if geometry_mode != "rectangle":
+            raise ValueError("disk geometry is only supported for real-space lattice runs, not momentum-space band-structure runs.")
         if _normalize_boundary(params.get("boundary")) != "periodic":
             raise ValueError("hard-wall boundary is only supported for real-space lattice runs, not momentum-space band-structure runs.")
         if x_kind == "n_occ" or y_kind == "n_occ" or n_occ is not None:
@@ -616,6 +685,16 @@ def run_analytic(
         if is_band_structure:
             k_tuple = tuple(cell_params.pop(a) for a in momentum_axes)
             return analytic_bands(model, k_tuple, cell_params, observable=observable)
+        if projection is not None and (projection.geometry != "rectangle" or has_profiles):
+            return _analytic_projected(
+                model,
+                lattice,
+                n_occ_val,
+                cell_params,
+                observable,
+                projection,
+                profile_kwargs,
+            )
         return analytic(model, lattice, n_occ_val, cell_params, observable=observable)
 
     if is_1d:
@@ -652,6 +731,10 @@ def run_analytic(
             "parameters": {
                 "model": model.name,
                 "lattice": list(lattice) if lattice is not None else None,
+                "geometry": projection.geometry if projection is not None else "rectangle",
+                "radius": radius,
+                "center": list(center) if center is not None else None,
+                **profile_metadata(**profile_kwargs),
                 "model_params": _serialize_model_params(params),
             },
             "x_param": x_param,

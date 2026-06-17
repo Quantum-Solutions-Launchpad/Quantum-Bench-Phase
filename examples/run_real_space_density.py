@@ -24,7 +24,7 @@ quaph.plot_real_space_state_density(
     lattice=LATTICE,
     model_params=PARAMS,
     boundary="periodic",
-    output_path=os.path.join(_PLOT_DIR, "real-space-density-periodic-2d.png"),
+    output_path=os.path.join(_PLOT_DIR, "real-space-density-periodic-2d.pdf"),
     hide_plot=True,
 )
 
@@ -33,6 +33,6 @@ quaph.plot_real_space_state_density(
     lattice=LATTICE,
     model_params=PARAMS,
     boundary="hard_wall",
-    output_path=os.path.join(_PLOT_DIR, "real-space-density-hard-wall-2d.png"),
+    output_path=os.path.join(_PLOT_DIR, "real-space-density-hard-wall-2d.pdf"),
     hide_plot=True,
 )

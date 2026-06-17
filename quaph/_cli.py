@@ -6,6 +6,7 @@ import sys
 from quaph._registry import get_model, register_model_from_file, remove_model
 from quaph._run import run_analytic, run_simulated_ideal, run_simulated_noisy
 from quaph._realspace import plot_real_space_state_density
+from quaph._edge import plot_edge_spectrum
 from quaph._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS, _INITIAL_STATES
 
 
@@ -74,6 +75,29 @@ def _add_output_args(parser):
                         help="Directory for plot PDF files (model/<lattice-tag>/ appended)")
     parser.add_argument("--hide-plot", dest="hide_plot",
                         action="store_true", default=False)
+
+
+def _add_profile_args(parser):
+    parser.add_argument("--potential-profile", choices=["none", "soft-dot", "soft_dot"], default="none",
+                        help="Onsite scalar potential profile (default: none).")
+    parser.add_argument("--potential-radius", type=float, default=None,
+                        help="Radius for the soft-dot potential wall.")
+    parser.add_argument("--potential-v0", type=float, default=None,
+                        help="Outer potential height for the soft-dot profile.")
+    parser.add_argument("--potential-xi", type=float, default=None,
+                        help="Smoothing length for the soft-dot potential.")
+    parser.add_argument("--mass-profile", choices=["none", "radial-step", "radial_step", "radial-tanh", "radial_tanh"], default="none",
+                        help="Radial A/B Semenoff mass profile for Haldane-like models (default: none).")
+    parser.add_argument("--mass-radius", type=float, default=None,
+                        help="Radius for the radial mass interface.")
+    parser.add_argument("--mass-inner", type=float, default=None,
+                        help="Mass value inside the radial mass interface.")
+    parser.add_argument("--mass-outer", type=float, default=None,
+                        help="Mass value outside the radial mass interface.")
+    parser.add_argument("--mass-xi", type=float, default=None,
+                        help="Smoothing length for radial-tanh mass profiles.")
+    parser.add_argument("--profile-center", type=float, nargs=2, default=None, metavar=("X", "Y"),
+                        help="Center for radial potential/mass profiles. Defaults to active geometry center.")
 
 
 def _add_sim_required(parser):
@@ -228,6 +252,19 @@ def _dispatch_analytic(args, model):
         model,
         lattice=tuple(args.lattice) if args.lattice else None,
         boundary=args.boundary,
+        geometry=args.geometry,
+        radius=args.radius,
+        center=args.center,
+        potential_profile=args.potential_profile,
+        potential_radius=args.potential_radius,
+        potential_v0=args.potential_v0,
+        potential_xi=args.potential_xi,
+        mass_profile=args.mass_profile,
+        mass_radius=args.mass_radius,
+        mass_inner=args.mass_inner,
+        mass_outer=args.mass_outer,
+        mass_xi=args.mass_xi,
+        profile_center=args.profile_center,
         x_param=x_param,
         x_range=args.x_range,
         y_param=y_param,
@@ -359,6 +396,12 @@ def main(argv=None):
     plot_state_parser.add_argument("--boundary", choices=["periodic", "hard-wall", "hard_wall", "open"],
                                    default="periodic",
                                    help="Real-space boundary condition for the finite-lattice model (default: periodic).")
+    plot_state_parser.add_argument("--geometry", choices=["rectangle", "disk"], default="rectangle",
+                                   help="Finite real-space domain shape inside the parent lattice (default: rectangle).")
+    plot_state_parser.add_argument("--radius", type=float, default=None,
+                                   help="Disk radius; required when --geometry disk.")
+    plot_state_parser.add_argument("--center", type=float, nargs=2, default=None, metavar=("X", "Y"),
+                                   help="Disk center in real-space coordinates. Defaults to the parent lattice center.")
     plot_state_parser.add_argument("--state-index", type=int, default=None,
                                    help="Eigenstate index after sorting energies ascending. Defaults to the state closest to E=0.")
     plot_state_parser.add_argument("--n-occ", type=int, default=None,
@@ -372,6 +415,29 @@ def main(argv=None):
                                    help="Hide hopping bonds in the real-space plot.")
     plot_state_parser.add_argument("--max-bonds", type=int, default=3000,
                                    help="Maximum number of bonds to draw (default: 3000).")
+    _add_profile_args(plot_state_parser)
+
+    edge_spectrum_parser = sub.add_parser(
+        "edge-spectrum",
+        help="Plot eigenenergies colored by edge participation",
+    )
+    edge_spectrum_parser.add_argument("--model", default=None, metavar="MODEL",
+                                      help="Registered model name (e.g. haldane, hubbard, haldane-hubbard).")
+    edge_spectrum_parser.add_argument("--lattice", type=int, nargs="+", required=True, metavar="N",
+                                      help="Lattice extents per dimension (e.g. --lattice 10 10).")
+    edge_spectrum_parser.add_argument("--boundary", choices=["periodic", "hard-wall", "hard_wall", "open"],
+                                      default="hard-wall",
+                                      help="Real-space boundary condition for the finite-lattice model (default: hard-wall).")
+    edge_spectrum_parser.add_argument("--geometry", choices=["rectangle", "disk"], default="rectangle",
+                                      help="Finite real-space domain shape inside the parent lattice (default: rectangle).")
+    edge_spectrum_parser.add_argument("--radius", type=float, default=None,
+                                      help="Disk radius; required when --geometry disk.")
+    edge_spectrum_parser.add_argument("--center", type=float, nargs=2, default=None, metavar=("X", "Y"),
+                                      help="Disk center in real-space coordinates. Defaults to the parent lattice center.")
+    edge_spectrum_parser.add_argument("--output", default=None, metavar="PATH",
+                                      help="Output PDF/image path. Omit to show an interactive window.")
+    edge_spectrum_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
+    _add_profile_args(edge_spectrum_parser)
 
     run_parser = sub.add_parser("run")
     run_sub = run_parser.add_subparsers(dest="subcommand", required=True)
@@ -400,6 +466,13 @@ def main(argv=None):
     analytic_parser.add_argument("--observable", default="E", metavar="NAME",
                                  help="Observable to compute per cell (default: 'E'). "
                                       "Use 'list observables --model NAME' to see what's available.")
+    analytic_parser.add_argument("--geometry", choices=["rectangle", "disk"], default="rectangle",
+                                 help="Finite real-space domain shape inside the parent lattice (default: rectangle).")
+    analytic_parser.add_argument("--radius", type=float, default=None,
+                                 help="Disk radius; required when --geometry disk.")
+    analytic_parser.add_argument("--center", type=float, nargs=2, default=None, metavar=("X", "Y"),
+                                 help="Disk center in real-space coordinates. Defaults to the parent lattice center.")
+    _add_profile_args(analytic_parser)
 
     for p in (sim_ideal_parser, sim_noisy_parser):
         _add_sim_required(p)
@@ -411,7 +484,7 @@ def main(argv=None):
 
     if (
         (subcommand in ("analytic", "simulated-ideal", "simulated-noisy"))
-        or pre_args.command == "plot-state"
+        or pre_args.command in ("plot-state", "edge-spectrum")
     ) and model_arg:
         try:
             model = get_model(model_arg)
@@ -419,9 +492,11 @@ def main(argv=None):
             parser.error(str(e))
 
         target = (
-            plot_state_parser
-            if pre_args.command == "plot-state"
-            else {
+            {
+                "plot-state": plot_state_parser,
+                "edge-spectrum": edge_spectrum_parser,
+            }.get(pre_args.command)
+            or {
                 "analytic": analytic_parser,
                 "simulated-ideal": sim_ideal_parser,
                 "simulated-noisy": sim_noisy_parser,
@@ -502,11 +577,47 @@ def main(argv=None):
                 lattice=args.lattice,
                 model_params=params,
                 boundary=args.boundary,
+                geometry=args.geometry,
+                radius=args.radius,
+                center=args.center,
+                potential_profile=args.potential_profile,
+                potential_radius=args.potential_radius,
+                potential_v0=args.potential_v0,
+                potential_xi=args.potential_xi,
+                mass_profile=args.mass_profile,
+                mass_radius=args.mass_radius,
+                mass_inner=args.mass_inner,
+                mass_outer=args.mass_outer,
+                mass_xi=args.mass_xi,
+                profile_center=args.profile_center,
                 state_index=args.state_index,
                 n_occ=args.n_occ,
                 view=args.view,
                 show_bonds=args.show_bonds,
                 max_bonds=args.max_bonds,
+                output_path=args.output,
+                hide_plot=args.hide_plot,
+            )
+        elif args.command == "edge-spectrum":
+            params = _collect_model_params(args, model, None, None)
+            plot_edge_spectrum(
+                model=model,
+                lattice=args.lattice,
+                model_params=params,
+                boundary=args.boundary,
+                geometry=args.geometry,
+                radius=args.radius,
+                center=args.center,
+                potential_profile=args.potential_profile,
+                potential_radius=args.potential_radius,
+                potential_v0=args.potential_v0,
+                potential_xi=args.potential_xi,
+                mass_profile=args.mass_profile,
+                mass_radius=args.mass_radius,
+                mass_inner=args.mass_inner,
+                mass_outer=args.mass_outer,
+                mass_xi=args.mass_xi,
+                profile_center=args.profile_center,
                 output_path=args.output,
                 hide_plot=args.hide_plot,
             )
