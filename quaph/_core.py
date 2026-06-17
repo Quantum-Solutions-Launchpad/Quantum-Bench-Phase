@@ -16,10 +16,11 @@ from qiskit_nature.second_q.circuit.library import HartreeFock
 from qiskit_nature.second_q.operators import FermionicOp
 
 from qiskit_aer import AerSimulator
-from qiskit_aer.primitives import Sampler
 from qiskit_aer.noise import NoiseModel
 
 from loguru import logger
+
+from quaph._backend import is_real_backend
 
 
 def setup_logging():
@@ -89,22 +90,12 @@ def resolve_sweep(param: str, range_args, n_orbitals: int, momentum_axes: tuple[
 
 
 def _make_simulator(backend):
+    if is_real_backend(backend):
+        return backend
     if backend:
         noise_model = NoiseModel.from_backend(backend)
         return AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
     return AerSimulator()
-
-
-def _make_sampler(backend):
-    if backend:
-        noise_model = NoiseModel.from_backend(backend)
-        return Sampler(
-            backend_options={
-                "noise_model": noise_model,
-                "basis_gates": noise_model.basis_gates,
-            }
-        )
-    return Sampler()
 
 
 def _hf_initial_state(n_sites: int, spin: int, n_occ: int, mapper):
