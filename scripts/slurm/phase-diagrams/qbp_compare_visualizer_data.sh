@@ -28,7 +28,7 @@ Y_PARAMS=(t2 U U t2 U U)
 TOTAL_TASKS="${#MODELS[@]}"
 TASK_IDS="${TASK_IDS:-}"
 
-print_visualizer_header "Collecting QuAPH comparison visualizer data"
+print_visualizer_header "Collecting QBP comparison visualizer data"
 echo "  algorithms:  ${ALGORITHMS}"
 echo "  quantum:     ${QUANTUM_PIPELINE:-ideal}"
 echo "  configs:     ${TOTAL_TASKS}"

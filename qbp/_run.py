@@ -886,7 +886,7 @@ def _run_model_methods(
         _sl()
 
     def jobs_per_shard():
-        value = os.environ.get("QUAPH_JOBS_PER_SHARD") or "1"
+        value = os.environ.get("QBP_JOBS_PER_SHARD") or "1"
         try:
             return max(1, int(value))
         except ValueError:

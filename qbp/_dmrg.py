@@ -118,8 +118,8 @@ def _run_julia_dmrg(
         cmd = [julia, *julia_args]
     env = os.environ.copy()
     # Point Julia at a specific depot only if the user asked for one (e.g. a
-    # shared HPC depot via QUAPH_JULIA_DEPOT); otherwise use Julia's default.
-    depot = os.environ.get("QUAPH_JULIA_DEPOT")
+    # shared HPC depot via QBP_JULIA_DEPOT); otherwise use Julia's default.
+    depot = os.environ.get("QBP_JULIA_DEPOT")
     if depot:
         env.setdefault("JULIA_DEPOT_PATH", depot)
     subprocess.run(cmd, check=True, env=env)
