@@ -2,6 +2,7 @@ import math
 import os
 
 import qbp
+from qbp import Method
 
 
 MODEL = "haldane"
@@ -20,24 +21,29 @@ PARAMS = {
 }
 
 
-qbp.plot_real_space_state_density(
+qbp.run(
     model=MODEL,
+    method=Method.ANALYTIC,
     lattice=PARENT_LATTICE,
+    x_param="Lx",
+    y_param="Ly",
     boundary="hard_wall",
     geometry="disk",
     radius=RADIUS,
     model_params=PARAMS,
-    output_path=os.path.join(_PLOT_DIR, "disk-density-hard-wall.pdf"),
+    plot_path=os.path.join(_PLOT_DIR, "disk-density-hard-wall.pdf"),
     hide_plot=True,
 )
 
-qbp.plot_edge_spectrum(
+qbp.run(
     model=MODEL,
+    method=Method.ANALYTIC,
     lattice=PARENT_LATTICE,
+    x_param="eigenstate",
     boundary="hard_wall",
     geometry="disk",
     radius=RADIUS,
     model_params=PARAMS,
-    output_path=os.path.join(_PLOT_DIR, "disk-edge-spectrum-hard-wall.pdf"),
+    plot_path=os.path.join(_PLOT_DIR, "disk-edge-spectrum-hard-wall.pdf"),
     hide_plot=True,
 )

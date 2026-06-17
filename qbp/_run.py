@@ -124,6 +124,58 @@ def _safe_observable_label(model_name, observable: str) -> str:
         return "$E$"
 
 
+# Real-space diagnostics select a whole plot type (not a sweep scalar), so they
+# live on a dedicated `plot` axis rather than on `observable`.
+_PLOT_KIND_ALIASES = {
+    "energy": "energy",
+    "sweep": "energy",
+    "real_space_density": "real_space_density",
+    "real_space": "real_space_density",
+    "density": "real_space_density",
+    "state_density": "real_space_density",
+    "edge_spectrum": "edge_spectrum",
+    "edge": "edge_spectrum",
+}
+
+
+def _normalize_plot_kind(plot: str | None) -> str:
+    if plot is None:
+        return "energy"
+    key = str(plot).strip().lower().replace("-", "_").replace(" ", "_")
+    kind = _PLOT_KIND_ALIASES.get(key)
+    if kind is None:
+        raise ValueError(
+            f"unsupported plot kind {plot!r}; expected 'energy', "
+            f"'real_space_density', or 'edge_spectrum'."
+        )
+    return kind
+
+
+_SPECTRAL_AXES = ("eigenstate",)
+
+
+def _diagnostic_kind_from_axes(model, x_param, y_param) -> str:
+    axes = [a for a in (x_param, y_param) if a is not None]
+    spatial_names = set(model.lattice_shape)
+    spatial = [a for a in axes if a in spatial_names]
+    spectral = [a for a in axes if a in _SPECTRAL_AXES]
+    if not spatial and not spectral:
+        return "energy"
+    if spectral:
+        if len(axes) != 1:
+            raise ValueError(
+                "'eigenstate' is a standalone edge-spectrum axis and cannot be paired "
+                "with another sweep axis."
+            )
+        return "edge_spectrum"
+    if len(axes) != len(spatial):
+        raise ValueError(
+            f"real-space axes {sorted(spatial_names)} cannot be combined with non-spatial "
+            f"sweep axes."
+        )
+    return "real_space_density"
+
+
 def _normalize_boundary(boundary: str | None) -> str:
     if boundary is None:
         return "periodic"
@@ -263,12 +315,18 @@ class RunResult:
     log_path: str | None = None
     raw_log_path: str | None = None
     plot_path: str | None = None
+    plot_kind: str = "energy"
+    diagnostic: object = field(default=None, repr=False)
     raw: dict = field(default_factory=dict, repr=False)
     _model_params: dict = field(default_factory=dict, repr=False)
+    _replot: object = field(default=None, repr=False)
 
     def plot(self, *, hide_plot: bool = False, output_path=None,
             hide_legend: bool = False, diff: bool = False,
             diff_format: str = "3d"):
+        if self._replot is not None:
+            self.diagnostic = self._replot(output_path=output_path, hide_plot=hide_plot)
+            return self.diagnostic.figure
         result = _plot_run_result(
             self, output_path=output_path, hide_plot=hide_plot, hide_legend=hide_legend,
         )
@@ -556,8 +614,33 @@ def run(
     ``log_path`` / ``plot_path`` are the exact JSON / PDF files to write (both the
     containing directory and the file name are chosen by the caller); parent
     directories are created as needed. Either may be ``None`` to skip that output.
+
+    The sweep axes select the kind of figure, just as momentum axes (``kx``/``ky``)
+    select a band-structure run. The model's real-space lattice axes (``Lx``/``Ly``)
+    render a single-particle real-space eigenstate-density map, and ``eigenstate``
+    renders an edge-participation spectrum. Both are exact-diagonalization
+    diagnostics of one Hamiltonian (``method=Method.ANALYTIC``); the boundary
+    condition, ``geometry``/``radius``/``center`` and radial ``potential``/``mass``
+    profiles all apply.
     """
     methods = _normalize_methods(method)
+
+    if model is not None and qubit_operator is None:
+        diagnostic_model = _resolve_model(model)
+        diagnostic_kind = _diagnostic_kind_from_axes(diagnostic_model, x_param, y_param)
+        if diagnostic_kind != "energy":
+            return _run_diagnostic(
+                diagnostic_kind, diagnostic_model, methods,
+                lattice=lattice, boundary=boundary, geometry=geometry,
+                radius=radius, center=center, n_occ=n_occ, model_params=model_params,
+                potential_profile=potential_profile, potential_radius=potential_radius,
+                potential_v0=potential_v0, potential_xi=potential_xi,
+                mass_profile=mass_profile, mass_radius=mass_radius,
+                mass_inner=mass_inner, mass_outer=mass_outer, mass_xi=mass_xi,
+                profile_center=profile_center,
+                plot_path=plot_path, hide_plot=hide_plot,
+            )
+
     method_objs = _build_method_objects(methods, method_params)
     backend = resolve_backend(backend)
     backend_label = _backend_label(backend)
@@ -594,6 +677,52 @@ def run(
         task_index=task_index, task_count=task_count,
         prepare_only=prepare_only, aggregate_only=aggregate_only,
         no_progress_log=no_progress_log,
+    )
+
+
+# --------------------------------------------------------- real-space diagnostics
+def _run_diagnostic(
+    plot_kind, model, methods, *,
+    lattice, boundary, geometry, radius, center, n_occ, model_params,
+    potential_profile, potential_radius, potential_v0, potential_xi,
+    mass_profile, mass_radius, mass_inner, mass_outer, mass_xi, profile_center,
+    plot_path, hide_plot,
+):
+    if methods != [Method.ANALYTIC]:
+        raise ValueError(
+            f"the '{plot_kind}' diagnostic is a single-particle exact-diagonalization "
+            f"plot; use method=Method.ANALYTIC."
+        )
+    lat = _resolve_lattice(model, lattice)
+    common = dict(
+        model=model, lattice=lat, model_params=model_params, boundary=boundary,
+        geometry=geometry, radius=radius, center=center,
+        potential_profile=potential_profile, potential_radius=potential_radius,
+        potential_v0=potential_v0, potential_xi=potential_xi,
+        mass_profile=mass_profile, mass_radius=mass_radius,
+        mass_inner=mass_inner, mass_outer=mass_outer, mass_xi=mass_xi,
+        profile_center=profile_center,
+    )
+    if plot_kind == "real_space_density":
+        from qbp._realspace import plot_real_space_state_density as _diag_fn
+        common["n_occ"] = n_occ
+        shape = tuple(model.lattice_shape)
+        x_param = shape[0]
+        y_param = shape[1] if len(shape) > 1 else None
+    else:
+        from qbp._edge import plot_edge_spectrum as _diag_fn
+        x_param, y_param = "eigenstate", None
+
+    def _replot(*, output_path, hide_plot):
+        return _diag_fn(output_path=output_path, hide_plot=hide_plot, **common)
+
+    diagnostic = _replot(output_path=plot_path, hide_plot=hide_plot)
+    return RunResult(
+        model_name=model.name, lattice=lat, x_param=x_param, y_param=y_param,
+        x_values=[], y_values=[], methods=["analytic"], grids={},
+        plot_format=plot_kind, observable="E", backend_label="ideal",
+        plot_path=plot_path, plot_kind=plot_kind, diagnostic=diagnostic,
+        _model_params=dict(model_params or {}), _replot=_replot,
     )
 
 

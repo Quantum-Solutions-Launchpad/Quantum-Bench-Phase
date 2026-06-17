@@ -17,12 +17,10 @@ from qbp._run import (
     RunResult,
 )
 from qbp._realspace import (
-    plot_real_space_state_density,
     real_space_positions,
     RealSpaceStateResult,
 )
 from qbp._edge import (
-    plot_edge_spectrum,
     edge_mask_from_missing_bonds,
     edge_participation_all,
     inverse_participation_ratio_all,
@@ -53,10 +51,8 @@ __all__ = [
     "run",
     "load_result",
     "RunResult",
-    "plot_real_space_state_density",
     "real_space_positions",
     "RealSpaceStateResult",
-    "plot_edge_spectrum",
     "edge_mask_from_missing_bonds",
     "edge_participation_all",
     "inverse_participation_ratio_all",

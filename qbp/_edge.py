@@ -105,32 +105,37 @@ def _plot_edge_spectrum(
     edge_participation: np.ndarray,
     ipr: np.ndarray,
     *,
-    title: str,
     output_path=None,
     hide_plot: bool = False,
 ):
     import matplotlib.pyplot as plt
+    from matplotlib.colors import LinearSegmentedColormap
+    from qbp._plotting import _apply_rcparams
+
+    _apply_rcparams()
+    cmap_obj = LinearSegmentedColormap.from_list(
+        "magma_dark", plt.cm.magma(np.linspace(0.05, 0.82, 256))
+    )
 
     x = np.arange(len(eigvals))
     ipr_scale = ipr / ipr.max() if ipr.size and ipr.max() > 0.0 else ipr
     sizes = 28.0 + 140.0 * ipr_scale
 
-    fig, ax = plt.subplots(figsize=(9.0, 6.2))
+    fig, ax = plt.subplots(figsize=(9, 6))
     sc = ax.scatter(
         x,
         eigvals,
         c=edge_participation,
         s=sizes,
-        cmap="viridis",
+        cmap=cmap_obj,
         edgecolors="#202020",
         linewidths=0.25,
     )
     ax.axhline(0.0, color="#333333", linestyle="--", linewidth=1.0, alpha=0.75)
     cbar = fig.colorbar(sc, ax=ax, pad=0.02, fraction=0.045)
-    cbar.set_label("edge participation")
-    ax.set_xlabel("eigenstate index")
-    ax.set_ylabel("energy")
-    ax.set_title(title)
+    cbar.set_label("edge participation", labelpad=10)
+    ax.set_xlabel("eigenstate index", labelpad=8)
+    ax.set_ylabel(r"$E$", labelpad=8)
     ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.45)
     fig.tight_layout()
     return _save_and_show(fig, output_path, hide_plot)
@@ -180,7 +185,7 @@ def plot_edge_spectrum(
         center=center,
     )
     H = apply_geometry_to_hamiltonian(H_full, projection)
-    from qbp._profiles import apply_profiles_to_hamiltonian, normalize_mass_profile, normalize_potential_profile
+    from qbp._profiles import apply_profiles_to_hamiltonian
     H = apply_profiles_to_hamiltonian(
         H,
         model,
@@ -211,18 +216,10 @@ def plot_edge_spectrum(
     edge_part = edge_participation_all(eigvecs, edge_mask, model.spin)
     ipr = inverse_participation_ratio_all(eigvecs, model.spin)
 
-    title = (
-        f"{model.display_name} edge spectrum | "
-        f"{projection.geometry} | {boundary_mode.replace('_', '-')} | "
-        f"V={normalize_potential_profile(potential_profile)} | "
-        f"M={normalize_mass_profile(mass_profile)} | "
-        f"edge sites={int(edge_mask.sum())}"
-    )
     fig = _plot_edge_spectrum(
         eigvals,
         edge_part,
         ipr,
-        title=title,
         output_path=output_path,
         hide_plot=hide_plot,
     )

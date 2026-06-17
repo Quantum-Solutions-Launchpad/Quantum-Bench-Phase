@@ -1,0 +1,64 @@
+{
+    "type": "run",
+    "methods": [
+        "analytic"
+    ],
+    "backend": "ideal",
+    "plot_format": "2d",
+    "band_structure": false,
+    "observable": "E",
+    "extremum": "min",
+    "x_param": "n_occ",
+    "y_param": null,
+    "x_values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+    ],
+    "y_values": [],
+    "parameters": {
+        "model": "haldane",
+        "lattice": [
+            3,
+            3
+        ],
+        "geometry": "rectangle",
+        "radius": null,
+        "center": null,
+        "potential_profile": "none",
+        "potential_radius": null,
+        "potential_v0": null,
+        "potential_xi": null,
+        "mass_profile": "none",
+        "mass_radius": null,
+        "mass_inner": null,
+        "mass_outer": null,
+        "mass_xi": null,
+        "profile_center": null,
+        "model_params": {
+            "t1": 1.0,
+            "t2": 0.1,
+            "phi": 0.7853981633974483,
+            "M": 0.0,
+            "boundary": "hard_wall"
+        },
+        "method_params": {
+            "analytic": {}
+        }
+    },
+    "result": {
+        "analytic": {
+            "0": 0.0,
+            "1": -2.8205077378002974,
+            "2": -5.061725146229136,
+            "3": -6.9539433592896085,
+            "4": -8.585760575664724,
+            "5": -9.849776016620424,
+            "6": -10.863547511249813
+        }
+    }
+}
