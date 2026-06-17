@@ -1,7 +1,7 @@
 import math
 import os
 
-import quaph
+import qbp
 
 
 MODEL = "haldane"
@@ -19,7 +19,7 @@ PARAMS = {
 }
 
 
-quaph.plot_real_space_state_density(
+qbp.plot_real_space_state_density(
     model=MODEL,
     lattice=LATTICE,
     model_params=PARAMS,
@@ -28,7 +28,7 @@ quaph.plot_real_space_state_density(
     hide_plot=True,
 )
 
-quaph.plot_real_space_state_density(
+qbp.plot_real_space_state_density(
     model=MODEL,
     lattice=LATTICE,
     model_params=PARAMS,

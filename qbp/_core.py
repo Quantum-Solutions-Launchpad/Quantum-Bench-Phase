@@ -1,8 +1,8 @@
-"""Shared low-level infrastructure for QuaPh simulation methods.
+"""Shared low-level infrastructure for QBP simulation methods.
 
 Technique-specific solver logic lives in the per-method modules
-(:mod:`quaph._analytic`, :mod:`quaph._vqe`, :mod:`quaph._iqpe`,
-:mod:`quaph._dmrg`). This module holds only what those methods share: logging,
+(:mod:`qbp._analytic`, :mod:`qbp._vqe`, :mod:`qbp._iqpe`,
+:mod:`qbp._dmrg`). This module holds only what those methods share: logging,
 sweep-axis resolution, the noisy/ideal backend constructors, and the
 initial-state circuit builders reused across VQE/IQPE and the model layer.
 """
@@ -20,7 +20,7 @@ from qiskit_aer.noise import NoiseModel
 
 from loguru import logger
 
-from quaph._backend import is_real_backend
+from qbp._backend import is_real_backend
 
 
 def setup_logging():

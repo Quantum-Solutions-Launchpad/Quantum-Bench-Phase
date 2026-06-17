@@ -16,7 +16,7 @@ setup_realspace_env() {
 
     SHARDS="${SHARDS:-${SLURM_NTASKS:-${SLURM_CPUS_ON_NODE:-128}}}"
     CPUS_PER_SHARD="${CPUS_PER_SHARD:-${SLURM_CPUS_PER_TASK:-1}}"
-    export QUAPH_JOBS_PER_SHARD="${QUAPH_JOBS_PER_SHARD:-1}"
+    export QBP_JOBS_PER_SHARD="${QBP_JOBS_PER_SHARD:-1}"
 }
 
 run_command() {
@@ -26,7 +26,7 @@ run_command() {
     if [[ "${cmd}" == scripts/* || "${cmd}" == *.py* ]]; then
         python ${cmd} "$@"
     else
-        quaph run ${cmd} "$@"
+        qbp run ${cmd} "$@"
     fi
 }
 
@@ -40,7 +40,7 @@ run_sharded_config() {
         if [[ "${cmd}" == scripts/* || "${cmd}" == *.py* ]]; then
             srun -N 1 -n 1 -c "${CPUS_PER_SHARD}" --exact bash -c "python ${cmd} --task-index ${shard} --task-count ${SHARDS}" &
         else
-            srun -N 1 -n 1 -c "${CPUS_PER_SHARD}" --exact bash -c "quaph run ${cmd} --task-index ${shard} --task-count ${SHARDS}" &
+            srun -N 1 -n 1 -c "${CPUS_PER_SHARD}" --exact bash -c "qbp run ${cmd} --task-index ${shard} --task-count ${SHARDS}" &
         fi
         pids+=("$!")
     done

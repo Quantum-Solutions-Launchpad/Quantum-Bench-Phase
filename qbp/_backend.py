@@ -1,6 +1,6 @@
 """Backend resolution and the real-vs-simulated execution differences.
 
-QuaPh's ``backend`` argument selects how the quantum methods (VQE/IQPE) execute:
+QBP's ``backend`` argument selects how the quantum methods (VQE/IQPE) execute:
 
 * ``None``              -> ideal :class:`~qiskit_aer.AerSimulator` (no noise),
 * a Qiskit **fake** backend (object or name) -> local noisy simulation built

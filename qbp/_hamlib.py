@@ -39,7 +39,7 @@ def _extract_hdf5_from_zip(data: bytes, source: str) -> str:
             raise ValueError(f"ZIP archive '{source}' contains no files.")
         h5_names = [n for n in names if n.lower().endswith(_HDF5_SUFFIXES)]
         chosen = (h5_names or names)[0]
-        dest_dir = tempfile.mkdtemp(prefix="quaph_hamlib_")
+        dest_dir = tempfile.mkdtemp(prefix="qbp_hamlib_")
         dest = os.path.join(dest_dir, os.path.basename(chosen) or "operator.h5")
         with z.open(chosen) as src, open(dest, "wb") as out:
             shutil.copyfileobj(src, out)
@@ -52,7 +52,7 @@ def resolve_hamlib_source(source: str) -> str:
         data = _download(source)
         if source.lower().endswith(".zip") or zipfile.is_zipfile(BytesIO(data)):
             return _extract_hdf5_from_zip(data, source)
-        dest_dir = tempfile.mkdtemp(prefix="quaph_hamlib_")
+        dest_dir = tempfile.mkdtemp(prefix="qbp_hamlib_")
         dest = os.path.join(dest_dir, os.path.basename(source) or "operator.h5")
         with open(dest, "wb") as out:
             out.write(data)

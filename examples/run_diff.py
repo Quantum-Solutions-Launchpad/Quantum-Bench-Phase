@@ -1,5 +1,5 @@
 import os
-import quaph
+import qbp
 
 MODEL   = "haldane"
 LATTICE = (2, 2)
@@ -14,7 +14,7 @@ _LOG = os.path.join(
 
 # Diff plots between all method pairs are produced alongside the normal plot
 # when diff=True. Reload a prior run and re-plot with diffs enabled:
-quaph.load_result(_LOG).plot(
+qbp.load_result(_LOG).plot(
     diff=True,
     diff_format="3d",       # bar_2d | 3d | heatmap
     output_path=os.path.join(_HERE, "plots/diff.pdf"),

@@ -1,6 +1,6 @@
 import os
-import quaph
-from quaph import Method
+import qbp
+from qbp import Method
 
 MODEL = "hubbard"
 LATTICE = (1, 2)
@@ -21,10 +21,10 @@ _PLOT = os.path.join(_HERE, "plots", MODEL, "real-hardware-n_occ-vs-U.pdf")
 
 if os.path.exists(_LOG):
     print("Plotting from existing log...")
-    result = quaph.load_result(_LOG)
+    result = qbp.load_result(_LOG)
     result.plot()
 else:
-    result = quaph.run(
+    result = qbp.run(
         model=MODEL,
         method=METHODS,
         backend=BACKEND,

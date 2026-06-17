@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from matplotlib.colors import LinearSegmentedColormap, Normalize, TwoSlopeNorm
 
-from quaph._plotting import (
+from qbp._plotting import (
     _apply_rcparams,
     _save_and_show,
     _format_momentum_ticks,
 )
-from quaph._interactive import attach_hover, lock_camera_azimuth
+from qbp._interactive import attach_hover, lock_camera_azimuth
 
 
 def _diff_cmap_and_norm(Z: np.ndarray):

@@ -5,8 +5,8 @@ from __future__ import annotations
 import numpy as np
 from scipy.sparse.linalg import eigsh as _sparse_eigsh
 
-from quaph._core import _fmt_params, logger
-from quaph._method import Method, SimulationMethod, register_method
+from qbp._core import _fmt_params, logger
+from qbp._method import Method, SimulationMethod, register_method
 
 
 # --------------------------------------------------------------------- solvers

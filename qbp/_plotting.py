@@ -12,7 +12,7 @@ from matplotlib.legend_handler import HandlerBase
 from matplotlib.image import BboxImage
 from matplotlib.transforms import Bbox, TransformedBbox
 
-from quaph._interactive import attach_hover, lock_camera_azimuth
+from qbp._interactive import attach_hover, lock_camera_azimuth
 
 
 def _format_momentum_ticks(ax, axis, vals):

@@ -1,7 +1,7 @@
 import math
 import os
 
-import quaph
+import qbp
 
 
 MODEL = "haldane"
@@ -11,7 +11,7 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _PLOT_DIR = os.path.join(_HERE, "plots", MODEL, "6x6")
 
 
-quaph.plot_edge_spectrum(
+qbp.plot_edge_spectrum(
     model=MODEL,
     lattice=LATTICE,
     boundary="hard_wall",

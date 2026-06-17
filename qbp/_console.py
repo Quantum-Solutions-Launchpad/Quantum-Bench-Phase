@@ -7,8 +7,8 @@ from pathlib import Path
 
 import yaml
 
-from quaph._registry import _MODELS, register_model_from_file, remove_model
-from quaph._yaml_model import (
+from qbp._registry import _MODELS, register_model_from_file, remove_model
+from qbp._yaml_model import (
     _QISKIT_ANSATZES,
     _QISKIT_MAPPERS,
     _QISKIT_OPTIMIZERS,
@@ -18,21 +18,22 @@ from quaph._yaml_model import (
 )
 
 
-_BANNER = r"""
-                                           ,-.----.
-    ,----..                                \    /  \    ,---,
-   /   /   \                               |   :    \ ,--.' |
-  /   .     :            ,--,              |   |  .\ :|  |  :
- .   /   ;.  \         ,'_ /|              .   :  |: |:  :  :
-.   ;   /  ` ;    .--. |  | :    ,--.--.   |   |   \ ::  |  |,--.
-;   |  ; \ ; |  ,'_ /| :  . |   /       \  |   : .   /|  :  '   |
-|   :  | ; | '  |  ' | |  . .  .--.  .-. | ;   | |`-' |  |   /' :
-.   |  ' ' ' :  |  | ' |  | |   \__\/: . . |   | ;    '  :  | | |
-'   ;  \; /  |  :  | : ;  ; |   ," .--.; | :   ' |    |  |  ' | :
- \   \  ',  . \ '  :  `--'   \ /  /  ,.  | :   : :    |  :  :_:,'
-  ;   :      ; |:  ,      .-./;  :   .'   \|   | :    |  | ,'
-   \   \ .'`--"  `--`----'    |  ,     .-./`---'.|    `--''
-    `---`                      `--`---'      `---`
+_BANNER = r"""                        
+                  ..                  
+            . uW8"                    
+            `t888        .d``         
+    .u@u     8888   .    @8Ne.   .u   
+ .zWF8888bx  9888.z88N   %8888:u@88N  
+.888  9888   9888  888E   `888I  888. 
+I888  9888   9888  888E    888I  888I 
+I888  9888   9888  888E    888I  888I 
+I888  9888   9888  888E  uW888L  888' 
+`888Nx?888  .8888  888" '*88888Nu88P  
+ "88" '888   `%888*%"   ~ '88888F`    
+       88E      "`         888 ^      
+       98>                 *8E        
+       '8                  '8>        
+        `                   "                                 
 """
 
 _HELP = """\
@@ -67,16 +68,16 @@ Commands:
 """
 
 
-def _quaph_version() -> str:
+def _qbp_version() -> str:
     from importlib.metadata import PackageNotFoundError, version
     try:
-        return version("quaph")
+        return version("qbp")
     except PackageNotFoundError:
         return "0.0.0"
 
 
 def _print_banner() -> None:
-    version = _quaph_version()
+    version = _qbp_version()
     tagline = f'v{version} — type "help" if you don\'t know what to do.'
     if not sys.stdout.isatty():
         print(_BANNER)
@@ -160,7 +161,7 @@ def _handle_line(line: str) -> bool:
         elif head == "remove":
             _remove_walkthrough(argv[1:])
         else:
-            from quaph._cli import main as cli_main
+            from qbp._cli import main as cli_main
             try:
                 cli_main(argv)
             except SystemExit:
@@ -190,7 +191,7 @@ def _list_command(args: list[str]) -> None:
         if not model_name:
             print("usage: list observables --model NAME")
             return
-        from quaph._registry import get_model
+        from qbp._registry import get_model
         try:
             model = get_model(model_name)
         except ValueError as e:
@@ -457,7 +458,7 @@ def _prompt_spin_channels(spin: int) -> list[str] | None:
 
 def _register_walkthrough() -> None:
     print("\n--- Register a custom model ---")
-    print("This walkthrough writes a YAML file under quaph/models/.")
+    print("This walkthrough writes a YAML file under qbp/models/.")
     print("Type 'skip' to omit any optional field.\n")
 
     while True:
@@ -604,7 +605,7 @@ def _register_walkthrough() -> None:
         return
 
     with tempfile.NamedTemporaryFile(
-        "w", suffix=".yaml", delete=False, prefix=f"quaph_{name}_"
+        "w", suffix=".yaml", delete=False, prefix=f"qbp_{name}_"
     ) as tmp:
         tmp.write(yaml_text)
         tmp_path = Path(tmp.name)

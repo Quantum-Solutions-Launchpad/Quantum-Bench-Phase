@@ -1,7 +1,7 @@
 import math
 import os
 
-import quaph
+import qbp
 
 
 MODEL = "haldane"
@@ -20,7 +20,7 @@ PARAMS = {
 
 
 # Phase 2: scalar soft confinement wall inside a larger hard-wall flake.
-quaph.plot_real_space_state_density(
+qbp.plot_real_space_state_density(
     model=MODEL,
     lattice=PARENT_LATTICE,
     boundary="hard_wall",
@@ -33,7 +33,7 @@ quaph.plot_real_space_state_density(
     hide_plot=True,
 )
 
-quaph.plot_edge_spectrum(
+qbp.plot_edge_spectrum(
     model=MODEL,
     lattice=PARENT_LATTICE,
     boundary="hard_wall",
@@ -52,7 +52,7 @@ quaph.plot_edge_spectrum(
 TOPOLOGICAL_INTERFACE_PARAMS = dict(PARAMS)
 TOPOLOGICAL_INTERFACE_PARAMS["M"] = 0.0
 
-quaph.plot_real_space_state_density(
+qbp.plot_real_space_state_density(
     model=MODEL,
     lattice=PARENT_LATTICE,
     boundary="hard_wall",
@@ -66,7 +66,7 @@ quaph.plot_real_space_state_density(
     hide_plot=True,
 )
 
-quaph.plot_edge_spectrum(
+qbp.plot_edge_spectrum(
     model=MODEL,
     lattice=PARENT_LATTICE,
     boundary="hard_wall",

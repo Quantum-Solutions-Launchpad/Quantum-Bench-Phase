@@ -3,12 +3,12 @@ from __future__ import annotations
 import argparse
 import sys
 
-from quaph._registry import get_model, register_model_from_file, remove_model
-from quaph._run import run, load_result
-from quaph._realspace import plot_real_space_state_density
-from quaph._edge import plot_edge_spectrum
-from quaph._method import Method, METHOD_ORDER, get_method_class
-from quaph._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS, _INITIAL_STATES
+from qbp._registry import get_model, register_model_from_file, remove_model
+from qbp._run import run, load_result
+from qbp._realspace import plot_real_space_state_density
+from qbp._edge import plot_edge_spectrum
+from qbp._method import Method, METHOD_ORDER, get_method_class
+from qbp._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS, _INITIAL_STATES
 
 
 def _model_param_names(model) -> list[str]:
@@ -181,7 +181,7 @@ def _add_operator_args(parser):
 
 
 def _parse_cli_kwargs(pairs):
-    from quaph._console import _coerce_kwarg_value
+    from qbp._console import _coerce_kwarg_value
     out = {}
     for item in (pairs or []):
         if "=" not in item:
@@ -312,12 +312,12 @@ def main(argv=None):
         argv = sys.argv[1:]
 
     if not argv:
-        from quaph._console import run_console
+        from qbp._console import run_console
         return run_console()
 
     if argv[0] == "register":
         if len(argv) == 1:
-            from quaph._console import run_console
+            from qbp._console import run_console
             return run_console(initial_command="register")
         if len(argv) == 3 and argv[1] == "--from":
             try:
@@ -327,12 +327,12 @@ def main(argv=None):
                 return 1
             print(f"Registered '{model.name}'.")
             return 0
-        print("usage: quaph register | quaph register --from <path.yaml>", file=sys.stderr)
+        print("usage: qbp register | qbp register --from <path.yaml>", file=sys.stderr)
         return 2
 
     if argv[0] == "remove":
         if len(argv) != 2:
-            print("usage: quaph remove <model-name>", file=sys.stderr)
+            print("usage: qbp remove <model-name>", file=sys.stderr)
             return 2
         try:
             remove_model(argv[1])
@@ -346,7 +346,7 @@ def main(argv=None):
     pre.add_argument("--model", default=None)
     pre_args, _ = pre.parse_known_args(argv)
 
-    parser = argparse.ArgumentParser(prog="quaph")
+    parser = argparse.ArgumentParser(prog="qbp")
     sub = parser.add_subparsers(dest="command", required=True)
 
     list_parser = sub.add_parser("list", help="List available models or observables")
@@ -451,7 +451,7 @@ def main(argv=None):
 
     if args.command == "list":
         if args.target == "models":
-            from quaph._registry import _MODELS
+            from qbp._registry import _MODELS
             if not _MODELS:
                 print("(no models registered)")
             else:

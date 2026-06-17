@@ -10,11 +10,11 @@ from qiskit.circuit.library import PauliEvolutionGate
 from qiskit.synthesis import SuzukiTrotter
 from qiskit.quantum_info import SparsePauliOp
 
-from quaph._backend import make_iqpe_sampler
-from quaph._core import (
+from qbp._backend import make_iqpe_sampler
+from qbp._core import (
     _fmt_params, _hf_initial_state, _make_simulator, _uniform_initial, logger,
 )
-from quaph._method import Method, ParamSpec, SimulationMethod, register_method
+from qbp._method import Method, ParamSpec, SimulationMethod, register_method
 
 
 # --------------------------------------------------------------------- solvers
@@ -272,7 +272,7 @@ class IQPEMethod(SimulationMethod):
 
     # ------------------------------------------------------------------- operator
     def compute_operator_cell(self, op, *, extremum, backend, label, observable: str = "E"):
-        from quaph._yaml_model import InitialStateSpec, build_initial_state_factory
+        from qbp._yaml_model import InitialStateSpec, build_initial_state_factory
         spec = (
             InitialStateSpec.model_validate(self.initial_state) if self.initial_state
             else InitialStateSpec(type="uniform")

@@ -1,7 +1,7 @@
 import math
 import os
 
-import quaph
+import qbp
 
 
 MODEL = "haldane"
@@ -10,7 +10,7 @@ LATTICE = (3, 3)
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
 
-quaph.run_analytic(
+qbp.run_analytic(
     model=MODEL,
     lattice=LATTICE,
     boundary="hard_wall",

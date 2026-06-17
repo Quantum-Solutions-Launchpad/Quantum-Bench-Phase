@@ -11,7 +11,7 @@ STEP=$(python3 -c "import math; print(math.pi/50)")
 NEG_PI=$(python3 -c "import math; print(-math.pi)")
 PHI=$(python3 -c "import math; print(math.pi/2)")
 
-quaph run \
+qbp run \
     --model "$MODEL" \
     --method analytic \
     --x-param "$X_PARAM" \
@@ -23,7 +23,7 @@ quaph run \
     --plot-path "$HERE/plots/$MODEL/band-structure-heatmap.pdf" \
     --heatmap
 
-quaph run \
+qbp run \
     --model "$MODEL" \
     --method analytic \
     --x-param "$X_PARAM" \

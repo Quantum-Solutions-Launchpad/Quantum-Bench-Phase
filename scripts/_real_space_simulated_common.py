@@ -14,8 +14,8 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
-from quaph._core import analytic, iqpe, iqpe_other_benchmarks, setup_logging, vqe, vqe_other_benchmarks
-from quaph._registry import get_model
+from qbp._core import analytic, iqpe, iqpe_other_benchmarks, setup_logging, vqe, vqe_other_benchmarks
+from qbp._registry import get_model
 
 
 def _model_param_names(model):
@@ -218,7 +218,7 @@ def main(simulation_tag, backend=None, argv=None):
             raise RuntimeError("Missing results before aggregation: " + ", ".join(missing[:20]))
 
     def jobs_per_shard():
-        value = os.environ.get("QUAPH_JOBS_PER_SHARD") or "1"
+        value = os.environ.get("QBP_JOBS_PER_SHARD") or "1"
         try:
             return max(1, int(value))
         except ValueError:

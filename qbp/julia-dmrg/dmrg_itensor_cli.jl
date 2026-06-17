@@ -211,7 +211,7 @@ function main()
 
     link_dims = collect_link_dims(dmrg_result.psi)
     output = Dict(
-        "format" => "quaph_itensor_dmrg_result_v1",
+        "format" => "qbp_itensor_dmrg_result_v1",
         "model" => spec["model"],
         "lattice" => spec["lattice"],
         "spin" => spin,
