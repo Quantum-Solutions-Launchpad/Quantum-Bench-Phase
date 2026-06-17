@@ -16,13 +16,11 @@ from qbp._run import (
     load_result,
     RunResult,
 )
-from qbp._realspace import (
-    plot_real_space_state_density,
+from qbp._real_space import (
     real_space_positions,
     RealSpaceStateResult,
 )
 from qbp._edge import (
-    plot_edge_spectrum,
     edge_mask_from_missing_bonds,
     edge_participation_all,
     inverse_participation_ratio_all,
@@ -35,9 +33,10 @@ from qbp._geometry import (
 )
 from qbp._profiles import (
     soft_dot_potential,
-    radial_mass_values,
     apply_profiles_to_hamiltonian,
 )
+from qbp._investigation import Investigation, build_investigation
+from qbp._semenoff_mass import SemenoffMass, radial_mass_values
 
 __all__ = [
     "Model",
@@ -53,10 +52,8 @@ __all__ = [
     "run",
     "load_result",
     "RunResult",
-    "plot_real_space_state_density",
     "real_space_positions",
     "RealSpaceStateResult",
-    "plot_edge_spectrum",
     "edge_mask_from_missing_bonds",
     "edge_participation_all",
     "inverse_participation_ratio_all",
@@ -65,6 +62,9 @@ __all__ = [
     "apply_geometry_to_hamiltonian",
     "GeometryProjection",
     "soft_dot_potential",
-    "radial_mass_values",
     "apply_profiles_to_hamiltonian",
+    "Investigation",
+    "build_investigation",
+    "SemenoffMass",
+    "radial_mass_values",
 ]

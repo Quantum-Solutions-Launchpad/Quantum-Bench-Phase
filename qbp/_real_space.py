@@ -8,6 +8,7 @@ import numpy as np
 
 from qbp._model import Model
 from qbp._registry import get_model as _get_model
+from qbp._boundary import _normalize_boundary, _with_boundary
 
 
 @dataclass
@@ -48,46 +49,6 @@ def _resolve_lattice(model: Model, lattice) -> tuple[int, ...]:
     if any(x < 1 for x in lat):
         raise ValueError(f"lattice entries must be >= 1; got {lat}.")
     return lat
-
-
-def _normalize_boundary(boundary: str | None) -> str:
-    if boundary is None:
-        return "periodic"
-    mode = str(boundary).strip().lower().replace("-", "_").replace(" ", "_")
-    aliases = {
-        "pbc": "periodic",
-        "periodic_boundary": "periodic",
-        "periodic_boundary_condition": "periodic",
-        "open": "hard_wall",
-        "obc": "hard_wall",
-        "hardwall": "hard_wall",
-        "hard_wall_boundary": "hard_wall",
-        "hard_wall_boundary_condition": "hard_wall",
-    }
-    mode = aliases.get(mode, mode)
-    if mode not in ("periodic", "hard_wall"):
-        raise ValueError(
-            f"unsupported boundary mode {boundary!r}; expected 'periodic' or 'hard_wall'."
-        )
-    return mode
-
-
-def _with_boundary(params: dict | None, boundary: str | None) -> dict:
-    out = dict(params or {})
-    requested = _normalize_boundary(boundary)
-    existing_key = "boundary" if "boundary" in out else "boundary_condition" if "boundary_condition" in out else None
-    if existing_key is not None:
-        existing = _normalize_boundary(out[existing_key])
-        if requested != "periodic" and existing != requested:
-            raise ValueError(
-                f"conflicting boundary settings: boundary={requested!r}, "
-                f"model_params[{existing_key!r}]={existing!r}."
-            )
-        out.pop("boundary_condition", None)
-        out["boundary"] = existing
-    elif requested != "periodic":
-        out["boundary"] = requested
-    return out
 
 
 def _flat_cell_index(cell_idx: tuple[int, ...], lattice: tuple[int, ...]) -> int:
@@ -200,12 +161,18 @@ def _plot_density_2d(
     density: np.ndarray,
     bonds,
     *,
-    title: str,
     output_path=None,
     hide_plot: bool = False,
     show_bonds: bool = True,
 ):
     import matplotlib.pyplot as plt
+    from matplotlib.colors import LinearSegmentedColormap
+    from qbp._plotting import _apply_rcparams
+
+    _apply_rcparams()
+    cmap_obj = LinearSegmentedColormap.from_list(
+        "magma_dark", plt.cm.magma(np.linspace(0.05, 0.82, 256))
+    )
 
     fig, ax = plt.subplots(figsize=(8.5, 7.0))
     max_strength = max((b[2] for b in bonds), default=1.0)
@@ -216,12 +183,11 @@ def _plot_density_2d(
 
     vmax = float(density.max()) if density.size else 1.0
     sizes = 45.0 + 520.0 * density / vmax if vmax > 0.0 else np.full_like(density, 45.0)
-    sc = ax.scatter(xy[:, 0], xy[:, 1], c=density, s=sizes, cmap="viridis", edgecolors="#202020", linewidths=0.35)
+    sc = ax.scatter(xy[:, 0], xy[:, 1], c=density, s=sizes, cmap=cmap_obj, edgecolors="#202020", linewidths=0.35)
     cbar = fig.colorbar(sc, ax=ax, pad=0.02, fraction=0.045)
-    cbar.set_label(r"$|\psi_i|^2$")
-    ax.set_title(title)
-    ax.set_xlabel("x")
-    ax.set_ylabel("y")
+    cbar.set_label(r"$|\psi_i|^2$", labelpad=10)
+    ax.set_xlabel(r"$L_x$", labelpad=8)
+    ax.set_ylabel(r"$L_y$", labelpad=8)
     ax.set_aspect("equal", adjustable="box")
     ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.45)
     fig.tight_layout()
@@ -233,14 +199,20 @@ def _plot_density_3d(
     density: np.ndarray,
     bonds,
     *,
-    title: str,
     output_path=None,
     hide_plot: bool = False,
     show_bonds: bool = True,
 ):
     import matplotlib.pyplot as plt
+    from matplotlib.colors import LinearSegmentedColormap
+    from qbp._plotting import _apply_rcparams
 
-    fig = plt.figure(figsize=(10.5, 8.0))
+    _apply_rcparams()
+    cmap_obj = LinearSegmentedColormap.from_list(
+        "magma_dark", plt.cm.magma(np.linspace(0.05, 0.82, 256))
+    )
+
+    fig = plt.figure(figsize=(10, 7.5))
     ax = fig.add_subplot(111, projection="3d")
 
     max_strength = max((b[2] for b in bonds), default=1.0)
@@ -265,18 +237,17 @@ def _plot_density_3d(
         xy[:, 0], xy[:, 1], density,
         c=density,
         s=sizes,
-        cmap="viridis",
+        cmap=cmap_obj,
         edgecolors="#202020",
         linewidths=0.25,
         depthshade=True,
     )
     cbar = fig.colorbar(sc, ax=ax, pad=0.08, fraction=0.04)
-    cbar.set_label(r"$|\psi_i|^2$")
+    cbar.set_label(r"$|\psi_i|^2$", labelpad=10)
 
-    ax.set_title(title, pad=18)
-    ax.set_xlabel("x", labelpad=8)
-    ax.set_ylabel("y", labelpad=8)
-    ax.set_zlabel(r"$|\psi_i|^2$", labelpad=8)
+    ax.set_xlabel(r"$L_x$", labelpad=12)
+    ax.set_ylabel(r"$L_y$", labelpad=12)
+    ax.set_zlabel(r"$|\psi_i|^2$", labelpad=10)
     ax.set_zlim(0.0, max(vmax * 1.15, 1e-12))
     ax.view_init(elev=28, azim=-55)
     ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.4)
@@ -297,12 +268,7 @@ def plot_real_space_state_density(
     potential_radius: float | None = None,
     potential_v0: float | None = None,
     potential_xi: float | None = None,
-    mass_profile: str | None = None,
-    mass_radius: float | None = None,
-    mass_inner: float | None = None,
-    mass_outer: float | None = None,
-    mass_xi: float | None = None,
-    profile_center=None,
+    investigation=None,
     state_index: int | None = None,
     n_occ: int | None = None,
     view: str = "2d",
@@ -328,7 +294,7 @@ def plot_real_space_state_density(
         center=center,
     )
     H = apply_geometry_to_hamiltonian(H, projection)
-    from qbp._profiles import apply_profiles_to_hamiltonian, normalize_mass_profile, normalize_potential_profile
+    from qbp._profiles import apply_profiles_to_hamiltonian
     H = apply_profiles_to_hamiltonian(
         H,
         model,
@@ -338,13 +304,11 @@ def plot_real_space_state_density(
         potential_radius=potential_radius,
         potential_v0=potential_v0,
         potential_xi=potential_xi,
-        mass_profile=mass_profile,
-        mass_radius=mass_radius,
-        mass_inner=mass_inner,
-        mass_outer=mass_outer,
-        mass_xi=mass_xi,
-        profile_center=profile_center,
+        center=center,
     )
+    if investigation is not None:
+        investigation.check_model(model)
+        H = investigation.apply(H, model, projection, params)
     eigvals, eigvecs = np.linalg.eigh(H)
     k = _choose_state(eigvals, state_index, n_occ)
 
@@ -352,22 +316,15 @@ def plot_real_space_state_density(
     density = _site_density(eigvecs[:, k], model.spin)
     bonds = _extract_bonds(H, model.spin, max_bonds=max_bonds)
 
-    title = (
-        f"{model.display_name} real-space eigenstate density | "
-        f"{projection.geometry} | {boundary_mode.replace('_', '-')} | "
-        f"V={normalize_potential_profile(potential_profile)} | "
-        f"M={normalize_mass_profile(mass_profile)} | "
-        f"state={k} | E={eigvals[k]:+.6f}"
-    )
     view_mode = str(view).strip().lower()
     if view_mode in ("3d", "three_d", "surface"):
         fig = _plot_density_3d(
-            xy, density, bonds, title=title, output_path=output_path,
+            xy, density, bonds, output_path=output_path,
             hide_plot=hide_plot, show_bonds=show_bonds,
         )
     elif view_mode in ("2d", "planar", "flat"):
         fig = _plot_density_2d(
-            xy, density, bonds, title=title, output_path=output_path,
+            xy, density, bonds, output_path=output_path,
             hide_plot=hide_plot, show_bonds=show_bonds,
         )
     else:

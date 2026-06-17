@@ -21,11 +21,13 @@ from qbp._hamlib import (
 from qbp._geometry import apply_geometry_to_hamiltonian, geometry_projection, normalize_geometry
 from qbp._plotting import plot_analytic, plot_simulated
 from qbp._profiles import apply_profiles_to_hamiltonian, profile_metadata
+from qbp._boundary import _normalize_boundary, _with_boundary, _resolve_boundary
 from qbp._diff import _diff_3d, _diff_heatmap, _diff_bar_2d
 from qbp._registry import get_model as _get_model
 from qbp._method import (
     Method, METHOD_ORDER, CellContext, build_method, get_method_class,
 )
+from qbp._investigation import build_investigation
 
 
 # Marker styling for non-surface comparison series (VQE/IQPE handled natively by
@@ -124,44 +126,56 @@ def _safe_observable_label(model_name, observable: str) -> str:
         return "$E$"
 
 
-def _normalize_boundary(boundary: str | None) -> str:
-    if boundary is None:
-        return "periodic"
-    mode = str(boundary).strip().lower().replace("-", "_").replace(" ", "_")
-    aliases = {
-        "pbc": "periodic",
-        "periodic_boundary": "periodic",
-        "periodic_boundary_condition": "periodic",
-        "open": "hard_wall",
-        "obc": "hard_wall",
-        "hardwall": "hard_wall",
-        "hard_wall_boundary": "hard_wall",
-        "hard_wall_boundary_condition": "hard_wall",
-    }
-    mode = aliases.get(mode, mode)
-    if mode not in ("periodic", "hard_wall"):
+# Real-space diagnostics select a whole plot type (not a sweep scalar), so they
+# live on a dedicated `plot` axis rather than on `observable`.
+_PLOT_KIND_ALIASES = {
+    "energy": "energy",
+    "sweep": "energy",
+    "real_space_density": "real_space_density",
+    "real_space": "real_space_density",
+    "density": "real_space_density",
+    "state_density": "real_space_density",
+    "edge_spectrum": "edge_spectrum",
+    "edge": "edge_spectrum",
+}
+
+
+def _normalize_plot_kind(plot: str | None) -> str:
+    if plot is None:
+        return "energy"
+    key = str(plot).strip().lower().replace("-", "_").replace(" ", "_")
+    kind = _PLOT_KIND_ALIASES.get(key)
+    if kind is None:
         raise ValueError(
-            f"unsupported boundary mode {boundary!r}; expected 'periodic' or 'hard_wall'."
+            f"unsupported plot kind {plot!r}; expected 'energy', "
+            f"'real_space_density', or 'edge_spectrum'."
         )
-    return mode
+    return kind
 
 
-def _with_boundary(params: dict | None, boundary: str | None) -> dict:
-    out = dict(params or {})
-    requested = _normalize_boundary(boundary)
-    existing_key = "boundary" if "boundary" in out else "boundary_condition" if "boundary_condition" in out else None
-    if existing_key is not None:
-        existing = _normalize_boundary(out[existing_key])
-        if requested != "periodic" and existing != requested:
+_SPECTRAL_AXES = ("eigenstate",)
+
+
+def _diagnostic_kind_from_axes(model, x_param, y_param) -> str:
+    axes = [a for a in (x_param, y_param) if a is not None]
+    spatial_names = set(model.lattice_shape)
+    spatial = [a for a in axes if a in spatial_names]
+    spectral = [a for a in axes if a in _SPECTRAL_AXES]
+    if not spatial and not spectral:
+        return "energy"
+    if spectral:
+        if len(axes) != 1:
             raise ValueError(
-                f"conflicting boundary settings: boundary={requested!r}, "
-                f"model_params[{existing_key!r}]={existing!r}."
+                "'eigenstate' is a standalone edge-spectrum axis and cannot be paired "
+                "with another sweep axis."
             )
-        out.pop("boundary_condition", None)
-        out["boundary"] = existing
-    elif requested != "periodic":
-        out["boundary"] = requested
-    return out
+        return "edge_spectrum"
+    if len(axes) != len(spatial):
+        raise ValueError(
+            f"real-space axes {sorted(spatial_names)} cannot be combined with non-spatial "
+            f"sweep axes."
+        )
+    return "real_space_density"
 
 
 def _serialize_model_params(params: dict) -> dict:
@@ -174,7 +188,8 @@ def _serialize_model_params(params: dict) -> dict:
     return serial
 
 
-def _analytic_projected_cell(model, lattice, n_occ, model_params, observable, projection, profile_kwargs):
+def _analytic_projected_cell(model, lattice, n_occ, model_params, observable, projection,
+                             potential_kwargs, investigation):
     from loguru import logger
     from qbp._core import _fmt_params
 
@@ -185,8 +200,10 @@ def _analytic_projected_cell(model, lattice, n_occ, model_params, observable, pr
         model,
         projection,
         model_params,
-        **profile_kwargs,
+        **potential_kwargs,
     )
+    if investigation is not None:
+        H = investigation.apply(H, model, projection, model_params)
     eigvals, eigvecs = np.linalg.eigh(H)
     obs = model.get_observable(observable)
     result = float(obs.analytic(model, lattice, H, eigvals, eigvecs, n_occ, model_params))
@@ -263,12 +280,18 @@ class RunResult:
     log_path: str | None = None
     raw_log_path: str | None = None
     plot_path: str | None = None
+    plot_kind: str = "energy"
+    diagnostic: object = field(default=None, repr=False)
     raw: dict = field(default_factory=dict, repr=False)
     _model_params: dict = field(default_factory=dict, repr=False)
+    _replot: object = field(default=None, repr=False)
 
     def plot(self, *, hide_plot: bool = False, output_path=None,
             hide_legend: bool = False, diff: bool = False,
             diff_format: str = "3d"):
+        if self._replot is not None:
+            self.diagnostic = self._replot(output_path=output_path, hide_plot=hide_plot)
+            return self.diagnostic.figure
         result = _plot_run_result(
             self, output_path=output_path, hide_plot=hide_plot, hide_legend=hide_legend,
         )
@@ -506,19 +529,9 @@ def run(
     method_params: dict | None = None,
     lattice=None,
     boundary: str | None = None,
-    geometry: str | None = None,
-    radius: float | None = None,
-    center=None,
-    potential_profile: str | None = None,
-    potential_radius: float | None = None,
-    potential_v0: float | None = None,
-    potential_xi: float | None = None,
-    mass_profile: str | None = None,
-    mass_radius: float | None = None,
-    mass_inner: float | None = None,
-    mass_outer: float | None = None,
-    mass_xi: float | None = None,
-    profile_center=None,
+    boundary_params: dict | None = None,
+    investigation=None,
+    investigation_params: dict | None = None,
     x_param: str | None = None,
     x_range=None,
     y_param: str | None = None,
@@ -556,8 +569,53 @@ def run(
     ``log_path`` / ``plot_path`` are the exact JSON / PDF files to write (both the
     containing directory and the file name are chosen by the caller); parent
     directories are created as needed. Either may be ``None`` to skip that output.
+
+    ``boundary`` selects ``'periodic'`` or ``'open'``; ``boundary_params`` is the
+    open-boundary parameter dict (``geometry``/``radius``/``center`` and the
+    ``potential_*`` soft-dot knobs), paired with ``boundary`` the same way
+    ``model_params`` is paired with ``model``. Periodic boundaries take no
+    parameters.
+
+    ``investigation`` selects a model-specific physics study (an
+    :class:`~qbp._investigation.Investigation` instance or registered name, e.g.
+    ``"semenoff_mass"``); ``investigation_params`` supplies its parameters when
+    selecting by name. It is paired with ``investigation`` the same way
+    ``method_params`` is paired with ``method``, and applies to real-space
+    analytic runs and diagnostics only.
+
+    The sweep axes select the kind of figure, just as momentum axes (``kx``/``ky``)
+    select a band-structure run. The model's real-space lattice axes (``Lx``/``Ly``)
+    render a single-particle real-space eigenstate-density map, and ``eigenstate``
+    renders an edge-participation spectrum. Both are exact-diagonalization
+    diagnostics of one Hamiltonian (``method=Method.ANALYTIC``); the boundary
+    condition, open-boundary geometry/potential and the selected investigation all
+    apply.
     """
     methods = _normalize_methods(method)
+    boundary, bparams = _resolve_boundary(boundary, boundary_params)
+    investigation = build_investigation(investigation, investigation_params)
+    geometry = bparams["geometry"]
+    radius = bparams["radius"]
+    center = bparams["center"]
+    potential_profile = bparams["potential_profile"]
+    potential_radius = bparams["potential_radius"]
+    potential_v0 = bparams["potential_v0"]
+    potential_xi = bparams["potential_xi"]
+
+    if model is not None and qubit_operator is None:
+        diagnostic_model = _resolve_model(model)
+        diagnostic_kind = _diagnostic_kind_from_axes(diagnostic_model, x_param, y_param)
+        if diagnostic_kind != "energy":
+            return _run_diagnostic(
+                diagnostic_kind, diagnostic_model, methods,
+                lattice=lattice, boundary=boundary, geometry=geometry,
+                radius=radius, center=center, n_occ=n_occ, model_params=model_params,
+                potential_profile=potential_profile, potential_radius=potential_radius,
+                potential_v0=potential_v0, potential_xi=potential_xi,
+                investigation=investigation,
+                plot_path=plot_path, hide_plot=hide_plot,
+            )
+
     method_objs = _build_method_objects(methods, method_params)
     backend = resolve_backend(backend)
     backend_label = _backend_label(backend)
@@ -585,9 +643,7 @@ def run(
         boundary=boundary, geometry=geometry, radius=radius, center=center,
         potential_profile=potential_profile, potential_radius=potential_radius,
         potential_v0=potential_v0, potential_xi=potential_xi,
-        mass_profile=mass_profile, mass_radius=mass_radius,
-        mass_inner=mass_inner, mass_outer=mass_outer, mass_xi=mass_xi,
-        profile_center=profile_center,
+        investigation=investigation,
         observable=observable, log_path=log_path, plot_path=plot_path,
         hide_plot=hide_plot, hide_legend=hide_legend, heatmap=heatmap,
         diff=diff, diff_format=diff_format,
@@ -597,13 +653,57 @@ def run(
     )
 
 
+# --------------------------------------------------------- real-space diagnostics
+def _run_diagnostic(
+    plot_kind, model, methods, *,
+    lattice, boundary, geometry, radius, center, n_occ, model_params,
+    potential_profile, potential_radius, potential_v0, potential_xi,
+    investigation,
+    plot_path, hide_plot,
+):
+    if methods != [Method.ANALYTIC]:
+        raise ValueError(
+            f"the '{plot_kind}' diagnostic is a single-particle exact-diagonalization "
+            f"plot; use method=Method.ANALYTIC."
+        )
+    lat = _resolve_lattice(model, lattice)
+    common = dict(
+        model=model, lattice=lat, model_params=model_params, boundary=boundary,
+        geometry=geometry, radius=radius, center=center,
+        potential_profile=potential_profile, potential_radius=potential_radius,
+        potential_v0=potential_v0, potential_xi=potential_xi,
+        investigation=investigation,
+    )
+    if plot_kind == "real_space_density":
+        from qbp._real_space import plot_real_space_state_density as _diag_fn
+        common["n_occ"] = n_occ
+        shape = tuple(model.lattice_shape)
+        x_param = shape[0]
+        y_param = shape[1] if len(shape) > 1 else None
+    else:
+        from qbp._edge import plot_edge_spectrum as _diag_fn
+        x_param, y_param = "eigenstate", None
+
+    def _replot(*, output_path, hide_plot):
+        return _diag_fn(output_path=output_path, hide_plot=hide_plot, **common)
+
+    diagnostic = _replot(output_path=plot_path, hide_plot=hide_plot)
+    return RunResult(
+        model_name=model.name, lattice=lat, x_param=x_param, y_param=y_param,
+        x_values=[], y_values=[], methods=["analytic"], grids={},
+        plot_format=plot_kind, observable="E", backend_label="ideal",
+        plot_path=plot_path, plot_kind=plot_kind, diagnostic=diagnostic,
+        _model_params=dict(model_params or {}), _replot=_replot,
+    )
+
+
 # --------------------------------------------------------------- model dispatch
 def _run_model_methods(
     model, methods, method_objs, backend, backend_label,
     *, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
     boundary, geometry, radius, center,
     potential_profile, potential_radius, potential_v0, potential_xi,
-    mass_profile, mass_radius, mass_inner, mass_outer, mass_xi, profile_center,
+    investigation,
     observable, log_path, plot_path, hide_plot, hide_legend, heatmap,
     diff, diff_format,
     task_index, task_count, prepare_only, aggregate_only, no_progress_log,
@@ -613,6 +713,8 @@ def _run_model_methods(
     model = _resolve_model(model)
     _ = model._build_H_matrix
     _ = model.get_observable(observable)
+    if investigation is not None:
+        investigation.check_model(model)
 
     x_param, x_range, y_param, y_range, is_1d = _normalize_sweep_axes(
         x_param, x_range, y_param, y_range
@@ -625,23 +727,20 @@ def _run_model_methods(
 
     params = _with_boundary(model_params, boundary)
     geometry_mode = normalize_geometry(geometry)
-    profile_kwargs = dict(
+    potential_kwargs = dict(
         potential_profile=potential_profile,
         potential_radius=potential_radius,
         potential_v0=potential_v0,
         potential_xi=potential_xi,
-        mass_profile=mass_profile,
-        mass_radius=mass_radius,
-        mass_inner=mass_inner,
-        mass_outer=mass_outer,
-        mass_xi=mass_xi,
-        profile_center=profile_center,
+        center=center,
     )
-    profile_info = profile_metadata(**profile_kwargs)
-    has_profiles = (
-        profile_info["potential_profile"] != "none"
-        or profile_info["mass_profile"] != "none"
+    profile_info = profile_metadata(
+        potential_profile=potential_profile,
+        potential_radius=potential_radius,
+        potential_v0=potential_v0,
+        potential_xi=potential_xi,
     )
+    has_profiles = (profile_info["potential_profile"] != "none") or (investigation is not None)
 
     is_band_structure_run = _is_band_structure_axes(model, x_param, y_param)
     if is_band_structure_run:
@@ -650,9 +749,9 @@ def _run_model_methods(
         if geometry_mode != "rectangle":
             raise ValueError("disk geometry is only supported for real-space lattice runs, not momentum-space band-structure runs.")
         if _normalize_boundary(params.get("boundary")) != "periodic":
-            raise ValueError("hard-wall boundary is only supported for real-space lattice runs, not momentum-space band-structure runs.")
+            raise ValueError("open boundary is only supported for real-space lattice runs, not momentum-space band-structure runs.")
         if has_profiles:
-            raise ValueError("radial potential/mass profiles are only supported for real-space lattice runs.")
+            raise ValueError("open-boundary potential profiles and investigations are only supported for real-space lattice runs.")
         for m in methods:
             if not method_objs[m].SUPPORTS_BAND_STRUCTURE:
                 raise ValueError(
@@ -780,7 +879,8 @@ def _run_model_methods(
                 cp,
                 observable,
                 projection,
-                profile_kwargs,
+                potential_kwargs,
+                investigation,
             )
             return {"value": value}
         ctx.mapper = model.get_mapper(n_sites, spin, n_occ_val)
@@ -852,6 +952,7 @@ def _run_model_methods(
                 "radius": radius,
                 "center": list(center) if center is not None else None,
                 **profile_info,
+                "investigation": investigation.metadata() if investigation is not None else None,
                 "model_params": _serialize_model_params(params),
                 "method_params": method_params_summary,
             },
@@ -990,6 +1091,7 @@ def _run_model_methods(
             "radius": radius,
             "center": list(center) if center is not None else None,
             **profile_info,
+            "investigation": investigation.metadata() if investigation is not None else None,
             "model_params": _serialize_model_params(params),
             "method_params": method_params_summary,
         },

@@ -18,6 +18,10 @@ def _isa(op, circ):
     return op.apply_layout(circ.layout) if circ.layout is not None else op
 
 
+def _isa(op, circ):
+    return op.apply_layout(circ.layout) if circ.layout is not None else op
+
+
 # --------------------------------------------------------------------- solvers
 def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend=None) -> QuantumCircuit:
     simulator = _make_simulator(backend)

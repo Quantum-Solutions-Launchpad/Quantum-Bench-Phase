@@ -2,6 +2,7 @@ import math
 import os
 
 import qbp
+from qbp import Method
 
 
 MODEL = "haldane"
@@ -19,20 +20,26 @@ PARAMS = {
 }
 
 
-qbp.plot_real_space_state_density(
+qbp.run(
     model=MODEL,
+    method=Method.ANALYTIC,
     lattice=LATTICE,
+    x_param="Lx",
+    y_param="Ly",
     model_params=PARAMS,
     boundary="periodic",
-    output_path=os.path.join(_PLOT_DIR, "real-space-density-periodic-2d.pdf"),
+    plot_path=os.path.join(_PLOT_DIR, "real-space-density-periodic-2d.pdf"),
     hide_plot=True,
 )
 
-qbp.plot_real_space_state_density(
+qbp.run(
     model=MODEL,
+    method=Method.ANALYTIC,
     lattice=LATTICE,
+    x_param="Lx",
+    y_param="Ly",
     model_params=PARAMS,
-    boundary="hard_wall",
-    output_path=os.path.join(_PLOT_DIR, "real-space-density-hard-wall-2d.pdf"),
+    boundary="open",
+    plot_path=os.path.join(_PLOT_DIR, "real-space-density-hard-wall-2d.pdf"),
     hide_plot=True,
 )
