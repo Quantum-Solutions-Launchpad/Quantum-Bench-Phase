@@ -4,9 +4,10 @@ import argparse
 import sys
 
 from quaph._registry import get_model, register_model_from_file, remove_model
-from quaph._run import run_analytic, run_simulated_ideal, run_simulated_noisy
+from quaph._run import run, load_result
 from quaph._realspace import plot_real_space_state_density
 from quaph._edge import plot_edge_spectrum
+from quaph._method import Method, METHOD_ORDER, get_method_class
 from quaph._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS, _INITIAL_STATES
 
 
@@ -21,10 +22,6 @@ def _add_model_params(parser, model):
             f"--{name}", type=float, default=None, metavar=name.upper(),
             help=f"Value for model parameter {name} (required unless it is the active sweep axis)",
         )
-
-
-def _resolve_sweep_axes(args) -> tuple[str | None, str | None]:
-    return args.x_param, args.y_param
 
 
 def _collect_model_params(args, model, x_param, y_param) -> dict:
@@ -69,12 +66,27 @@ def _validate_range(name, rng):
 
 
 def _add_output_args(parser):
-    parser.add_argument("--log-dir", default=None, metavar="PATH",
-                        help="Directory for log JSON files (model/<lattice-tag>/ appended)")
-    parser.add_argument("--plot-dir", default=None, metavar="PATH",
-                        help="Directory for plot PDF files (model/<lattice-tag>/ appended)")
-    parser.add_argument("--hide-plot", dest="hide_plot",
-                        action="store_true", default=False)
+    parser.add_argument("--log-path", default=None, metavar="FILE",
+                        help="JSON file to write the run log to")
+    parser.add_argument("--plot-path", default=None, metavar="FILE",
+                        help="PDF file to write the plot to")
+    parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
+    parser.add_argument("--hide-legend", action="store_true", default=False)
+
+
+def _add_boundary_args(parser):
+    parser.add_argument("--boundary", choices=["periodic", "hard-wall", "hard_wall", "open"],
+                        default="periodic",
+                        help="Real-space boundary condition for finite-lattice model runs (default: periodic).")
+
+
+def _add_geometry_args(parser):
+    parser.add_argument("--geometry", choices=["rectangle", "disk"], default="rectangle",
+                        help="Finite real-space domain shape inside the parent lattice (default: rectangle).")
+    parser.add_argument("--radius", type=float, default=None,
+                        help="Disk radius; required when --geometry disk.")
+    parser.add_argument("--center", type=float, nargs=2, default=None, metavar=("X", "Y"),
+                        help="Disk center in real-space coordinates. Defaults to the parent lattice center.")
 
 
 def _add_profile_args(parser):
@@ -100,63 +112,72 @@ def _add_profile_args(parser):
                         help="Center for radial potential/mass profiles. Defaults to active geometry center.")
 
 
-def _add_sim_required(parser):
-    parser.add_argument("--vqe-iters", type=int, default=None, metavar="N")
-    parser.add_argument("--vqe-layers", type=int, default=None, metavar="N")
-    parser.add_argument("--iqpe-time", type=float, default=None, metavar="F")
-    parser.add_argument("--iqpe-trot", type=int, default=None, metavar="N")
-    parser.add_argument("--iqpe-iters", type=int, default=None, metavar="N")
+def _add_distribution_args(parser):
+    parser.add_argument("--task-index", type=int, default=None, metavar="N")
+    parser.add_argument("--task-count", type=int, default=1, metavar="N")
+    parser.add_argument("--prepare-only", action="store_true", default=False)
+    parser.add_argument("--aggregate-only", action="store_true", default=False)
+    parser.add_argument("--no-progress-log", action="store_true", default=False)
 
 
-def _add_sim_optional(parser):
-    parser.add_argument("--vqe-reps", type=int, default=None, metavar="N")
-    parser.add_argument("--iqpe-reps", type=int, default=None, metavar="N")
-    parser.add_argument("--hide-legend", action="store_true", default=False)
+def _add_method_param_flags(parser):
+    """Auto-generate --<method>-<param> flags from each method's PARAM_SPECS."""
+    for m in METHOD_ORDER:
+        cls = get_method_class(m)
+        for spec in cls.PARAM_SPECS:
+            if not spec.cli:
+                continue
+            flag = f"--{m.value}-{spec.name.replace('_', '-')}"
+            dest = f"{m.value}_{spec.name}"
+            if spec.is_flag:
+                parser.add_argument(flag, dest=dest, default=None,
+                                    action=argparse.BooleanOptionalAction, help=spec.help)
+            else:
+                parser.add_argument(flag, dest=dest, type=spec.type, default=None,
+                                    metavar=spec.metavar or spec.name.upper(),
+                                    choices=spec.choices, help=spec.help)
 
 
-def _add_operator_args(parser, *, simulated):
-    parser.add_argument("--qubit-operator", dest="qubit_operator", default=None, metavar="SOURCE",
-                        help="HamLib HDF5 source: a local .h5/.hdf5 file, a local .zip archive "
-                             "containing one, or an http(s) URL to either (e.g. a HamLib library "
-                             ".zip link). Choose the sweep axes with --x-param/--y-param naming key "
-                             "tokens (e.g. --x-param h --y-param Lx) and narrow multi-family sources "
-                             "to one family with --select; with no axes it sweeps every key by "
-                             "instance index.")
+def _add_operator_dict_flags(parser):
+    """Bespoke flags for the dict-valued VQE/IQPE operator-path parameters."""
+    parser.add_argument("--vqe-ansatz", default=None, choices=list(_QISKIT_ANSATZES),
+                        help="VQE ansatz type for the --qubit-operator path (default: efficient_su2).")
+    parser.add_argument("--vqe-ansatz-kwarg", dest="vqe_ansatz_kwarg", action="append", default=None,
+                        metavar="KEY=VALUE",
+                        help="Ansatz kwarg; repeatable. Values may be numbers or @n_layers bindings.")
+    parser.add_argument("--vqe-ansatz-prefix", dest="vqe_ansatz_prefix",
+                        choices=["hartree_fock", "none"], default="none",
+                        help="Initial-state prefix for the ansatz (default: none).")
+    parser.add_argument("--vqe-optimizer", default=None, choices=list(_QISKIT_OPTIMIZERS),
+                        help="Classical optimizer for the --qubit-operator path (default: SPSA).")
+    parser.add_argument("--vqe-optimizer-kwarg", dest="vqe_optimizer_kwarg", action="append", default=None,
+                        metavar="KEY=VALUE", help="Optimizer kwarg; repeatable, e.g. maxiter=@max_iters.")
+    parser.add_argument("--iqpe-initial-state", dest="iqpe_initial_state", default=None,
+                        choices=list(_INITIAL_STATES),
+                        help="Initial state type for IQPE (default: uniform for operator path).")
+    parser.add_argument("--iqpe-initial-vqe-ansatz", dest="iqpe_initial_vqe_ansatz", default=None,
+                        choices=list(_QISKIT_ANSATZES),
+                        help="VQE ansatz for vqe_informed initial state (default: efficient_su2).")
+    parser.add_argument("--iqpe-initial-vqe-ansatz-kwarg", dest="iqpe_initial_vqe_ansatz_kwarg",
+                        action="append", default=None, metavar="KEY=VALUE",
+                        help="Ansatz kwarg for vqe_informed initial state; repeatable.")
+    parser.add_argument("--iqpe-initial-vqe-n-layers", dest="iqpe_initial_vqe_n_layers", type=int,
+                        default=None, metavar="N",
+                        help="Ansatz layers for vqe_informed initial state (default: 1).")
+    parser.add_argument("--iqpe-initial-vqe-max-iters", dest="iqpe_initial_vqe_max_iters", type=int,
+                        default=None, metavar="N",
+                        help="VQE iterations for vqe_informed initial state (default: 100).")
+
+
+def _add_operator_args(parser):
+    parser.add_argument("--qubit-operator", dest="qubit_operator", default=None,
+                        nargs="+", metavar="SOURCE",
+                        help="One or more HamLib HDF5 sources (local files, zip archives, or URLs).")
     parser.add_argument("--extremum", choices=["min", "max"], default="min",
                         help="Target eigenvalue for the --qubit-operator path (default: min).")
     parser.add_argument("--select", dest="select", action="append", default=None, metavar="TERMS",
                         help="Comma-separated key-segment filters to narrow the source to one "
-                             "Hamiltonian family before sweeping (repeatable, AND semantics). "
-                             "Terms match whole '-'/'_'-delimited segments, e.g. "
-                             "--select 1D,grid,pbc or a token pin like --select Ly-105.")
-    if simulated:
-        parser.add_argument("--ansatz", default=None, choices=list(_QISKIT_ANSATZES),
-                            help="VQE ansatz type for the --qubit-operator path (default: efficient_su2).")
-        parser.add_argument("--ansatz-kwarg", dest="ansatz_kwarg", action="append", default=None,
-                            metavar="KEY=VALUE",
-                            help="Ansatz kwarg; repeatable. Values may be numbers or runtime bindings like @n_layers.")
-        parser.add_argument("--ansatz-prefix", dest="ansatz_prefix", choices=["hartree_fock", "none"],
-                            default="none", help="Initial-state prefix for the ansatz (default: none).")
-        parser.add_argument("--optimizer", default=None, choices=list(_QISKIT_OPTIMIZERS),
-                            help="Classical optimizer for the --qubit-operator path (default: SPSA).")
-        parser.add_argument("--optimizer-kwarg", dest="optimizer_kwarg", action="append", default=None,
-                            metavar="KEY=VALUE",
-                            help="Optimizer kwarg; repeatable, e.g. maxiter=@max_iters.")
-        parser.add_argument("--iqpe-initial-state", dest="iqpe_initial_state", default=None,
-                            choices=list(_INITIAL_STATES),
-                            help="Initial state type for IQPE (default: uniform for operator path).")
-        parser.add_argument("--iqpe-initial-vqe-ansatz", dest="iqpe_initial_vqe_ansatz", default=None,
-                            choices=list(_QISKIT_ANSATZES),
-                            help="VQE ansatz for vqe_informed initial state (default: efficient_su2).")
-        parser.add_argument("--iqpe-initial-vqe-ansatz-kwarg", dest="iqpe_initial_vqe_ansatz_kwarg",
-                            action="append", default=None, metavar="KEY=VALUE",
-                            help="Ansatz kwarg for vqe_informed initial state; repeatable.")
-        parser.add_argument("--iqpe-initial-vqe-n-layers", dest="iqpe_initial_vqe_n_layers", type=int,
-                            default=None, metavar="N",
-                            help="Ansatz layers for vqe_informed initial state (default: 1).")
-        parser.add_argument("--iqpe-initial-vqe-max-iters", dest="iqpe_initial_vqe_max_iters", type=int,
-                            default=None, metavar="N",
-                            help="VQE iterations for vqe_informed initial state (default: 100).")
+                             "Hamiltonian family before sweeping (repeatable, AND semantics).")
 
 
 def _parse_cli_kwargs(pairs):
@@ -171,19 +192,19 @@ def _parse_cli_kwargs(pairs):
 
 
 def _ansatz_dict(args):
-    if getattr(args, "ansatz", None) is None:
+    if getattr(args, "vqe_ansatz", None) is None:
         return None
     return {
-        "type": args.ansatz,
-        "kwargs": _parse_cli_kwargs(args.ansatz_kwarg),
-        "initial_state_prefix": args.ansatz_prefix,
+        "type": args.vqe_ansatz,
+        "kwargs": _parse_cli_kwargs(args.vqe_ansatz_kwarg),
+        "initial_state_prefix": args.vqe_ansatz_prefix,
     }
 
 
 def _optimizer_dict(args):
-    if getattr(args, "optimizer", None) is None:
+    if getattr(args, "vqe_optimizer", None) is None:
         return None
-    return {"type": args.optimizer, "kwargs": _parse_cli_kwargs(args.optimizer_kwarg)}
+    return {"type": args.vqe_optimizer, "kwargs": _parse_cli_kwargs(args.vqe_optimizer_kwarg)}
 
 
 def _iqpe_initial_state_dict(args):
@@ -204,52 +225,72 @@ def _iqpe_initial_state_dict(args):
     return d
 
 
-def _dispatch_analytic_operator(args):
-    run_analytic(
-        qubit_operator=args.qubit_operator,
-        extremum=args.extremum,
-        select=args.select,
-        x_param=args.x_param,
-        x_range=args.x_range,
-        y_param=args.y_param,
-        y_range=args.y_range,
-        heatmap=args.heatmap,
-        log_dir=args.log_dir,
-        plot_dir=args.plot_dir,
-        hide_plot=args.hide_plot,
-    )
+def _collect_method_params(args, methods):
+    method_params: dict = {}
+    for m in methods:
+        cls = get_method_class(m)
+        params: dict = {}
+        for spec in cls.PARAM_SPECS:
+            if not spec.cli:
+                continue
+            val = getattr(args, f"{m.value}_{spec.name}", None)
+            if val is not None:
+                params[spec.name] = val
+        if m == Method.VQE:
+            ansatz = _ansatz_dict(args)
+            optimizer = _optimizer_dict(args)
+            if ansatz is not None:
+                params["ansatz"] = ansatz
+            if optimizer is not None:
+                params["optimizer"] = optimizer
+        if m == Method.IQPE:
+            initial = _iqpe_initial_state_dict(args)
+            if initial is not None:
+                params["initial_state"] = initial
+        method_params[m] = params
+    return method_params
 
 
-def _dispatch_simulated_operator(run_fn, args):
-    run_fn(
-        qubit_operator=args.qubit_operator,
-        extremum=args.extremum,
-        select=args.select,
-        x_param=args.x_param,
-        x_range=args.x_range,
-        y_param=y_param,
-        y_range=args.y_range,
-        ansatz=_ansatz_dict(args),
-        optimizer=_optimizer_dict(args),
-        iqpe_initial_state=_iqpe_initial_state_dict(args),
-        vqe_iters=args.vqe_iters,
-        vqe_layers=args.vqe_layers,
-        vqe_reps=args.vqe_reps,
-        iqpe_time=args.iqpe_time,
-        iqpe_trot=args.iqpe_trot,
-        iqpe_iters=args.iqpe_iters,
-        iqpe_reps=args.iqpe_reps,
-        log_dir=args.log_dir,
-        plot_dir=args.plot_dir,
-        hide_plot=args.hide_plot,
-        hide_legend=args.hide_legend,
-    )
+def _resolve_backend(args):
+    if getattr(args, "noisy", False) and getattr(args, "backend", None):
+        raise ValueError("--noisy and --backend are mutually exclusive.")
+    name = getattr(args, "backend", None)
+    if name:
+        from qiskit_ibm_runtime import fake_provider
+        try:
+            return getattr(fake_provider, name)()
+        except AttributeError:
+            raise ValueError(f"Unknown fake backend '{name}'.")
+    if getattr(args, "noisy", False):
+        from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
+        return FakeSherbrooke()
+    return None
 
 
-def _dispatch_analytic(args, model):
-    x_param, y_param = _resolve_sweep_axes(args)
-    run_analytic(
-        model,
+def _dispatch_run(args):
+    methods = [Method.coerce(m) for m in args.method]
+    method_params = _collect_method_params(args, methods)
+    backend = _resolve_backend(args)
+
+    if args.qubit_operator is not None:
+        if args.model:
+            raise ValueError("--model and --qubit-operator are mutually exclusive.")
+        run(
+            method=methods, method_params=method_params, backend=backend,
+            qubit_operator=args.qubit_operator, extremum=args.extremum, select=args.select,
+            x_param=args.x_param, x_range=args.x_range,
+            y_param=args.y_param, y_range=args.y_range,
+            log_path=args.log_path, plot_path=args.plot_path,
+            hide_plot=args.hide_plot, hide_legend=args.hide_legend, heatmap=args.heatmap,
+            diff=args.diff, diff_format=args.diff_format,
+        )
+        return
+
+    if not args.model:
+        raise ValueError("one of --model or --qubit-operator is required")
+    model = get_model(args.model)
+    run(
+        model, method=methods, method_params=method_params, backend=backend,
         lattice=tuple(args.lattice) if args.lattice else None,
         boundary=args.boundary,
         geometry=args.geometry,
@@ -265,69 +306,16 @@ def _dispatch_analytic(args, model):
         mass_outer=args.mass_outer,
         mass_xi=args.mass_xi,
         profile_center=args.profile_center,
-        x_param=x_param,
-        x_range=args.x_range,
-        y_param=y_param,
-        y_range=args.y_range,
-        n_occ=args.n_occ,
-        model_params=_collect_model_params(args, model, x_param, y_param),
+        x_param=args.x_param, x_range=args.x_range,
+        y_param=args.y_param, y_range=args.y_range, n_occ=args.n_occ,
+        model_params=_collect_model_params(args, model, args.x_param, args.y_param),
         observable=args.observable,
-        log_dir=args.log_dir,
-        plot_dir=args.plot_dir,
-        hide_plot=args.hide_plot,
-        heatmap=args.heatmap,
-    )
-
-
-def _dispatch_simulated_ideal(args, model):
-    x_param, y_param = _resolve_sweep_axes(args)
-    run_simulated_ideal(
-        model,
-        lattice=tuple(args.lattice) if args.lattice else None,
-        boundary=args.boundary,
-        x_param=x_param,
-        x_range=args.x_range,
-        y_param=y_param,
-        y_range=args.y_range,
-        n_occ=args.n_occ,
-        model_params=_collect_model_params(args, model, x_param, y_param),
-        vqe_iters=args.vqe_iters,
-        vqe_layers=args.vqe_layers,
-        vqe_reps=args.vqe_reps,
-        iqpe_time=args.iqpe_time,
-        iqpe_trot=args.iqpe_trot,
-        iqpe_iters=args.iqpe_iters,
-        iqpe_reps=args.iqpe_reps,
-        log_dir=args.log_dir,
-        plot_dir=args.plot_dir,
-        hide_plot=args.hide_plot,
-        hide_legend=args.hide_legend,
-    )
-
-
-def _dispatch_simulated_noisy(args, model):
-    x_param, y_param = _resolve_sweep_axes(args)
-    run_simulated_noisy(
-        model,
-        lattice=tuple(args.lattice) if args.lattice else None,
-        boundary=args.boundary,
-        x_param=x_param,
-        x_range=args.x_range,
-        y_param=y_param,
-        y_range=args.y_range,
-        n_occ=args.n_occ,
-        model_params=_collect_model_params(args, model, x_param, y_param),
-        vqe_iters=args.vqe_iters,
-        vqe_layers=args.vqe_layers,
-        vqe_reps=args.vqe_reps,
-        iqpe_time=args.iqpe_time,
-        iqpe_trot=args.iqpe_trot,
-        iqpe_iters=args.iqpe_iters,
-        iqpe_reps=args.iqpe_reps,
-        log_dir=args.log_dir,
-        plot_dir=args.plot_dir,
-        hide_plot=args.hide_plot,
-        hide_legend=args.hide_legend,
+        log_path=args.log_path, plot_path=args.plot_path,
+        hide_plot=args.hide_plot, hide_legend=args.hide_legend, heatmap=args.heatmap,
+        diff=args.diff, diff_format=args.diff_format,
+        task_index=args.task_index, task_count=args.task_count,
+        prepare_only=args.prepare_only, aggregate_only=args.aggregate_only,
+        no_progress_log=args.no_progress_log,
     )
 
 
@@ -339,7 +327,7 @@ def main(argv=None):
         from quaph._console import run_console
         return run_console()
 
-    if argv and argv[0] == "register":
+    if argv[0] == "register":
         if len(argv) == 1:
             from quaph._console import run_console
             return run_console(initial_command="register")
@@ -354,7 +342,7 @@ def main(argv=None):
         print("usage: quaph register | quaph register --from <path.yaml>", file=sys.stderr)
         return 2
 
-    if argv and argv[0] == "remove":
+    if argv[0] == "remove":
         if len(argv) != 2:
             print("usage: quaph remove <model-name>", file=sys.stderr)
             return 2
@@ -367,12 +355,8 @@ def main(argv=None):
 
     pre = argparse.ArgumentParser(add_help=False)
     pre.add_argument("command", nargs="?")
-    pre.add_argument("subcommand", nargs="?")
     pre.add_argument("--model", default=None)
     pre_args, _ = pre.parse_known_args(argv)
-
-    subcommand = pre_args.subcommand
-    model_arg = pre_args.model
 
     parser = argparse.ArgumentParser(prog="quaph")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -387,21 +371,20 @@ def main(argv=None):
     plot_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
     plot_parser.add_argument("--output", default=None, metavar="PATH", help="Output PDF path")
     plot_parser.add_argument("--hide-legend", action="store_true", default=False)
+    plot_parser.add_argument("--diff", action="store_true", default=False,
+                             help="Also produce a difference plot for every pair of methods.")
+    plot_parser.add_argument("--diff-format", dest="diff_format", default="3d",
+                             choices=["3d", "heatmap", "bar_2d"],
+                             help="Plot format for --diff plots (default: 3d).")
 
     plot_state_parser = sub.add_parser("plot-state", help="Plot a real-space eigenstate density")
     plot_state_parser.add_argument("--model", default=None, metavar="MODEL",
                                    help="Registered model name (e.g. haldane, hubbard, haldane-hubbard).")
     plot_state_parser.add_argument("--lattice", type=int, nargs="+", required=True, metavar="N",
                                    help="Lattice extents per dimension (e.g. --lattice 3 3).")
-    plot_state_parser.add_argument("--boundary", choices=["periodic", "hard-wall", "hard_wall", "open"],
-                                   default="periodic",
-                                   help="Real-space boundary condition for the finite-lattice model (default: periodic).")
-    plot_state_parser.add_argument("--geometry", choices=["rectangle", "disk"], default="rectangle",
-                                   help="Finite real-space domain shape inside the parent lattice (default: rectangle).")
-    plot_state_parser.add_argument("--radius", type=float, default=None,
-                                   help="Disk radius; required when --geometry disk.")
-    plot_state_parser.add_argument("--center", type=float, nargs=2, default=None, metavar=("X", "Y"),
-                                   help="Disk center in real-space coordinates. Defaults to the parent lattice center.")
+    _add_boundary_args(plot_state_parser)
+    _add_geometry_args(plot_state_parser)
+    _add_profile_args(plot_state_parser)
     plot_state_parser.add_argument("--state-index", type=int, default=None,
                                    help="Eigenstate index after sorting energies ascending. Defaults to the state closest to E=0.")
     plot_state_parser.add_argument("--n-occ", type=int, default=None,
@@ -415,7 +398,6 @@ def main(argv=None):
                                    help="Hide hopping bonds in the real-space plot.")
     plot_state_parser.add_argument("--max-bonds", type=int, default=3000,
                                    help="Maximum number of bonds to draw (default: 3000).")
-    _add_profile_args(plot_state_parser)
 
     edge_spectrum_parser = sub.add_parser(
         "edge-spectrum",
@@ -425,83 +407,55 @@ def main(argv=None):
                                       help="Registered model name (e.g. haldane, hubbard, haldane-hubbard).")
     edge_spectrum_parser.add_argument("--lattice", type=int, nargs="+", required=True, metavar="N",
                                       help="Lattice extents per dimension (e.g. --lattice 10 10).")
-    edge_spectrum_parser.add_argument("--boundary", choices=["periodic", "hard-wall", "hard_wall", "open"],
-                                      default="hard-wall",
-                                      help="Real-space boundary condition for the finite-lattice model (default: hard-wall).")
-    edge_spectrum_parser.add_argument("--geometry", choices=["rectangle", "disk"], default="rectangle",
-                                      help="Finite real-space domain shape inside the parent lattice (default: rectangle).")
-    edge_spectrum_parser.add_argument("--radius", type=float, default=None,
-                                      help="Disk radius; required when --geometry disk.")
-    edge_spectrum_parser.add_argument("--center", type=float, nargs=2, default=None, metavar=("X", "Y"),
-                                      help="Disk center in real-space coordinates. Defaults to the parent lattice center.")
+    _add_boundary_args(edge_spectrum_parser)
+    edge_spectrum_parser.set_defaults(boundary="hard-wall")
+    _add_geometry_args(edge_spectrum_parser)
+    _add_profile_args(edge_spectrum_parser)
     edge_spectrum_parser.add_argument("--output", default=None, metavar="PATH",
                                       help="Output PDF/image path. Omit to show an interactive window.")
     edge_spectrum_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
-    _add_profile_args(edge_spectrum_parser)
 
-    run_parser = sub.add_parser("run")
-    run_sub = run_parser.add_subparsers(dest="subcommand", required=True)
+    run_parser = sub.add_parser("run", help="Run one or more simulation methods over a sweep")
+    run_parser.add_argument("--model", default=None, metavar="MODEL",
+                            help="Registered model name. Mutually exclusive with --qubit-operator.")
+    run_parser.add_argument("--method", nargs="+", required=True,
+                            choices=[m.value for m in METHOD_ORDER],
+                            help="One or more simulation methods to run.")
+    run_parser.add_argument("--lattice", type=int, nargs="+", default=None, metavar="N",
+                            help="Lattice extents per dimension (omit for band-structure runs).")
+    run_parser.add_argument("--observable", default="E", metavar="NAME",
+                            help="Observable to compute per cell (default: 'E').")
+    run_parser.add_argument("--heatmap", action="store_true", default=False,
+                            help="Render as a 2D heatmap (one method + both sweep axes).")
+    run_parser.add_argument("--diff", action="store_true", default=False,
+                            help="Also produce a difference plot for every pair of methods.")
+    run_parser.add_argument("--diff-format", dest="diff_format", default="3d",
+                            choices=["3d", "heatmap", "bar_2d"],
+                            help="Plot format for --diff plots (default: 3d).")
+    run_parser.add_argument("--noisy", action="store_true", default=False,
+                            help="Use the FakeSherbrooke noise model for VQE/IQPE.")
+    run_parser.add_argument("--backend", default=None, metavar="NAME",
+                            help="Named qiskit fake backend for VQE/IQPE noise (e.g. FakeSherbrooke).")
+    _add_boundary_args(run_parser)
+    _add_geometry_args(run_parser)
+    _add_profile_args(run_parser)
+    _add_sweep_args(run_parser)
+    _add_output_args(run_parser)
+    _add_distribution_args(run_parser)
+    _add_operator_args(run_parser)
+    _add_method_param_flags(run_parser)
+    _add_operator_dict_flags(run_parser)
 
-    analytic_parser = run_sub.add_parser("analytic")
-    sim_ideal_parser = run_sub.add_parser("simulated-ideal")
-    sim_noisy_parser = run_sub.add_parser("simulated-noisy")
-
-    for p in (analytic_parser, sim_ideal_parser, sim_noisy_parser):
-        p.add_argument("--model", default=None, metavar="MODEL",
-                       help="Registered model name (e.g. haldane, hubbard, haldane-hubbard). "
-                            "Mutually exclusive with --qubit-operator.")
-        p.add_argument("--lattice", type=int, nargs="+", default=None, metavar="N",
-                       help="Lattice extents per dimension (e.g. --lattice 3 3 for a 3x3 unit-cell grid). Omit for momentum-space band-structure runs.")
-        p.add_argument("--boundary", choices=["periodic", "hard-wall", "hard_wall", "open"], default="periodic",
-                       help="Real-space boundary condition for finite-lattice model runs (default: periodic).")
-        _add_sweep_args(p)
-        _add_output_args(p)
-
-    _add_operator_args(analytic_parser, simulated=False)
-    for p in (sim_ideal_parser, sim_noisy_parser):
-        _add_operator_args(p, simulated=True)
-
-    analytic_parser.add_argument("--heatmap", action="store_true", default=False,
-                                 help="Render results as a 2D heatmap (requires both x and y sweep axes)")
-    analytic_parser.add_argument("--observable", default="E", metavar="NAME",
-                                 help="Observable to compute per cell (default: 'E'). "
-                                      "Use 'list observables --model NAME' to see what's available.")
-    analytic_parser.add_argument("--geometry", choices=["rectangle", "disk"], default="rectangle",
-                                 help="Finite real-space domain shape inside the parent lattice (default: rectangle).")
-    analytic_parser.add_argument("--radius", type=float, default=None,
-                                 help="Disk radius; required when --geometry disk.")
-    analytic_parser.add_argument("--center", type=float, nargs=2, default=None, metavar=("X", "Y"),
-                                 help="Disk center in real-space coordinates. Defaults to the parent lattice center.")
-    _add_profile_args(analytic_parser)
-
-    for p in (sim_ideal_parser, sim_noisy_parser):
-        _add_sim_required(p)
-        _add_sim_optional(p)
-        p.add_argument("--observable", default="E", metavar="NAME",
-                       help="Observable to compute per cell (default: 'E'). "
-                            "VQE supports any registered observable; IQPE supports only 'E' "
-                            "and energy-based composites.")
-
-    if (
-        (subcommand in ("analytic", "simulated-ideal", "simulated-noisy"))
-        or pre_args.command in ("plot-state", "edge-spectrum")
-    ) and model_arg:
+    if pre_args.command in ("run", "plot-state", "edge-spectrum") and pre_args.model:
         try:
-            model = get_model(model_arg)
+            model = get_model(pre_args.model)
         except ValueError as e:
             parser.error(str(e))
-
-        target = (
-            {
-                "plot-state": plot_state_parser,
-                "edge-spectrum": edge_spectrum_parser,
-            }.get(pre_args.command)
-            or {
-                "analytic": analytic_parser,
-                "simulated-ideal": sim_ideal_parser,
-                "simulated-noisy": sim_noisy_parser,
-            }[subcommand]
-        )
+        target = {
+            "run": run_parser,
+            "plot-state": plot_state_parser,
+            "edge-spectrum": edge_spectrum_parser,
+        }[pre_args.command]
         _add_model_params(target, model)
 
     args = parser.parse_args(argv)
@@ -536,27 +490,17 @@ def main(argv=None):
             return
 
     if args.command == "plot":
-        from quaph._run import load_result
         try:
             result = load_result(args.path)
         except Exception as e:
             parser.error(str(e))
-        kwargs = dict(hide_plot=args.hide_plot, output_path=args.output)
-        if hasattr(result, "vqe_best_energies"):
-            kwargs["hide_legend"] = args.hide_legend
-        result.plot(**kwargs)
+        result.plot(hide_plot=args.hide_plot, output_path=args.output, hide_legend=args.hide_legend,
+                    diff=args.diff, diff_format=args.diff_format)
         return
 
-    if getattr(args, "qubit_operator", None) is not None:
-        if args.model:
-            parser.error("--model and --qubit-operator are mutually exclusive.")
+    if args.command == "run":
         try:
-            if args.subcommand == "analytic":
-                _dispatch_analytic_operator(args)
-            elif args.subcommand == "simulated-ideal":
-                _dispatch_simulated_operator(run_simulated_ideal, args)
-            elif args.subcommand == "simulated-noisy":
-                _dispatch_simulated_operator(run_simulated_noisy, args)
+            _dispatch_run(args)
         except (ValueError, FileNotFoundError, KeyError) as e:
             parser.error(str(e))
         return
@@ -621,11 +565,5 @@ def main(argv=None):
                 output_path=args.output,
                 hide_plot=args.hide_plot,
             )
-        elif args.subcommand == "analytic":
-            _dispatch_analytic(args, model)
-        elif args.subcommand == "simulated-ideal":
-            _dispatch_simulated_ideal(args, model)
-        elif args.subcommand == "simulated-noisy":
-            _dispatch_simulated_noisy(args, model)
     except ValueError as e:
         parser.error(str(e))

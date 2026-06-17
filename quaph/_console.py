@@ -37,21 +37,22 @@ _BANNER = r"""
 
 _HELP = """\
 Commands:
-  run analytic --model NAME --lattice L [L ...] [...]
-  run simulated-ideal --model NAME --lattice L [L ...] [...]
-  run simulated-noisy --model NAME --lattice L [L ...] [...]
+  run --model NAME --method M [M ...] --lattice L [L ...] [...]
+                       Run one or more simulation methods over a parameter sweep.
+                       Methods: analytic, vqe, iqpe, dmrg (choose any combination).
+                       Per-method flags are prefixed, e.g. --vqe-iters 200
+                       --vqe-layers 2 --iqpe-time 0.2 --dmrg-nsweeps 4. Add --noisy
+                       (or --backend NAME) to run vqe/iqpe under a noise model.
     OR
-  run analytic --qubit-operator SOURCE [--extremum min|max] [--x-param T --x-range MIN MAX [STEP]]
-  run simulated-ideal --qubit-operator SOURCE [...]
-  run simulated-noisy --qubit-operator SOURCE [...]
+  run --qubit-operator SOURCE --method M [M ...] [--extremum min|max] [...]
                        Sweep a HamLib HDF5 file's Hamiltonians instead of a
-                       registered model. SOURCE is a local .h5/.hdf5 file, a local
-                       .zip archive containing one, or an http(s) URL to either
-                       (e.g. a HamLib library .zip link). Choose sweep axes with
-                       --x-param/--y-param naming key tokens (e.g. --x-param h
-                       --y-param Lx); a range may omit STEP to use every available
-                       value. Narrow multi-family sources with --select 1D,grid,pbc.
-                       With no axes it sweeps all keys by instance index.
+                       registered model (analytic/vqe/iqpe only). SOURCE is a local
+                       .h5/.hdf5 file, a local .zip archive containing one, or an
+                       http(s) URL to either. Choose sweep axes with --x-param/
+                       --y-param naming key tokens (e.g. --x-param h --y-param Lx);
+                       a range may omit STEP to use every available value. Narrow
+                       multi-family sources with --select 1D,grid,pbc. With no axes
+                       it sweeps all keys by instance index.
   plot PATH
   register             Walk through registering a new custom model (writes YAML)
   register --from PATH Register a model from a YAML file

@@ -10,13 +10,11 @@ from quaph._registry import (
 )
 from quaph._yaml_model import build_tight_binding_model
 from quaph._hamlib import load_hamlib_operator, list_hamlib_keys
+from quaph._method import Method
 from quaph._run import (
-    run_analytic,
-    run_simulated_ideal,
-    run_simulated_noisy,
+    run,
     load_result,
-    AnalyticResult,
-    SimulatedResult,
+    RunResult,
 )
 from quaph._realspace import (
     plot_real_space_state_density,
@@ -51,12 +49,10 @@ __all__ = [
     "remove_model",
     "load_hamlib_operator",
     "list_hamlib_keys",
-    "run_analytic",
-    "run_simulated_ideal",
-    "run_simulated_noisy",
+    "Method",
+    "run",
     "load_result",
-    "AnalyticResult",
-    "SimulatedResult",
+    "RunResult",
     "plot_real_space_state_density",
     "real_space_positions",
     "RealSpaceStateResult",

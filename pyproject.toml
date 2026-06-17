@@ -39,6 +39,7 @@ dependencies = [
     "pyyaml>=6.0",
     "pydantic>=2.0",
     "asteval>=1.0",
+    "scipy>=1.10",
 ]
 
 [project.scripts]
@@ -47,3 +48,6 @@ quaph = "quaph._cli:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["quaph*"]
+
+[tool.setuptools.package-data]
+quaph = ["julia-dmrg/*.jl", "julia-dmrg/*.toml", "models/*.yaml", "models/*.yml"]
