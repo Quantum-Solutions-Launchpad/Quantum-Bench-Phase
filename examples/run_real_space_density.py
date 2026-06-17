@@ -39,7 +39,7 @@ qbp.run(
     x_param="Lx",
     y_param="Ly",
     model_params=PARAMS,
-    boundary="hard_wall",
+    boundary="open",
     plot_path=os.path.join(_PLOT_DIR, "real-space-density-hard-wall-2d.pdf"),
     hide_plot=True,
 )

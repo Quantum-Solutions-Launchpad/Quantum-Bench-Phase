@@ -15,7 +15,7 @@ qbp.run(
     model=MODEL,
     method=Method.ANALYTIC,
     lattice=LATTICE,
-    boundary="hard_wall",
+    boundary="open",
     x_param="n_occ",
     x_range=(0, 6, 1),
     model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 4, "M": 0.0},

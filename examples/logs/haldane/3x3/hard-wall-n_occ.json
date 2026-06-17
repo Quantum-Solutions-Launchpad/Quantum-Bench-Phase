@@ -33,18 +33,13 @@
         "potential_radius": null,
         "potential_v0": null,
         "potential_xi": null,
-        "mass_profile": "none",
-        "mass_radius": null,
-        "mass_inner": null,
-        "mass_outer": null,
-        "mass_xi": null,
-        "profile_center": null,
+        "investigation": null,
         "model_params": {
             "t1": 1.0,
             "t2": 0.1,
             "phi": 0.7853981633974483,
             "M": 0.0,
-            "boundary": "hard_wall"
+            "boundary": "open"
         },
         "method_params": {
             "analytic": {}

@@ -2,7 +2,7 @@ import math
 import os
 
 import qbp
-from qbp import Method
+from qbp import Method, SemenoffMass
 
 
 MODEL = "haldane"
@@ -27,12 +27,14 @@ qbp.run(
     lattice=PARENT_LATTICE,
     x_param="Lx",
     y_param="Ly",
-    boundary="hard_wall",
+    boundary="open",
+    boundary_params={
+        "potential_profile": "soft_dot",
+        "potential_radius": 5.5,
+        "potential_v0": 3.0,
+        "potential_xi": 0.8,
+    },
     model_params=PARAMS,
-    potential_profile="soft_dot",
-    potential_radius=5.5,
-    potential_v0=3.0,
-    potential_xi=0.8,
     plot_path=os.path.join(_PLOT_DIR, "soft-dot-density.pdf"),
     hide_plot=True,
 )
@@ -42,12 +44,14 @@ qbp.run(
     method=Method.ANALYTIC,
     lattice=PARENT_LATTICE,
     x_param="eigenstate",
-    boundary="hard_wall",
+    boundary="open",
+    boundary_params={
+        "potential_profile": "soft_dot",
+        "potential_radius": 5.5,
+        "potential_v0": 3.0,
+        "potential_xi": 0.8,
+    },
     model_params=PARAMS,
-    potential_profile="soft_dot",
-    potential_radius=5.5,
-    potential_v0=3.0,
-    potential_xi=0.8,
     plot_path=os.path.join(_PLOT_DIR, "soft-dot-edge-spectrum.pdf"),
     hide_plot=True,
 )
@@ -64,13 +68,9 @@ qbp.run(
     lattice=PARENT_LATTICE,
     x_param="Lx",
     y_param="Ly",
-    boundary="hard_wall",
+    boundary="open",
     model_params=TOPOLOGICAL_INTERFACE_PARAMS,
-    mass_profile="radial_tanh",
-    mass_radius=5.5,
-    mass_inner=0.2,
-    mass_outer=0.8,
-    mass_xi=0.8,
+    investigation=SemenoffMass(profile="radial_tanh", radius=5.5, inner=0.2, outer=0.8, xi=0.8),
     plot_path=os.path.join(_PLOT_DIR, "topological-interface-density.pdf"),
     hide_plot=True,
 )
@@ -80,13 +80,9 @@ qbp.run(
     method=Method.ANALYTIC,
     lattice=PARENT_LATTICE,
     x_param="eigenstate",
-    boundary="hard_wall",
+    boundary="open",
     model_params=TOPOLOGICAL_INTERFACE_PARAMS,
-    mass_profile="radial_tanh",
-    mass_radius=5.5,
-    mass_inner=0.2,
-    mass_outer=0.8,
-    mass_xi=0.8,
+    investigation=SemenoffMass(profile="radial_tanh", radius=5.5, inner=0.2, outer=0.8, xi=0.8),
     plot_path=os.path.join(_PLOT_DIR, "topological-interface-edge-spectrum.pdf"),
     hide_plot=True,
 )

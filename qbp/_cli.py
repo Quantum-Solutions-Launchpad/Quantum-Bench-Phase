@@ -6,6 +6,7 @@ import sys
 from qbp._registry import get_model, register_model_from_file, remove_model
 from qbp._run import run, load_result
 from qbp._method import Method, METHOD_ORDER, get_method_class
+from qbp._investigation import registered_investigations, get_investigation_class
 from qbp._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS, _INITIAL_STATES
 
 
@@ -46,6 +47,47 @@ def _collect_model_params(args, model, x_param, y_param) -> dict:
     return params
 
 
+def _collect_boundary_params(args) -> dict | None:
+    """Assemble the open-boundary parameter dict from the flat CLI flags.
+
+    Only non-default values are included so a plain periodic run yields ``None``;
+    pairing an open-boundary flag with ``--boundary periodic`` then surfaces as an
+    error in ``run()`` rather than being silently ignored.
+    """
+    bp: dict = {}
+    if args.geometry != "rectangle":
+        bp["geometry"] = args.geometry
+    if args.radius is not None:
+        bp["radius"] = args.radius
+    if args.center is not None:
+        bp["center"] = args.center
+    if args.potential_profile != "none":
+        bp["potential_profile"] = args.potential_profile
+    if args.potential_radius is not None:
+        bp["potential_radius"] = args.potential_radius
+    if args.potential_v0 is not None:
+        bp["potential_v0"] = args.potential_v0
+    if args.potential_xi is not None:
+        bp["potential_xi"] = args.potential_xi
+    return bp or None
+
+
+def _collect_investigation_params(args) -> tuple[str | None, dict | None]:
+    """Resolve --investigation and its --<name>-<param> flags into (name, params)."""
+    name = getattr(args, "investigation", None)
+    if name is None:
+        return None, None
+    cls = get_investigation_class(name)
+    params = {}
+    for spec in cls.PARAM_SPECS:
+        if not spec.cli:
+            continue
+        val = getattr(args, f"{name}_{spec.name}", None)
+        if val is not None:
+            params[spec.name] = val
+    return name, params
+
+
 def _add_sweep_args(parser):
     parser.add_argument("--x-param", default=None, metavar="PARAM",
                         help="Sweep axis. A model/operator parameter or n_occ runs an energy "
@@ -78,7 +120,7 @@ def _add_output_args(parser):
 
 
 def _add_boundary_args(parser):
-    parser.add_argument("--boundary", choices=["periodic", "hard-wall", "hard_wall", "open"],
+    parser.add_argument("--boundary", choices=["periodic", "open"],
                         default="periodic",
                         help="Real-space boundary condition for finite-lattice model runs (default: periodic).")
 
@@ -94,25 +136,35 @@ def _add_geometry_args(parser):
 
 def _add_profile_args(parser):
     parser.add_argument("--potential-profile", choices=["none", "soft-dot", "soft_dot"], default="none",
-                        help="Onsite scalar potential profile (default: none).")
+                        help="Open-boundary onsite scalar potential profile (default: none).")
     parser.add_argument("--potential-radius", type=float, default=None,
                         help="Radius for the soft-dot potential wall.")
     parser.add_argument("--potential-v0", type=float, default=None,
                         help="Outer potential height for the soft-dot profile.")
     parser.add_argument("--potential-xi", type=float, default=None,
                         help="Smoothing length for the soft-dot potential.")
-    parser.add_argument("--mass-profile", choices=["none", "radial-step", "radial_step", "radial-tanh", "radial_tanh"], default="none",
-                        help="Radial A/B Semenoff mass profile for Haldane-like models (default: none).")
-    parser.add_argument("--mass-radius", type=float, default=None,
-                        help="Radius for the radial mass interface.")
-    parser.add_argument("--mass-inner", type=float, default=None,
-                        help="Mass value inside the radial mass interface.")
-    parser.add_argument("--mass-outer", type=float, default=None,
-                        help="Mass value outside the radial mass interface.")
-    parser.add_argument("--mass-xi", type=float, default=None,
-                        help="Smoothing length for radial-tanh mass profiles.")
-    parser.add_argument("--profile-center", type=float, nargs=2, default=None, metavar=("X", "Y"),
-                        help="Center for radial potential/mass profiles. Defaults to active geometry center.")
+
+
+def _add_investigation_args(parser):
+    """`--investigation` selector plus auto-generated --<name>-<param> flags."""
+    investigations = registered_investigations()
+    parser.add_argument("--investigation", choices=sorted(investigations), default=None,
+                        help="Model-specific physics investigation to apply "
+                             "(real-space analytic runs only).")
+    for name, cls in sorted(investigations.items()):
+        prefix = name.replace("_", "-")
+        for spec in cls.PARAM_SPECS:
+            if not spec.cli:
+                continue
+            flag = f"--{prefix}-{spec.name.replace('_', '-')}"
+            dest = f"{name}_{spec.name}"
+            if spec.is_flag:
+                parser.add_argument(flag, dest=dest, default=None,
+                                    action=argparse.BooleanOptionalAction, help=spec.help)
+            else:
+                parser.add_argument(flag, dest=dest, type=spec.type, default=None,
+                                    metavar=spec.metavar or spec.name.upper(),
+                                    choices=spec.choices, help=spec.help)
 
 
 def _add_distribution_args(parser):
@@ -280,23 +332,14 @@ def _dispatch_run(args):
     if not args.model:
         raise ValueError("one of --model or --qubit-operator is required")
     model = get_model(args.model)
+    investigation, investigation_params = _collect_investigation_params(args)
     run(
         model, method=methods, method_params=method_params, backend=backend,
         lattice=tuple(args.lattice) if args.lattice else None,
         boundary=args.boundary,
-        geometry=args.geometry,
-        radius=args.radius,
-        center=args.center,
-        potential_profile=args.potential_profile,
-        potential_radius=args.potential_radius,
-        potential_v0=args.potential_v0,
-        potential_xi=args.potential_xi,
-        mass_profile=args.mass_profile,
-        mass_radius=args.mass_radius,
-        mass_inner=args.mass_inner,
-        mass_outer=args.mass_outer,
-        mass_xi=args.mass_xi,
-        profile_center=args.profile_center,
+        boundary_params=_collect_boundary_params(args),
+        investigation=investigation,
+        investigation_params=investigation_params,
         x_param=args.x_param, x_range=args.x_range,
         y_param=args.y_param, y_range=args.y_range, n_occ=args.n_occ,
         model_params=_collect_model_params(args, model, args.x_param, args.y_param),
@@ -392,6 +435,7 @@ def main(argv=None):
     _add_boundary_args(run_parser)
     _add_geometry_args(run_parser)
     _add_profile_args(run_parser)
+    _add_investigation_args(run_parser)
     _add_sweep_args(run_parser)
     _add_output_args(run_parser)
     _add_distribution_args(run_parser)

@@ -17,7 +17,7 @@ qbp.run(
     method=Method.ANALYTIC,
     lattice=LATTICE,
     x_param="eigenstate",
-    boundary="hard_wall",
+    boundary="open",
     model_params={
         "t1": 1.0,
         "t2": 0.1,

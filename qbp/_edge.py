@@ -6,13 +6,12 @@ from typing import Any
 
 import numpy as np
 
-from qbp._realspace import (
-    _normalize_boundary,
+from qbp._real_space import (
     _resolve_lattice,
     _resolve_model,
     _site_density,
-    _with_boundary,
 )
+from qbp._boundary import _normalize_boundary, _with_boundary
 
 
 @dataclass
@@ -146,7 +145,7 @@ def plot_edge_spectrum(
     lattice,
     *,
     model_params: dict | None = None,
-    boundary: str | None = "hard_wall",
+    boundary: str | None = "open",
     geometry: str | None = None,
     radius: float | None = None,
     center=None,
@@ -154,12 +153,7 @@ def plot_edge_spectrum(
     potential_radius: float | None = None,
     potential_v0: float | None = None,
     potential_xi: float | None = None,
-    mass_profile: str | None = None,
-    mass_radius: float | None = None,
-    mass_inner: float | None = None,
-    mass_outer: float | None = None,
-    mass_xi: float | None = None,
-    profile_center=None,
+    investigation=None,
     output_path=None,
     hide_plot: bool = False,
 ) -> EdgeSpectrumResult:
@@ -195,13 +189,11 @@ def plot_edge_spectrum(
         potential_radius=potential_radius,
         potential_v0=potential_v0,
         potential_xi=potential_xi,
-        mass_profile=mass_profile,
-        mass_radius=mass_radius,
-        mass_inner=mass_inner,
-        mass_outer=mass_outer,
-        mass_xi=mass_xi,
-        profile_center=profile_center,
+        center=center,
     )
+    if investigation is not None:
+        investigation.check_model(model)
+        H = investigation.apply(H, model, projection, params)
 
     if projection.geometry == "rectangle":
         edge_mask = edge_mask_from_missing_bonds(H, H_ref, model.spin)

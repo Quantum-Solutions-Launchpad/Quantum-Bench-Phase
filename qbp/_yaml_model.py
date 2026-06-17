@@ -9,6 +9,7 @@ from asteval import Interpreter
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from qbp._model import Model, Observable, default_energy_observable
+from qbp._boundary import _boundary_mode
 
 
 _QISKIT_OPTIMIZERS = (
@@ -313,29 +314,6 @@ def _iter_cells(lattice: tuple[int, ...]):
             for j in range(lattice[1]):
                 for k in range(lattice[2]):
                     yield (i, j, k)
-
-
-def _boundary_mode(params: dict) -> str:
-    raw = params.get("boundary", params.get("boundary_condition", "periodic"))
-    if raw is None:
-        return "periodic"
-    mode = str(raw).strip().lower().replace("-", "_").replace(" ", "_")
-    aliases = {
-        "pbc": "periodic",
-        "periodic_boundary": "periodic",
-        "periodic_boundary_condition": "periodic",
-        "open": "hard_wall",
-        "obc": "hard_wall",
-        "hardwall": "hard_wall",
-        "hard_wall_boundary": "hard_wall",
-        "hard_wall_boundary_condition": "hard_wall",
-    }
-    mode = aliases.get(mode, mode)
-    if mode not in ("periodic", "hard_wall"):
-        raise ValueError(
-            f"unsupported boundary mode {raw!r}; expected 'periodic' or 'hard_wall'."
-        )
-    return mode
 
 
 def _target_cell(cell: tuple[int, ...], offset: list[int], lattice: tuple[int, ...], boundary: str):

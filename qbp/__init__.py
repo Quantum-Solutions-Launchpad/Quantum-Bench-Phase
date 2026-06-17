@@ -16,7 +16,7 @@ from qbp._run import (
     load_result,
     RunResult,
 )
-from qbp._realspace import (
+from qbp._real_space import (
     real_space_positions,
     RealSpaceStateResult,
 )
@@ -33,9 +33,10 @@ from qbp._geometry import (
 )
 from qbp._profiles import (
     soft_dot_potential,
-    radial_mass_values,
     apply_profiles_to_hamiltonian,
 )
+from qbp._investigation import Investigation, build_investigation
+from qbp._semenoff_mass import SemenoffMass, radial_mass_values
 
 __all__ = [
     "Model",
@@ -61,6 +62,9 @@ __all__ = [
     "apply_geometry_to_hamiltonian",
     "GeometryProjection",
     "soft_dot_potential",
-    "radial_mass_values",
     "apply_profiles_to_hamiltonian",
+    "Investigation",
+    "build_investigation",
+    "SemenoffMass",
+    "radial_mass_values",
 ]

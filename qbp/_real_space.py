@@ -8,6 +8,7 @@ import numpy as np
 
 from qbp._model import Model
 from qbp._registry import get_model as _get_model
+from qbp._boundary import _normalize_boundary, _with_boundary
 
 
 @dataclass
@@ -48,46 +49,6 @@ def _resolve_lattice(model: Model, lattice) -> tuple[int, ...]:
     if any(x < 1 for x in lat):
         raise ValueError(f"lattice entries must be >= 1; got {lat}.")
     return lat
-
-
-def _normalize_boundary(boundary: str | None) -> str:
-    if boundary is None:
-        return "periodic"
-    mode = str(boundary).strip().lower().replace("-", "_").replace(" ", "_")
-    aliases = {
-        "pbc": "periodic",
-        "periodic_boundary": "periodic",
-        "periodic_boundary_condition": "periodic",
-        "open": "hard_wall",
-        "obc": "hard_wall",
-        "hardwall": "hard_wall",
-        "hard_wall_boundary": "hard_wall",
-        "hard_wall_boundary_condition": "hard_wall",
-    }
-    mode = aliases.get(mode, mode)
-    if mode not in ("periodic", "hard_wall"):
-        raise ValueError(
-            f"unsupported boundary mode {boundary!r}; expected 'periodic' or 'hard_wall'."
-        )
-    return mode
-
-
-def _with_boundary(params: dict | None, boundary: str | None) -> dict:
-    out = dict(params or {})
-    requested = _normalize_boundary(boundary)
-    existing_key = "boundary" if "boundary" in out else "boundary_condition" if "boundary_condition" in out else None
-    if existing_key is not None:
-        existing = _normalize_boundary(out[existing_key])
-        if requested != "periodic" and existing != requested:
-            raise ValueError(
-                f"conflicting boundary settings: boundary={requested!r}, "
-                f"model_params[{existing_key!r}]={existing!r}."
-            )
-        out.pop("boundary_condition", None)
-        out["boundary"] = existing
-    elif requested != "periodic":
-        out["boundary"] = requested
-    return out
 
 
 def _flat_cell_index(cell_idx: tuple[int, ...], lattice: tuple[int, ...]) -> int:
@@ -307,12 +268,7 @@ def plot_real_space_state_density(
     potential_radius: float | None = None,
     potential_v0: float | None = None,
     potential_xi: float | None = None,
-    mass_profile: str | None = None,
-    mass_radius: float | None = None,
-    mass_inner: float | None = None,
-    mass_outer: float | None = None,
-    mass_xi: float | None = None,
-    profile_center=None,
+    investigation=None,
     state_index: int | None = None,
     n_occ: int | None = None,
     view: str = "2d",
@@ -348,13 +304,11 @@ def plot_real_space_state_density(
         potential_radius=potential_radius,
         potential_v0=potential_v0,
         potential_xi=potential_xi,
-        mass_profile=mass_profile,
-        mass_radius=mass_radius,
-        mass_inner=mass_inner,
-        mass_outer=mass_outer,
-        mass_xi=mass_xi,
-        profile_center=profile_center,
+        center=center,
     )
+    if investigation is not None:
+        investigation.check_model(model)
+        H = investigation.apply(H, model, projection, params)
     eigvals, eigvecs = np.linalg.eigh(H)
     k = _choose_state(eigvals, state_index, n_occ)
 
