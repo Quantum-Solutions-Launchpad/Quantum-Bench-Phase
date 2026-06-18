@@ -82,8 +82,9 @@ def iqpe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamilt
     return _iqpe_sparse(qubit_hamiltonian, initial, time_param, n_trot, n_iters, rep, backend=backend, label=label)
 
 
-def iqpe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, time_param, n_trot, n_iters, rep, observable, backend=None, get_initial_state_fn=None):
+def iqpe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, time_param, n_trot, n_iters, rep, observable, backend=None, get_initial_state_fn=None, fermionic_hamiltonian_fn=None):
     obs = model.get_observable(observable)
+    fermionic_hamiltonian_fn = fermionic_hamiltonian_fn or model.fermionic_hamiltonian
 
     def sub_eval(sub_n_occ, observable_qubit_ops=None):
         if observable_qubit_ops is not None:
@@ -93,7 +94,7 @@ def iqpe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, 
             )
         energy, _ = iqpe_fermionic(
             lattice, n_sites, spin, sub_n_occ, model_params,
-            model.fermionic_hamiltonian, mapper, time_param, n_trot, n_iters, rep,
+            fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep,
             backend=backend, get_initial_state_fn=get_initial_state_fn,
         )
         return energy
@@ -106,7 +107,7 @@ def iqpe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, 
     if observable == "E":
         return iqpe_fermionic(
             lattice, n_sites, spin, n_occ, model_params,
-            model.fermionic_hamiltonian, mapper, time_param, n_trot, n_iters, rep,
+            fermionic_hamiltonian_fn, mapper, time_param, n_trot, n_iters, rep,
             backend=backend, get_initial_state_fn=get_initial_state_fn,
         )
     raise NotImplementedError(
@@ -217,13 +218,14 @@ class IQPEMethod(SimulationMethod):
     # ----------------------------------------------------------------- real space
     def compute_cell(self, model, lattice, n_occ, cell_params, observable, *,
                      backend, ctx):
+        ferm_fn = ctx.fermionic_hamiltonian_fn or model.fermionic_hamiltonian
         reps = []
         iteration_energies = []
         for rep in range(1, self.reps + 1):
             if observable == "E":
                 energy, iter_energies = iqpe_fermionic(
                     lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
-                    model.fermionic_hamiltonian, ctx.mapper,
+                    ferm_fn, ctx.mapper,
                     self.time, self.trot, self.iters, rep,
                     backend=backend, get_initial_state_fn=model.get_iqpe_initial_state,
                 )
@@ -232,12 +234,13 @@ class IQPEMethod(SimulationMethod):
                     model, lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
                     ctx.mapper, self.time, self.trot, self.iters, rep, observable,
                     backend=backend, get_initial_state_fn=model.get_iqpe_initial_state,
+                    fermionic_hamiltonian_fn=ferm_fn,
                 )
             reps.append(float(energy))
             iteration_energies.append(iter_energies)
         num_queries, (total, two_q) = iqpe_other_benchmarks(
             lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
-            model.fermionic_hamiltonian, ctx.mapper,
+            ferm_fn, ctx.mapper,
             self.time, self.trot, self.iters, self.reps, backend=backend,
         )
         return {

@@ -33,8 +33,10 @@ def _jsonable(value):
     return value
 
 
-def _export_fermionic_op(model: Model, lattice, n_occ: int, model_params: dict, path: str):
-    op = model.fermionic_hamiltonian(lattice, **model_params)
+def _export_fermionic_op(model: Model, lattice, n_occ: int, model_params: dict, path: str,
+                         fermionic_hamiltonian_fn=None):
+    fermionic_hamiltonian_fn = fermionic_hamiltonian_fn or model.fermionic_hamiltonian
+    op = fermionic_hamiltonian_fn(lattice, **model_params)
     terms = []
     for label, coeff in op.items():
         terms.append({"label": label, "coefficient": _complex_payload(coeff)})
@@ -149,7 +151,10 @@ class DMRGMethod(SimulationMethod):
         cell_tag = f"cell-x{ctx.ix}-y{ctx.iy}"
         hamiltonian_path = os.path.join(ctx.tmp_dir, f"{cell_tag}-hamiltonian.json")
         output_path = os.path.join(ctx.raw_dir, f"dmrg-{cell_tag}.json")
-        spec = _export_fermionic_op(model, lattice, n_occ, cell_params, hamiltonian_path)
+        spec = _export_fermionic_op(
+            model, lattice, n_occ, cell_params, hamiltonian_path,
+            fermionic_hamiltonian_fn=ctx.fermionic_hamiltonian_fn,
+        )
         _run_julia_dmrg(
             hamiltonian_path,
             output_path,

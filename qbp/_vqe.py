@@ -99,13 +99,14 @@ def vqe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamilto
     )
 
 
-def vqe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, max_iters, n_layers, rep, observable, backend=None):
+def vqe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, max_iters, n_layers, rep, observable, backend=None, fermionic_hamiltonian_fn=None):
     obs = model.get_observable(observable)
+    fermionic_hamiltonian_fn = fermionic_hamiltonian_fn or model.fermionic_hamiltonian
 
     def sub_eval(sub_n_occ, observable_qubit_ops=None):
         return vqe_fermionic(
             lattice, n_sites, spin, sub_n_occ, model_params,
-            model.fermionic_hamiltonian, model.get_optimizer,
+            fermionic_hamiltonian_fn, model.get_optimizer,
             model.get_vqe_ansatz, mapper, max_iters, n_layers, rep,
             backend=backend, observable_qubit_ops=observable_qubit_ops,
         )
@@ -193,12 +194,13 @@ class VQEMethod(SimulationMethod):
     # ----------------------------------------------------------------- real space
     def compute_cell(self, model, lattice, n_occ, cell_params, observable, *,
                      backend, ctx):
+        ferm_fn = ctx.fermionic_hamiltonian_fn or model.fermionic_hamiltonian
         reps = []
         for rep in range(1, self.reps + 1):
             if observable == "E":
                 energy = vqe_fermionic(
                     lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
-                    model.fermionic_hamiltonian, model.get_optimizer,
+                    ferm_fn, model.get_optimizer,
                     model.get_vqe_ansatz, ctx.mapper, self.iters, self.layers, rep,
                     backend=backend,
                 )
@@ -206,12 +208,12 @@ class VQEMethod(SimulationMethod):
                 energy = vqe_observable(
                     model, lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
                     ctx.mapper, self.iters, self.layers, rep, observable,
-                    backend=backend,
+                    backend=backend, fermionic_hamiltonian_fn=ferm_fn,
                 )
             reps.append(float(energy))
         num_queries, (total, two_q) = vqe_other_benchmarks(
             lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
-            model.fermionic_hamiltonian, model.get_vqe_ansatz, ctx.mapper,
+            ferm_fn, model.get_vqe_ansatz, ctx.mapper,
             self.iters, self.layers, self.reps, backend=backend,
         )
         return {

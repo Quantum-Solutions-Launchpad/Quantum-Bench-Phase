@@ -87,3 +87,39 @@ def apply_geometry_to_hamiltonian(H: np.ndarray, projection: GeometryProjection)
         return H
     idx = np.flatnonzero(projection.orbital_mask)
     return H[np.ix_(idx, idx)]
+
+
+def orbital_index_map(projection: GeometryProjection) -> np.ndarray:
+    mask = projection.orbital_mask
+    mapping = np.full(mask.shape[0], -1, dtype=int)
+    mapping[np.flatnonzero(mask)] = np.arange(int(mask.sum()))
+    return mapping
+
+
+def project_fermionic_op(op, projection: GeometryProjection | None):
+    if projection is None or projection.geometry == "rectangle":
+        return op
+    from qiskit_nature.second_q.operators import FermionicOp
+
+    mapping = orbital_index_map(projection)
+    n_active = int(projection.orbital_mask.sum())
+    new_terms: dict[str, complex] = {}
+    for label, coeff in op.items():
+        if not label:
+            new_terms[label] = new_terms.get(label, 0j) + coeff
+            continue
+        tokens = label.split()
+        translated = []
+        drop = False
+        for token in tokens:
+            action, idx = token.split("_")
+            j = mapping[int(idx)]
+            if j < 0:
+                drop = True
+                break
+            translated.append(f"{action}_{j}")
+        if drop:
+            continue
+        new_label = " ".join(translated)
+        new_terms[new_label] = new_terms.get(new_label, 0j) + coeff
+    return FermionicOp(new_terms, num_spin_orbitals=n_active)

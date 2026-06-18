@@ -847,15 +847,17 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
 
     def _mb_result_cached(model, lattice, n_occ, params):
         """Returns (eigvals, ground_state_vec_in_sector, sector_mask)."""
-        key = (tuple(lattice), int(n_occ), tuple(sorted(params.items())))
+        ferm_fn = getattr(model, "_analytic_fermionic_fn", None) or model.fermionic_hamiltonian
+        proj_sig = getattr(model, "_analytic_projection_sig", None)
+        key = (tuple(lattice), int(n_occ), tuple(sorted(params.items())), proj_sig)
         cache = getattr(model, "_mb_cache", None)
         if cache is None:
             cache = {}
             model._mb_cache = cache
         if key in cache:
             return cache[key]
-        n_sites = math.prod(lattice) * model.sites_per_cell
-        fermionic_op = model.fermionic_hamiltonian(lattice, **params)
+        fermionic_op = ferm_fn(lattice, **params)
+        n_sites = fermionic_op.num_spin_orbitals // model.spin
         mapper = model.get_mapper(n_sites, model.spin, n_occ)
         qubit_op = mapper.map(fermionic_op)
         H_mb = qubit_op.to_matrix()
