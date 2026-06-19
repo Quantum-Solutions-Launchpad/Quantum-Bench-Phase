@@ -11,14 +11,19 @@ from dataclasses import dataclass, field
 import numpy as np
 from joblib import Parallel, delayed
 
-from qbp._model import Model, ModelCapabilityError
+from qbp._model import Model, ModelCapabilityError, matrix_to_fermionic_op
 from qbp._backend import resolve_backend, backend_label as _backend_label
 from qbp._core import resolve_sweep
 from qbp._hamlib import (
     list_hamlib_keys, load_hamlib_operator, parse_key_params,
     collect_keys_multi,
 )
-from qbp._geometry import apply_geometry_to_hamiltonian, geometry_projection, normalize_geometry
+from qbp._geometry import (
+    apply_geometry_to_hamiltonian,
+    geometry_projection,
+    normalize_geometry,
+    project_fermionic_op,
+)
 from qbp._plotting import plot_analytic, plot_simulated
 from qbp._profiles import apply_profiles_to_hamiltonian, profile_metadata
 from qbp._boundary import _normalize_boundary, _with_boundary, _resolve_boundary
@@ -188,25 +193,42 @@ def _serialize_model_params(params: dict) -> dict:
     return serial
 
 
+def _build_modified_H(model, lattice, model_params, projection, potential_kwargs, investigation):
+    H = apply_geometry_to_hamiltonian(model._build_H_matrix(lattice, **model_params), projection)
+    H = apply_profiles_to_hamiltonian(H, model, projection, model_params, **potential_kwargs)
+    if investigation is not None:
+        H = investigation.apply(H, model, projection, model_params)
+    return H
+
+
+def _modified_fermionic_fn(model, projection, potential_kwargs, investigation):
+    def _build(lattice, **params):
+        H = _build_modified_H(model, lattice, params, projection, potential_kwargs, investigation)
+        op = matrix_to_fermionic_op(H)
+        if model._interaction_hamiltonian_fn is not None:
+            int_op = model._interaction_hamiltonian_fn(lattice, **params)
+            op = op + project_fermionic_op(int_op, projection)
+        return op
+    return _build
+
+
 def _analytic_projected_cell(model, lattice, n_occ, model_params, observable, projection,
                              potential_kwargs, investigation):
     from loguru import logger
     from qbp._core import _fmt_params
 
-    H_full = model._build_H_matrix(lattice, **model_params)
-    H = apply_geometry_to_hamiltonian(H_full, projection)
-    H = apply_profiles_to_hamiltonian(
-        H,
-        model,
-        projection,
-        model_params,
-        **potential_kwargs,
-    )
-    if investigation is not None:
-        H = investigation.apply(H, model, projection, model_params)
+    H = _build_modified_H(model, lattice, model_params, projection, potential_kwargs, investigation)
     eigvals, eigvecs = np.linalg.eigh(H)
     obs = model.get_observable(observable)
-    result = float(obs.analytic(model, lattice, H, eigvals, eigvecs, n_occ, model_params))
+    model._analytic_fermionic_fn = _modified_fermionic_fn(
+        model, projection, potential_kwargs, investigation
+    )
+    model._analytic_projection_sig = (projection.geometry, int(projection.orbital_mask.sum()))
+    try:
+        result = float(obs.analytic(model, lattice, H, eigvals, eigvecs, n_occ, model_params))
+    finally:
+        model._analytic_fermionic_fn = None
+        model._analytic_projection_sig = None
     logger.info(
         f"Analytic [{observable}] ({_fmt_params(lattice, n_occ, model_params)}, "
         f"geometry={projection.geometry}, active_sites={int(projection.site_mask.sum())}) = {result}"
@@ -767,11 +789,6 @@ def _run_model_methods(
             radius=radius,
             center=center,
         )
-        if (projection.geometry != "rectangle" or has_profiles) and methods != [Method.ANALYTIC]:
-            raise ValueError(
-                "disk geometry and radial profile diagnostics are currently supported for "
-                "single-method analytic real-space runs. Use method='analytic'."
-            )
 
     for axis in (x_param, y_param):
         if axis is None:
@@ -871,7 +888,8 @@ def _run_model_methods(
         if is_band:
             k_tuple = tuple(cp.pop(a) for a in momentum_axes)
             return m_obj.compute_bloch_cell(model, k_tuple, cp, observable, backend=backend, ctx=ctx)
-        if projection is not None and (projection.geometry != "rectangle" or has_profiles):
+        projected = projection is not None and (projection.geometry != "rectangle" or has_profiles)
+        if projected and m_obj.METHOD == Method.ANALYTIC:
             value = _analytic_projected_cell(
                 model,
                 lattice,
@@ -883,6 +901,12 @@ def _run_model_methods(
                 investigation,
             )
             return {"value": value}
+        if projected:
+            ctx.fermionic_hamiltonian_fn = _modified_fermionic_fn(
+                model, projection, potential_kwargs, investigation
+            )
+        else:
+            ctx.fermionic_hamiltonian_fn = model.fermionic_hamiltonian
         ctx.mapper = model.get_mapper(n_sites, spin, n_occ_val)
         return m_obj.compute_cell(model, lattice, n_occ_val, cp, observable, backend=backend, ctx=ctx)
 

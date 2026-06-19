@@ -79,6 +79,7 @@ class CellContext:
     raw_dir: str | None = None
     tmp_dir: str | None = None
     label: str = ""
+    fermionic_hamiltonian_fn: Any = None
 
 
 class SimulationMethod:
