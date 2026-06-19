@@ -42,6 +42,11 @@ dependencies = [
     "scipy>=1.10",
 ]
 
+[project.optional-dependencies]
+parallel = ["threadpoolctl>=3.0"]
+gpu-cuda = ["cupy-cuda12x>=13.0"]
+gpu-torch = ["torch>=2.0"]
+
 [project.scripts]
 qbp = "qbp._cli:main"
 
