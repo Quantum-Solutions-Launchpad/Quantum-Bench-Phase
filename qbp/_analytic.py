@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-import numpy as np
 from scipy.sparse.linalg import eigsh as _sparse_eigsh
 
 from qbp._core import _fmt_params, logger
+from qbp._linalg import eigh as _eigh
 from qbp._method import Method, SimulationMethod, register_method
 
 
 # --------------------------------------------------------------------- solvers
 def analytic(model, lattice, n_occ, model_params, observable: str = "E"):
     H = model._build_H_matrix(lattice, **model_params)
-    eigvals, eigvecs = np.linalg.eigh(H)
+    eigvals, eigvecs = _eigh(H)
     obs = model.get_observable(observable)
     result = float(obs.analytic(model, lattice, H, eigvals, eigvecs, n_occ, model_params))
     logger.info(f"Analytic [{observable}] ({_fmt_params(lattice, n_occ, model_params)}) = {result}")
@@ -21,7 +21,7 @@ def analytic(model, lattice, n_occ, model_params, observable: str = "E"):
 
 def analytic_bands(model, k_tuple, model_params, observable: str = "E"):
     H = model.bloch_hamiltonian(*k_tuple, **model_params)
-    eigvals, eigvecs = np.linalg.eigh(H)
+    eigvals, eigvecs = _eigh(H)
     obs = model.get_observable(observable)
     if obs.analytic_bloch is None:
         raise ValueError(

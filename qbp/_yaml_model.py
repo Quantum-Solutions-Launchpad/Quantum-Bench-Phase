@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from qbp._model import Model, Observable, default_energy_observable
 from qbp._boundary import _boundary_mode
+from qbp._linalg import eigh as _eigh
 
 
 _QISKIT_OPTIMIZERS = (
@@ -865,7 +866,7 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
         occ_counts = np.array([bin(i).count('1') for i in range(2**n_qubits)])
         mask = occ_counts == n_occ
         H_sector = H_mb[np.ix_(mask, mask)]
-        evs, vecs = np.linalg.eigh(H_sector)
+        evs, vecs = _eigh(H_sector)
         result = (evs, vecs[:, 0], mask)
         cache[key] = result
         return result
