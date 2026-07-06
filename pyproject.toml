@@ -46,6 +46,7 @@ dependencies = [
 parallel = ["threadpoolctl>=3.0"]
 gpu-cuda = ["cupy-cuda12x>=13.0"]
 gpu-torch = ["torch>=2.0"]
+iqm = ["qiskit-iqm>=17"]
 
 [project.scripts]
 qbp = "qbp._cli:main"
