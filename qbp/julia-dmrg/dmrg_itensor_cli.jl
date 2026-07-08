@@ -26,6 +26,8 @@ function parse_args(args::Vector{String})
         "cutoff" => 1e-9,
         "seed" => 1234,
         "conserve_qns" => true,
+        "conserve_sz" => true,
+        "initial_state" => "packed",
     )
     i = 1
     while i <= length(args)
@@ -51,6 +53,12 @@ function parse_args(args::Vector{String})
         elseif arg == "--conserve-qns"
             i += 1
             config["conserve_qns"] = parse_bool(args[i])
+        elseif arg == "--conserve-sz"
+            i += 1
+            config["conserve_sz"] = parse_bool(args[i])
+        elseif arg == "--initial-state"
+            i += 1
+            config["initial_state"] = lowercase(strip(args[i]))
         else
             error("Unknown argument: $arg")
         end
@@ -58,6 +66,8 @@ function parse_args(args::Vector{String})
     end
     isnothing(config["hamiltonian"]) && error("--hamiltonian is required")
     isnothing(config["output"]) && error("--output is required")
+    config["initial_state"] in ("packed", "neel") ||
+        error("--initial-state must be packed or neel")
     return config
 end
 
@@ -109,22 +119,59 @@ function add_term(os::OpSum, coeff, label::AbstractString, spin::Int)
     return os
 end
 
-function build_initial_state(n_sites::Int, spin::Int, n_occ::Int, seed::Int)
+function build_spinful_packed_state(n_sites::Int, n_occ::Int, rng)
+    state = fill("Emp", n_sites)
+    remaining = n_occ
+    for i in 1:n_sites
+        if remaining >= 2
+            state[i] = "UpDn"
+            remaining -= 2
+        elseif remaining == 1
+            state[i] = "Up"
+            remaining -= 1
+        end
+    end
+    shuffle!(rng, state)
+    return state
+end
+
+function build_spinful_neel_state(n_sites::Int, n_occ::Int, rng)
+    state = fill("Emp", n_sites)
+    site_order = collect(1:n_sites)
+    shuffle!(rng, site_order)
+
+    # Place one electron on each selected site before creating any doublons.
+    # Site parity follows the A/B ordering of the Hubbard lattice and seeds
+    # staggered Up/Dn order at half filling.
+    singly_occupied = min(n_occ, n_sites)
+    for site in site_order[1:singly_occupied]
+        state[site] = isodd(site) ? "Up" : "Dn"
+    end
+
+    extra = max(0, n_occ - n_sites)
+    for site in site_order[1:extra]
+        state[site] = "UpDn"
+    end
+    return state
+end
+
+function build_initial_state(
+    n_sites::Int,
+    spin::Int,
+    n_occ::Int,
+    seed::Int,
+    strategy::AbstractString,
+)
+    0 <= n_occ <= spin * n_sites ||
+        error("n_occ=$n_occ is outside the valid range 0:$(spin * n_sites)")
     rng = MersenneTwister(seed)
     if spin == 2
-        state = fill("Emp", n_sites)
-        remaining = n_occ
-        for i in 1:n_sites
-            if remaining >= 2
-                state[i] = "UpDn"
-                remaining -= 2
-            elseif remaining == 1
-                state[i] = "Up"
-                remaining -= 1
-            end
+        if strategy == "neel"
+            return build_spinful_neel_state(n_sites, n_occ, rng)
+        elseif strategy == "packed"
+            return build_spinful_packed_state(n_sites, n_occ, rng)
         end
-        shuffle!(rng, state)
-        return state
+        error("Unsupported spinful initial-state strategy: $strategy")
     elseif spin == 1
         state = fill("Emp", n_sites)
         for i in 1:min(n_occ, n_sites)
@@ -170,7 +217,12 @@ function main()
 
     sites = profile_section!(profile, "siteinds") do
         if spin == 2
-            siteinds("Electron", n_sites; conserve_qns=config["conserve_qns"])
+            siteinds(
+                "Electron",
+                n_sites;
+                conserve_nf=config["conserve_qns"],
+                conserve_sz=config["conserve_qns"] && config["conserve_sz"],
+            )
         elseif spin == 1
             siteinds("Fermion", n_sites; conserve_qns=config["conserve_qns"])
         else
@@ -191,7 +243,13 @@ function main()
     end
 
     state = profile_section!(profile, "build_init_state") do
-        build_initial_state(n_sites, spin, n_occ, config["seed"])
+        build_initial_state(
+            n_sites,
+            spin,
+            n_occ,
+            config["seed"],
+            config["initial_state"],
+        )
     end
 
     psi0 = profile_section!(profile, "build_product_mps") do
@@ -209,6 +267,25 @@ function main()
         (energy=energy, psi=psi)
     end
 
+    observable_value = nothing
+    if haskey(spec, "observable_terms")
+        O = profile_section!(profile, "build_observable_mpo") do
+            observable_os = OpSum()
+            for term in spec["observable_terms"]
+                observable_os = add_term(
+                    observable_os,
+                    complex_coeff(term["coefficient"]),
+                    term["label"],
+                    spin,
+                )
+            end
+            MPO(observable_os, sites)
+        end
+        observable_value = profile_section!(profile, "observable_expectation") do
+            real(inner(dmrg_result.psi', O, dmrg_result.psi))
+        end
+    end
+
     link_dims = collect_link_dims(dmrg_result.psi)
     output = Dict(
         "format" => "qbp_itensor_dmrg_result_v1",
@@ -224,18 +301,27 @@ function main()
         "cutoff" => config["cutoff"],
         "seed" => config["seed"],
         "conserve_qns" => config["conserve_qns"],
+        "conserve_sz" => config["conserve_sz"],
+        "initial_state" => config["initial_state"],
         "energy" => dmrg_result.energy,
+        "observable" => get(spec, "observable", "E"),
         "profile" => profile,
         "link_dims" => link_dims,
         "max_link_dim" => isempty(link_dims) ? 0 : maximum(link_dims),
         "avg_link_dim" => isempty(link_dims) ? 0.0 : sum(link_dims) / length(link_dims),
     )
+    if !isnothing(observable_value)
+        output["observable_value"] = observable_value
+    end
 
     mkpath(dirname(config["output"]))
     open(config["output"], "w") do io
         JSON.print(io, output, 2)
     end
     println("DMRG energy: $(dmrg_result.energy)")
+    if !isnothing(observable_value)
+        println("DMRG ", spec["observable"], ": ", observable_value)
+    end
     println("Wrote $(config["output"])")
 end
 

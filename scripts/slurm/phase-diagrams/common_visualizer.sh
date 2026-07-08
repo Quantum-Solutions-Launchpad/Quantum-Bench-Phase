@@ -8,11 +8,12 @@ setup_visualizer_env() {
 
     export MPLBACKEND="${MPLBACKEND:-Agg}"
 
-    LOG_DIR="${LOG_DIR:-${REPO_ROOT}/examples/logs}"
-    PLOT_DIR="${PLOT_DIR:-${REPO_ROOT}/examples/plots}"
+    OUTPUT_ROOT="${OUTPUT_ROOT:-${REPO_ROOT}/manuscript-plots}"
+    LOG_DIR="${LOG_DIR:-${OUTPUT_ROOT}/logs}"
+    PLOT_DIR="${PLOT_DIR:-${OUTPUT_ROOT}/plots}"
     PHI="${PHI:-0.7853981633974483}"
 
-    mkdir -p "${LOG_DIR}" "${PLOT_DIR}" "${REPO_ROOT}/scripts/logs/slurm"
+    mkdir -p "${OUTPUT_ROOT}" "${LOG_DIR}" "${PLOT_DIR}" "${REPO_ROOT}/scripts/logs/slurm"
 }
 
 setup_visualizer_dmrg_env() {
@@ -39,27 +40,76 @@ print_visualizer_header() {
     echo "  plot dir:    ${PLOT_DIR}"
 }
 
-append_haldane_2x2_phase_args() {
+append_haldane_2x2_mass_phi_args() {
     local -n cmd_ref="$1"
 
     cmd_ref+=(
         --model haldane
         --lattice 2 2
-        --x-param n_occ
-        --y-param t2
-        --y-range "${HALDANE_T2_START:-0.0}" "${HALDANE_T2_END:-1.0}" "${HALDANE_T2_STEP:-0.1}"
+        --x-param M
+        --x-range "${HALDANE_M_START:--6.0}" "${HALDANE_M_END:-6.0}" "${HALDANE_M_STEP:-0.5}"
+        --y-param phi
+        --y-range "${HALDANE_PHI_START:--3.141592653589793}" "${HALDANE_PHI_END:-3.141592653589793}" "${HALDANE_PHI_STEP:-0.39269908169872414}"
         --t1 "${HALDANE_T1:-1.0}"
-        --phi "${HALDANE_PHI:-${PHI}}"
-        --M "${HALDANE_M:-0.0}"
+        --t2 "${HALDANE_T2:-1.0}"
     )
 }
 
-append_output_args() {
+append_haldane_3x3_mass_phi_args() {
     local -n cmd_ref="$1"
 
     cmd_ref+=(
-        --log-dir "${LOG_DIR}"
-        --plot-dir "${PLOT_DIR}"
+        --model haldane
+        --lattice 3 3
+        --x-param M
+        --x-range "${HALDANE_M_START:--6.0}" "${HALDANE_M_END:-6.0}" "${HALDANE_M_STEP:-0.5}"
+        --y-param phi
+        --y-range "${HALDANE_PHI_START:--3.141592653589793}" "${HALDANE_PHI_END:-3.141592653589793}" "${HALDANE_PHI_STEP:-0.39269908169872414}"
+        --t1 "${HALDANE_T1:-1.0}"
+        --t2 "${HALDANE_T2:-1.0}"
+    )
+}
+
+append_hubbard_2x2_magnetization_args() {
+    local -n cmd_ref="$1"
+    local observable="$2"
+
+    cmd_ref+=(
+        --model hubbard
+        --lattice 2 2
+        --observable "${observable}"
+        --x-param n_occ
+        --x-range "${HUBBARD_N_OCC_START:-0}" "${HUBBARD_N_OCC_END:-16}" "${HUBBARD_N_OCC_STEP:-1}"
+        --y-param U
+        --y-range "${HUBBARD_U_START:-0.0}" "${HUBBARD_U_END:-10.0}" "${HUBBARD_U_STEP:-0.5}"
+        --t "${HUBBARD_T:-1.0}"
+    )
+}
+
+append_hubbard_3x3_magnetization_args() {
+    local -n cmd_ref="$1"
+    local observable="$2"
+
+    cmd_ref+=(
+        --model hubbard
+        --lattice 3 3
+        --observable "${observable}"
+        --x-param n_occ
+        --y-param U
+        --y-range "${HUBBARD_U_START:-0.0}" "${HUBBARD_U_END:-10.0}" "${HUBBARD_U_STEP:-0.5}"
+        --t "${HUBBARD_T:-1.0}"
+    )
+}
+
+append_qbp_output_paths() {
+    local -n cmd_ref="$1"
+    local log_path="$2"
+    local plot_path="$3"
+
+    mkdir -p "$(dirname "${log_path}")" "$(dirname "${plot_path}")"
+    cmd_ref+=(
+        --log-path "${log_path}"
+        --plot-path "${plot_path}"
         --hide-plot
     )
 }
@@ -99,14 +149,14 @@ append_optional_vqe_iqpe_args() {
     fi
 }
 
-append_dmrg_run_args() {
+append_dmrg_args() {
     local -n cmd_ref="$1"
 
     cmd_ref+=(
-        --nsweeps "${DMRG_NSWEEPS:-4}"
-        --maxdims "${DMRG_MAXDIMS:-20,50,100,200}"
-        --cutoff "${DMRG_CUTOFF:-1e-9}"
-        --seed "${DMRG_SEED:-1234}"
+        --dmrg-nsweeps "${DMRG_NSWEEPS:-4}"
+        --dmrg-maxdims "${DMRG_MAXDIMS:-20,50,100,200}"
+        --dmrg-cutoff "${DMRG_CUTOFF:-1e-9}"
+        --dmrg-seed "${DMRG_SEED:-1234}"
     )
 }
 

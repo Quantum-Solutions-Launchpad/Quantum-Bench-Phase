@@ -351,7 +351,11 @@ def _plot_run_result(rr: RunResult, *, output_path, hide_plot, hide_legend):
             Z = rr.analytic_bands
         else:
             Z = rr.grids[m.value]
-        z_label = obs_label if m == Method.ANALYTIC else f"${get_method_class(m).LABEL}$"
+        z_label = (
+            obs_label
+            if rr.observable != "E" or m == Method.ANALYTIC
+            else f"${get_method_class(m).LABEL}$"
+        )
         return plot_analytic(
             rr.x_values, rr.y_values, x_label, y_label if rr.y_param else z_label, Z,
             plot_format=plot_format, output_path=output_path, hide_plot=hide_plot,
@@ -853,9 +857,10 @@ def _run_model_methods(
     progress_path = None
     if log_path is not None:
         os.makedirs(os.path.dirname(os.path.abspath(log_path)), exist_ok=True)
-        # Raw sidecar + progress journal only matter for expensive parallel runs
-        # (benchmarks, resume, sharding); analytic-only runs need just the summary.
-        if use_parallel:
+        # Raw sidecar + progress journal for expensive parallel runs, and for
+        # any sharded/aggregated run (even cheap analytic-only ones): the
+        # journal is the only channel between shards and aggregation.
+        if use_parallel or prepare_only or aggregate_only or task_index is not None:
             raw_data_path, progress_path = _derived_paths(log_path)
 
     raw_cells = {m.value: {str(ix): {} for ix in range(nx)} for m in methods}
@@ -944,7 +949,9 @@ def _run_model_methods(
                 if not line.strip():
                     continue
                 record = json.loads(line)
-                apply(tuple(record["tag"]), record["cell"])
+                tag = tuple(record["tag"])
+                if tag[0] in raw_cells:  # ignore entries for methods not in this run
+                    apply(tag, record["cell"])
 
     def validate_complete():
         missing = []
@@ -983,11 +990,30 @@ def _run_model_methods(
             "cells": raw_cells,
         }
 
-    if raw_data_path is not None and not no_progress_log and (
-        prepare_only or (task_index is None and not aggregate_only)
-    ):
+    # Only prepare-only resets the journal; compute runs resume from it, so a
+    # resubmitted job skips cells that were already logged.
+    if raw_data_path is not None and not no_progress_log and prepare_only:
         with open(progress_path, "w") as f:
             f.write("")
+
+    def load_completed_tags():
+        """Read already-computed cells from the progress journal for resume."""
+        done = set()
+        if no_progress_log or progress_path is None or not os.path.exists(progress_path):
+            return done
+        with open(progress_path) as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    continue  # tolerate a partially written trailing line
+                tag = tuple(record["tag"])
+                if tag[0] in raw_cells:
+                    done.add(tag)
+                    apply(tag, record["cell"])
+        return done
 
     def empty_result():
         grids = {m.value: _squeeze_scalar(np.full((nx, ny), np.nan), is_1d) for m in methods}
@@ -1028,6 +1054,17 @@ def _run_model_methods(
             selected = [t for i, t in enumerate(all_tags) if i % task_count == task_index]
             n_jobs = jobs_per_shard()
 
+        completed = load_completed_tags()
+        if completed:
+            before = len(selected)
+            selected = [t for t in selected if t not in completed]
+            skipped = before - len(selected)
+            if skipped:
+                print(
+                    f"Resuming from progress log: skipping {skipped} already-computed "
+                    f"cell(s), {len(selected)} remaining."
+                )
+
         with tempfile.TemporaryDirectory(prefix="qbp-run-") as tmp_dir:
             if use_parallel:
                 results = Parallel(
@@ -1039,7 +1076,7 @@ def _run_model_methods(
                 # dominates, so run in-process.
                 results = (run_job(t, tmp_dir) for t in selected)
             for tag_tuple, cell in results:
-                if use_parallel:
+                if progress_path is not None:
                     append_progress(tag_tuple, cell)
                 apply(tag_tuple, cell)
                 # Incremental snapshots only for expensive parallel runs; for

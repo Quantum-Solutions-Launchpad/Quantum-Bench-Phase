@@ -1,0 +1,76 @@
+{
+    "type": "run",
+    "methods": [
+        "dmrg"
+    ],
+    "backend": "ideal",
+    "plot_format": "heatmap",
+    "band_structure": false,
+    "observable": "M_stag",
+    "extremum": "min",
+    "x_param": "n_occ",
+    "y_param": "U",
+    "x_values": [
+        0,
+        1,
+        2
+    ],
+    "y_values": [
+        0.0,
+        0.5,
+        1.0
+    ],
+    "parameters": {
+        "model": "hubbard",
+        "lattice": [
+            2,
+            2
+        ],
+        "geometry": "rectangle",
+        "radius": null,
+        "center": null,
+        "potential_profile": "none",
+        "potential_radius": null,
+        "potential_v0": null,
+        "potential_xi": null,
+        "investigation": null,
+        "model_params": {
+            "t": 1.0,
+            "boundary": "periodic"
+        },
+        "method_params": {
+            "dmrg": {
+                "nsweeps": 2,
+                "maxdims": "10\\,20",
+                "cutoff": 1e-09,
+                "seed": 1234,
+                "conserve_qns": true,
+                "conserve_sz": false,
+                "initial_state": "neel",
+                "julia": "julia",
+                "julia_module": "julia/1.11.7",
+                "julia_project": null,
+                "script_path": null
+            }
+        }
+    },
+    "result": {
+        "dmrg": {
+            "0": {
+                "0": 0.0,
+                "1": 0.0,
+                "2": 0.0
+            },
+            "1": {
+                "0": 8.556735888188421e-05,
+                "1": 8.55673588818634e-05,
+                "2": 0.0002047894878462568
+            },
+            "2": {
+                "0": 1.4309854199329869e-05,
+                "1": 6.349563572205508e-06,
+                "2": 7.415932065807374e-05
+            }
+        }
+    }
+}

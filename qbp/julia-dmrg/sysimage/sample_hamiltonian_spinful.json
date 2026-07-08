@@ -1,0 +1,22 @@
+{
+    "format": "qbp_fermionic_hamiltonian_v1",
+    "model": "hubbard",
+    "lattice": [2, 1],
+    "spin": 2,
+    "n_sites": 2,
+    "n_occ": 2,
+    "model_params": {},
+    "observable": "E",
+    "terms": [
+        {"coefficient": {"re": -1.0, "im": 0.0}, "label": "+_0 -_2"},
+        {"coefficient": {"re": -1.0, "im": 0.0}, "label": "+_2 -_0"},
+        {"coefficient": {"re": -1.0, "im": 0.0}, "label": "+_1 -_3"},
+        {"coefficient": {"re": -1.0, "im": 0.0}, "label": "+_3 -_1"},
+        {"coefficient": {"re": 4.0, "im": 0.0}, "label": "+_0 -_0 +_1 -_1"},
+        {"coefficient": {"re": 4.0, "im": 0.0}, "label": "+_2 -_2 +_3 -_3"}
+    ],
+    "observable_terms": [
+        {"coefficient": {"re": 0.5, "im": 0.0}, "label": "+_0 -_0"},
+        {"coefficient": {"re": -0.5, "im": 0.0}, "label": "+_1 -_1"}
+    ]
+}
