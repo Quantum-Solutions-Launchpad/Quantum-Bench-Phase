@@ -1,0 +1,199 @@
+{
+    "type": "run",
+    "methods": [
+        "analytic",
+        "vqe"
+    ],
+    "backend": "AerSimulator",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "extremum": "min",
+    "x_param": "n_occ",
+    "y_param": "t2",
+    "x_values": [
+        2,
+        4,
+        6
+    ],
+    "y_values": [
+        0.2,
+        0.5,
+        0.8
+    ],
+    "parameters": {
+        "model": "haldane",
+        "lattice": [
+            2,
+            2
+        ],
+        "model_params": {
+            "t1": 1.0,
+            "phi": 0.7853981633974483,
+            "M": 0.1
+        },
+        "method_params": {
+            "analytic": {},
+            "vqe": {
+                "iters": 500,
+                "layers": 4,
+                "reps": 3,
+                "ansatz": null,
+                "optimizer": null
+            }
+        }
+    },
+    "cells": {
+        "analytic": {
+            "0": {
+                "2": {
+                    "value": -6.788225099390862
+                },
+                "0": {
+                    "value": -4.572339191022054
+                },
+                "1": {
+                    "value": -5.420867328445912
+                }
+            },
+            "1": {
+                "0": {
+                    "value": -6.016628890296992
+                },
+                "1": {
+                    "value": -6.016628890296992
+                },
+                "2": {
+                    "value": -6.535458523818087
+                }
+            },
+            "2": {
+                "0": {
+                    "value": -3.4409683411235767
+                },
+                "1": {
+                    "value": -3.424188686597274
+                },
+                "2": {
+                    "value": -4.272716824021133
+                }
+            }
+        },
+        "vqe": {
+            "0": {
+                "2": {
+                    "repetitions": [
+                        -4.711416822704159,
+                        -2.94273410511353,
+                        -5.154259296074516
+                    ],
+                    "num_queries": 84000,
+                    "circuit_depth": {
+                        "total": 177,
+                        "two_qubit": 52
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -4.343155324019811,
+                        -3.641722997508247,
+                        -4.247725571423595
+                    ],
+                    "num_queries": 84000,
+                    "circuit_depth": {
+                        "total": 177,
+                        "two_qubit": 52
+                    }
+                },
+                "0": {
+                    "repetitions": [
+                        -3.611993606592221,
+                        -3.4647991311991735,
+                        -3.4095912383054774
+                    ],
+                    "num_queries": 84000,
+                    "circuit_depth": {
+                        "total": 177,
+                        "two_qubit": 52
+                    }
+                }
+            },
+            "1": {
+                "2": {
+                    "repetitions": [
+                        -4.334408901918646,
+                        -3.630488082464952,
+                        -4.002980211009118
+                    ],
+                    "num_queries": 84000,
+                    "circuit_depth": {
+                        "total": 177,
+                        "two_qubit": 52
+                    }
+                },
+                "0": {
+                    "repetitions": [
+                        -4.021438439132839,
+                        -3.832168123728287,
+                        -3.1907041959515725
+                    ],
+                    "num_queries": 84000,
+                    "circuit_depth": {
+                        "total": 177,
+                        "two_qubit": 52
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -2.7829255689386354,
+                        -3.593917762573707,
+                        -3.793776712447445
+                    ],
+                    "num_queries": 84000,
+                    "circuit_depth": {
+                        "total": 177,
+                        "two_qubit": 52
+                    }
+                }
+            },
+            "2": {
+                "2": {
+                    "repetitions": [
+                        -2.510922723131542,
+                        -2.3948035231699603,
+                        -2.093229066692885
+                    ],
+                    "num_queries": 84000,
+                    "circuit_depth": {
+                        "total": 177,
+                        "two_qubit": 52
+                    }
+                },
+                "0": {
+                    "repetitions": [
+                        -1.4696755608000591,
+                        -1.9787788563523252,
+                        -2.223794491366311
+                    ],
+                    "num_queries": 84000,
+                    "circuit_depth": {
+                        "total": 177,
+                        "two_qubit": 52
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -2.28888091771337,
+                        -1.7573866982202675,
+                        -1.600174024915395
+                    ],
+                    "num_queries": 84000,
+                    "circuit_depth": {
+                        "total": 177,
+                        "two_qubit": 52
+                    }
+                }
+            }
+        }
+    }
+}

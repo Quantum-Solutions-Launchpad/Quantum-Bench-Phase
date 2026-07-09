@@ -66,7 +66,7 @@ class AnalyticMethod(SimulationMethod):
     def compute_operator_cell(self, op, *, extremum, backend, label, observable: str = "E"):
         return {"value": float(analytic_operator(op, extremum, label=label, observable=observable))}
 
-    def reduce(self, cell, *, extremum="min"):
+    def reduce(self, cell, *, extremum="min", analytic=None):
         if "bands" in cell:
             return cell["bands"]
         return float(cell["value"])

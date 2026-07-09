@@ -1,0 +1,18 @@
+{"timestamp": "2026-07-01T13:20:16", "tag": ["analytic", 0, 0], "cell": {"value": -4.572339191022054}}
+{"timestamp": "2026-07-01T13:20:16", "tag": ["analytic", 0, 2], "cell": {"value": -6.788225099390862}}
+{"timestamp": "2026-07-01T13:20:16", "tag": ["analytic", 1, 1], "cell": {"value": -6.016628890296992}}
+{"timestamp": "2026-07-01T13:20:16", "tag": ["analytic", 1, 2], "cell": {"value": -6.535458523818087}}
+{"timestamp": "2026-07-01T13:20:16", "tag": ["analytic", 1, 0], "cell": {"value": -6.016628890296992}}
+{"timestamp": "2026-07-01T13:20:16", "tag": ["analytic", 0, 1], "cell": {"value": -5.420867328445912}}
+{"timestamp": "2026-07-01T13:20:16", "tag": ["analytic", 2, 0], "cell": {"value": -3.4409683411235767}}
+{"timestamp": "2026-07-01T13:20:16", "tag": ["analytic", 2, 2], "cell": {"value": -4.272716824021133}}
+{"timestamp": "2026-07-01T13:20:16", "tag": ["analytic", 2, 1], "cell": {"value": -3.424188686597274}}
+{"timestamp": "2026-07-01T13:25:11", "tag": ["vqe", 0, 2], "cell": {"repetitions": [-4.532482628072537, -4.668548061510858, -4.902480937332371], "num_queries": 84000, "circuit_depth": {"total": 177, "two_qubit": 52}}}
+{"timestamp": "2026-07-01T13:25:13", "tag": ["vqe", 0, 1], "cell": {"repetitions": [-3.079155973224046, -3.5237514728008046, -4.325706376670419], "num_queries": 84000, "circuit_depth": {"total": 177, "two_qubit": 52}}}
+{"timestamp": "2026-07-01T13:25:13", "tag": ["vqe", 0, 0], "cell": {"repetitions": [-3.4213181368005396, -3.388316813602675, -3.795297160423372], "num_queries": 84000, "circuit_depth": {"total": 177, "two_qubit": 52}}}
+{"timestamp": "2026-07-01T13:25:16", "tag": ["vqe", 1, 2], "cell": {"repetitions": [-3.8588722090277985, -4.153374132616144, -4.163641061028066], "num_queries": 84000, "circuit_depth": {"total": 177, "two_qubit": 52}}}
+{"timestamp": "2026-07-01T13:25:17", "tag": ["vqe", 1, 0], "cell": {"repetitions": [-3.5389780230253516, -3.6155871388931162, -3.026082920309371], "num_queries": 84000, "circuit_depth": {"total": 177, "two_qubit": 52}}}
+{"timestamp": "2026-07-01T13:25:17", "tag": ["vqe", 1, 1], "cell": {"repetitions": [-3.446510400187233, -3.6906645707522543, -2.9122211664353346], "num_queries": 84000, "circuit_depth": {"total": 177, "two_qubit": 52}}}
+{"timestamp": "2026-07-01T13:25:19", "tag": ["vqe", 2, 1], "cell": {"repetitions": [-2.419493730396933, -2.456589013404435, -2.0253817556957494], "num_queries": 84000, "circuit_depth": {"total": 177, "two_qubit": 52}}}
+{"timestamp": "2026-07-01T13:25:20", "tag": ["vqe", 2, 0], "cell": {"repetitions": [-2.293658445606417, -2.0028681908518586, -2.2556718447053923], "num_queries": 84000, "circuit_depth": {"total": 177, "two_qubit": 52}}}
+{"timestamp": "2026-07-01T13:25:21", "tag": ["vqe", 2, 2], "cell": {"repetitions": [-2.788171895291245, -2.3712962190449995, -2.4281629613889977], "num_queries": 84000, "circuit_depth": {"total": 177, "two_qubit": 52}}}

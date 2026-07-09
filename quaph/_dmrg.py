@@ -174,5 +174,5 @@ class DMRGMethod(SimulationMethod):
             "profile": raw.get("profile"),
         }
 
-    def reduce(self, cell, *, extremum="min"):
+    def reduce(self, cell, *, extremum="min", analytic=None):
         return float(cell["energy"])

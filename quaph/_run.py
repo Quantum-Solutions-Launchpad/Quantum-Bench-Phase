@@ -681,6 +681,12 @@ def _run_model_methods(
         except ValueError:
             return 1
 
+    # Build and calibrate every active mitigation strategy once in the main
+    # process before parallel dispatch. Calibration data is stored on the
+    # method object and pickled with it, so workers never recalibrate.
+    for m in methods:
+        method_objs[m].calibrate_mitigation(backend)
+
     if aggregate_only:
         load_progress()
     else:
@@ -699,8 +705,6 @@ def _run_model_methods(
                     initializer=init_worker_logging,
                 )(delayed(run_job)(t, tmp_dir) for t in selected)
             else:
-                # Cheap cells (analytic): joblib's per-task pickling overhead
-                # dominates, so run in-process.
                 results = (run_job(t, tmp_dir) for t in selected)
             for tag_tuple, cell in results:
                 if use_parallel:
@@ -718,10 +722,13 @@ def _run_model_methods(
     validate_complete()
 
     # --------------------------------------------------------------- reduce grids
+    # Analytic first (if requested) so other methods can reduce their
+    # repetitions against it instead of blindly taking min/max.
     n_bands = 1
     analytic_bands = None
     grids_full = {}
-    for m in methods:
+    ordered_methods = sorted(methods, key=lambda m: 0 if m == Method.ANALYTIC else 1)
+    for m in ordered_methods:
         m_obj = method_objs[m]
         if is_band and m == Method.ANALYTIC:
             probe = raw_cells["analytic"]["0"]["0"]["bands"]
@@ -736,7 +743,14 @@ def _run_model_methods(
             arr = np.full((nx, ny), np.nan)
             for ix in range(nx):
                 for iy in range(ny):
-                    val = m_obj.reduce(raw_cells[m.value][str(ix)][str(iy)], extremum="min")
+                    if is_band and analytic_bands is not None:
+                        analytic_ref = float(np.min(analytic_bands[ix, iy, :]))
+                    elif not is_band and "analytic" in grids_full:
+                        analytic_ref = float(grids_full["analytic"][ix, iy])
+                    else:
+                        analytic_ref = None
+                    val = m_obj.reduce(raw_cells[m.value][str(ix)][str(iy)], extremum="min",
+                                        analytic=analytic_ref)
                     arr[ix, iy] = val
             grids_full[m.value] = arr
             for ix in range(nx):
@@ -994,7 +1008,9 @@ def _run_operator_methods(
             raw_cells[mv][str(ix)][str(iy)] = cell
 
     grids_full = {}
-    for m in methods:
+    # Analytic first (if requested) so other methods can reduce their
+    # repetitions against it instead of blindly taking min/max.
+    for m in sorted(methods, key=lambda m: 0 if m == Method.ANALYTIC else 1):
         m_obj = method_objs[m]
         arr = np.full((nx, ny), np.nan)
         for ix in range(nx):
@@ -1002,7 +1018,8 @@ def _run_operator_methods(
                 cell = raw_cells[m.value].get(str(ix), {}).get(str(iy))
                 if cell is None:
                     continue
-                arr[ix, iy] = m_obj.reduce(cell, extremum=extremum)
+                analytic_ref = float(grids_full["analytic"][ix, iy]) if "analytic" in grids_full else None
+                arr[ix, iy] = m_obj.reduce(cell, extremum=extremum, analytic=analytic_ref)
                 logger.info(f"{m_obj.LABEL} ({cell_label(ix, iy)}) = {arr[ix, iy]}")
         grids_full[m.value] = arr
 

@@ -35,7 +35,11 @@ def _load_grid(path: str, source: str) -> tuple[np.ndarray, np.ndarray, np.ndarr
                 analytic_val = float(analytic_block[xi_str][yi_str])
                 Z[xi, yi] = min(val, key=lambda e: abs(e - analytic_val))
             else:
-                Z[xi, yi] = float(val)
+                # Band structure: val may be a list of eigenvalues — take ground state
+                if isinstance(val, list):
+                    Z[xi, yi] = float(min(val))
+                else:
+                    Z[xi, yi] = float(val)
 
     return x_vals, y_vals, Z
 
@@ -213,6 +217,7 @@ def _diff_3d(
     ax.set_xlabel(x_label, labelpad=12)
     ax.set_ylabel(y_label, labelpad=12)
     ax.set_zlabel(z_label, labelpad=10)
+    ax.set_title(_make_title(method, meta), pad=14)
 
     if x_is_momentum:
         _format_momentum_ticks(ax, "x", x_vals)
@@ -251,6 +256,7 @@ def _diff_heatmap(
 
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel(y_label, labelpad=8)
+    ax.set_title(_make_title(method, meta), pad=10)
     ax.set_xlim(_pcolormesh_edges(x_arr)[0], _pcolormesh_edges(x_arr)[-1])
     ax.set_ylim(_pcolormesh_edges(y_arr)[0], _pcolormesh_edges(y_arr)[-1])
     for spine in ax.spines.values():
@@ -336,6 +342,7 @@ def _diff_bar_2d(
     z_label = rf"$E_{{\mathrm{{{_method_name(method)}}}}} - E_{{\mathrm{{Analytic}}}}$"
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel(z_label, labelpad=8)
+    ax.set_title(_make_title(method, meta), pad=10)
     ax.grid(True, axis="y", linestyle="--", alpha=0.4)
     for spine in ax.spines.values():
         spine.set_edgecolor("#cfcece")
