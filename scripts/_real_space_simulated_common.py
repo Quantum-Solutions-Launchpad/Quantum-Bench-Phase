@@ -218,11 +218,16 @@ def main(simulation_tag, backend=None, argv=None):
             raise RuntimeError("Missing results before aggregation: " + ", ".join(missing[:20]))
 
     def jobs_per_shard():
-        value = os.environ.get("QBP_JOBS_PER_SHARD") or "1"
+        value = os.environ.get("QBP_JOBS_PER_SHARD")
+        if value:
+            try:
+                return max(1, int(value))
+            except ValueError:
+                pass
         try:
-            return max(1, int(value))
-        except ValueError:
-            return 1
+            return max(1, len(os.sched_getaffinity(0)))
+        except AttributeError:
+            return max(1, os.cpu_count() or 1)
 
     def write_outputs():
         validate_complete()
