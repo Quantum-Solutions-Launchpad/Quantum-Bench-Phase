@@ -1,6 +1,9 @@
 {
     "type": "run",
     "methods": [
+        "analytic",
+        "vqe",
+        "iqpe",
         "dmrg"
     ],
     "backend": "ideal",
@@ -41,9 +44,24 @@
             "boundary": "periodic"
         },
         "method_params": {
+            "analytic": {},
+            "vqe": {
+                "iters": 10,
+                "layers": 5,
+                "reps": 1,
+                "ansatz": null,
+                "optimizer": null
+            },
+            "iqpe": {
+                "time": 0.2,
+                "trot": 5,
+                "iters": 8,
+                "reps": 1,
+                "initial_state": null
+            },
             "dmrg": {
                 "nsweeps": 4,
-                "maxdims": "20\\,50\\,100\\,200",
+                "maxdims": "20,50,100,200",
                 "cutoff": 1e-09,
                 "seed": 1234,
                 "conserve_qns": true,
@@ -57,6 +75,345 @@
         }
     },
     "cells": {
+        "analytic": {
+            "0": {
+                "0": {
+                    "value": 0.0
+                },
+                "1": {
+                    "value": 0.0
+                },
+                "2": {
+                    "value": 0.0
+                }
+            },
+            "1": {
+                "1": {
+                    "value": -5.121319907410726
+                },
+                "2": {
+                    "value": -7.242639814821445
+                },
+                "0": {
+                    "value": -3.0000000000000004
+                }
+            },
+            "2": {
+                "2": {
+                    "value": -8.485279629642886
+                },
+                "0": {
+                    "value": -4.000000000000001
+                },
+                "1": {
+                    "value": -5.414213271607152
+                }
+            }
+        },
+        "vqe": {
+            "0": {
+                "0": {
+                    "repetitions": [
+                        0.054443359375
+                    ],
+                    "num_queries": 240,
+                    "circuit_depth": {
+                        "total": 51,
+                        "two_qubit": 45
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        -0.08249549213936963
+                    ],
+                    "num_queries": 480,
+                    "circuit_depth": {
+                        "total": 51,
+                        "two_qubit": 45
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        0.0016539589964075915
+                    ],
+                    "num_queries": 480,
+                    "circuit_depth": {
+                        "total": 51,
+                        "two_qubit": 45
+                    }
+                }
+            },
+            "1": {
+                "0": {
+                    "repetitions": [
+                        -0.642822265625
+                    ],
+                    "num_queries": 240,
+                    "circuit_depth": {
+                        "total": 52,
+                        "two_qubit": 45
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        -0.051703802340220234
+                    ],
+                    "num_queries": 480,
+                    "circuit_depth": {
+                        "total": 52,
+                        "two_qubit": 45
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        0.1560281616962974
+                    ],
+                    "num_queries": 480,
+                    "circuit_depth": {
+                        "total": 52,
+                        "two_qubit": 45
+                    }
+                }
+            },
+            "2": {
+                "0": {
+                    "repetitions": [
+                        0.328125
+                    ],
+                    "num_queries": 240,
+                    "circuit_depth": {
+                        "total": 52,
+                        "two_qubit": 45
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -0.021292525453708716
+                    ],
+                    "num_queries": 480,
+                    "circuit_depth": {
+                        "total": 52,
+                        "two_qubit": 45
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        -2.6017529241135127
+                    ],
+                    "num_queries": 480,
+                    "circuit_depth": {
+                        "total": 52,
+                        "two_qubit": 45
+                    }
+                }
+            }
+        },
+        "iqpe": {
+            "0": {
+                "0": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 960,
+                    "circuit_depth": {
+                        "total": 43194,
+                        "two_qubit": 37773
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 1920,
+                    "circuit_depth": {
+                        "total": 100888,
+                        "two_qubit": 91961
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 1920,
+                    "circuit_depth": {
+                        "total": 100888,
+                        "two_qubit": 91961
+                    }
+                }
+            },
+            "1": {
+                "0": {
+                    "repetitions": [
+                        -0.9817477042468103
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -15.707963267948966,
+                            -7.853981633974483,
+                            -3.9269908169872414,
+                            -1.9634954084936207,
+                            -0.9817477042468103
+                        ]
+                    ],
+                    "num_queries": 960,
+                    "circuit_depth": {
+                        "total": 43194,
+                        "two_qubit": 37773
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        -31.047771146805378
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966,
+                            -7.853981633974483,
+                            -19.634954084936204,
+                            -25.52544031041707,
+                            -28.4706834231575,
+                            -29.943304979527714,
+                            -30.67961575771282,
+                            -31.047771146805378
+                        ]
+                    ],
+                    "num_queries": 1920,
+                    "circuit_depth": {
+                        "total": 100888,
+                        "two_qubit": 91961
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -29.697868053466014
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -15.707963267948966,
+                            -7.853981633974483,
+                            -3.9269908169872414,
+                            -17.671458676442587,
+                            -24.543692606170257,
+                            -27.979809571034092,
+                            -29.697868053466014
+                        ]
+                    ],
+                    "num_queries": 1920,
+                    "circuit_depth": {
+                        "total": 100888,
+                        "two_qubit": 91961
+                    }
+                }
+            },
+            "2": {
+                "0": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 960,
+                    "circuit_depth": {
+                        "total": 43194,
+                        "two_qubit": 37773
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -29.943304979527714
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0,
+                            -15.707963267948966,
+                            -7.853981633974483,
+                            -19.634954084936204,
+                            -25.52544031041707,
+                            -28.4706834231575,
+                            -29.943304979527714
+                        ]
+                    ],
+                    "num_queries": 1920,
+                    "circuit_depth": {
+                        "total": 100888,
+                        "two_qubit": 91961
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        -28.59340188618835
+                    ],
+                    "iteration_energies": [
+                        [
+                            -15.707963267948966,
+                            -7.853981633974483,
+                            -3.9269908169872414,
+                            -17.671458676442587,
+                            -8.835729338221293,
+                            -20.125827937059608,
+                            -25.77087723647877,
+                            -28.59340188618835
+                        ]
+                    ],
+                    "num_queries": 1920,
+                    "circuit_depth": {
+                        "total": 100888,
+                        "two_qubit": 91961
+                    }
+                }
+            }
+        },
         "dmrg": {
             "0": {
                 "2": {

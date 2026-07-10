@@ -13,7 +13,7 @@
 # Smoke test: tiny n_occ-vs-t2 sweep through the shared ground_state_energy
 # driver. Verifies sharding, parallel methods, progress logging, and plots.
 # Run interactively:
-#   salloc -q interactive -C cpu -N 1 -t 00:20:00 -A m5027
+#   salloc -q interactive -C cpu -N 1 -t 01:00:00 -A m5027
 #   bash scripts/slurm/phase-diagrams/2x2/haldane/haldane_2x2_smoke_test.sh
 
 set -euo pipefail
@@ -26,10 +26,10 @@ export Y_START=0.0 Y_END=1.0 Y_STEP=0.5
 export SWEEP_TAG=smoke-test-nocc-vs-t2  # keep outputs separate from real runs
 export OUT_SUBDIR=smoke-test            # nest outputs under haldane/2x2/smoke-test/
 
-# Minimal method parameters — fast, not accurate
-export VQE_ITERS=5 VQE_LAYERS=1 VQE_REPS=2
-export IQPE_TIME=0.2 IQPE_TROT=1 IQPE_ITERS=2 IQPE_REPS=2
-export DMRG_NSWEEPS=2 DMRG_MAXDIMS="10,20"
+# Use regular job hyperparameters for realistic testing
+export VQE_ITERS=10 VQE_LAYERS=5 VQE_REPS=1
+export IQPE_TIME=0.2 IQPE_TROT=5 IQPE_ITERS=8 IQPE_REPS=1
+export DMRG_NSWEEPS=4 DMRG_MAXDIMS="20,50,100,200"
 
 # Keep resource use small enough for a single interactive node
 export SHARDS="${SHARDS:-4}"

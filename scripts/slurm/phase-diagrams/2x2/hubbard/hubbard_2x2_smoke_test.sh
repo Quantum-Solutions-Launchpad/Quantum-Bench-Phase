@@ -30,11 +30,11 @@ export HUBBARD_U_START=0.0
 export HUBBARD_U_END=1.0
 export HUBBARD_U_STEP=0.5
 
-# Minimal method parameters -- fast, not accurate
+# Use regular job hyperparameters for realistic testing
 export METHODS="${METHODS:-analytic vqe dmrg}"
-export VQE_ITERS=5 VQE_LAYERS=1 VQE_REPS=2
-export IQPE_REPS=0
-export DMRG_NSWEEPS=2 DMRG_MAXDIMS="10,20"
+export VQE_ITERS=10000 VQE_LAYERS=5 VQE_REPS=10
+export IQPE_TIME=0.2 IQPE_TROT=5 IQPE_ITERS=8 IQPE_REPS=20
+export DMRG_NSWEEPS=4 DMRG_MAXDIMS="20,50,100,200"
 
 # Keep resource use small enough for a single interactive node
 export SHARDS="${SHARDS:-4}"

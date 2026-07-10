@@ -6158,3 +6158,124 @@ Traceback (most recent call last):
         f'Cannot register {name} for automatic cleanup: '
         f'unknown resource type {rtype}')
 ValueError: Cannot register /loky-219426-bkyb9pdm for automatic cleanup: unknown resource type semlock
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-07-10T18:35:29.971] error: *** STEP 55730425.56 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-07-10T18:35:29.972] error: *** STEP 55730425.52 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-07-10T18:35:29.973] error: *** STEP 55730425.60 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-07-10T18:35:29.974] error: *** STEP 55730425.48 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-07-10T18:35:29.975] error: *** STEP 55730425.63 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-07-10T18:35:29.975] error: *** STEP 55730425.44 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-07-10T18:35:29.976] error: *** STEP 55730425.36 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-07-10T18:35:29.976] error: *** STEP 55730425.55 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.977] error: *** STEP 55730425.40 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.977] error: *** STEP 55730425.61 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.977] error: *** STEP 55730425.59 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.978] error: *** STEP 55730425.32 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.978] error: *** STEP 55730425.51 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.979] error: *** STEP 55730425.28 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.979] error: *** STEP 55730425.47 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.980] error: *** STEP 55730425.24 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.980] error: *** STEP 55730425.57 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.980] error: *** STEP 55730425.20 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.980] error: *** STEP 55730425.53 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.981] error: *** STEP 55730425.43 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.981] error: *** STEP 55730425.4 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.981] error: *** STEP 55730425.39 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.982] error: *** STEP 55730425.49 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.983] error: *** STEP 55730425.0 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.983] error: *** STEP 55730425.35 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.983] error: *** STEP 55730425.45 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.984] error: *** STEP 55730425.8 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.984] error: *** STEP 55730425.41 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.984] error: *** STEP 55730425.31 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.985] error: *** STEP 55730425.37 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.985] error: *** STEP 55730425.27 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.986] error: *** STEP 55730425.12 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.986] error: *** STEP 55730425.33 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.986] error: *** STEP 55730425.62 ON nid005008 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.986] error: *** STEP 55730425.23 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.987] error: *** STEP 55730425.16 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.987] error: *** STEP 55730425.29 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.987] error: *** STEP 55730425.54 ON nid005008 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.988] error: *** STEP 55730425.19 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.988] error: *** JOB 55730425 ON nid004852 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.988] error: *** STEP 55730425.13 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.989] error: *** STEP 55730425.58 ON nid005008 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.989] error: *** STEP 55730425.15 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.989] error: *** STEP 55730425.1 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.990] error: *** STEP 55730425.3 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.990] error: *** STEP 55730425.25 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.990] error: *** STEP 55730425.46 ON nid005008 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.991] error: *** STEP 55730425.7 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.991] error: *** STEP 55730425.9 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.989] error: *** STEP 55730425.50 ON nid005008 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.991] error: *** STEP 55730425.42 ON nid005008 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.991] error: *** STEP 55730425.11 ON nid005707 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.992] error: *** STEP 55730425.5 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.992] error: *** STEP 55730425.38 ON nid005008 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.992] error: *** STEP 55730425.17 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.993] error: *** STEP 55730425.21 ON nid004954 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***
+[2026-07-10T18:35:29.993] error: *** STEP 55730425.34 ON nid005008 CANCELLED AT 2026-07-10T18:35:29 DUE to SIGNAL Terminated ***

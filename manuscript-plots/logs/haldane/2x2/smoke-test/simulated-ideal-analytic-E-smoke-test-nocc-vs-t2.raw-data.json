@@ -1,7 +1,7 @@
 {
     "type": "run",
     "methods": [
-        "dmrg"
+        "analytic"
     ],
     "backend": "ideal",
     "plot_format": "3d",
@@ -41,37 +41,43 @@
             "boundary": "periodic"
         },
         "method_params": {
-            "dmrg": {
-                "nsweeps": 4,
-                "maxdims": "20\\,50\\,100\\,200",
-                "cutoff": 1e-09,
-                "seed": 1234,
-                "conserve_qns": true,
-                "conserve_sz": true,
-                "initial_state": "packed",
-                "julia": "julia",
-                "julia_module": "julia/1.11.7",
-                "julia_project": null,
-                "script_path": null
-            }
+            "analytic": {}
         }
     },
-    "result": {
-        "dmrg": {
+    "cells": {
+        "analytic": {
             "0": {
-                "0": 0.0,
-                "1": 0.0,
-                "2": 0.0
+                "0": {
+                    "value": 0.0
+                },
+                "1": {
+                    "value": 0.0
+                },
+                "2": {
+                    "value": 0.0
+                }
             },
             "1": {
-                "0": -2.9999999912408404,
-                "1": -5.12131990741065,
-                "2": -7.24263981480693
+                "1": {
+                    "value": -5.121319907410726
+                },
+                "2": {
+                    "value": -7.242639814821445
+                },
+                "0": {
+                    "value": -3.0000000000000004
+                }
             },
             "2": {
-                "0": -3.999999999943282,
-                "1": -5.4142132716069025,
-                "2": -8.485279313590379
+                "2": {
+                    "value": -8.485279629642886
+                },
+                "0": {
+                    "value": -4.000000000000001
+                },
+                "1": {
+                    "value": -5.414213271607152
+                }
             }
         }
     }

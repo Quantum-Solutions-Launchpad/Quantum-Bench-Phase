@@ -12,9 +12,10 @@ Workers computed rep results via joblib.Parallel
 
 ## Implementation
 
-`_core._rep_jobs()` calculates worker count:
-- `QBP_REP_JOBS` env var overrides all
-- Otherwise: `SLURM_CPUS_PER_TASK / QBP_JOBS_PER_SHARD`
+`qbp/_run.py` calculates `jobs_per_shard()` automatically:
+- Checks `QBP_JOBS_PER_SHARD` env var first (explicit override)
+- Falls back to `os.sched_getaffinity(0)` — CPUs available to this process (respects SLURM cgroup limits)
+- Falls back to `os.cpu_count()` if affinity detection unavailable
 - Used by `run_reps_parallel()` for repetition-level parallelism
 
 ## Methods
@@ -28,22 +29,35 @@ Workers computed rep results via joblib.Parallel
 
 ## Usage
 
+**Default behavior** (no configuration needed):
 ```bash
-# Runtime override
+# Auto-detects CPUS_PER_SHARD and uses that as parallelism
+sbatch scripts/slurm/phase-diagrams/2x2/hubbard/magnetization/vqe.sh
+```
+
+**Override if needed:**
+```bash
+# Reduce parallelism for memory-constrained nodes
 export QBP_JOBS_PER_SHARD=2
 sbatch scripts/slurm/phase-diagrams/2x2/hubbard/magnetization/vqe.sh
 
-# Adaptive: use half CPUs per shard for I/O headroom
+# Custom value (e.g., half the allocated CPUs for I/O headroom)
 export QBP_JOBS_PER_SHARD=$((SLURM_CPUS_PER_TASK / 2))
+sbatch scripts/slurm/phase-diagrams/2x2/hubbard/magnetization/dmrg.sh
 ```
 
 ## Tuning
 
-| Method | Recommended | Notes |
-|--------|---|---|
-| VQE | 2-4 | CPU-bound; memory ~4GB/job |
-| IQPE | 2-4 | CPU-bound; memory ~4GB/job |
-| DMRG | 1-2 | Memory-bound; check node capacity |
+**Default auto-tuning** now sets `QBP_JOBS_PER_SHARD = CPUS_PER_SHARD`. Override only if:
+- Node is memory-constrained
+- You want to reserve CPUs for other tasks
+- Empirical testing shows reduced parallelism is faster (rare)
+
+| Method | Auto-tuned | Manual Override | Notes |
+|--------|---|---|---|
+| VQE | `CPUS_PER_SHARD` | 2-4 | CPU-bound; memory ~4GB/job |
+| IQPE | `CPUS_PER_SHARD` | 2-4 | CPU-bound; memory ~4GB/job |
+| DMRG | `CPUS_PER_SHARD` | 1-2 | Memory-bound; reduce if OOM |
 
 ## Examples
 

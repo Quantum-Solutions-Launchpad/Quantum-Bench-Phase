@@ -1,0 +1,9 @@
+{"timestamp": "2026-07-10T11:29:17", "tag": ["vqe", 1, 0], "cell": {"repetitions": [-0.642822265625], "num_queries": 240, "circuit_depth": {"total": 52, "two_qubit": 45}}}
+{"timestamp": "2026-07-10T11:29:18", "tag": ["vqe", 2, 0], "cell": {"repetitions": [0.328125], "num_queries": 240, "circuit_depth": {"total": 52, "two_qubit": 45}}}
+{"timestamp": "2026-07-10T11:29:18", "tag": ["vqe", 0, 0], "cell": {"repetitions": [0.054443359375], "num_queries": 240, "circuit_depth": {"total": 51, "two_qubit": 45}}}
+{"timestamp": "2026-07-10T11:29:19", "tag": ["vqe", 2, 1], "cell": {"repetitions": [-0.021292525453708716], "num_queries": 480, "circuit_depth": {"total": 52, "two_qubit": 45}}}
+{"timestamp": "2026-07-10T11:29:19", "tag": ["vqe", 0, 2], "cell": {"repetitions": [-0.08249549213936963], "num_queries": 480, "circuit_depth": {"total": 51, "two_qubit": 45}}}
+{"timestamp": "2026-07-10T11:29:23", "tag": ["vqe", 1, 2], "cell": {"repetitions": [-0.051703802340220234], "num_queries": 480, "circuit_depth": {"total": 52, "two_qubit": 45}}}
+{"timestamp": "2026-07-10T11:29:23", "tag": ["vqe", 0, 1], "cell": {"repetitions": [0.0016539589964075915], "num_queries": 480, "circuit_depth": {"total": 51, "two_qubit": 45}}}
+{"timestamp": "2026-07-10T11:29:23", "tag": ["vqe", 1, 1], "cell": {"repetitions": [0.1560281616962974], "num_queries": 480, "circuit_depth": {"total": 52, "two_qubit": 45}}}
+{"timestamp": "2026-07-10T11:29:24", "tag": ["vqe", 2, 2], "cell": {"repetitions": [-2.6017529241135127], "num_queries": 480, "circuit_depth": {"total": 52, "two_qubit": 45}}}
