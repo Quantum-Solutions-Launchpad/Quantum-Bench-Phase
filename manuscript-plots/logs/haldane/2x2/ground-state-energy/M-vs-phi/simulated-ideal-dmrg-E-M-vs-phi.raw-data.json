@@ -4,7 +4,7 @@
         "dmrg"
     ],
     "backend": "ideal",
-    "plot_format": "heatmap",
+    "plot_format": "3d",
     "band_structure": false,
     "observable": "E",
     "extremum": "min",
