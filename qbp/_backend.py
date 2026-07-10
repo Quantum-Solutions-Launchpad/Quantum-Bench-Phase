@@ -8,7 +8,7 @@ QBP's ``backend`` argument selects how the quantum methods (VQE/IQPE) execute:
 * a **real** IBM device (object, device name, or ``"least_busy"``) -> execution
   on hardware via Qiskit Runtime, given the user has credentials configured,
 * an **IQM Resonance** device (``"iqm_emerald"`` / ``"iqm_garnet"`` /
-  ``"iqm_sirius"``) -> execution on hardware via ``qiskit-iqm``, given an
+  ``"iqm_sirius"``) -> execution on hardware via ``iqm-client[qiskit]``, given an
   ``IQM_TOKEN`` is configured.
 
 This module owns everything that differs between those cases so the per-method
@@ -89,8 +89,16 @@ def _resolve_iqm(name: str):
         raise ValueError(f"Unknown IQM backend '{name}'. Known: {sorted(_IQM_DEVICES)}.")
     token = os.environ.get("IQM_TOKEN")
     if not token:
+        try:
+            from dotenv import find_dotenv, load_dotenv
+        except ImportError:
+            pass
+        else:
+            load_dotenv(find_dotenv(usecwd=True))
+            token = os.environ.get("IQM_TOKEN")
+    if not token:
         raise RuntimeError(_IQM_NO_TOKEN_HINT)
-    provider = IQMProvider(_IQM_SERVER_URL, quantum_computer=device, token=token)
+    provider = IQMProvider(_IQM_SERVER_URL, quantum_computer=device)
     return provider.get_backend()
 
 
