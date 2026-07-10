@@ -1,7 +1,7 @@
 import os
 import math
-import quaph
-from quaph import Method
+import qbp
+from qbp import Method
 
 MODEL = "haldane"
 LATTICE = (3, 3)
@@ -10,7 +10,7 @@ Y_PARAM = "t2"
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
-quaph.run(
+qbp.run(
     model=MODEL,
     method=[Method.ANALYTIC],
     lattice=LATTICE,

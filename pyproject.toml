@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "quaph"
+name = "qbp"
 version = "0.1.0"
 description = "A library facilitating the generation of phase diagrams of quantum simulations of fermionic Hamiltonians."
 readme = "README.md"
@@ -12,7 +12,6 @@ authors = [
     { name = "Adam Godel", email = "adam.g@thewiser.org" },
     { name = "Adrian Acosta", email = "adrian.a@thewiser.org" },
     { name = "Maggie Bao", email = "maggie.b@thewiser.org" },
-    { name = "Connor Howe", email = "connor.h@thewiser.org" },
 ]
 keywords = ["quantum", "qiskit", "majorana", "topological", "vqe", "iqpe"]
 classifiers = [
@@ -31,32 +30,30 @@ dependencies = [
     "loguru>=0.7",
     "matplotlib>=3.10",
     "numpy>=2.0",
-    "qiskit>=2.2",
+    "qiskit>=2.1",
     "qiskit-aer>=0.17",
     "qiskit-algorithms>=0.4",
-    "qiskit-ibm-runtime>=0.43",
+    "qiskit-ibm-runtime>=0.40",
     "qiskit-nature>=0.7",
     "rich>=13",
     "pyyaml>=6.0",
     "pydantic>=2.0",
     "asteval>=1.0",
+    "scipy>=1.10",
 ]
 
 [project.optional-dependencies]
-docs = [
-    "sphinx>=7",
-    "shibuya>=2024.10",
-    "myst-parser>=3",
-    "sphinx-autodoc-typehints>=2",
-    "sphinx-copybutton>=0.5",
-]
+parallel = ["threadpoolctl>=3.0"]
+gpu-cuda = ["cupy-cuda12x>=13.0"]
+gpu-torch = ["torch>=2.0"]
+iqm = ["iqm-client[qiskit]>=34", "python-dotenv>=1.0"]
 
 [project.scripts]
-quaph = "quaph._cli:main"
+qbp = "qbp._cli:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["quaph*"]
+include = ["qbp*"]
 
 [tool.setuptools.package-data]
-quaph = ["julia-dmrg/*.jl", "julia-dmrg/*.toml", "models/*.yaml", "models/*.yml"]
+qbp = ["julia-dmrg/*.jl", "julia-dmrg/*.toml", "models/*.yaml", "models/*.yml"]

@@ -1,7 +1,7 @@
 import os
 import math
-import quaph
-from quaph import Method
+import qbp
+from qbp import Method
 
 MODEL = "haldane-hubbard"
 LATTICE = (2, 2)
@@ -15,10 +15,11 @@ _PLOT = os.path.join(_HERE, "plots", MODEL, "sim-ideal-t2-vs-U.pdf")
 
 if os.path.exists(_LOG):
     print("Plotting from existing log...")
-    result = quaph.load_result(_LOG)
-    result.plot()
+    result = qbp.load_result(_LOG)
+    result.plot(diff=True, diff_format="3d")
+
 else:
-    result = quaph.run(
+    result = qbp.run(
         model=MODEL,
         method=METHODS,
         lattice=LATTICE,

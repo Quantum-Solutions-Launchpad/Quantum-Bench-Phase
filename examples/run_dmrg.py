@@ -1,12 +1,12 @@
 import os
 import math
-import quaph
-from quaph import Method
+import qbp
+from qbp import Method
 
 # DMRG vs. exact ground-state energy across a Haldane-model phase diagram.
 #
 # DMRG requires a working Julia + ITensorMPS toolchain (bundled under
-# quaph/julia-dmrg/), so this script only runs end-to-end where Julia is
+# qbp/julia-dmrg/), so this script only runs end-to-end where Julia is
 # available. Selecting Method.ANALYTIC alongside Method.DMRG overlays the exact
 # ground-state energy as the reference surface.
 
@@ -22,9 +22,9 @@ _PLOT = os.path.join(_HERE, "plots", MODEL, "dmrg-n_occ-vs-t2.pdf")
 
 if os.path.exists(_LOG):
     print("Plotting from existing log: {}".format(_LOG))
-    quaph.load_result(_LOG).plot()
+    qbp.load_result(_LOG).plot()
 else:
-    result = quaph.run(
+    result = qbp.run(
         model=MODEL,
         method=[Method.ANALYTIC, Method.DMRG],
         lattice=LATTICE,

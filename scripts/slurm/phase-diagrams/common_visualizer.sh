@@ -3,8 +3,8 @@ set -euo pipefail
 
 setup_visualizer_env() {
     REPO_ROOT="${REPO_ROOT:-/pscratch/sd/m/mbao202/NNL-P7}"
-    source "${REPO_ROOT}/scripts/slurm/phase-diagrams/quaph_sharded.sh"
-    setup_quaph_slurm_env
+    source "${REPO_ROOT}/scripts/slurm/phase-diagrams/qbp_sharded.sh"
+    setup_qbp_slurm_env
 
     export MPLBACKEND="${MPLBACKEND:-Agg}"
 
@@ -126,5 +126,5 @@ run_visualizer_sharded_cmd() {
     local cmd_string
 
     printf -v cmd_string "%q " "${cmd_ref[@]}"
-    run_quaph_sharded_config "${cmd_string}"
+    run_qbp_sharded_config "${cmd_string}"
 }

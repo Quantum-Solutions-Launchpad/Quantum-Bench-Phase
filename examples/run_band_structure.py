@@ -1,7 +1,7 @@
 import os
 import math
-import quaph
-from quaph import Method
+import qbp
+from qbp import Method
 
 MODEL = "haldane"
 X_PARAM = "kx"
@@ -11,7 +11,7 @@ MODEL_PARAMS = {"t1": 1.0, "t2": 0.05, "M": 0.2, "phi": math.pi / 2}
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
-quaph.run(
+qbp.run(
     model=MODEL,
     method=[Method.ANALYTIC],
     x_param=X_PARAM,
@@ -24,7 +24,7 @@ quaph.run(
     heatmap=True,
 )
 
-quaph.run(
+qbp.run(
     model=MODEL,
     method=[Method.ANALYTIC],
     x_param=X_PARAM,

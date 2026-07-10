@@ -1,6 +1,6 @@
 import os
-import quaph
-from quaph import Method
+import qbp
+from qbp import Method
 
 # Transverse-Field Ising Model (TFIM) from the Hamlib dataset.
 #
@@ -13,7 +13,7 @@ HAMLIB_PATH = "/Users/adamgodel/hamlib/condensedmatter/tfim/tfim.zip"
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
 # 3D surface: ground-state energy vs Lx and h
-quaph.run(
+qbp.run(
     method=[Method.ANALYTIC],
     qubit_operator=HAMLIB_PATH,
     x_param="Lx",
@@ -25,7 +25,7 @@ quaph.run(
 )
 
 # Heatmap: same data, alternative view
-quaph.run(
+qbp.run(
     method=[Method.ANALYTIC],
     qubit_operator=HAMLIB_PATH,
     x_param="Lx",
@@ -38,7 +38,7 @@ quaph.run(
 )
 
 # 2D line: energy vs transverse field at fixed Lx=8
-quaph.run(
+qbp.run(
     method=[Method.ANALYTIC],
     qubit_operator=HAMLIB_PATH,
     x_param="h",
