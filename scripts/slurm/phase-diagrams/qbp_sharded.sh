@@ -23,9 +23,7 @@ setup_qbp_slurm_env() {
 
     SHARDS="${SHARDS:-${SLURM_NTASKS:-${SLURM_CPUS_ON_NODE:-128}}}"
     CPUS_PER_SHARD="${CPUS_PER_SHARD:-${SLURM_CPUS_PER_TASK:-1}}"
-    # QBP_JOBS_PER_SHARD controls intra-shard parallelism for expensive methods (VQE, IQPE, DMRG).
-    # Set > 1 to parallelize grid cells within each shard. See QBP_JOBS_PER_SHARD.md for tuning.
-    export QBP_JOBS_PER_SHARD="${QBP_JOBS_PER_SHARD:-1}"
+    export QBP_JOBS_PER_SHARD="${QBP_JOBS_PER_SHARD:-${CPUS_PER_SHARD}}"
 }
 
 run_qbp_sharded_config() {

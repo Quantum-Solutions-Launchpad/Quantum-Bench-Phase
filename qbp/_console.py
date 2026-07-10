@@ -44,8 +44,9 @@ Commands:
                        Per-method flags are prefixed, e.g. --vqe-iters 200
                        --vqe-layers 2 --iqpe-time 0.2 --dmrg-nsweeps 4. Add
                        --backend NAME to run vqe/iqpe under a noise model
-                       (e.g. FakeSherbrooke) or on a real IBM device (ibm_brisbane,
-                       least_busy).
+                       (e.g. FakeSherbrooke), on a real IBM device (ibm_brisbane,
+                       least_busy), or on an IQM Resonance device (iqm_emerald,
+                       iqm_garnet, iqm_sirius).
     OR
   run --qubit-operator SOURCE --method M [M ...] [--extremum min|max] [...]
                        Sweep a HamLib HDF5 file's Hamiltonians instead of a

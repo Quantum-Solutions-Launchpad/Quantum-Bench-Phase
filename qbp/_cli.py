@@ -430,8 +430,9 @@ def main(argv=None):
                             help="Plot format for --diff plots (default: 3d).")
     run_parser.add_argument("--backend", default=None, metavar="NAME",
                             help="VQE/IQPE execution backend: a fake backend for local noise "
-                                 "(e.g. FakeSherbrooke), a real IBM device (e.g. ibm_brisbane), "
-                                 "or least_busy. Omit for ideal simulation.")
+                                 "(e.g. FakeSherbrooke), a real IBM device (e.g. ibm_brisbane) "
+                                 "or least_busy, or an IQM Resonance device (iqm_emerald, "
+                                 "iqm_garnet, iqm_sirius). Omit for ideal simulation.")
     _add_boundary_args(run_parser)
     _add_geometry_args(run_parser)
     _add_profile_args(run_parser)

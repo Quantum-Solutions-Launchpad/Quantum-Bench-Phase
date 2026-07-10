@@ -8,14 +8,10 @@ from qiskit import transpile
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import efficient_su2
 from qiskit.quantum_info import SparsePauliOp
-from qiskit_ibm_runtime import Session, Estimator
 
 from qbp._core import _fmt_params, _make_simulator, run_reps_parallel, logger
+from qbp._backend import make_vqe_estimator
 from qbp._method import Method, ParamSpec, SimulationMethod, register_method
-
-
-def _isa(op, circ):
-    return op.apply_layout(circ.layout) if circ.layout is not None else op
 
 
 def _isa(op, circ):
@@ -24,12 +20,10 @@ def _isa(op, circ):
 
 # --------------------------------------------------------------------- solvers
 def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend=None) -> QuantumCircuit:
-    simulator = _make_simulator(backend)
-    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
-    isa_hamiltonian = _isa(hamiltonian, ansatz_circuit)
-
-    with Session(backend=simulator) as session:
-        estimator = Estimator(mode=session)
+    with make_vqe_estimator(backend) as est:
+        ansatz_circuit = est.transpile(ansatz)
+        isa_hamiltonian = _isa(hamiltonian, ansatz_circuit)
+        estimator = est.estimator
         x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
         cost_history = {"iters": 0, "prev": None}
 
@@ -51,12 +45,10 @@ def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend
 
 
 def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=None, label="", observable_qubit_ops=None):
-    simulator = _make_simulator(backend)
-    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
-    isa_hamiltonian = _isa(hamiltonian, ansatz_circuit)
-
-    with Session(backend=simulator) as session:
-        estimator = Estimator(mode=session)
+    with make_vqe_estimator(backend) as est:
+        ansatz_circuit = est.transpile(ansatz)
+        isa_hamiltonian = _isa(hamiltonian, ansatz_circuit)
+        estimator = est.estimator
         x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
 
         cost_history = {"iters": 0, "cost_history": []}
