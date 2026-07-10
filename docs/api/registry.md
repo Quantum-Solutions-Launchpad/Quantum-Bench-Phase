@@ -1,7 +1,7 @@
 # Registry
 
 ```{eval-rst}
-.. autofunction:: quaph.get_model
+.. autofunction:: qbp.get_model
 ```
 
 ```{eval-rst}
@@ -9,16 +9,16 @@
 ```
 
 ```{eval-rst}
-.. autofunction:: quaph.register_model
+.. autofunction:: qbp.register_model
 ```
 
 ```{eval-rst}
-.. todo:: Example: constructing a Python :class:`~quaph.Model` and
+.. todo:: Example: constructing a Python :class:`~qbp.Model` and
    registering it.
 ```
 
 ```{eval-rst}
-.. autofunction:: quaph.register_model_from_file
+.. autofunction:: qbp.register_model_from_file
 ```
 
 ```{eval-rst}
@@ -26,7 +26,7 @@
 ```
 
 ```{eval-rst}
-.. autofunction:: quaph.remove_model
+.. autofunction:: qbp.remove_model
 ```
 
 ```{eval-rst}

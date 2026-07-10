@@ -1,7 +1,7 @@
 # Defining a Model in Python
 
 ```{eval-rst}
-.. todo:: Defining a :class:`~quaph.Model` directly in Python. Full
+.. todo:: Defining a :class:`~qbp.Model` directly in Python. Full
    constructor signature (``name``, ``display_name``, ``param_labels``,
    ``spin``, ``n_dims``, ``lattice_shape``, ``sites_per_cell``,
    ``hamiltonian_matrix``, ``bloch_hamiltonian``, ``get_optimizer``,

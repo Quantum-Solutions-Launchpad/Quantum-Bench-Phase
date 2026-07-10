@@ -1,6 +1,6 @@
 # Concepts
 
-This page introduces the physics and algorithms that QuaPh is designed around. We use the [Haldane model](https://en.wikipedia.org/wiki/Haldane_model) throughout as a running example, since it is the case study used in the accompanying paper and is a built-in model of the library.
+This page introduces the physics and algorithms that QBP is designed around. We use the [Haldane model](https://en.wikipedia.org/wiki/Haldane_model) throughout as a running example, since it is the case study used in the accompanying paper and is a built-in model of the library.
 
 ## The Haldane Model
 
@@ -16,7 +16,7 @@ $$
 
 where $\xi_i = \pm 1$ labels the sublattice, $\nu_{ij} = \pm 1$ encodes the chirality of the next-nearest-neighbor hop, and $c_i^\dagger, c_j$ are fermionic creation and annihilation operators.
 
-QuaPh treats the Haldane model as an $m \times n$ honeycomb lattice with **periodic boundary conditions (PBCs)**, where $m$ and $n$ count unit cells along each direction. A parallelogram slice of the lattice is used, with edges wrapping around to the opposite side. Open boundary conditions are also supported.
+QBP treats the Haldane model as an $m \times n$ honeycomb lattice with **periodic boundary conditions (PBCs)**, where $m$ and $n$ count unit cells along each direction. A parallelogram slice of the lattice is used, with edges wrapping around to the opposite side. Open boundary conditions are also supported.
 
 ## Glossary of Relevant Terms
 
@@ -33,11 +33,11 @@ QuaPh treats the Haldane model as an $m \times n$ honeycomb lattice with **perio
 : Bloch mode exploits translation invariance under PBCs to diagonalize the Hamiltonian one momentum block at a time, which is fast but only available with PBCs. Real-space mode works directly with site operators, supports open boundaries, and is required when translation symmetry is broken.
 
 **Fermion-to-Qubit Mapping**
-: A protocol that rewrites fermionic operators as Pauli operators so the Hamiltonian can run on a quantum computer. QuaPh uses mappings such as [Jordan-Wigner](https://en.wikipedia.org/wiki/Jordan%E2%80%93Wigner_transformation) that send one spin-orbital to exactly one qubit, so the qubit count equals the number of sites.
+: A protocol that rewrites fermionic operators as Pauli operators so the Hamiltonian can run on a quantum computer. QBP uses mappings such as [Jordan-Wigner](https://en.wikipedia.org/wiki/Jordan%E2%80%93Wigner_transformation) that send one spin-orbital to exactly one qubit, so the qubit count equals the number of sites.
 
 ## Quantum Simulation Techniques
 
-QuaPh supports two quantum algorithms for estimating ground-state energies.
+QBP supports two quantum algorithms for estimating ground-state energies.
 
 **Variational Quantum Eigensolver (VQE)**
 : A hybrid quantum-classical algorithm that exploits the variational principle $E_0 \leq \langle\Psi|\hat{H}|\Psi\rangle / \langle\Psi|\Psi\rangle$. The trial state $|\Psi\rangle = U(\boldsymbol{\theta})|\boldsymbol{0}\rangle$ is prepared by a parameterized circuit (the **ansatz**), and a classical optimizer iteratively updates $\boldsymbol{\theta}$ to minimize the measured energy. Each iteration uses a shallow circuit, which makes VQE well suited to NISQ-era hardware. The user chooses the qubit mapping, the ansatz (e.g. an excitation-preserving ansatz of two-qubit gates), and the classical optimizer (e.g. Adam or SPSA).
@@ -46,4 +46,4 @@ QuaPh supports two quantum algorithms for estimating ground-state energies.
 : A variant of [quantum phase estimation](https://en.wikipedia.org/wiki/Quantum_phase_estimation_algorithm) that trades qubit count for iteration count. Phase estimation extracts $\theta$ from $U|\psi\rangle = e^{2\pi i\theta}|\psi\rangle$; precision in IQPE is controlled by the number of iterations $m$, which determines the bits $\phi = 0.x_1 x_2 \cdots x_m$ of the phase. Because $\hat{H}$ is not unitary, IQPE simulates the time-evolution operator $U(t) = e^{-i\hat{H}t}$, decomposed into gates via **Trotterization**. The user chooses the evolution time $t$ (typically so that $E_\text{max} t < 2\pi$), the number of Trotter steps $N_\text{trot}$, and the number of iterations $m$. IQPE circuits are deeper than VQE circuits, but when they are viable they are typically more accurate.
 
 **Analytic, simulated, and noisy runs**
-: Every QuaPh workflow can be executed in three modes. *Analytic* runs diagonalize the Hamiltonian classically and return the exact answer; they are the fastest and serve as a ground-truth reference. *Simulated ideal* runs execute the quantum circuit on a noiseless statevector simulator, so they capture algorithmic error (e.g. Trotter or ansatz error) without hardware noise. *Simulated noisy* runs use a noise model (or a real backend via Qiskit IBM Runtime) and additionally capture device noise.
+: Every QBP workflow can be executed in three modes. *Analytic* runs diagonalize the Hamiltonian classically and return the exact answer; they are the fastest and serve as a ground-truth reference. *Simulated ideal* runs execute the quantum circuit on a noiseless statevector simulator, so they capture algorithmic error (e.g. Trotter or ansatz error) without hardware noise. *Simulated noisy* runs use a noise model (or a real backend via Qiskit IBM Runtime) and additionally capture device noise.

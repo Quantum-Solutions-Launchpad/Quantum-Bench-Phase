@@ -4,6 +4,9 @@ logs/*.log
 *.egg-info/
 .vscode/
 
+# Sphinx build output
+docs/_build/
+
 # Environment variables / secrets
 .env
 

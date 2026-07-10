@@ -8,7 +8,7 @@
 
 ```{eval-rst}
 .. todo:: Table of model parameters with LaTeX symbols, drawn from
-   ``quaph/models/kane_mele.yaml``.
+   ``qbp/models/kane_mele.yaml``.
 ```
 
 ## Typical Sweep
@@ -21,6 +21,6 @@
 ## Example
 
 ```{eval-rst}
-.. todo:: Runnable snippet using :func:`~quaph.run_analytic` (and/or
-   :func:`~quaph.run_simulated_ideal`) targeting ``kane-mele``.
+.. todo:: Runnable snippet using :func:`~qbp.run` with ``Method.ANALYTIC`` (and/or
+   ``Method.VQE``) targeting ``kane-mele``.
 ```

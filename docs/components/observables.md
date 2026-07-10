@@ -1,7 +1,7 @@
 # Observables
 
 ```{eval-rst}
-.. todo:: Document :class:`~quaph.Observable` (fields ``name``,
+.. todo:: Document :class:`~qbp.Observable` (fields ``name``,
    ``display_name``, ``analytic``, ``analytic_bloch``, ``operator``) and the
    five built-in defaults (``E``, ``gap``, ``kinetic_energy``,
    ``interaction_energy``, ``density_variance``). Worked example of writing

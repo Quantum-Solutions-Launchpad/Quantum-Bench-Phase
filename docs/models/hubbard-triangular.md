@@ -8,7 +8,7 @@
 
 ```{eval-rst}
 .. todo:: Table of model parameters with LaTeX symbols, drawn from
-   ``quaph/models/hubbard_triangular.yaml``.
+   ``qbp/models/hubbard_triangular.yaml``.
 ```
 
 ## Typical Sweep
@@ -21,6 +21,6 @@
 ## Example
 
 ```{eval-rst}
-.. todo:: Runnable snippet using :func:`~quaph.run_analytic` (and/or
-   :func:`~quaph.run_simulated_ideal`) targeting ``hubbard-triangular``.
+.. todo:: Runnable snippet using :func:`~qbp.run` with ``Method.ANALYTIC`` (and/or
+   ``Method.VQE``) targeting ``hubbard-triangular``.
 ```

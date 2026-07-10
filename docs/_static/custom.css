@@ -1,6 +1,6 @@
-/* QuaPh pipeline diagram (used on docs/getting-started/concepts.md) */
+/* QBP pipeline diagram (used on docs/getting-started/concepts.md) */
 
-.quaph-pipeline {
+.qbp-pipeline {
     --pipeline-fill: #ebe4ff;
     --pipeline-stroke: #6e56cf;
     --pipeline-text: #2b1c5c;
@@ -13,14 +13,14 @@
     font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
 }
 
-.quaph-pipeline .pipeline-row {
+.qbp-pipeline .pipeline-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     align-items: stretch;
     gap: 0.4rem;
 }
 
-.quaph-pipeline .step {
+.qbp-pipeline .step {
     background: var(--pipeline-fill);
     border: 2px solid var(--pipeline-stroke);
     color: var(--pipeline-text);
@@ -36,45 +36,45 @@
     justify-content: center;
 }
 
-.quaph-pipeline .arrow {
+.qbp-pipeline .arrow {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0.2rem;
 }
 
-.quaph-pipeline .arrow svg {
+.qbp-pipeline .arrow svg {
     fill: var(--pipeline-stroke);
     width: 100%;
     height: 100%;
     display: block;
 }
 
-.quaph-pipeline .arrow-right svg,
-.quaph-pipeline .arrow-left svg {
+.qbp-pipeline .arrow-right svg,
+.qbp-pipeline .arrow-left svg {
     height: 55%;
     width: 85%;
 }
 
-.quaph-pipeline .connector {
+.qbp-pipeline .connector {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 0.4rem;
     height: 5.75rem;
 }
 
-.quaph-pipeline .connector .arrow {
+.qbp-pipeline .connector .arrow {
     grid-column: 5;
     padding: 0.4rem 0;
 }
 
-.quaph-pipeline .arrow-down svg {
+.qbp-pipeline .arrow-down svg {
     height: 100%;
     width: 28%;
 }
 
 @media (prefers-color-scheme: dark) {
-    .quaph-pipeline {
+    .qbp-pipeline {
         --pipeline-fill: #2b1c5c;
         --pipeline-stroke: #aa99ec;
         --pipeline-text: #ebe4ff;

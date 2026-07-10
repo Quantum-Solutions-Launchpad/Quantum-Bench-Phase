@@ -1,25 +1,18 @@
 # Runners
 
 ```{eval-rst}
-.. autofunction:: quaph.run_analytic
+.. autofunction:: qbp.run
 ```
 
 ```{eval-rst}
-.. todo:: Example: SSH sweep over ``t2``.
+.. todo:: Example: SSH sweep over ``t2`` with ``method=[Method.ANALYTIC]``.
 ```
 
 ```{eval-rst}
-.. autofunction:: quaph.run_simulated_ideal
+.. todo:: Example: same SSH sweep with ``method=[Method.VQE, Method.IQPE]`` on
+   the ideal simulator.
 ```
 
 ```{eval-rst}
-.. todo:: Example: same SSH sweep with VQE and IQPE enabled.
-```
-
-```{eval-rst}
-.. autofunction:: quaph.run_simulated_noisy
-```
-
-```{eval-rst}
-.. todo:: Example: SSH sweep against ``FakeSherbrooke``.
+.. todo:: Example: SSH sweep against ``FakeSherbrooke`` via ``backend="FakeSherbrooke"``.
 ```

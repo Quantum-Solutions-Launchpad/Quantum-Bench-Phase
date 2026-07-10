@@ -1,4 +1,4 @@
-"""Sphinx configuration for the QuaPh documentation."""
+"""Sphinx configuration for the QBP documentation."""
 
 from __future__ import annotations
 
@@ -10,13 +10,13 @@ sys.path.insert(0, os.path.abspath(".."))
 
 # -- Project information -----------------------------------------------------
 
-project = "QuaPh"
+project = "QBP"
 author = "WISER/NNL"
 copyright = f"{datetime.now().year}, {author}"
 
 try:
     from importlib.metadata import version as _pkg_version
-    release = _pkg_version("quaph")
+    release = _pkg_version("qbp")
 except Exception:
     release = "0.1.0"
 version = ".".join(release.split(".")[:2])
@@ -82,7 +82,7 @@ intersphinx_mapping = {
 # -- HTML output -------------------------------------------------------------
 
 html_theme = "shibuya"
-html_title = "QuaPh"
+html_title = "QBP"
 html_static_path = ["_static"]
 html_favicon = "_static/favicon-dark.svg"
 html_css_files = ["custom.css"]

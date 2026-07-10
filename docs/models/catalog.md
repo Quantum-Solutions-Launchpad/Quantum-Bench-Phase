@@ -1,8 +1,8 @@
 # Built-In Models
 
 ```{eval-rst}
-.. todo:: One-paragraph framing of QuaPh's built-in catalog: where the YAML
-   files live (``quaph/models/``), how to override or extend them, and a
+.. todo:: One-paragraph framing of QBP's built-in catalog: where the YAML
+   files live (``qbp/models/``), how to override or extend them, and a
    short note pointing readers to the per-model pages below for parameters
    and runnable snippets.
 ```

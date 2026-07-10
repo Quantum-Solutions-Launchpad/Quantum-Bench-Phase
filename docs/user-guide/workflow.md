@@ -1,10 +1,10 @@
 # End-to-End Workflow
 
-## QuaPh Pipeline
+## QBP Pipeline
 
-A typical QuaPh run follows the same pipeline regardless of the model or algorithm:
+A typical QBP run follows the same pipeline regardless of the model or algorithm:
 
-<div class="quaph-pipeline">
+<div class="qbp-pipeline">
   <div class="pipeline-row">
     <div class="step">Model</div>
     <div class="arrow arrow-right"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,18 60,18 60,0 100,30 60,60 60,42 0,42"/></svg></div>
@@ -51,7 +51,7 @@ where $\xi_i = +1$ on sublattice $A$ and $-1$ on sublattice $B$, and $\nu_{ij} =
 
 ### Analytic Computation
 
-The canonical phase diagram of the Haldane model is a plot of $M/t_2$ against $\phi$. In this setup, the phase boundaries appear as sinusoidal waves with peaks at $\pm 3\sqrt{3}$. As an example, let's fix $t_2 = 0.1$ and plot $M$ against $\phi$ as a heatmap using QuaPh. We will begin by just performing an analytic computation.
+The canonical phase diagram of the Haldane model is a plot of $M/t_2$ against $\phi$. In this setup, the phase boundaries appear as sinusoidal waves with peaks at $\pm 3\sqrt{3}$. As an example, let's fix $t_2 = 0.1$ and plot $M$ against $\phi$ as a heatmap using QBP. We will begin by just performing an analytic computation.
 
 ```{jupyter-execute}
 :hide-code:
@@ -65,7 +65,8 @@ from loguru import logger
 logger.remove()
 sys.stdout = sys.stderr = io.StringIO()
 
-import quaph
+import qbp
+from qbp import Method
 
 def _find_data_dir() -> Path:
     for base in (Path.cwd(), *Path.cwd().parents):
@@ -79,26 +80,33 @@ def _find_data_dir() -> Path:
 
 _DATA_DIR = _find_data_dir()
 
-def _patched_simulated_ideal(*args, **kwargs):
-    result = quaph.load_result(str(_DATA_DIR / "simulated-ideal-3d-n_occ-vs-t2.json"))
-    result.plot(hide_plot=kwargs.get("hide_plot", False))
-    return result
+_real_run = qbp.run
 
-def _patched_simulated_noisy(*args, **kwargs):
-    result = quaph.load_result(str(_DATA_DIR / "simulated-noisy-3d-n_occ-vs-t2.json"))
-    result.plot(hide_plot=kwargs.get("hide_plot", False))
-    return result
+def _patched_run(*args, **kwargs):
+    methods = kwargs.get("method") or []
+    names = {getattr(m, "value", m) for m in methods}
+    if names & {"vqe", "iqpe"}:
+        fname = (
+            "simulated-noisy-3d-n_occ-vs-t2.json"
+            if kwargs.get("backend")
+            else "simulated-ideal-3d-n_occ-vs-t2.json"
+        )
+        result = qbp.load_result(str(_DATA_DIR / fname))
+        result.plot(hide_plot=kwargs.get("hide_plot", False))
+        return result
+    return _real_run(*args, **kwargs)
 
-quaph.run_simulated_ideal = _patched_simulated_ideal
-quaph.run_simulated_noisy = _patched_simulated_noisy
+qbp.run = _patched_run
 ```
 
 ```{jupyter-execute}
 import math
-import quaph
+import qbp
+from qbp import Method
 
-result = quaph.run_analytic(
+result = qbp.run(
     model="haldane",
+    method=[Method.ANALYTIC],
     lattice=(3, 3),
     x_param="phi",
     x_range=(-math.pi, math.pi, math.pi / 100),
@@ -115,10 +123,12 @@ You can use the `observable` parameter to plot different observables. By default
 
 ```{jupyter-execute}
 import math
-import quaph
+import qbp
+from qbp import Method
 
-result = quaph.run_analytic(
+result = qbp.run(
     model="haldane",
+    method=[Method.ANALYTIC],
     lattice=(3, 3),
     x_param="phi",
     x_range=(-math.pi, math.pi, math.pi / 100),
@@ -134,55 +144,54 @@ Here, the same phase boundary is far more visible as a zero-gap area. Depending 
 
 ### Ideal Simulation
 
-The real power of QuaPh, though, comes from comparing these analytic diagonalization runs against observables computed by quantum algorithms. Two entry points wrap this functionality end-to-end: `quaph.run_simulated_ideal` runs VQE and IQPE on a noise-free statevector simulator, and `quaph.run_simulated_noisy` runs them through a noise model. Both use Qiskit circuitry to accomplish the simulation, and both return a `SimulatedResult` that already knows how to plot itself.
+The real power of QBP, though, comes from comparing these analytic diagonalization runs against observables computed by quantum algorithms. The same `qbp.run` entry point drives them: pass quantum methods such as `Method.VQE` and `Method.IQPE` in the `method` list, and add `Method.ANALYTIC` to overlay the exact diagonalization surface as a reference. Per-method settings go in `method_params`, keyed by the method. Leaving `backend` unset runs on a noise-free statevector simulator. The call returns a `RunResult` that already knows how to plot itself.
 
 Let's stick with the Haldane model but switch axes: fix $\phi = \pi/4$ and $M = 0.1$, and sweep occupation number $N_\text{occ}$ against $t_2$. The code to compute the ground-state energies for this configuration with a noise-free simulator looks as follows:
 
 ```{jupyter-execute}
 import math
-import quaph
+import qbp
+from qbp import Method
 
-result = quaph.run_simulated_ideal(
+result = qbp.run(
     model="haldane",
+    method=[Method.ANALYTIC, Method.VQE, Method.IQPE],
     lattice=(2, 2),
     x_param="n_occ",
     y_param="t2",
     y_range=(0.0, 1.0, 0.25),
     model_params={"t1": 1.0, "phi": math.pi / 4, "M": 0.1},
-    vqe_iters=50,
-    vqe_layers=1,
-    vqe_reps=1,
-    iqpe_time=0.1,
-    iqpe_trot=1,
-    iqpe_iters=1,
-    iqpe_reps=1,
+    method_params={
+        Method.VQE: {"iters": 50, "layers": 1, "reps": 1},
+        Method.IQPE: {"time": 0.1, "trot": 1, "iters": 1, "reps": 1},
+    },
 )
 ```
 
-The analytic surface is the smooth diagonalization baseline. VQE and IQPE samples sit on top of it. If the simulation is accurate, they should hug the baseline closely, with residual gaps coming from finite ansatz depth (`vqe_layers`) or limited phase-estimation precision (`iqpe_iters`). Cranking those knobs up tightens agreement at the cost of runtime.
+The analytic surface is the smooth diagonalization baseline. VQE and IQPE samples sit on top of it. If the simulation is accurate, they should hug the baseline closely, with residual gaps coming from finite ansatz depth (`layers`) or limited phase-estimation precision (`iters`). Cranking those knobs up tightens agreement at the cost of runtime.
 
 ### Noisy Simulation
 
-Real hardware, especially today's quantum hardware, is far noisier than this, though. Swapping in `run_simulated_noisy` keeps the same sweep shape but routes the circuits through a noise model. By default, QuaPh uses a fake snapshot of IBM's Sherbrooke device, but you can pass any Qiskit backend through the `backend` keyword to use your own.
+Real hardware, especially today's quantum hardware, is far noisier than this, though. Passing a `backend` keeps the same sweep shape but routes the circuits through a noise model. Here we use a fake snapshot of IBM's Sherbrooke device, but you can pass any Qiskit backend through the `backend` keyword to use your own.
 
 ```{jupyter-execute}
 import math
-import quaph
+import qbp
+from qbp import Method
 
-result = quaph.run_simulated_noisy(
+result = qbp.run(
     model="haldane",
+    method=[Method.ANALYTIC, Method.VQE, Method.IQPE],
     lattice=(2, 2),
     x_param="n_occ",
     y_param="t2",
     y_range=(0.0, 1.0, 0.25),
     model_params={"t1": 1.0, "phi": math.pi / 4, "M": 0.1},
-    vqe_iters=50,
-    vqe_layers=1,
-    vqe_reps=1,
-    iqpe_time=0.1,
-    iqpe_trot=1,
-    iqpe_iters=1,
-    iqpe_reps=1,
+    method_params={
+        Method.VQE: {"iters": 50, "layers": 1, "reps": 1},
+        Method.IQPE: {"time": 0.1, "trot": 1, "iters": 1, "reps": 1},
+    },
+    backend="FakeSherbrooke",
 )
 ```
 

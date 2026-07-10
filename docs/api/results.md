@@ -1,25 +1,16 @@
 # Results
 
 ```{eval-rst}
-.. autoclass:: quaph.AnalyticResult
+.. autoclass:: qbp.RunResult
    :members:
 ```
 
 ```{eval-rst}
-.. todo:: Example: ``.plot()`` and saving to PDF.
+.. todo:: Example: ``.plot()`` showing analytic vs. VQE vs. IQPE, and saving to PDF.
 ```
 
 ```{eval-rst}
-.. autoclass:: quaph.SimulatedResult
-   :members:
-```
-
-```{eval-rst}
-.. todo:: Example: ``.plot()`` showing analytic vs. VQE vs. IQPE.
-```
-
-```{eval-rst}
-.. autofunction:: quaph.load_result
+.. autofunction:: qbp.load_result
 ```
 
 ```{eval-rst}

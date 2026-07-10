@@ -8,6 +8,6 @@
    ``bloch_hamiltonian``, ``lattice_vectors``, ``sublattice_positions``,
    ``observables``. Document each ``terms`` kind (``hopping``, ``onsite``,
    ``density_density_onsite``, ``density_density_bond``) with its field list.
-   Include an annotated example reproducing ``quaph/models/ssh.yaml``.
+   Include an annotated example reproducing ``qbp/models/ssh.yaml``.
    Explain ``@<name>`` runtime-parameter references and ``hermitian_partner``.
 ```

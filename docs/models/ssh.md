@@ -22,6 +22,6 @@
 ## Example
 
 ```{eval-rst}
-.. todo:: Runnable ``run_analytic`` snippet that reproduces the SSH phase
-   diagram and points at ``quaph/models/ssh.yaml`` for the underlying spec.
+.. todo:: Runnable ``run`` snippet (``method=[Method.ANALYTIC]``) that reproduces the SSH phase
+   diagram and points at ``qbp/models/ssh.yaml`` for the underlying spec.
 ```
