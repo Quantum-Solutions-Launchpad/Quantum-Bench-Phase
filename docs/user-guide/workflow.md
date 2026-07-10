@@ -5,31 +5,25 @@
 A typical QBP run follows the same pipeline regardless of the model or algorithm:
 
 <div class="qbp-pipeline">
-  <div class="pipeline-row">
-    <div class="step">Model</div>
-    <div class="arrow arrow-right"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,18 60,18 60,0 100,30 60,60 60,42 0,42"/></svg></div>
-    <div class="step">Mapper</div>
-    <div class="arrow arrow-right"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,18 60,18 60,0 100,30 60,60 60,42 0,42"/></svg></div>
-    <div class="step">Ansatz /<br>Trotterization</div>
-  </div>
-  <div class="connector">
-    <div class="arrow arrow-down"><svg viewBox="0 0 60 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="18,0 42,0 42,60 60,60 30,100 0,60 18,60"/></svg></div>
-  </div>
-  <div class="pipeline-row">
-    <div class="step">Plot</div>
-    <div class="arrow arrow-left"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,18 40,18 40,0 0,30 40,60 40,42 100,42"/></svg></div>
-    <div class="step">Result</div>
-    <div class="arrow arrow-left"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,18 40,18 40,0 0,30 40,60 40,42 100,42"/></svg></div>
-    <div class="step">Optimizer</div>
-  </div>
+  <div class="step" style="grid-area: 1 / 1;">Model</div>
+  <div class="arrow arrow-right" style="grid-area: 1 / 2;"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,18 60,18 60,0 100,30 60,60 60,42 0,42"/></svg></div>
+  <div class="step" style="grid-area: 1 / 3;">Mapper</div>
+  <div class="arrow arrow-down" style="grid-area: 2 / 3;"><svg viewBox="0 0 60 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="18,0 42,0 42,60 60,60 30,100 0,60 18,60"/></svg></div>
+  <div class="inject" style="grid-area: 3 / 1;">Qubit-Mapped<br>Hamiltonians</div>
+  <div class="arrow arrow-right" style="grid-area: 3 / 2;"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,18 60,18 60,0 100,30 60,60 60,42 0,42"/></svg></div>
+  <div class="step" style="grid-area: 3 / 3;">Simulation</div>
+  <div class="arrow arrow-down" style="grid-area: 4 / 3;"><svg viewBox="0 0 60 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="18,0 42,0 42,60 60,60 30,100 0,60 18,60"/></svg></div>
+  <div class="step" style="grid-area: 5 / 1;">Plot</div>
+  <div class="arrow arrow-left" style="grid-area: 5 / 2;"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,18 40,18 40,0 0,30 40,60 40,42 100,42"/></svg></div>
+  <div class="step" style="grid-area: 5 / 3;">Result</div>
 </div>
 
 - **Model.** A tight-binding Hamiltonian on a chosen lattice with chosen parameters.
 - **Mapper.** A fermion-to-qubit mapping (e.g. Jordan-Wigner) that turns the Hamiltonian into Pauli operators.
-- **Ansatz / Trotterization.** A parameterized circuit (VQE) or a Trotterized time-evolution circuit (IQPE).
-- **Optimizer.** A classical optimizer that updates ansatz parameters (VQE) or iterative execution of a quantum circuit (IQPE).
+- **Simulation.** A quantum algorithm — VQE (a parameterized ansatz optimized by a classical optimizer) or IQPE (a Trotterized time-evolution circuit) — or a classical tensor-network benchmark (DMRG), each estimating ground-state energies or other observables across the sweep.
 - **Result.** Ground-state energies, gaps, or other observables across a parameter sweep.
 - **Plot.** A line plot, 3D plot, or heatmap of the observable.
+- **Qubit-Mapped Hamiltonians.** Instead of starting from a built-in model and mapper, you can inject a pre-mapped qubit Hamiltonian — for example a [HamLib](https://quantum-journal.org/papers/q-2024-12-11-1559/) problem Hamiltonian or your own Pauli operators — straight into the simulation stage.
 
 ## Case Study: Haldane Model
 
