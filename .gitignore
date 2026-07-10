@@ -2,12 +2,12 @@ __pycache__
 .DS_Store
 logs/*.log
 *.egg-info/
+.vscode/
+
+# Environment variables / secrets
+.env
 
 # Python virtual environments
 .venv/
 venv/
 venv7/
-
-# Build environments
-build/
-docs/_build/
