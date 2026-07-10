@@ -12,7 +12,7 @@ import numpy as np
 from joblib import Parallel, delayed
 
 from qbp._model import Model, ModelCapabilityError, matrix_to_fermionic_op
-from qbp._backend import resolve_backend, backend_label as _backend_label
+from qbp._backend import resolve_backend, backend_label as _backend_label, is_real_backend
 from qbp._core import resolve_sweep
 from qbp._hamlib import (
     list_hamlib_keys, load_hamlib_operator, parse_key_params,
@@ -847,7 +847,7 @@ def _run_model_methods(
     if task_index is not None and not 0 <= task_index < task_count:
         raise ValueError("task_index must satisfy 0 <= task_index < task_count")
 
-    use_parallel = any(method_objs[m].WANTS_PARALLEL for m in methods)
+    use_parallel = any(method_objs[m].WANTS_PARALLEL for m in methods) and not is_real_backend(backend)
 
     raw_data_path = None
     progress_path = None
@@ -1336,7 +1336,8 @@ def _run_operator_methods(
     all_tags = [(m.value, ix, iy) for m in methods for ix in range(nx) for iy in range(ny)]
     jobs = (delayed(run_job)(*t) for t in all_tags)
     for (mv, ix, iy), cell in Parallel(
-        n_jobs=-1, return_as="generator_unordered", initializer=init_worker_logging,
+        n_jobs=1 if is_real_backend(backend) else -1,
+        return_as="generator_unordered", initializer=init_worker_logging,
     )(jobs):
         if cell is not None:
             raw_cells[mv][str(ix)][str(iy)] = cell
