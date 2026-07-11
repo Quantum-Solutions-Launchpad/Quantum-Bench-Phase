@@ -17,7 +17,7 @@ from qbp._core import (
 from qbp._method import Method, ParamSpec, SimulationMethod, register_method
 
 
-# --------------------------------------------------------------------- solvers
+
 def iqpe_estimate(unitary: QuantumCircuit, state_preparation: QuantumCircuit, num_iterations: int, sampler, label: str = ""):
     omega_coef = 0
     iteration_phases = []

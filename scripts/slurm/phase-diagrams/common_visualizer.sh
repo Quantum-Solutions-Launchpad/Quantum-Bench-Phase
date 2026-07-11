@@ -121,10 +121,15 @@ append_vqe_iqpe_args() {
         --vqe-iters "${VQE_ITERS:-10000}"
         --vqe-layers "${VQE_LAYERS:-5}"
         --vqe-reps "${VQE_REPS:-10}"
-        --iqpe-time "${IQPE_TIME:-0.2}"
+        --iqpe-time "${IQPE_TIME:-0.75}"
         --iqpe-trot "${IQPE_TROT:-5}"
         --iqpe-iters "${IQPE_ITERS:-8}"
         --iqpe-reps "${IQPE_REPS:-20}"
+        --iqpe-initial-state vqe_informed
+        --iqpe-initial-vqe-ansatz excitation_preserving
+        --iqpe-initial-vqe-n-layers "${IQPE_INITIAL_VQE_N_LAYERS:-2}"
+        --iqpe-initial-vqe-ansatz-kwarg "reps=${IQPE_INITIAL_VQE_REPS:-2}"
+        --iqpe-initial-vqe-max-iters "${IQPE_INITIAL_VQE_MAX_ITERS:-1000}"
     )
 }
 
@@ -140,10 +145,15 @@ append_optional_vqe_iqpe_args() {
     fi
 
     if (( ${IQPE_REPS:-20} > 0 )); then
-        cmd_ref+=(--iqpe-time "${IQPE_TIME:-0.2}")
+        cmd_ref+=(--iqpe-time "${IQPE_TIME:-0.75}")
         cmd_ref+=(--iqpe-trot "${IQPE_TROT:-5}")
         cmd_ref+=(--iqpe-iters "${IQPE_ITERS:-8}")
         cmd_ref+=(--iqpe-reps "${IQPE_REPS:-20}")
+        cmd_ref+=(--iqpe-initial-state vqe_informed)
+        cmd_ref+=(--iqpe-initial-vqe-ansatz excitation_preserving)
+        cmd_ref+=(--iqpe-initial-vqe-n-layers "${IQPE_INITIAL_VQE_N_LAYERS:-2}")
+        cmd_ref+=(--iqpe-initial-vqe-ansatz-kwarg "reps=${IQPE_INITIAL_VQE_REPS:-2}")
+        cmd_ref+=(--iqpe-initial-vqe-max-iters "${IQPE_INITIAL_VQE_MAX_ITERS:-1000}")
     else
         cmd_ref+=(--iqpe-reps 0)
     fi

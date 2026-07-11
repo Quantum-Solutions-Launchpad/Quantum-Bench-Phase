@@ -1112,9 +1112,11 @@ def _run_model_methods(
             grids_full[m.value] = arr[..., 0]
         else:
             arr = np.full((nx, ny), np.nan)
+            # Use median for IQPE, min for other methods
+            reduce_extremum = "median" if m == Method.IQPE else "min"
             for ix in range(nx):
                 for iy in range(ny):
-                    val = m_obj.reduce(raw_cells[m.value][str(ix)][str(iy)], extremum="min")
+                    val = m_obj.reduce(raw_cells[m.value][str(ix)][str(iy)], extremum=reduce_extremum)
                     arr[ix, iy] = val
             grids_full[m.value] = arr
             for ix in range(nx):

@@ -27,9 +27,9 @@ export SWEEP_TAG=smoke-test-nocc-vs-t2  # keep outputs separate from real runs
 export OUT_SUBDIR=smoke-test            # nest outputs under haldane/2x2/smoke-test/
 
 # Use regular job hyperparameters for realistic testing
-export VQE_ITERS=10 VQE_LAYERS=5 VQE_REPS=1
-export IQPE_TIME=0.2 IQPE_TROT=5 IQPE_ITERS=8 IQPE_REPS=1
-export DMRG_NSWEEPS=4 DMRG_MAXDIMS="20,50,100,200"
+export METHODS="iqpe"
+export IQPE_TIME=0.75 IQPE_TROT=5 IQPE_ITERS=8 IQPE_REPS=1
+export IQPE_INITIAL_VQE_N_LAYERS=2 IQPE_INITIAL_VQE_REPS=2 IQPE_INITIAL_VQE_MAX_ITERS=1000
 
 # Keep resource use small enough for a single interactive node
 export SHARDS="${SHARDS:-4}"
