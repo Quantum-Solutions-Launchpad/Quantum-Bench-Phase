@@ -57,7 +57,7 @@ append_iqpe_args() {
     local -n cmd_ref="$1"
 
     cmd_ref+=(
-        --iqpe-time "${IQPE_TIME:-0.75}"
+        --iqpe-time "${IQPE_TIME:-0.2}"
         --iqpe-trot "${IQPE_TROT:-5}"
         --iqpe-iters "${IQPE_ITERS:-8}"
         --iqpe-reps "${IQPE_REPS:-20}"
