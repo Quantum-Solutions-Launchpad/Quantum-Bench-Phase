@@ -1,19 +1,17 @@
 #!/bin/bash
-#SBATCH -J hubbard-2x2-mag-dmrg
+#SBATCH -J hubbard-2x2-mag-vqe-m-total
 #SBATCH -C cpu
 #SBATCH -q regular
-#SBATCH -N 1
+#SBATCH -N 2
 #SBATCH --ntasks-per-node=8
 #SBATCH -c 16
-#SBATCH --array=0-1
-#SBATCH -t 20:00:00
+#SBATCH -t 48:00:00
 #SBATCH -A m5027
-#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%A_%a.out
-#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%A_%a.err
+#SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.out
+#SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.err
 
-# Hubbard 2x2 magnetization DMRG: n_occ vs U sweep for M_stag/M_total.
-# Uses unified parallel runner for optimal scheduling (even for single method).
-# Array tasks: 0=M_stag, 1=M_total.
+# Hubbard 2x2 magnetization VQE: n_occ vs U sweep for M_total.
+# Uses unified parallel runner for optimal scheduling.
 # PIPELINE=noisy sbatch ... for the noisy pipeline (default: ideal).
 
 set -euo pipefail
@@ -39,13 +37,7 @@ OUT_LOG_DIR="${LOG_DIR}/hubbard/2x2/magnetization"
 OUT_PLOT_DIR="${PLOT_DIR}/hubbard/2x2/magnetization"
 mkdir -p "${OUT_LOG_DIR}" "${OUT_PLOT_DIR}"
 
-OBSERVABLES=(M_stag M_total)
-TASK_ID="${SLURM_ARRAY_TASK_ID:-${TASK_ID:-0}}"
-if (( TASK_ID < 0 || TASK_ID >= ${#OBSERVABLES[@]} )); then
-    echo "TASK_ID must be 0 (M_stag) or 1 (M_total)." >&2
-    exit 1
-fi
-OBSERVABLE="${OBSERVABLE:-${OBSERVABLES[$TASK_ID]}}"
+OBSERVABLE="M_total"
 SWEEP_TAG="n_occ-vs-U"
 
 PIPELINE="${PIPELINE:-ideal}"
@@ -55,18 +47,18 @@ if [[ "${PIPELINE}" == "noisy" ]]; then
 fi
 
 echo "==================================================================="
-echo "Hubbard 2x2 magnetization DMRG (SHARDED)"
+echo "Hubbard 2x2 magnetization VQE (SHARDED) - M_total"
 echo "  observable:  ${OBSERVABLE}"
 echo "  sweep:       n_occ [${HUBBARD_N_OCC_START:-0} ${HUBBARD_N_OCC_END:-16} ${HUBBARD_N_OCC_STEP:-1}] vs U [${HUBBARD_U_START:-0.0} ${HUBBARD_U_END:-10.0} ${HUBBARD_U_STEP:-0.5}]"
 echo "  pipeline:    ${PIPELINE}${backend_args[1]:+ (backend: ${backend_args[1]})}"
-echo "  method:      dmrg"
+echo "  method:      vqe"
 echo "  plot format: heatmap"
 echo "  parallelism: distributed across ${SHARDS} shards on multiple nodes"
 echo "==================================================================="
 
 cmd=(
     --model hubbard
-    --method dmrg
+    --method vqe
     --lattice 2 2
     --observable "${OBSERVABLE}"
     --x-param n_occ
@@ -74,8 +66,6 @@ cmd=(
     --y-param U
     --y-range "${HUBBARD_U_START:-0.0}" "${HUBBARD_U_END:-10.0}" "${HUBBARD_U_STEP:-0.5}"
     --t "${HUBBARD_T:-1.0}"
-    --no-dmrg-conserve-sz
-    --dmrg-initial-state "${DMRG_INITIAL_STATE:-neel}"
     --heatmap
 )
 
@@ -83,8 +73,19 @@ if [[ "${PIPELINE}" == "noisy" ]]; then
     cmd+=("${backend_args[@]}")
 fi
 
-append_dmrg_args cmd
-append_qbp_output_paths cmd "${OUT_LOG_DIR}/simulated-${PIPELINE}-dmrg-${OBSERVABLE}-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-${PIPELINE}-dmrg-${OBSERVABLE}-${SWEEP_TAG}.pdf"
+append_vqe_args cmd
+append_qbp_output_paths cmd "${OUT_LOG_DIR}/simulated-${PIPELINE}-vqe-${OBSERVABLE}-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-${PIPELINE}-vqe-${OBSERVABLE}-${SWEEP_TAG}.pdf"
 
 run_visualizer_sharded_cmd cmd
 EXIT_STATUS=$?
+
+echo ""
+echo "==================================================================="
+if (( EXIT_STATUS == 0 )); then
+    echo "✓ JOB PASSED at $(date)"
+else
+    echo "✗ JOB FAILED"
+fi
+echo "==================================================================="
+
+exit ${EXIT_STATUS}

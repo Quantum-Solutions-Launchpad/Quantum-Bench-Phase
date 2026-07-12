@@ -1,20 +1,20 @@
 #!/bin/bash
-#SBATCH -J hubbard-2x2-mag-dmrg
+#SBATCH -J hubbard-2x2-mag-analytic
 #SBATCH -C cpu
 #SBATCH -q regular
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=8
 #SBATCH -c 16
 #SBATCH --array=0-1
-#SBATCH -t 20:00:00
+#SBATCH -t 02:00:00
 #SBATCH -A m5027
 #SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%A_%a.out
 #SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%A_%a.err
 
-# Hubbard 2x2 magnetization DMRG: n_occ vs U sweep for M_stag/M_total.
+# Hubbard 2x2 magnetization ANALYTIC: n_occ vs U sweep for M_stag/M_total.
 # Uses unified parallel runner for optimal scheduling (even for single method).
 # Array tasks: 0=M_stag, 1=M_total.
-# PIPELINE=noisy sbatch ... for the noisy pipeline (default: ideal).
+# Much faster than re-rendering with analytic_plots.sh.
 
 set -euo pipefail
 
@@ -48,25 +48,18 @@ fi
 OBSERVABLE="${OBSERVABLE:-${OBSERVABLES[$TASK_ID]}}"
 SWEEP_TAG="n_occ-vs-U"
 
-PIPELINE="${PIPELINE:-ideal}"
-backend_args=()
-if [[ "${PIPELINE}" == "noisy" ]]; then
-    backend_args=(--backend "${NOISY_BACKEND:-FakeSherbrooke}")
-fi
-
 echo "==================================================================="
-echo "Hubbard 2x2 magnetization DMRG (SHARDED)"
+echo "Hubbard 2x2 magnetization ANALYTIC (SHARDED)"
 echo "  observable:  ${OBSERVABLE}"
 echo "  sweep:       n_occ [${HUBBARD_N_OCC_START:-0} ${HUBBARD_N_OCC_END:-16} ${HUBBARD_N_OCC_STEP:-1}] vs U [${HUBBARD_U_START:-0.0} ${HUBBARD_U_END:-10.0} ${HUBBARD_U_STEP:-0.5}]"
-echo "  pipeline:    ${PIPELINE}${backend_args[1]:+ (backend: ${backend_args[1]})}"
-echo "  method:      dmrg"
+echo "  method:      analytic (exact diagonalization)"
 echo "  plot format: heatmap"
 echo "  parallelism: distributed across ${SHARDS} shards on multiple nodes"
 echo "==================================================================="
 
 cmd=(
     --model hubbard
-    --method dmrg
+    --method analytic
     --lattice 2 2
     --observable "${OBSERVABLE}"
     --x-param n_occ
@@ -74,17 +67,23 @@ cmd=(
     --y-param U
     --y-range "${HUBBARD_U_START:-0.0}" "${HUBBARD_U_END:-10.0}" "${HUBBARD_U_STEP:-0.5}"
     --t "${HUBBARD_T:-1.0}"
-    --no-dmrg-conserve-sz
-    --dmrg-initial-state "${DMRG_INITIAL_STATE:-neel}"
     --heatmap
 )
 
-if [[ "${PIPELINE}" == "noisy" ]]; then
-    cmd+=("${backend_args[@]}")
-fi
-
-append_dmrg_args cmd
-append_qbp_output_paths cmd "${OUT_LOG_DIR}/simulated-${PIPELINE}-dmrg-${OBSERVABLE}-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-${PIPELINE}-dmrg-${OBSERVABLE}-${SWEEP_TAG}.pdf"
+append_qbp_output_paths cmd "${OUT_LOG_DIR}/simulated-ideal-analytic-${OBSERVABLE}-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-ideal-analytic-${OBSERVABLE}-${SWEEP_TAG}.pdf"
 
 run_visualizer_sharded_cmd cmd
 EXIT_STATUS=$?
+
+echo ""
+echo "==================================================================="
+if (( EXIT_STATUS == 0 )); then
+    echo "✓ Completed at $(date)"
+    echo "  output: ${OUT_LOG_DIR}/simulated-ideal-analytic-${OBSERVABLE}-${SWEEP_TAG}.json"
+    echo "  plot:   ${OUT_PLOT_DIR}/simulated-ideal-analytic-${OBSERVABLE}-${SWEEP_TAG}.pdf"
+else
+    echo "✗ FAILED with status ${EXIT_STATUS}"
+fi
+echo "==================================================================="
+
+exit ${EXIT_STATUS}

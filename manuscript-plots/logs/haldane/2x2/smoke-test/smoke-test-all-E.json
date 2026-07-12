@@ -1,0 +1,147 @@
+{
+    "type": "run",
+    "methods": [
+        "analytic",
+        "vqe",
+        "iqpe",
+        "dmrg"
+    ],
+    "backend": "ideal",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "extremum": "min",
+    "x_param": "n_occ",
+    "y_param": "t2",
+    "x_values": [
+        0,
+        4,
+        8
+    ],
+    "y_values": [
+        0.0,
+        0.5,
+        1.0
+    ],
+    "parameters": {
+        "model": "haldane",
+        "lattice": [
+            2,
+            2
+        ],
+        "geometry": "rectangle",
+        "radius": null,
+        "center": null,
+        "potential_profile": "none",
+        "potential_radius": null,
+        "potential_v0": null,
+        "potential_xi": null,
+        "investigation": null,
+        "model_params": {
+            "t1": 1.0,
+            "phi": 0.7853981633974483,
+            "M": 0.0,
+            "boundary": "periodic"
+        },
+        "method_params": {
+            "analytic": {},
+            "vqe": {
+                "iters": 100,
+                "layers": 2,
+                "reps": 1,
+                "ansatz": null,
+                "optimizer": null
+            },
+            "iqpe": {
+                "time": 0.1,
+                "trot": 1,
+                "iters": 2,
+                "reps": 1,
+                "initial_state": null
+            },
+            "dmrg": {
+                "nsweeps": 4,
+                "maxdims": "20\\,50\\,100\\,200",
+                "cutoff": 1e-09,
+                "seed": 1234,
+                "conserve_qns": true,
+                "conserve_sz": true,
+                "initial_state": "packed",
+                "julia": "julia",
+                "julia_module": "julia/1.11.7",
+                "julia_project": null,
+                "script_path": null
+            }
+        }
+    },
+    "result": {
+        "analytic": {
+            "0": {
+                "0": 0.0,
+                "1": 0.0,
+                "2": 0.0
+            },
+            "1": {
+                "0": -6.0,
+                "1": -6.0,
+                "2": -7.65685424949238
+            },
+            "2": {
+                "0": -8.881784197001252e-16,
+                "1": -8.881784197001252e-16,
+                "2": 0.0
+            }
+        },
+        "vqe": {
+            "0": {
+                "0": -0.0732421875,
+                "1": 0.013302070648007466,
+                "2": -0.006336981786768597
+            },
+            "1": {
+                "0": -1.75732421875,
+                "1": -1.3415343623305733,
+                "2": -1.2133358003112307
+            },
+            "2": {
+                "0": 0.078369140625,
+                "1": -0.06157723293714181,
+                "2": 0.01271687298695523
+            }
+        },
+        "iqpe": {
+            "0": {
+                "0": -0.0,
+                "1": -0.0,
+                "2": -0.0
+            },
+            "1": {
+                "0": -0.0,
+                "1": -0.0,
+                "2": -0.0
+            },
+            "2": {
+                "0": -0.0,
+                "1": -0.0,
+                "2": -0.0
+            }
+        },
+        "dmrg": {
+            "0": {
+                "0": 0.0,
+                "1": 0.0,
+                "2": 0.0
+            },
+            "1": {
+                "0": -5.999999999999183,
+                "1": -5.999999981756072,
+                "2": -7.656854189586862
+            },
+            "2": {
+                "0": 0.0,
+                "1": 0.0,
+                "2": 0.0
+            }
+        }
+    }
+}

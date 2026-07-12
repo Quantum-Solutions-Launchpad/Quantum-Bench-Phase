@@ -966,6 +966,7 @@ def _run_model_methods(
     method_params_summary = {m.value: method_objs[m].parameter_summary() for m in methods}
 
     def build_raw():
+        extremum_val = "median" if Method.IQPE in methods else "min"
         return {
             "type": "run",
             "methods": [m.value for m in methods],
@@ -973,7 +974,7 @@ def _run_model_methods(
             "plot_format": plot_format,
             "band_structure": is_band,
             "observable": observable,
-            "extremum": "min",
+            "extremum": extremum_val,
             "x_param": x_param, "y_param": y_param,
             "x_values": x_vals, "y_values": y_vals,
             "parameters": {
@@ -1142,6 +1143,7 @@ def _run_model_methods(
         else:
             result_block[m.value] = scalar_block(grids_full[m.value])
 
+    summary_extremum = "median" if Method.IQPE in methods else "min"
     summary = {
         "type": "run",
         "methods": [m.value for m in methods],
@@ -1149,7 +1151,7 @@ def _run_model_methods(
         "plot_format": plot_format,
         "band_structure": is_band,
         "observable": observable,
-        "extremum": "min",
+        "extremum": summary_extremum,
         "x_param": x_param, "y_param": y_param,
         "x_values": x_vals, "y_values": y_vals,
         "parameters": {
@@ -1191,7 +1193,7 @@ def _run_model_methods(
         x_values=x_vals, y_values=y_vals if not is_1d else [],
         methods=[m.value for m in methods], grids=grids_out,
         band_structure=is_band, analytic_bands=analytic_bands_out,
-        plot_format=plot_format, observable=observable, extremum="min",
+        plot_format=plot_format, observable=observable, extremum=summary_extremum,
         backend_label=backend_label, log_path=log_path, raw_log_path=raw_data_path,
         plot_path=plot_path, raw=summary, _model_params=params,
     )
@@ -1390,12 +1392,13 @@ def _run_operator_methods(
     for m in methods:
         m_obj = method_objs[m]
         arr = np.full((nx, ny), np.nan)
+        reduce_extremum = "median" if m == Method.IQPE else extremum
         for ix in range(nx):
             for iy in range(ny):
                 cell = raw_cells[m.value].get(str(ix), {}).get(str(iy))
                 if cell is None:
                     continue
-                arr[ix, iy] = m_obj.reduce(cell, extremum=extremum)
+                arr[ix, iy] = m_obj.reduce(cell, extremum=reduce_extremum)
                 logger.info(f"{m_obj.LABEL} ({cell_label(ix, iy)}) = {arr[ix, iy]}")
         grids_full[m.value] = arr
 
@@ -1404,6 +1407,7 @@ def _run_operator_methods(
             return {ix: float(arr[ix, 0]) for ix in range(nx)}
         return {ix: {iy: float(arr[ix, iy]) for iy in range(ny)} for ix in range(nx)}
 
+    summary_extremum = "median" if Method.IQPE in methods else extremum
     summary = {
         "type": "run",
         "methods": [m.value for m in methods],
@@ -1411,7 +1415,7 @@ def _run_operator_methods(
         "plot_format": plot_format,
         "band_structure": False,
         "observable": observable,
-        "extremum": extremum,
+        "extremum": summary_extremum,
         "x_param": x_param, "y_param": y_param,
         "x_values": x_vals, "y_values": y_vals,
         "parameters": {
@@ -1419,7 +1423,7 @@ def _run_operator_methods(
             "lattice": None,
             "qubit_operator": source_repr,
             "keys": key_grid,
-            "extremum": extremum,
+            "extremum": summary_extremum,
             "model_params": {},
             "method_params": {m.value: method_objs[m].parameter_summary() for m in methods},
         },
@@ -1437,7 +1441,7 @@ def _run_operator_methods(
         x_values=x_vals, y_values=y_vals if not is_1d else [],
         methods=[m.value for m in methods], grids=grids_out,
         band_structure=False, plot_format=plot_format, observable="E",
-        extremum=extremum, backend_label=backend_label,
+        extremum=summary_extremum, backend_label=backend_label,
         log_path=log_path, plot_path=plot_path, raw=summary, _model_params={},
     )
 

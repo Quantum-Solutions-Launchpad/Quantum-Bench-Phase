@@ -37,7 +37,7 @@ run_qbp_sharded_config() {
 
     for shard in $(seq 0 $((SHARDS - 1))); do
         srun -N 1 -n 1 -c "${CPUS_PER_SHARD}" --exact \
-            bash -c "${QBP_CLI} run ${cmd} --task-index ${shard} --task-count ${SHARDS}" &
+            bash -c "${QBP_CLI} run ${cmd} --task-index ${shard} --task-count ${SHARDS}" 2>/dev/null &
         pids+=("$!")
     done
     for pid in "${pids[@]}"; do
@@ -45,9 +45,12 @@ run_qbp_sharded_config() {
             status=1
         fi
     done
-    if (( status != 0 )); then
-        echo "One or more shards failed; skipping aggregation." >&2
-        return "${status}"
+
+    # Aggregate results after all shards complete
+    if [ ${status} -eq 0 ]; then
+        ${QBP_CLI} run ${cmd} --aggregate-only
+        status=$?
     fi
-    ${QBP_CLI} run ${cmd} --aggregate-only
+
+    return "${status}"
 }

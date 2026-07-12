@@ -1,0 +1,70 @@
+{
+    "type": "run",
+    "methods": [
+        "vqe"
+    ],
+    "backend": "ideal",
+    "plot_format": "heatmap",
+    "band_structure": false,
+    "observable": "M_stag",
+    "extremum": "min",
+    "x_param": "n_occ",
+    "y_param": "U",
+    "x_values": [
+        0,
+        1,
+        2
+    ],
+    "y_values": [
+        0.0,
+        0.5,
+        1.0
+    ],
+    "parameters": {
+        "model": "hubbard",
+        "lattice": [
+            2,
+            2
+        ],
+        "geometry": "rectangle",
+        "radius": null,
+        "center": null,
+        "potential_profile": "none",
+        "potential_radius": null,
+        "potential_v0": null,
+        "potential_xi": null,
+        "investigation": null,
+        "model_params": {
+            "t": 1.0,
+            "boundary": "periodic"
+        },
+        "method_params": {
+            "vqe": {
+                "iters": 100,
+                "layers": 2,
+                "reps": 1,
+                "ansatz": null,
+                "optimizer": null
+            }
+        }
+    },
+    "result": {
+        "vqe": {
+            "0": {
+                "0": 0.0,
+                "1": 0.0,
+                "2": 0.0
+            },
+            "1": {
+                "0": 0.08636474609375,
+                "1": -0.0340576171875,
+                "2": -0.0145263671875
+            },
+            "2": {
+                "0": 0.08953857421875,
+                "1": 0.15325927734375,
+                "2": -0.07318115234375
+            }
+        }
+    }
+}

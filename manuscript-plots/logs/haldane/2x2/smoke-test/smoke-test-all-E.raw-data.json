@@ -1,0 +1,678 @@
+{
+    "type": "run",
+    "methods": [
+        "analytic",
+        "vqe",
+        "iqpe",
+        "dmrg"
+    ],
+    "backend": "ideal",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "extremum": "min",
+    "x_param": "n_occ",
+    "y_param": "t2",
+    "x_values": [
+        0,
+        4,
+        8
+    ],
+    "y_values": [
+        0.0,
+        0.5,
+        1.0
+    ],
+    "parameters": {
+        "model": "haldane",
+        "lattice": [
+            2,
+            2
+        ],
+        "geometry": "rectangle",
+        "radius": null,
+        "center": null,
+        "potential_profile": "none",
+        "potential_radius": null,
+        "potential_v0": null,
+        "potential_xi": null,
+        "investigation": null,
+        "model_params": {
+            "t1": 1.0,
+            "phi": 0.7853981633974483,
+            "M": 0.0,
+            "boundary": "periodic"
+        },
+        "method_params": {
+            "analytic": {},
+            "vqe": {
+                "iters": 100,
+                "layers": 2,
+                "reps": 1,
+                "ansatz": null,
+                "optimizer": null
+            },
+            "iqpe": {
+                "time": 0.1,
+                "trot": 1,
+                "iters": 2,
+                "reps": 1,
+                "initial_state": null
+            },
+            "dmrg": {
+                "nsweeps": 4,
+                "maxdims": "20\\,50\\,100\\,200",
+                "cutoff": 1e-09,
+                "seed": 1234,
+                "conserve_qns": true,
+                "conserve_sz": true,
+                "initial_state": "packed",
+                "julia": "julia",
+                "julia_module": "julia/1.11.7",
+                "julia_project": null,
+                "script_path": null
+            }
+        }
+    },
+    "cells": {
+        "analytic": {
+            "0": {
+                "1": {
+                    "value": 0.0
+                },
+                "0": {
+                    "value": 0.0
+                },
+                "2": {
+                    "value": 0.0
+                }
+            },
+            "1": {
+                "2": {
+                    "value": -7.65685424949238
+                },
+                "1": {
+                    "value": -6.0
+                },
+                "0": {
+                    "value": -6.0
+                }
+            },
+            "2": {
+                "2": {
+                    "value": 0.0
+                },
+                "0": {
+                    "value": -8.881784197001252e-16
+                },
+                "1": {
+                    "value": -8.881784197001252e-16
+                }
+            }
+        },
+        "vqe": {
+            "0": {
+                "0": {
+                    "repetitions": [
+                        -0.0732421875
+                    ],
+                    "num_queries": 2400,
+                    "circuit_depth": {
+                        "total": 30,
+                        "two_qubit": 27
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        0.013302070648007466
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 30,
+                        "two_qubit": 27
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        -0.006336981786768597
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 30,
+                        "two_qubit": 27
+                    }
+                }
+            },
+            "1": {
+                "0": {
+                    "repetitions": [
+                        -1.75732421875
+                    ],
+                    "num_queries": 2400,
+                    "circuit_depth": {
+                        "total": 31,
+                        "two_qubit": 27
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -1.3415343623305733
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 31,
+                        "two_qubit": 27
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        -1.2133358003112307
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 31,
+                        "two_qubit": 27
+                    }
+                }
+            },
+            "2": {
+                "0": {
+                    "repetitions": [
+                        0.078369140625
+                    ],
+                    "num_queries": 2400,
+                    "circuit_depth": {
+                        "total": 31,
+                        "two_qubit": 27
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -0.06157723293714181
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 31,
+                        "two_qubit": 27
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        0.01271687298695523
+                    ],
+                    "num_queries": 4800,
+                    "circuit_depth": {
+                        "total": 31,
+                        "two_qubit": 27
+                    }
+                }
+            }
+        },
+        "iqpe": {
+            "0": {
+                "0": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 48,
+                    "circuit_depth": {
+                        "total": 410,
+                        "two_qubit": 357
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 96,
+                    "circuit_depth": {
+                        "total": 953,
+                        "two_qubit": 867
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 96,
+                    "circuit_depth": {
+                        "total": 953,
+                        "two_qubit": 867
+                    }
+                }
+            },
+            "1": {
+                "0": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 48,
+                    "circuit_depth": {
+                        "total": 410,
+                        "two_qubit": 357
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 96,
+                    "circuit_depth": {
+                        "total": 953,
+                        "two_qubit": 867
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 96,
+                    "circuit_depth": {
+                        "total": 953,
+                        "two_qubit": 867
+                    }
+                }
+            },
+            "2": {
+                "0": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 48,
+                    "circuit_depth": {
+                        "total": 410,
+                        "two_qubit": 357
+                    }
+                },
+                "1": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 96,
+                    "circuit_depth": {
+                        "total": 953,
+                        "two_qubit": 867
+                    }
+                },
+                "2": {
+                    "repetitions": [
+                        -0.0
+                    ],
+                    "iteration_energies": [
+                        [
+                            -0.0,
+                            -0.0
+                        ]
+                    ],
+                    "num_queries": 96,
+                    "circuit_depth": {
+                        "total": 953,
+                        "two_qubit": 867
+                    }
+                }
+            }
+        },
+        "dmrg": {
+            "0": {
+                "1": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-_ufzsxsc/dmrg-cell-x0-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 17.430882572,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.045665289,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.408607636,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.106645252,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.052417211,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.239804806,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-judt5iv3/dmrg-cell-x0-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 16.408294914,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.018534987,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.379076332,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.093681721,
+                            "alloc_bytes": 10871432.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.046438974,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.211121455,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "2": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-cqsj4fbu/dmrg-cell-x0-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 16.149983953,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.021848361,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.365876157,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.093706028,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.044073411,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.199581318,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            },
+            "1": {
+                "1": {
+                    "energy": -5.999999981756072,
+                    "output": "/tmp/qbp-run-40vggdtl/dmrg-cell-x1-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 4.714285714285714,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 21.103571324,
+                            "alloc_bytes": 1593653984.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.052985919,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.402315986,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.103777616,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.050852875,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.227835913,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": -5.999999999999183,
+                    "output": "/tmp/qbp-run-r6zoarxj/dmrg-cell-x1-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 4.571428571428571,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 20.213772316,
+                            "alloc_bytes": 1597599312.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.023928342,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.394993318,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.099217942,
+                            "alloc_bytes": 10873520.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.04815468,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.224903915,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "2": {
+                    "energy": -7.656854189586862,
+                    "output": "/tmp/qbp-run-zm0xbve4/dmrg-cell-x1-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.89052125,
+                            "alloc_bytes": 1580120024.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.025967493,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.369867933,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.096404184,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.045615281,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.202544176,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            },
+            "2": {
+                "2": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-2a1aewta/dmrg-cell-x2-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.065995173,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.019230812,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.390773122,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.10119674,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049536492,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.225451381,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "1": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-s40ple6e/dmrg-cell-x2-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.143378141,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.046586571,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.402083265,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.102141196,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.050001461,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.226913157,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-xgalfqqi/dmrg-cell-x2-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 16.511611107,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.0204249,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.37403644,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.092959816,
+                            "alloc_bytes": 10873520.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.047893205,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.200936338,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            }
+        }
+    }
+}
