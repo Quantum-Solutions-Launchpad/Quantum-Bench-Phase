@@ -21,8 +21,8 @@ getting-started/concepts
 
 user-guide/workflow
 user-guide/analytic-runs
-user-guide/ideal-simulation
-user-guide/noisy-simulation
+user-guide/performing-simulation
+user-guide/incorporating-quantum-hardware
 user-guide/results-and-plotting
 user-guide/logging-and-reloading
 user-guide/cli-and-console
@@ -56,14 +56,13 @@ api/index
 ```
 
 ```{toctree}
-:caption: Examples
+:caption: More Examples
 :maxdepth: 1
 
-examples/ssh-quickstart
-examples/haldane-phase-diagram
-examples/custom-model
-examples/band-structure
-examples/noisy-backend
+more-examples/haldane-phase-diagram
+more-examples/custom-model
+more-examples/band-structure
+more-examples/noisy-backend
 ```
 
 ```{toctree}
