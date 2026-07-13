@@ -24,19 +24,23 @@ def _ssh_optimizer(max_iters):
     return SPSA(maxiter=max_iters)
 
 
-def _ssh_H_matrix(lattice, t1, t2):
+def _ssh_H_matrix(lattice, t1, t2, boundary="periodic"):
     L, = lattice
     H = np.zeros((L, L), dtype=complex)
     for i in range(L - 1):
         t = t1 if i % 2 == 0 else t2
         H[i, i + 1] -= t
         H[i + 1, i] -= t
+    if boundary == "periodic" and L > 2:
+        t = t1 if (L - 1) % 2 == 0 else t2
+        H[L - 1, 0] -= t
+        H[0, L - 1] -= t
     return H
 
 
 ssh_model = Model(
-    name="ssh",
-    display_name="SSH",
+    name="ssh_custom",
+    display_name="SSH (custom)",
     param_labels={"t1": "t_1", "t2": "t_2"},
     spin=1,
     n_dims=1,
@@ -47,13 +51,13 @@ ssh_model = Model(
 )
 
 try:
-    qbp.get_model("ssh")
+    qbp.get_model("ssh_custom")
 except ValueError:
     qbp.register_model(ssh_model)
 
 # ---------------------------------------------------------------------------
 
-MODEL = "ssh"
+MODEL = "ssh_custom"
 LATTICE = (4,)
 X_PARAM = "n_occ"
 Y_PARAM = "t2"

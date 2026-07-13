@@ -1,15 +1,12 @@
 # Built-In Models
 
-```{eval-rst}
-.. todo:: One-paragraph framing of QBP's built-in catalog: where the YAML
-   files live (``qbp/models/``), how to override or extend them, and a
-   short note pointing readers to the per-model pages below for parameters
-   and runnable snippets.
-```
+QBP currently has six built-in tight-binding models. Each is defined declaratively in a YAML file under `qbp/models/` and registered under the short name in the first column below—pass that name as the `model` argument to [`qbp.run`](../api/runners.md) and you are ready to sweep phase diagrams and benchmark quantum methods. Run `qbp list models` to see what is registered in your environment.
+
+The built-in specs are also worked examples: copy one into your own YAML file and edit it to define a variant (see [Defining a Model in YAML](custom-yaml.md)), build the equivalent structure programmatically with [`build_tight_binding_model`](tight-binding-builder.md), or drop to the full Python API for arbitrary Hamiltonians (see [Defining a Model in Python](custom-python.md)). The per-model pages below give each model's Hamiltonian, its parameters, its canonical sweep, and a runnable snippet.
 
 ## Overview
 
-| Name | Dim | Spin | Interacting | Phase diagram | Band structure |
+| Name | Dim | Spin | Interacting | Phase Diagram | Band Structure |
 | --- | --- | --- | --- | --- | --- |
 | [`ssh`](ssh.md)                         | 1D | spinless | no  | yes | yes |
 | [`haldane`](haldane.md)                 | 2D | spinless | no  | yes | yes |
