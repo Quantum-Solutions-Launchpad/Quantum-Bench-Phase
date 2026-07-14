@@ -1,5 +1,5 @@
 import os
-import quaph
+import qbp
 
 MODEL   = "haldane"
 LATTICE = (2, 2)
@@ -12,9 +12,10 @@ _LOG = os.path.join(
     _HERE, f"logs/{MODEL}/{_LATTICE_TAG}/simulated-ideal-3d-{X_PARAM}-vs-{Y_PARAM}.json"
 )
 
-quaph.plot_diff(
-    _LOG,
-    method="both",          # vqe | iqpe | both
-    plot_format="3d",       # bar_2d | 3d  | heatmap
+# Diff plots between all method pairs are produced alongside the normal plot
+# when diff=True. Reload a prior run and re-plot with diffs enabled:
+qbp.load_result(_LOG).plot(
+    diff=True,
+    diff_format="3d",       # bar_2d | 3d | heatmap
     output_path=os.path.join(_HERE, "plots/diff.pdf"),
 )

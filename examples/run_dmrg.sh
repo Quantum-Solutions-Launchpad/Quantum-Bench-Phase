@@ -3,7 +3,7 @@
 # DMRG vs. exact ground-state energy across a Haldane-model phase diagram.
 #
 # DMRG requires a working Julia + ITensorMPS toolchain (bundled under
-# quaph/julia-dmrg/), so this only runs end-to-end where Julia is available.
+# qbp/julia-dmrg/), so this only runs end-to-end where Julia is available.
 # Selecting `analytic` alongside `dmrg` overlays the exact energy as reference.
 
 MODEL="haldane"
@@ -23,9 +23,9 @@ PHI=$(python3 -c "import math; print(math.pi/4)")
 
 if [ -f "$LOG" ]; then
     echo "Plotting from existing log..."
-    quaph plot "$LOG"
+    qbp plot "$LOG"
 else
-    quaph run \
+    qbp run \
         --model "$MODEL" \
         --method analytic dmrg \
         --lattice "${LATTICE[@]}" \

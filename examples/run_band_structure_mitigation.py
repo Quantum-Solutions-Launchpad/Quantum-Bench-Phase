@@ -11,8 +11,8 @@ import os
 import math
 import json
 import numpy as np
-import quaph
-from quaph import Method
+import qbp
+from qbp import Method
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel, ReadoutError
 
@@ -64,7 +64,7 @@ if os.path.exists(raw_log):
     print("Raw log exists — skipping raw IQPE run.")
 else:
     print("Running raw IQPE band structure...")
-    quaph.run(
+    qbp.run(
         **SHARED,
         method=[Method.ANALYTIC, Method.IQPE],
         method_params={Method.IQPE: IQPE_PARAMS},
@@ -78,7 +78,7 @@ if os.path.exists(m3_log):
     print("M3 log exists — skipping M3 IQPE run.")
 else:
     print("Running M3-mitigated IQPE band structure...")
-    quaph.run(
+    qbp.run(
         **SHARED,
         method=[Method.ANALYTIC, Method.IQPE],
         method_params={Method.IQPE: {**IQPE_PARAMS, "mitigation": {"m3": True}}},
@@ -89,19 +89,19 @@ else:
 
 # --- Diff plots ---
 print("Generating diff plots...")
-quaph.plot_diff(
+qbp.plot_diff(
     raw_log, method="iqpe", plot_format="heatmap",
     output_path=os.path.join(_HERE, "plots", "haldane", "band-iqpe-raw-diff-heatmap.pdf"),
 )
-quaph.plot_diff(
+qbp.plot_diff(
     m3_log, method="iqpe", plot_format="heatmap",
     output_path=os.path.join(_HERE, "plots", "haldane", "band-iqpe-m3-diff-heatmap.pdf"),
 )
-quaph.plot_diff(
+qbp.plot_diff(
     raw_log, method="iqpe", plot_format="3d",
     output_path=os.path.join(_HERE, "plots", "haldane", "band-iqpe-raw-diff-3d.pdf"),
 )
-quaph.plot_diff(
+qbp.plot_diff(
     m3_log, method="iqpe", plot_format="3d",
     output_path=os.path.join(_HERE, "plots", "haldane", "band-iqpe-m3-diff-3d.pdf"),
 )

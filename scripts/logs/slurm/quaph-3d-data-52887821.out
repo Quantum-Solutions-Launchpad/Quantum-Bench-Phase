@@ -1,9 +1,9 @@
-Collecting QuAPH 3D visualizer data
+Collecting QBP 3D visualizer data
   job id:      52887821
   simulation:  ideal
   configs:     6
   nodes:       6
-  shards:      
+  shards:
   log dir:     /pscratch/sd/m/mbao202/NNL-P7/examples/logs
   plot dir:    /pscratch/sd/m/mbao202/NNL-P7/examples/plots
 Starting config 0/6: haldane, 4-sites, n_occ vs t2

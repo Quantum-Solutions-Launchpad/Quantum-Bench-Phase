@@ -12,8 +12,8 @@ import math
 import json
 import numpy as np
 import warnings
-import quaph
-from quaph import Method
+import qbp
+from qbp import Method
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import (
     NoiseModel, depolarizing_error, thermal_relaxation_error, ReadoutError
@@ -36,7 +36,7 @@ def _gate_error_only(p_2q=0.08, p_1q=0.01):
     # 2q error registered on both "cx" and "ecr": the transpiler's chosen
     # 2-qubit gate depends on the backend's basis_gates and can vary, and
     # NoiseModel.add_all_qubit_quantum_error only ever fires for the exact
-    # gate NAME registered. 
+    # gate NAME registered.
     nm = NoiseModel()
     err_2q = depolarizing_error(p_2q, 2)
     nm.add_all_qubit_quantum_error(err_2q, ["ecr", "cx"])
@@ -89,7 +89,7 @@ VQE_ZNE = {"iters": 3000, "layers": 4, "reps": 4}
 
 if not os.path.exists(log("vqe-raw-gate")):
     print("Running raw VQE...")
-    quaph.run(**SHARED, method=[Method.ANALYTIC, Method.VQE],
+    qbp.run(**SHARED, method=[Method.ANALYTIC, Method.VQE],
               method_params={Method.VQE: VQE_ZNE},
               backend=BACKEND_ZNE,
               log_path=log("vqe-raw-gate"), plot_path=plt("vqe-raw-gate"))
@@ -98,7 +98,7 @@ else:
 
 if not os.path.exists(log("vqe-zne-gate")):
     print("Running ZNE VQE...")
-    quaph.run(**SHARED, method=[Method.ANALYTIC, Method.VQE],
+    qbp.run(**SHARED, method=[Method.ANALYTIC, Method.VQE],
               method_params={Method.VQE: {**VQE_ZNE, "mitigation": {"zne": True}}},
               backend=BACKEND_ZNE,
               log_path=log("vqe-zne-gate"), plot_path=plt("vqe-zne-gate"))
@@ -113,7 +113,7 @@ VQE_DD = {"iters": 3000, "layers": 6, "reps": 6}
 
 if not os.path.exists(log("vqe-raw-decoherence")):
     print("Running raw VQE...")
-    quaph.run(**SHARED, method=[Method.ANALYTIC, Method.VQE],
+    qbp.run(**SHARED, method=[Method.ANALYTIC, Method.VQE],
               method_params={Method.VQE: VQE_DD},
               backend=BACKEND_DD,
               log_path=log("vqe-raw-decoherence"), plot_path=plt("vqe-raw-decoherence"))
@@ -122,7 +122,7 @@ else:
 
 if not os.path.exists(log("vqe-dd-decoherence")):
     print("Running DD VQE...")
-    quaph.run(**SHARED, method=[Method.ANALYTIC, Method.VQE],
+    qbp.run(**SHARED, method=[Method.ANALYTIC, Method.VQE],
               method_params={Method.VQE: {**VQE_DD, "mitigation": {"dd": True}}},
               backend=BACKEND_DD,
               log_path=log("vqe-dd-decoherence"), plot_path=plt("vqe-dd-decoherence"))
@@ -144,7 +144,7 @@ SHARED_IQPE_HI = {**SHARED, "x_range": (5, 6, 1)}  # n_occ = 5, 6
 for suffix, grid in [("-lo", SHARED_IQPE_LO), ("-hi", SHARED_IQPE_HI)]:
     if not os.path.exists(log(f"iqpe-raw-readout{suffix}")):
         print(f"Running raw IQPE ({suffix})...")
-        quaph.run(**grid, method=[Method.ANALYTIC, Method.IQPE],
+        qbp.run(**grid, method=[Method.ANALYTIC, Method.IQPE],
                   method_params={Method.IQPE: IQPE_M3},
                   backend=BACKEND_M3,
                   log_path=log(f"iqpe-raw-readout{suffix}"), plot_path=plt(f"iqpe-raw-readout{suffix}"))
@@ -153,7 +153,7 @@ for suffix, grid in [("-lo", SHARED_IQPE_LO), ("-hi", SHARED_IQPE_HI)]:
 
     if not os.path.exists(log(f"iqpe-m3-readout{suffix}")):
         print(f"Running M3 IQPE ({suffix})...")
-        quaph.run(**grid, method=[Method.ANALYTIC, Method.IQPE],
+        qbp.run(**grid, method=[Method.ANALYTIC, Method.IQPE],
                   method_params={Method.IQPE: {**IQPE_M3, "mitigation": {"m3": True}}},
                   backend=BACKEND_M3,
                   log_path=log(f"iqpe-m3-readout{suffix}"), plot_path=plt(f"iqpe-m3-readout{suffix}"))
@@ -175,7 +175,7 @@ for name, method in [
     ("iqpe-m3-readout-hi",  "iqpe"),
 ]:
     for fmt in ["heatmap", "3d"]:
-        quaph.plot_diff(
+        qbp.plot_diff(
             log(name), method=method, plot_format=fmt,
             output_path=plt(f"{name}-diff-{fmt}"),
         )

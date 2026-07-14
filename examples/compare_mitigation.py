@@ -15,8 +15,8 @@ compare_strategies() and call it from your own script:
 import os
 import json
 import numpy as np
-import quaph
-from quaph import Method
+import qbp
+from qbp import Method
 
 
 def _grid_errors(raw_data_path, method):
@@ -99,15 +99,17 @@ def compare_strategies(
 
         if not os.path.exists(log_path):
             print(f"Running '{name}'...")
-            quaph.run(**shared, method=[Method.ANALYTIC, method],
+            qbp.run(**shared, method=[Method.ANALYTIC, method],
                       method_params={method: params},
                       backend=backend, log_path=log_path)
+
         else:
             print(f"'{name}' log exists, skipping.")
 
         diff_path = os.path.join(out_dir, "plots", f"{tag}-{name}-diff-{plot_format}.pdf")
-        quaph.plot_diff(log_path, method=method_key, plot_format=plot_format,
+        qbp.plot_diff(log_path, method=method_key, plot_format=plot_format,
                          output_path=diff_path)
+
 
         raw_data_path = log_path.replace(".json", ".raw-data.json")
         results[name] = _grid_errors(raw_data_path, method_key)

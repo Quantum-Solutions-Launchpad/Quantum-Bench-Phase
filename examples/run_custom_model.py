@@ -2,8 +2,8 @@ import os
 import numpy as np
 from qiskit_algorithms.optimizers import SPSA
 
-import quaph
-from quaph import Model, Method
+import qbp
+from qbp import Model, Method
 
 # ---------------------------------------------------------------------------
 # SSH (Su-Schrieffer-Heeger) model — 1D chain with staggered hopping.
@@ -16,7 +16,7 @@ from quaph import Model, Method
 #   topological phase  |t2| > |t1|  (zero-energy edge states)
 #
 # This script demonstrates the in-process Python API path. The same model
-# can also be registered interactively through the QuaPh console — see
+# can also be registered interactively through the QBP console — see
 # run_custom_model.sh.
 # ---------------------------------------------------------------------------
 
@@ -47,9 +47,9 @@ ssh_model = Model(
 )
 
 try:
-    quaph.get_model("ssh")
+    qbp.get_model("ssh")
 except ValueError:
-    quaph.register_model(ssh_model)
+    qbp.register_model(ssh_model)
 
 # ---------------------------------------------------------------------------
 
@@ -65,10 +65,10 @@ _PLOT = os.path.join(_HERE, "plots", MODEL, "sim-n_occ-vs-t2.pdf")
 
 if os.path.exists(_LOG):
     print("Plotting from existing log...")
-    result = quaph.load_result(_LOG)
+    result = qbp.load_result(_LOG)
     result.plot()
 else:
-    result = quaph.run(
+    result = qbp.run(
         model=MODEL,
         method=METHODS,
         lattice=LATTICE,

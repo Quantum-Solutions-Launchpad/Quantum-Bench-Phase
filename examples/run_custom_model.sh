@@ -11,12 +11,12 @@ PLOT="$HERE/plots/${MODEL}/sim-n_occ-vs-t2.pdf"
 
 if [ -f "$LOG" ]; then
     echo "Plotting from existing log..."
-    quaph plot "$LOG"
+    qbp plot "$LOG"
     exit 0
 fi
 
-if ! printf 'list\nexit\n' | quaph 2>/dev/null | grep -qE "^[[:space:]]+${MODEL}([[:space:]]|$)"; then
-    quaph <<'QUAPH'
+if ! printf 'list\nexit\n' | qbp 2>/dev/null | grep -qE "^[[:space:]]+${MODEL}([[:space:]]|$)"; then
+    qbp <<'QBP'
 register
 ssh
 SSH
@@ -53,10 +53,10 @@ maxiter
 
 y
 exit
-QUAPH
+QBP
 fi
 
-quaph run \
+qbp run \
     --model "$MODEL" \
     --method analytic vqe iqpe \
     --lattice "${LATTICE[@]}" \
