@@ -224,7 +224,6 @@ class DMRGMethod(SimulationMethod):
             raw = json.load(f)
         result = {
             "energy": float(raw["energy"]),
-            "output": output_path,
             "hamiltonian_terms": len(spec["terms"]),
             "max_link_dim": raw.get("max_link_dim"),
             "avg_link_dim": raw.get("avg_link_dim"),
@@ -239,3 +238,12 @@ class DMRGMethod(SimulationMethod):
 
     def reduce(self, cell, *, extremum="min"):
         return float(cell.get("value", cell["energy"]))
+
+    def parameter_summary(self) -> dict:
+        """Exclude Julia/script metadata and fixed parameters from JSON logging."""
+        out = super().parameter_summary()
+        # Remove internal Julia/script configuration that shouldn't be in public metadata
+        for key in ["julia", "julia_module", "julia_project", "script_path",
+                    "conserve_qns", "conserve_sz"]:
+            out.pop(key, None)
+        return out

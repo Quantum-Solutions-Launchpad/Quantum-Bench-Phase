@@ -194,98 +194,71 @@ function collect_link_dims(psi)
     return dims
 end
 
-function profile_section!(f::Function, profile::Dict{String, Any}, label::String)
-    t0 = time_ns()
-    result = nothing
-    alloc = @allocated begin
-        result = f()
-    end
-    profile[label] = Dict(
-        "elapsed_s" => (time_ns() - t0) / 1e9,
-        "alloc_bytes" => Float64(alloc),
-    )
-    return result
-end
-
 function main()
+    overall_t0 = time_ns()
     config = parse_args(ARGS)
     spec = JSON.parsefile(config["hamiltonian"])
     spin = Int(spec["spin"])
     n_sites = Int(spec["n_sites"])
     n_occ = Int(spec["n_occ"])
-    profile = Dict{String, Any}()
 
-    sites = profile_section!(profile, "siteinds") do
-        if spin == 2
-            siteinds(
-                "Electron",
-                n_sites;
-                conserve_nf=config["conserve_qns"],
-                conserve_sz=config["conserve_qns"] && config["conserve_sz"],
-            )
-        elseif spin == 1
-            siteinds("Fermion", n_sites; conserve_qns=config["conserve_qns"])
-        else
-            error("Unsupported spin=$spin")
-        end
-    end
-
-    os = profile_section!(profile, "build_opsum") do
-        local_os = OpSum()
-        for term in spec["terms"]
-            local_os = add_term(local_os, complex_coeff(term["coefficient"]), term["label"], spin)
-        end
-        local_os
-    end
-
-    H = profile_section!(profile, "build_mpo") do
-        MPO(os, sites)
-    end
-
-    state = profile_section!(profile, "build_init_state") do
-        build_initial_state(
-            n_sites,
-            spin,
-            n_occ,
-            config["seed"],
-            config["initial_state"],
+    sites = if spin == 2
+        siteinds(
+            "Electron",
+            n_sites;
+            conserve_nf=config["conserve_qns"],
+            conserve_sz=config["conserve_qns"] && config["conserve_sz"],
         )
+    elseif spin == 1
+        siteinds("Fermion", n_sites; conserve_qns=config["conserve_qns"])
+    else
+        error("Unsupported spin=$spin")
     end
 
-    psi0 = profile_section!(profile, "build_product_mps") do
-        productMPS(sites, state)
+    os = OpSum()
+    for term in spec["terms"]
+        os = add_term(os, complex_coeff(term["coefficient"]), term["label"], spin)
     end
 
-    dmrg_result = profile_section!(profile, "dmrg") do
-        energy, psi = dmrg(
-            H,
-            psi0;
-            nsweeps=config["nsweeps"],
-            maxdim=config["maxdims"],
-            cutoff=config["cutoff"],
-        )
-        (energy=energy, psi=psi)
-    end
+    H = MPO(os, sites)
+
+    state = build_initial_state(
+        n_sites,
+        spin,
+        n_occ,
+        config["seed"],
+        config["initial_state"],
+    )
+
+    psi0 = productMPS(sites, state)
+
+    dmrg_time_t0 = time_ns()
+    energy, psi = dmrg(
+        H,
+        psi0;
+        nsweeps=config["nsweeps"],
+        maxdim=config["maxdims"],
+        cutoff=config["cutoff"],
+    )
+    dmrg_elapsed_s = (time_ns() - dmrg_time_t0) / 1e9
+    dmrg_result = (energy=energy, psi=psi)
 
     observable_value = nothing
     if haskey(spec, "observable_terms")
-        O = profile_section!(profile, "build_observable_mpo") do
-            observable_os = OpSum()
-            for term in spec["observable_terms"]
-                observable_os = add_term(
-                    observable_os,
-                    complex_coeff(term["coefficient"]),
-                    term["label"],
-                    spin,
-                )
-            end
-            MPO(observable_os, sites)
+        observable_os = OpSum()
+        for term in spec["observable_terms"]
+            observable_os = add_term(
+                observable_os,
+                complex_coeff(term["coefficient"]),
+                term["label"],
+                spin,
+            )
         end
-        observable_value = profile_section!(profile, "observable_expectation") do
-            real(inner(dmrg_result.psi', O, dmrg_result.psi))
-        end
+        O = MPO(observable_os, sites)
+        observable_value = real(inner(dmrg_result.psi', O, dmrg_result.psi))
     end
 
+    overall_elapsed_s = (time_ns() - overall_t0) / 1e9
     link_dims = collect_link_dims(dmrg_result.psi)
     output = Dict(
         "format" => "qbp_itensor_dmrg_result_v1",
@@ -300,12 +273,13 @@ function main()
         "maxdims" => config["maxdims"],
         "cutoff" => config["cutoff"],
         "seed" => config["seed"],
-        "conserve_qns" => config["conserve_qns"],
-        "conserve_sz" => config["conserve_sz"],
         "initial_state" => config["initial_state"],
         "energy" => dmrg_result.energy,
         "observable" => get(spec, "observable", "E"),
-        "profile" => profile,
+        "profile" => Dict(
+            "dmrg" => Dict("elapsed_s" => dmrg_elapsed_s),
+            "total" => Dict("elapsed_s" => overall_elapsed_s),
+        ),
         "link_dims" => link_dims,
         "max_link_dim" => isempty(link_dims) ? 0 : maximum(link_dims),
         "avg_link_dim" => isempty(link_dims) ? 0.0 : sum(link_dims) / length(link_dims),

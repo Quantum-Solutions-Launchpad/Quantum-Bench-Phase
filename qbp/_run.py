@@ -963,10 +963,19 @@ def _run_model_methods(
         if missing:
             raise RuntimeError("Missing results before aggregation: " + ", ".join(missing[:20]))
 
-    method_params_summary = {m.value: method_objs[m].parameter_summary() for m in methods}
+    # Build method_params with per-method extremum (only for VQE and IQPE)
+    method_params_summary = {}
+    for m in methods:
+        summary = method_objs[m].parameter_summary()
+        if m == Method.VQE:
+            summary_with_extremum = {**summary, "extremum": "min"}
+        elif m == Method.IQPE:
+            summary_with_extremum = {**summary, "extremum": "median"}
+        else:
+            summary_with_extremum = summary
+        method_params_summary[m.value] = summary_with_extremum
 
     def build_raw():
-        extremum_val = "median" if Method.IQPE in methods else "min"
         return {
             "type": "run",
             "methods": [m.value for m in methods],
@@ -974,7 +983,6 @@ def _run_model_methods(
             "plot_format": plot_format,
             "band_structure": is_band,
             "observable": observable,
-            "extremum": extremum_val,
             "x_param": x_param, "y_param": y_param,
             "x_values": x_vals, "y_values": y_vals,
             "parameters": {
@@ -1143,7 +1151,6 @@ def _run_model_methods(
         else:
             result_block[m.value] = scalar_block(grids_full[m.value])
 
-    summary_extremum = "median" if Method.IQPE in methods else "min"
     summary = {
         "type": "run",
         "methods": [m.value for m in methods],
@@ -1151,7 +1158,6 @@ def _run_model_methods(
         "plot_format": plot_format,
         "band_structure": is_band,
         "observable": observable,
-        "extremum": summary_extremum,
         "x_param": x_param, "y_param": y_param,
         "x_values": x_vals, "y_values": y_vals,
         "parameters": {
@@ -1188,6 +1194,7 @@ def _run_model_methods(
             grids_out[m.value] = _squeeze_scalar(grids_full[m.value], is_1d)
     analytic_bands_out = _squeeze_bands(analytic_bands, is_1d) if analytic_bands is not None else None
 
+    summary_extremum = "median" if Method.IQPE in methods else "min"
     result = RunResult(
         model_name=model.name, lattice=lattice, x_param=x_param, y_param=y_param,
         x_values=x_vals, y_values=y_vals if not is_1d else [],
@@ -1407,7 +1414,18 @@ def _run_operator_methods(
             return {ix: float(arr[ix, 0]) for ix in range(nx)}
         return {ix: {iy: float(arr[ix, iy]) for iy in range(ny)} for ix in range(nx)}
 
-    summary_extremum = "median" if Method.IQPE in methods else extremum
+    # Build method_params with per-method extremum for qubit-operator path (only for VQE and IQPE)
+    qubit_method_params = {}
+    for m in methods:
+        summary = method_objs[m].parameter_summary()
+        if m == Method.VQE:
+            summary_with_extremum = {**summary, "extremum": extremum}
+        elif m == Method.IQPE:
+            summary_with_extremum = {**summary, "extremum": "median"}
+        else:
+            summary_with_extremum = summary
+        qubit_method_params[m.value] = summary_with_extremum
+
     summary = {
         "type": "run",
         "methods": [m.value for m in methods],
@@ -1415,7 +1433,6 @@ def _run_operator_methods(
         "plot_format": plot_format,
         "band_structure": False,
         "observable": observable,
-        "extremum": summary_extremum,
         "x_param": x_param, "y_param": y_param,
         "x_values": x_vals, "y_values": y_vals,
         "parameters": {
@@ -1423,9 +1440,8 @@ def _run_operator_methods(
             "lattice": None,
             "qubit_operator": source_repr,
             "keys": key_grid,
-            "extremum": summary_extremum,
             "model_params": {},
-            "method_params": {m.value: method_objs[m].parameter_summary() for m in methods},
+            "method_params": qubit_method_params,
         },
         "result": {m.value: scalar_block(grids_full[m.value]) for m in methods},
     }
