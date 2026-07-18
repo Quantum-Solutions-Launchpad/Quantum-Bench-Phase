@@ -11,6 +11,7 @@ from qiskit.quantum_info import SparsePauliOp
 
 from qbp._backend import make_vqe_estimator
 from qbp._core import _fmt_params, _make_simulator, logger
+from qbp._mitigation import chain_measure, transform_circuit_chain
 from qbp._method import Method, ParamSpec, SimulationMethod, register_method
 
 
@@ -19,6 +20,7 @@ def _isa(op, circ):
 
 
 # --------------------------------------------------------------------- solvers
+
 def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend=None) -> QuantumCircuit:
     with make_vqe_estimator(backend) as est:
         ansatz_circuit = est.transpile(ansatz)
@@ -44,21 +46,72 @@ def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend
     return ansatz.assign_parameters(param_dict)
 
 
-def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=None, label="", observable_qubit_ops=None):
+def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=None,
+               label="", observable_qubit_ops=None, strategies=None,
+               return_state: bool = False, seed: int | None = None):
+    """Run VQE for a single repetition.
+
+    Parameters
+    ----------
+    strategies
+        List of active :class:`~qbp._mitigation.MitigationStrategy`
+        instances (from ``self.mitigation_strategies``), already
+        calibrated. Each strategy's ``transform_circuit`` hook is applied
+        once to the ansatz circuit; each strategy's ``measure`` hook wraps
+        every expectation-value evaluation (see qbp._mitigation).
+    return_state
+        If True, also return the optimized ansatz bound to its final
+        parameters (e.g. to warm-start IQPE with a state that has real
+        overlap with the ground state, instead of a bare HF reference).
+        Mutually exclusive with observable_qubit_ops.
+    seed
+        If given, seeds every independent source of randomness in the VQE
+        loop so that two calls with the same seed are fully reproducible:
+        (1) numpy's global RNG, for x0; (2) qiskit_algorithms'
+        algorithm_globals RNG, since SPSA's bernoulli_perturbation draws
+        from algorithm_globals.random — a separate generator
+        np.random.seed() never touches, so without this two "identically
+        seeded" runs still diverge because SPSA's own perturbation-direction
+        randomness at every iteration is uncontrolled. quaph.run() dispatches
+        grid cells to worker processes via joblib (loky/spawn on macOS),
+        which do NOT inherit the parent process's seeded RNG state, so a
+        top-level np.random.seed() call in a driver script has no effect on
+        either of these here.
+    """
+    if seed is not None:
+        np.random.seed(seed)
+        from qiskit_algorithms.utils import algorithm_globals
+        algorithm_globals.random_seed = seed
+    strategies = strategies or []
+
+    # Separate from make_vqe_estimator's own internal simulator: DD's
+    # transform_circuit needs a backend-like object to schedule against
+    # (InstructionDurations.from_backend), and make_vqe_estimator doesn't
+    # expose its internal simulator as part of its public interface.
+    # _make_simulator is cheap/deterministic, so calling it again here is
+    # harmless.
+    simulator = _make_simulator(backend)
+
     with make_vqe_estimator(backend) as est:
         ansatz_circuit = est.transpile(ansatz)
-        isa_hamiltonian = _isa(hamiltonian, ansatz_circuit)
+        ansatz_circuit = transform_circuit_chain(strategies, ansatz_circuit, simulator)
         estimator = est.estimator
-        x0 = 2 * np.pi * np.random.random(ansatz.num_parameters)
 
+        def _base_measure(circuit, op, params):
+            pub = (circuit, [_isa(op, circuit)], [params])
+            result = estimator.run(pubs=[pub]).result()
+            evs = result[0].data.evs
+            return float(evs.flat[0]) if hasattr(evs, "flat") else float(evs[0])
+
+        measure = chain_measure(strategies, _base_measure)
+
+        x0 = 2 * np.pi * np.random.random(ansatz_circuit.num_parameters)
         cost_history = {"iters": 0, "cost_history": []}
 
         def cost_func(params):
             if cost_history["iters"] >= max_iters:
                 return cost_history["cost_history"][-1]
-            pub = (ansatz_circuit, [isa_hamiltonian], [params])
-            result = estimator.run(pubs=[pub]).result()
-            energy = result[0].data.evs[0]
+            energy = measure(ansatz_circuit, hamiltonian, params)
             cost_history["iters"] += 1
             cost_history["cost_history"].append(energy)
             return energy
@@ -68,19 +121,19 @@ def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=N
         energy = float(res.fun)
         logger.debug(f"VQE {label} = {energy}")
 
+        if return_state:
+            param_dict = dict(zip(ansatz_circuit.parameters, res.x))
+            return energy, ansatz_circuit.assign_parameters(param_dict)
+
         if observable_qubit_ops is None:
             return energy
 
         optimal_params = np.asarray(res.x)
-        observable_values = []
-        for op in observable_qubit_ops:
-            pub = (ansatz_circuit, [_isa(op, ansatz_circuit)], [optimal_params])
-            result = estimator.run(pubs=[pub]).result()
-            observable_values.append(float(result[0].data.evs[0]))
+        observable_values = [measure(ansatz_circuit, op, optimal_params) for op in observable_qubit_ops]
         return energy, observable_values
 
 
-def vqe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, rep, backend=None, observable_qubit_ops=None):
+def vqe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, rep, backend=None, observable_qubit_ops=None, strategies=None, return_state: bool = False, seed: int | None = None):
     fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
     ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
@@ -88,6 +141,8 @@ def vqe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamilto
     return _vqe_sparse(
         qubit_hamiltonian, ansatz, get_optimizer_fn, max_iters, rep,
         backend=backend, label=label, observable_qubit_ops=observable_qubit_ops,
+        strategies=strategies, return_state=return_state,
+        seed=seed,
     )
 
 
@@ -118,12 +173,12 @@ def vqe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, m
     return float(vals[0])
 
 
-def vqe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, get_optimizer_fn, max_iters, n_layers, rep, backend=None):
+def vqe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, get_optimizer_fn, max_iters, n_layers, rep, backend=None, strategies=None, seed: int | None = None):
     H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
     hamiltonian = SparsePauliOp.from_operator(H_matrix)
     ansatz = efficient_su2(hamiltonian.num_qubits, reps=n_layers)
     label = f"bloch (k={tuple(round(float(x), 3) for x in k_tuple)}, rep={rep})"
-    return _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=label)
+    return _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=label, strategies=strategies, seed=seed)
 
 
 def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_layers, rep, extremum="min", backend=None, label="", observable="E"):
@@ -194,7 +249,8 @@ class VQEMethod(SimulationMethod):
                     lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
                     ferm_fn, model.get_optimizer,
                     model.get_vqe_ansatz, ctx.mapper, self.iters, self.layers, rep,
-                    backend=backend,
+                    backend=backend, strategies=self.mitigation_strategies,
+                    seed=ctx.cell_index * 1000 + rep,
                 )
             else:
                 energy = vqe_observable(
@@ -222,6 +278,7 @@ class VQEMethod(SimulationMethod):
             energy = vqe_bloch(
                 k_tuple, cell_params, model.bloch_hamiltonian, model.get_optimizer,
                 self.iters, self.layers, rep, backend=backend,
+                strategies=self.mitigation_strategies, seed=ctx.cell_index * 1000 + rep,
             )
             reps.append(float(energy))
         num_queries, (total, two_q) = vqe_bloch_other_benchmarks(

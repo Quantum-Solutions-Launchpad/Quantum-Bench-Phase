@@ -16,6 +16,7 @@ from qbp._run import (
     load_result,
     RunResult,
 )
+from qbp._diff import plot_diff
 from qbp._real_space import (
     real_space_positions,
     RealSpaceStateResult,
@@ -52,6 +53,7 @@ __all__ = [
     "run",
     "load_result",
     "RunResult",
+    "plot_diff",
     "real_space_positions",
     "RealSpaceStateResult",
     "edge_mask_from_missing_bonds",

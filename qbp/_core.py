@@ -17,6 +17,7 @@ from qiskit_nature.second_q.operators import FermionicOp
 
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
+from qiskit_aer.primitives import Sampler
 
 from loguru import logger
 
@@ -89,14 +90,43 @@ def resolve_sweep(param: str, range_args, n_orbitals: int, momentum_axes: tuple[
     return vals, param, "parameter"
 
 
+def _resolve_noise_model(backend) -> NoiseModel:
+    """Get the NoiseModel for the used backend
+
+    NoiseModel.from_backend() reads calibration data (QubitProperties) off
+    a real or fake backend. it does NOT know how to recover the
+    noise model already attached to a plain AerSimulator(noise_model=...),
+    since that simulator has no calibration data to read 
+    so everything that builds its backend as AerSimulator(noise_model=custom_model()
+    had its noise silently discarded which is why this now exists.
+    """
+    if isinstance(backend, AerSimulator):
+        return backend.options.noise_model
+    return NoiseModel.from_backend(backend)
+
+
 def _make_simulator(backend):
     if is_real_backend(backend):
         return backend
     if backend:
-        noise_model = NoiseModel.from_backend(backend)
+        noise_model = _resolve_noise_model(backend)
         return AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
     return AerSimulator()
 
+
+def _make_sampler(backend):
+    # Do not use run_options={"shots": None}. Exact/no-shot sampling skips
+    # measurement and therefore does not apply classical readout errors,
+    # which are what M3 is intend to mitigate.
+    if backend:
+        noise_model = _resolve_noise_model(backend)
+        return Sampler(
+            backend_options={
+                "noise_model": noise_model,
+                "basis_gates": noise_model.basis_gates,
+            },
+        )
+    return Sampler()
 
 def _hf_initial_state(n_sites: int, spin: int, n_occ: int, mapper):
     if spin == 2:
