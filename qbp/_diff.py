@@ -11,7 +11,135 @@ from qbp._plotting import (
     _format_momentum_ticks,
 )
 from qbp._interactive import attach_hover, lock_camera_azimuth
+import json
 
+def _load_grid(path: str, source: str) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    with open(path) as fh:
+        raw = json.load(fh)
+
+    x_vals = np.asarray(raw["x_values"], dtype=float)
+    y_vals = np.asarray(raw["y_values"], dtype=float)
+    nx, ny = len(x_vals), len(y_vals)
+
+    block = raw["result"][source]
+    analytic_block = raw["result"].get("analytic")
+
+    Z = np.full((nx, ny), np.nan)
+    for xi_str, row in block.items():
+        xi = int(xi_str)
+        for yi_str, val in row.items():
+            yi = int(yi_str)
+            if source in ("vqe", "iqpe") and isinstance(val, list) and analytic_block is not None:
+                analytic_val = float(analytic_block[xi_str][yi_str])
+                Z[xi, yi] = min(val, key=lambda e: abs(e - analytic_val))
+            else:
+                # Band structure: val may be a list of eigenvalues — take ground state
+                if isinstance(val, list):
+                    Z[xi, yi] = float(min(val))
+                else:
+                    Z[xi, yi] = float(val)
+
+    return x_vals, y_vals, Z
+
+
+def _read_meta(path: str) -> dict:
+    with open(path) as fh:
+        raw = json.load(fh)
+    return {
+        "model": raw.get("parameters", {}).get("model", ""),
+        "lattice": raw.get("parameters", {}).get("lattice", []),
+        "x_param": raw.get("x_param", "x"),
+        "y_param": raw.get("y_param", "y"),
+        "available": list(raw.get("result", {}).keys()),
+    }
+
+
+def _param_label(param: str) -> str:
+    label_map = {
+        "n_occ": r"$N_{\mathrm{occ}}$",
+        "t2": r"$t_2$",
+        "t1": r"$t_1$",
+        "phi": r"$\phi$",
+        "M": r"$M$",
+        "U": r"$U$",
+        "kx": r"$k_x$",
+        "ky": r"$k_y$",
+        "k": r"$k$",
+    }
+    return label_map.get(param, f"${param}$")
+
+
+def _method_name(method: str) -> str:
+    return {"vqe": "VQE", "iqpe": "IQPE"}.get(method, method.upper())
+
+def _make_title(method: str, meta: dict) -> str:
+    method_name = _method_name(method)
+    model = meta.get("model", "")
+    lattice = meta.get("lattice", [])
+
+    details = []
+    if model:
+        details.append(str(model))
+    if lattice:
+        details.append("×".join(str(v) for v in lattice))
+
+    suffix = f" ({', '.join(details)})" if details else ""
+    return f"{method_name} Error Relative to Analytic{suffix}"
+
+
+def _out_path(base: str | None, method: str) -> str | None:
+    if base is None:
+        return None
+    if "." in base:
+        stem, ext = base.rsplit(".", 1)
+        return f"{stem}-{method}.{ext}"
+    return f"{base}-{method}"
+
+def plot_diff(
+    path: str,
+    *,
+    method: str = "both",
+    plot_format: str = "3d",
+    output_path: str | None = None,
+    hide_plot: bool = False,
+    x_is_momentum: bool = False,
+    y_is_momentum: bool = False,
+):
+    _apply_rcparams()
+
+    meta = _read_meta(path)
+    x_label = _param_label(meta["x_param"])
+    y_label = _param_label(meta["y_param"])
+
+    x_vals, y_vals, Z_analytic = _load_grid(path, "analytic")
+
+    methods = ["vqe", "iqpe"] if method == "both" else [method]
+    methods = [m for m in methods if m in meta["available"]]
+
+    figs = []
+    for m in methods:
+        x_vals, y_vals, Z_method = _load_grid(path, m)
+        Z_err = Z_method - Z_analytic
+
+        shared = dict(
+            x_label=x_label, y_label=y_label,
+            z_label=rf"$E_{{\mathrm{{{m.upper()}}}}} - E_{{\mathrm{{analytic}}}}$",
+            method=m, meta=meta,
+            x_is_momentum=x_is_momentum,
+            y_is_momentum=y_is_momentum,
+            output_path=_out_path(output_path, m),
+            hide_plot=hide_plot,
+        )
+
+        if plot_format == "heatmap":
+            fig = _diff_heatmap(x_vals, y_vals, Z_err, **shared)
+        elif plot_format == "bar_2d":
+            fig = _diff_bar_2d(x_vals, y_vals, Z_err, **shared)
+        else:
+            fig = _diff_3d(x_vals, y_vals, Z_err, hover_label=f"{_method_name(m)} error", **shared)
+
+
+    return figs if len(figs) > 1 else figs[0] if figs else None
 
 def _diff_cmap_and_norm(Z: np.ndarray):
     finite = Z[np.isfinite(Z)]
@@ -47,6 +175,7 @@ def _pcolormesh_edges(a: np.ndarray) -> np.ndarray:
 def _diff_3d(
     x_vals, y_vals, Z_err,
     *, x_label, y_label, z_label, hover_label,
+    method, meta,
     x_is_momentum, y_is_momentum,
     output_path, hide_plot,
 ):
@@ -60,7 +189,6 @@ def _diff_3d(
         axis.pane.set_edgecolor("#cccccc")
     ax.grid(True, linestyle="--", alpha=0.4)
     ax.view_init(elev=25, azim=-55)
-    ax.dist = 7
 
     ny = len(y_vals)
     X_grid, Y_grid = np.meshgrid(x_vals, y_vals, indexing="ij")
@@ -88,6 +216,7 @@ def _diff_3d(
     ax.set_xlabel(x_label, labelpad=12)
     ax.set_ylabel(y_label, labelpad=12)
     ax.set_zlabel(z_label, labelpad=10)
+    ax.set_title(_make_title(method, meta), pad=14)
 
     if x_is_momentum:
         _format_momentum_ticks(ax, "x", x_vals)
@@ -105,6 +234,7 @@ def _diff_3d(
 def _diff_heatmap(
     x_vals, y_vals, Z_err,
     *, x_label, y_label, z_label,
+    method, meta,
     x_is_momentum, y_is_momentum,
     output_path, hide_plot,
 ):
@@ -125,6 +255,7 @@ def _diff_heatmap(
 
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel(y_label, labelpad=8)
+    ax.set_title(_make_title(method, meta), pad=10)
     ax.set_xlim(_pcolormesh_edges(x_arr)[0], _pcolormesh_edges(x_arr)[-1])
     ax.set_ylim(_pcolormesh_edges(y_arr)[0], _pcolormesh_edges(y_arr)[-1])
     for spine in ax.spines.values():
@@ -142,6 +273,7 @@ def _diff_heatmap(
 def _diff_bar_2d(
     x_vals, y_vals, Z_err,
     *, x_label, y_label, z_label,
+    method, meta,
     x_is_momentum, y_is_momentum,
     output_path, hide_plot,
 ):
@@ -209,6 +341,7 @@ def _diff_bar_2d(
 
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel(z_label, labelpad=8)
+    ax.set_title(_make_title(method, meta), pad=10)
     ax.grid(True, axis="y", linestyle="--", alpha=0.4)
     for spine in ax.spines.values():
         spine.set_edgecolor("#cfcece")

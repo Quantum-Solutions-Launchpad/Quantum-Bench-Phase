@@ -159,22 +159,21 @@ class _AerIQPESampler:
     """IQPE sampler backed by the local Aer V1 ``Sampler`` (ideal / fake noise)."""
 
     def __init__(self, backend):
-        from qiskit_aer.noise import NoiseModel
-        from qiskit_aer.primitives import Sampler
+        from qbp._core import _make_sampler
 
-        if backend:
-            noise_model = NoiseModel.from_backend(backend)
-            self._sampler = Sampler(
-                backend_options={
-                    "noise_model": noise_model,
-                    "basis_gates": noise_model.basis_gates,
-                }
-            )
-        else:
-            self._sampler = Sampler()
+        self._sampler = _make_sampler(backend)
+
+    def raw_dist(self, qc) -> dict:
+        """The raw quasi-probability distribution, before any bit decision.
+
+        Exposed separately from sample_bit so mitigation strategies (M3)
+        can correct it before the majority-vote decision is made. Once
+        collapsed to a single bit there's nothing left to correct.
+        """
+        return self._sampler.run([qc]).result().quasi_dists[0]
 
     def sample_bit(self, qc) -> int:
-        result = self._sampler.run([qc]).result().quasi_dists[0]
+        result = self.raw_dist(qc)
         return 1 if result.get(1, 0) > result.get(0, 0) else 0
 
 
@@ -262,35 +261,44 @@ def make_iqpe_sampler(backend):
 class _RuntimeVQEEstimator:
     """VQE estimator over Aer (ideal/fake) or a real IBM device via Runtime.
 
-    Preserves the original VQE numerics: circuits are transpiled to the Aer/IBM
-    backend and expectation values come from ``qiskit_ibm_runtime`` ``Estimator``
-    inside a Session opened for the whole optimization.
+    Real IBM hardware needs qiskit_ibm_runtime's Session-backed Estimator. Ideal/fake backends use
+    qiskit_aer.primitives.EstimatorV2 directly instead: it computes exact expectation values (no shot sampling) 
+    straight from the noisy density matrix, which is like 45x faster in practice than shot-based sampling, still
+    correctly reflects the noise model, and needs no Session at all since there's nothing to queue on remote hardware.
     """
 
     def __init__(self, backend):
         from qbp._core import _make_simulator
 
+        self._backend = backend
         self._simulator = _make_simulator(backend)
         self._session = None
 
     def __enter__(self):
         from qiskit import transpile
-        from qiskit_ibm_runtime import Session, Estimator
 
-        self._session = Session(backend=self._simulator)
-        self._session.__enter__()
-        self.estimator = Estimator(mode=self._session)
         self._transpile = lambda c: transpile(
             c, backend=self._simulator, optimization_level=3
         )
+        if is_real_backend(self._backend):
+            from qiskit_ibm_runtime import Session, Estimator
+
+            self._session = Session(backend=self._simulator)
+            self._session.__enter__()
+            self.estimator = Estimator(mode=self._session)
+        else:
+            from qiskit_aer.primitives import EstimatorV2 as AerEstimatorV2
+
+            self.estimator = AerEstimatorV2.from_backend(self._simulator)
         return self
 
     def __exit__(self, *exc):
-        return self._session.__exit__(*exc)
+        if self._session is not None:
+            return self._session.__exit__(*exc)
+        return False
 
     def transpile(self, circuit):
         return self._transpile(circuit)
-
 
 class _IqmVQEEstimator:
     """VQE estimator over an IQM Resonance device via ``BackendEstimatorV2``."""
