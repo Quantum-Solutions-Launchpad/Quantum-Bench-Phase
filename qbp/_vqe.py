@@ -222,6 +222,48 @@ def vqe_bloch_other_benchmarks(k_tuple, model_params, bloch_hamiltonian_fn, max_
     return num_queries, (full_circuit_depth, two_gate_circuit_depth)
 
 
+def _vqe_measured_ansatz_and_groups(qubit_hamiltonian, ansatz):
+    """A measured copy of the ansatz plus the number of commuting Pauli groups.
+
+    The Estimator measures one circuit per commuting group of the Hamiltonian,
+    so the group count is the per-evaluation circuit multiplier for cost.
+    """
+    measured = ansatz.copy()
+    measured.measure_all()
+    return measured, len(qubit_hamiltonian.group_commuting())
+
+
+def vqe_cell_seconds(lattice, n_sites, spin, n_occ, model_params,
+                     fermionic_hamiltonian_fn, get_vqe_ansatz_fn, mapper,
+                     max_iters, n_layers, reps, backend, shots):
+    from qbp._backend import circuit_qpu_seconds
+
+    fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
+    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
+    ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
+    measured, n_groups = _vqe_measured_ansatz_and_groups(qubit_hamiltonian, ansatz)
+    return circuit_qpu_seconds(backend, measured, shots) * n_groups * max_iters * reps
+
+
+def vqe_bloch_seconds(k_tuple, model_params, bloch_hamiltonian_fn,
+                      max_iters, n_layers, reps, backend, shots):
+    from qbp._backend import circuit_qpu_seconds
+
+    H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
+    hamiltonian = SparsePauliOp.from_operator(H_matrix)
+    ansatz = efficient_su2(hamiltonian.num_qubits, reps=n_layers)
+    measured, n_groups = _vqe_measured_ansatz_and_groups(hamiltonian, ansatz)
+    return circuit_qpu_seconds(backend, measured, shots) * n_groups * max_iters * reps
+
+
+def vqe_operator_seconds(hamiltonian, get_vqe_ansatz_fn, max_iters, n_layers, reps, backend, shots):
+    from qbp._backend import circuit_qpu_seconds
+
+    ansatz = get_vqe_ansatz_fn(hamiltonian.num_qubits, n_layers, 0, 1)
+    measured, n_groups = _vqe_measured_ansatz_and_groups(hamiltonian, ansatz)
+    return circuit_qpu_seconds(backend, measured, shots) * n_groups * max_iters * reps
+
+
 # ---------------------------------------------------------------------- method
 @register_method
 class VQEMethod(SimulationMethod):
@@ -316,3 +358,38 @@ class VQEMethod(SimulationMethod):
             )
             reps.append(float(energy))
         return {"repetitions": reps}
+
+    def _estimate_shots(self, shots):
+        from qbp._backend import _VQE_ESTIMATOR_SHOTS
+
+        return _VQE_ESTIMATOR_SHOTS if shots is None else shots
+
+    def estimate_cell(self, model, lattice, n_occ, cell_params, observable, *,
+                      backend, ctx, shots):
+        ferm_fn = ctx.fermionic_hamiltonian_fn or model.fermionic_hamiltonian
+        return vqe_cell_seconds(
+            lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
+            ferm_fn, model.get_vqe_ansatz, ctx.mapper,
+            self.iters, self.layers, self.reps, backend, self._estimate_shots(shots),
+        )
+
+    def estimate_bloch_cell(self, model, k_tuple, cell_params, observable, *,
+                            backend, ctx, shots):
+        return vqe_bloch_seconds(
+            k_tuple, cell_params, model.bloch_hamiltonian,
+            self.iters, self.layers, self.reps, backend, self._estimate_shots(shots),
+        )
+
+    def estimate_operator_cell(self, op, *, extremum, backend, observable="E", shots):
+        from qbp._yaml_model import AnsatzSpec, build_ansatz_factory
+
+        ansatz_spec = (
+            AnsatzSpec.model_validate(self.ansatz) if self.ansatz
+            else AnsatzSpec(type="efficient_su2", kwargs={"reps": "@n_layers"},
+                            initial_state_prefix="none")
+        )
+        get_vqe_ansatz = build_ansatz_factory(ansatz_spec, name="operator")
+        return vqe_operator_seconds(
+            op, get_vqe_ansatz, self.iters, self.layers, self.reps, backend,
+            self._estimate_shots(shots),
+        )
