@@ -339,25 +339,41 @@ def make_vqe_estimator(backend):
             yield est
 
 _IQM_DEFAULT_GATE_SECONDS = {
-    "r": 42e-9,
-    "prx": 42e-9,
-    "cz": 130e-9,
-    "measure": 2e-6,
-    "reset": 2e-6,
+    "r": 24e-9,
+    "prx": 24e-9,
+    "cz": 90e-9,
+    "move": 70e-9,
+    "measure": 400e-9,
+    "reset": 350e-6,
     "id": 0.0,
     "delay": 0.0,
     "barrier": 0.0,
+}
+_IQM_CAL_GATE_MAP = {
+    "prx": ("r", "prx"),
+    "cz": ("cz",),
+    "move": ("move",),
+    "measure": ("measure",),
+    "reset_wait": ("reset",),
 }
 _IBM_FALLBACK_LAYER_SECONDS = 5e-7
 
 def _iqm_gate_seconds(backend) -> dict:
     """Map IQM ISA gate name -> duration (seconds) for ``backend``.
 
-    Sourced from the backend's calibrated ``error_profile`` when present (fake
-    backends), else the representative defaults, so cost estimation works for a
-    real ``IQMBackend`` too without contacting the server for pulse timing.
+    A real ``IQMBackend`` carries per-gate pulse durations in its calibration
+    set, which it fetches from the server as metadata (no circuits run, no
+    credits spent); the per-locus durations are aggregated to a representative
+    mean per gate. Fake backends expose the same timing via ``error_profile``.
+    Falls back to representative defaults if neither is available. Cached on the
+    backend so the calibration set is fetched only once.
     """
+    cached = getattr(backend, "_qbp_gate_seconds", None)
+    if cached is not None:
+        return cached
+
     durations = dict(_IQM_DEFAULT_GATE_SECONDS)
+
     profile = getattr(backend, "error_profile", None)
     if profile is not None:
         for name, ns in (getattr(profile, "single_qubit_gate_durations", None) or {}).items():
@@ -366,6 +382,30 @@ def _iqm_gate_seconds(backend) -> dict:
                 durations["r"] = float(ns) * 1e-9
         for name, ns in (getattr(profile, "two_qubit_gate_durations", None) or {}).items():
             durations[name] = float(ns) * 1e-9
+
+    client = getattr(backend, "client", None)
+    if client is not None:
+        try:
+            observations = client.get_calibration_set().observations
+            aggregated: dict = {}
+            for obs in observations:
+                field = obs.dut_field
+                if field.endswith(".duration"):
+                    gate = field.split(".")[1]
+                    aggregated.setdefault(gate, []).append(float(obs.value))
+            for cal_name, isa_names in _IQM_CAL_GATE_MAP.items():
+                values = aggregated.get(cal_name)
+                if values:
+                    seconds = sum(values) / len(values)
+                    for isa_name in isa_names:
+                        durations[isa_name] = seconds
+        except Exception:
+            pass
+
+    try:
+        backend._qbp_gate_seconds = durations
+    except Exception:
+        pass
     return durations
 
 
