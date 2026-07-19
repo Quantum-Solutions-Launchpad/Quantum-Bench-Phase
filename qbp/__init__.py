@@ -1,7 +1,7 @@
 from qbp._core import setup_logging as _setup_logging
 _setup_logging()
 
-from qbp._model import Model, ModelCapabilityError
+from qbp._model import Model, ModelCapabilityError, Observable
 from qbp._registry import (
     get_model,
     register_model,
@@ -43,6 +43,7 @@ from qbp._semenoff_mass import SemenoffMass, radial_mass_values
 __all__ = [
     "Model",
     "ModelCapabilityError",
+    "Observable",
     "get_model",
     "register_model",
     "register_model_from_file",

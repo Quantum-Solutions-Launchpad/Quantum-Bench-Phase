@@ -43,7 +43,7 @@ models/tight-binding-builder
 :maxdepth: 1
 
 components/observables
-components/ansatze
+components/initial-simulation-states
 components/mappers
 components/optimizers
 ```

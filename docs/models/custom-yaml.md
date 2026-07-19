@@ -124,7 +124,7 @@ ansatz:
   initial_state_prefix: hartree_fock
 ```
 
-The available runtime names depend on the section: the optimizer sees `max_iters`; the mapper sees `n_sites`, `spin`, `n_occ`, and `num_particles`; the ansatz sees `n_qubits`, `n_layers`, `n_occ`, `spin`, and `n_sites`. See [Optimizers](../components/optimizers.md), [Mappers](../components/mappers.md), and [Ansätze](../components/ansatze.md) for the supported `type` values.
+The available runtime names depend on the section: the optimizer sees `max_iters`; the mapper sees `n_sites`, `spin`, `n_occ`, and `num_particles`; the ansatz sees `n_qubits`, `n_layers`, `n_occ`, `spin`, and `n_sites`. See [Optimizers](../components/optimizers.md), [Mappers](../components/mappers.md), and [Initial Simulation States](../components/initial-simulation-states.md) for the supported `type` values.
 
 ## Band Structure
 
