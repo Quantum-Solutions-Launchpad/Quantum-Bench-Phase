@@ -720,18 +720,47 @@ def _run_diagnostic(
 
 
 # --------------------------------------------------------------- model dispatch
-def _run_model_methods(
-    model, methods, method_objs, backend, backend_label,
-    *, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
-    boundary, geometry, radius, center,
-    potential_profile, potential_radius, potential_v0, potential_xi,
-    investigation,
-    observable, log_path, plot_path, hide_plot, hide_legend, heatmap,
-    diff, diff_format,
-    task_index, task_count, prepare_only, aggregate_only, no_progress_log,
-):
-    from loguru import logger
+@dataclass
+class _ModelCellPlan:
+    model: Model
+    x_param: str
+    y_param: str | None
+    is_1d: bool
+    x_vals: list
+    y_vals: list
+    x_kind: str
+    y_kind: str
+    is_band: bool
+    nx: int
+    ny: int
+    params: dict
+    projection: object
+    potential_kwargs: dict
+    profile_info: dict
+    has_profiles: bool
+    lattice: tuple | None
+    n_sites: int
+    spin: int
+    n_orbitals: int
+    fixed_n_occ: int
+    momentum_axes: tuple
+    cell_params_and_nocc: object
 
+
+def _plan_model_cells(
+    model, methods, method_objs, *, lattice, x_param, x_range, y_param, y_range,
+    n_occ, model_params, boundary, geometry, radius, center,
+    potential_profile, potential_radius, potential_v0, potential_xi,
+    investigation, observable,
+) -> _ModelCellPlan:
+    """Resolve the sweep grid, geometry and cell parameters for a model run.
+
+    This is the pure planning phase shared by :func:`_run_model_methods` (which
+    then executes each cell) and :func:`qbp.estimate` (which instead sums each
+    cell's estimated QPU cost). It performs every model/axis/geometry validation
+    but never touches a backend. Run-specific concerns (``heatmap``/``plot_format``
+    and task sharding) stay in the caller.
+    """
     model = _resolve_model(model)
     _ = model._build_H_matrix
     _ = model.get_observable(observable)
@@ -741,10 +770,6 @@ def _run_model_methods(
     x_param, x_range, y_param, y_range, is_1d = _normalize_sweep_axes(
         x_param, x_range, y_param, y_range
     )
-    if heatmap and is_1d:
-        raise ValueError("heatmap=True requires both x and y sweep axes; provide y_param/y_range.")
-    if heatmap and len(methods) != 1:
-        raise ValueError("heatmap=True requires exactly one simulation method.")
     _gate_momentum(model, x_param, y_param)
 
     params = _with_boundary(model_params, boundary)
@@ -840,6 +865,75 @@ def _run_model_methods(
                     f"sweep axis nor fixed in model_params. Pin it explicitly to a value."
                 )
 
+    def cell_params_and_nocc(ix, iy):
+        cp = params.copy()
+        n_occ_val = fixed_n_occ
+        xv = x_vals[ix]
+        if x_kind == "n_occ":
+            n_occ_val = int(xv)
+        else:
+            cp[x_param] = xv
+        if not is_1d:
+            yv = y_vals[iy]
+            if y_kind == "n_occ":
+                n_occ_val = int(yv)
+            else:
+                cp[y_param] = yv
+        return cp, n_occ_val
+
+    return _ModelCellPlan(
+        model=model, x_param=x_param, y_param=y_param, is_1d=is_1d,
+        x_vals=x_vals, y_vals=y_vals, x_kind=x_kind, y_kind=y_kind,
+        is_band=is_band, nx=nx, ny=ny, params=params, projection=projection,
+        potential_kwargs=potential_kwargs, profile_info=profile_info,
+        has_profiles=has_profiles, lattice=lattice, n_sites=n_sites, spin=spin,
+        n_orbitals=n_orbitals, fixed_n_occ=fixed_n_occ, momentum_axes=momentum_axes,
+        cell_params_and_nocc=cell_params_and_nocc,
+    )
+
+
+def _run_model_methods(
+    model, methods, method_objs, backend, backend_label,
+    *, lattice, x_param, x_range, y_param, y_range, n_occ, model_params,
+    boundary, geometry, radius, center,
+    potential_profile, potential_radius, potential_v0, potential_xi,
+    investigation,
+    observable, log_path, plot_path, hide_plot, hide_legend, heatmap,
+    diff, diff_format,
+    task_index, task_count, prepare_only, aggregate_only, no_progress_log,
+):
+    from loguru import logger
+
+    plan = _plan_model_cells(
+        model, methods, method_objs,
+        lattice=lattice, x_param=x_param, x_range=x_range,
+        y_param=y_param, y_range=y_range, n_occ=n_occ, model_params=model_params,
+        boundary=boundary, geometry=geometry, radius=radius, center=center,
+        potential_profile=potential_profile, potential_radius=potential_radius,
+        potential_v0=potential_v0, potential_xi=potential_xi,
+        investigation=investigation, observable=observable,
+    )
+    model = plan.model
+    x_param, y_param, is_1d = plan.x_param, plan.y_param, plan.is_1d
+    x_vals, y_vals, x_kind, y_kind = plan.x_vals, plan.y_vals, plan.x_kind, plan.y_kind
+    params = plan.params
+    projection = plan.projection
+    potential_kwargs = plan.potential_kwargs
+    profile_info = plan.profile_info
+    has_profiles = plan.has_profiles
+    lattice = plan.lattice
+    n_sites, spin, n_orbitals = plan.n_sites, plan.spin, plan.n_orbitals
+    fixed_n_occ = plan.fixed_n_occ
+    momentum_axes = plan.momentum_axes
+    nx, ny = plan.nx, plan.ny
+    is_band = plan.is_band
+    cell_params_and_nocc = plan.cell_params_and_nocc
+
+    if heatmap and is_1d:
+        raise ValueError("heatmap=True requires both x and y sweep axes; provide y_param/y_range.")
+    if heatmap and len(methods) != 1:
+        raise ValueError("heatmap=True requires exactly one simulation method.")
+
     plot_format = "2d" if is_1d else ("heatmap" if heatmap else "3d")
 
     if task_count < 1:
@@ -859,22 +953,6 @@ def _run_model_methods(
             raw_data_path, progress_path = _derived_paths(log_path)
 
     raw_cells = {m.value: {str(ix): {} for ix in range(nx)} for m in methods}
-
-    def cell_params_and_nocc(ix, iy):
-        cp = params.copy()
-        n_occ_val = fixed_n_occ
-        xv = x_vals[ix]
-        if x_kind == "n_occ":
-            n_occ_val = int(xv)
-        else:
-            cp[x_param] = xv
-        if not is_1d:
-            yv = y_vals[iy]
-            if y_kind == "n_occ":
-                n_occ_val = int(yv)
-            else:
-                cp[y_param] = yv
-        return cp, n_occ_val
 
     def compute_one(method_value, ix, iy, tmp_dir):
         m_obj = method_objs[Method.coerce(method_value)]

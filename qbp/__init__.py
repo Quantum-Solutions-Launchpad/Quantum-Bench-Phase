@@ -16,6 +16,7 @@ from qbp._run import (
     load_result,
     RunResult,
 )
+from qbp._estimate import estimate
 from qbp._diff import plot_diff
 from qbp._real_space import (
     real_space_positions,
@@ -51,6 +52,7 @@ __all__ = [
     "list_hamlib_keys",
     "Method",
     "run",
+    "estimate",
     "load_result",
     "RunResult",
     "plot_diff",

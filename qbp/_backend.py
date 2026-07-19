@@ -40,6 +40,8 @@ _IQM_NO_TOKEN_HINT = (
     "    export IQM_TOKEN=<your token>"
 )
 _IQM_SHOTS = 1024
+_IBM_SAMPLER_SHOTS = 4096
+_VQE_ESTIMATOR_SHOTS = 4096
 
 
 def _service():
@@ -335,3 +337,121 @@ def make_vqe_estimator(backend):
     else:
         with _RuntimeVQEEstimator(backend) as est:
             yield est
+
+_IQM_DEFAULT_GATE_SECONDS = {
+    "r": 24e-9,
+    "prx": 24e-9,
+    "cz": 90e-9,
+    "move": 70e-9,
+    "measure": 400e-9,
+    "reset": 350e-6,
+    "id": 0.0,
+    "delay": 0.0,
+    "barrier": 0.0,
+}
+_IQM_CAL_GATE_MAP = {
+    "prx": ("r", "prx"),
+    "cz": ("cz",),
+    "move": ("move",),
+    "measure": ("measure",),
+    "reset_wait": ("reset",),
+}
+_IBM_FALLBACK_LAYER_SECONDS = 5e-7
+
+def _iqm_gate_seconds(backend) -> dict:
+    """Map IQM ISA gate name -> duration (seconds) for ``backend``.
+
+    A real ``IQMBackend`` carries per-gate pulse durations in its calibration
+    set, which it fetches from the server as metadata (no circuits run, no
+    credits spent); the per-locus durations are aggregated to a representative
+    mean per gate. Fake backends expose the same timing via ``error_profile``.
+    Falls back to representative defaults if neither is available. Cached on the
+    backend so the calibration set is fetched only once.
+    """
+    cached = getattr(backend, "_qbp_gate_seconds", None)
+    if cached is not None:
+        return cached
+
+    durations = dict(_IQM_DEFAULT_GATE_SECONDS)
+
+    profile = getattr(backend, "error_profile", None)
+    if profile is not None:
+        for name, ns in (getattr(profile, "single_qubit_gate_durations", None) or {}).items():
+            durations[name] = float(ns) * 1e-9
+            if name == "prx":
+                durations["r"] = float(ns) * 1e-9
+        for name, ns in (getattr(profile, "two_qubit_gate_durations", None) or {}).items():
+            durations[name] = float(ns) * 1e-9
+
+    client = getattr(backend, "client", None)
+    if client is not None:
+        try:
+            observations = client.get_calibration_set().observations
+            aggregated: dict = {}
+            for obs in observations:
+                field = obs.dut_field
+                if field.endswith(".duration"):
+                    gate = field.split(".")[1]
+                    aggregated.setdefault(gate, []).append(float(obs.value))
+            for cal_name, isa_names in _IQM_CAL_GATE_MAP.items():
+                values = aggregated.get(cal_name)
+                if values:
+                    seconds = sum(values) / len(values)
+                    for isa_name in isa_names:
+                        durations[isa_name] = seconds
+        except Exception:
+            pass
+
+    try:
+        backend._qbp_gate_seconds = durations
+    except Exception:
+        pass
+    return durations
+
+
+def _critical_path_seconds(circuit, gate_seconds: dict) -> float:
+    """ASAP critical-path duration (seconds) of an ISA ``circuit`` given a
+    ``{gate_name: seconds}`` map. Gates absent from the map contribute 0."""
+    index = {q: i for i, q in enumerate(circuit.qubits)}
+    end = [0.0] * circuit.num_qubits
+    for instruction in circuit.data:
+        qubits = [index[q] for q in instruction.qubits]
+        if not qubits:
+            continue
+        start = max(end[i] for i in qubits)
+        finish = start + gate_seconds.get(instruction.operation.name, 0.0)
+        for i in qubits:
+            end[i] = finish
+    return max(end) if end else 0.0
+
+
+def circuit_qpu_seconds(backend, circuit, shots: int) -> float:
+    """Estimated QPU execution seconds for one logical ``circuit`` at ``shots``.
+
+    Computed fully offline (no submission, no credits spent): the circuit is
+    transpiled to the device ISA exactly as :func:`run` would, its ASAP-scheduled
+    wall-clock duration is measured, and the result is scaled by the shot count.
+    IBM uses the calibrated ``Target`` via ``QuantumCircuit.estimate_duration``;
+    IQM uses its calibrated (or representative) gate durations over the ISA
+    circuit, since the IQM ``Target`` carries no per-gate timing.
+    """
+    if is_iqm_backend(backend):
+        from iqm.qiskit_iqm import transpile_to_IQM
+
+        isa = transpile_to_IQM(circuit, backend=backend, optimization_level=3)
+        seconds = _critical_path_seconds(isa, _iqm_gate_seconds(backend))
+    else:
+        from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
+
+        try:
+            pm = generate_preset_pass_manager(
+                optimization_level=3, backend=backend, scheduling_method="asap"
+            )
+            scheduled = pm.run(circuit)
+            seconds = float(scheduled.estimate_duration(backend.target, unit="s"))
+        except Exception:
+            from qiskit import transpile
+
+            isa = transpile(circuit, backend=backend, optimization_level=3)
+            seconds = isa.depth() * _IBM_FALLBACK_LAYER_SECONDS
+    return seconds * shots
