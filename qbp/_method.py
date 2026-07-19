@@ -164,6 +164,18 @@ class SimulationMethod:
             f"{self.METHOD.value} does not support the qubit-operator path."
         )
 
+    def estimate_cell(self, model, lattice, n_occ, cell_params, observable, *,
+                      backend, ctx: CellContext, shots: int) -> float:
+        return 0.0
+
+    def estimate_bloch_cell(self, model, k_tuple, cell_params, observable, *,
+                            backend, ctx: CellContext, shots: int) -> float:
+        return 0.0
+
+    def estimate_operator_cell(self, op, *, extremum, backend, observable: str = "E",
+                               shots: int) -> float:
+        return 0.0
+
     # ------------------------------------------------------------------- reduce
     def reduce(self, cell: dict, *, extremum: str = "min", analytic: float | None = None):
         """Collapse a raw cell dict to the scalar (or band list) plotted/stored.

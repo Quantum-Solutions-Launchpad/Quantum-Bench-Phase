@@ -301,6 +301,52 @@ def iqpe_supports_observable(model, observable: str) -> bool:
     return obs.quantum_composite is not None and observable == "charge_gap"
 
 
+def _iqpe_iteration_seconds(unitary, initial, n_iters, backend, shots):
+    from qbp._backend import circuit_qpu_seconds
+
+    total = 0.0
+    for k in range(n_iters, 0, -1):
+        qc = construct_iqpe_circuit(unitary, initial, k, -2 * np.pi)
+        total += circuit_qpu_seconds(backend, qc, shots)
+    return total
+
+
+def iqpe_cell_seconds(lattice, n_sites, spin, n_occ, model_params,
+                      fermionic_hamiltonian_fn, mapper, time_param, n_trot,
+                      n_iters, reps, backend, shots):
+    fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
+    qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
+    st = SuzukiTrotter(reps=n_trot)
+    evolution = PauliEvolutionGate(qubit_hamiltonian, time=time_param, synthesis=st)
+    initial = _hf_initial_state(n_sites, spin, n_occ, mapper)
+    return _iqpe_iteration_seconds(evolution, initial, n_iters, backend, shots) * reps
+
+
+def iqpe_bloch_seconds(k_tuple, model_params, bloch_hamiltonian_fn, time_param,
+                       n_trot, n_iters, reps, backend, shots):
+    H_matrix = bloch_hamiltonian_fn(*k_tuple, **model_params)
+    if H_matrix.shape == (2, 2):
+        unitary = _exact_bloch_unitary(H_matrix, time_param)
+        initial = _bloch_eigenstate(H_matrix, which="min")
+    else:
+        hamiltonian = SparsePauliOp.from_operator(H_matrix)
+        st = SuzukiTrotter(reps=n_trot)
+        unitary = PauliEvolutionGate(hamiltonian, time=time_param, synthesis=st)
+        initial = _uniform_initial(hamiltonian.num_qubits)
+    return _iqpe_iteration_seconds(unitary, initial, n_iters, backend, shots) * reps
+
+
+def iqpe_operator_seconds(hamiltonian, time_param, n_trot, n_iters, reps,
+                          get_initial_state_fn, backend, shots):
+    st = SuzukiTrotter(reps=n_trot)
+    evolution = PauliEvolutionGate(hamiltonian, time=time_param, synthesis=st)
+    if get_initial_state_fn is not None:
+        initial = get_initial_state_fn(hamiltonian)
+    else:
+        initial = _uniform_initial(hamiltonian.num_qubits)
+    return _iqpe_iteration_seconds(evolution, initial, n_iters, backend, shots) * reps
+
+
 # ---------------------------------------------------------------------- method
 @register_method
 class IQPEMethod(SimulationMethod):
@@ -412,3 +458,40 @@ class IQPEMethod(SimulationMethod):
             reps.append(float(energy))
             iteration_energies.append(iter_energies)
         return {"repetitions": reps, "iteration_energies": iteration_energies}
+
+    def _estimate_shots(self, backend, shots):
+        from qbp._backend import _IQM_SHOTS, _IBM_SAMPLER_SHOTS, is_iqm_backend
+
+        if shots is not None:
+            return shots
+        return _IQM_SHOTS if is_iqm_backend(backend) else _IBM_SAMPLER_SHOTS
+
+    def estimate_cell(self, model, lattice, n_occ, cell_params, observable, *,
+                      backend, ctx, shots):
+        ferm_fn = ctx.fermionic_hamiltonian_fn or model.fermionic_hamiltonian
+        return iqpe_cell_seconds(
+            lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
+            ferm_fn, ctx.mapper, self.time, self.trot, self.iters, self.reps,
+            backend, self._estimate_shots(backend, shots),
+        )
+
+    def estimate_bloch_cell(self, model, k_tuple, cell_params, observable, *,
+                            backend, ctx, shots):
+        return iqpe_bloch_seconds(
+            k_tuple, cell_params, model.bloch_hamiltonian,
+            self.time, self.trot, self.iters, self.reps, backend,
+            self._estimate_shots(backend, shots),
+        )
+
+    def estimate_operator_cell(self, op, *, extremum, backend, observable="E", shots):
+        from qbp._yaml_model import InitialStateSpec, build_initial_state_factory
+
+        spec = (
+            InitialStateSpec.model_validate(self.initial_state) if self.initial_state
+            else InitialStateSpec(type="uniform")
+        )
+        get_initial_state = build_initial_state_factory(spec, name="operator")
+        return iqpe_operator_seconds(
+            op, self.time, self.trot, self.iters, self.reps,
+            get_initial_state, backend, self._estimate_shots(backend, shots),
+        )
