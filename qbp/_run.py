@@ -285,6 +285,15 @@ def _build_method_objects(methods, method_params):
 # ----------------------------------------------------------------------- result
 @dataclass
 class RunResult:
+    """The outcome of a :func:`~qbp.run` sweep: data plus a reusable plot.
+
+    Holds the sweep axes (``x_values``/``y_values``), the per-method result
+    ``grids`` keyed by method name, and metadata about the run (observable,
+    backend, output paths). Call :meth:`plot` to redraw the figure, and read
+    ``grids["analytic"]`` and friends for the raw numbers. Reload a saved run
+    into the same object with :func:`~qbp.load_result`.
+    """
+
     model_name: str
     lattice: tuple[int, ...] | None
     x_param: str
@@ -437,6 +446,12 @@ def _plot_diffs(rr: RunResult, *, x_label, y_label, x_is_momentum, y_is_momentum
 
 
 def load_result(path: str) -> RunResult:
+    """Reload a :class:`RunResult` from a JSON log written by :func:`~qbp.run`.
+
+    Rebuilds the full result object — sweep axes, per-method grids, and
+    metadata — so you can re-plot or inspect a completed sweep without paying to
+    run it again.
+    """
     with open(path) as f:
         data = json.load(f)
 

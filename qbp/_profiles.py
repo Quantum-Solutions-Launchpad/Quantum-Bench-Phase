@@ -54,6 +54,15 @@ def soft_dot_potential(
     xi: float,
     center=None,
 ) -> np.ndarray:
+    r"""Smooth radial confinement potential evaluated at each site.
+
+    Returns the soft-dot potential
+    :math:`V(r) = \tfrac{v_0}{2}\,[1 + \tanh((r - \text{radius})/\xi)]` for the
+    Cartesian site coordinates ``xy``, measured from ``center`` (defaulting to
+    the flake center). ``v0`` sets the barrier height and ``xi`` the wall
+    softness. Add it to a Hamiltonian's diagonal with
+    :func:`apply_profiles_to_hamiltonian`.
+    """
     r0 = float(radius)
     width = max(float(xi), 1e-12)
     r = _radial_distances(xy, center)

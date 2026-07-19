@@ -13,6 +13,15 @@ from qbp._boundary import _normalize_boundary, _with_boundary
 
 @dataclass
 class RealSpaceStateResult:
+    """A single real-space single-particle eigenstate and its density.
+
+    Returned by the real-space state-density diagnostic. ``state_index`` and
+    ``energy`` identify the chosen eigenstate, ``positions`` gives one Cartesian
+    coordinate per site, ``densities`` the site probabilities of that state
+    (spin channels collapsed), and ``eigvals`` the full spectrum. ``figure``
+    holds the Matplotlib figure when one was produced.
+    """
+
     model_name: str
     lattice: tuple[int, ...]
     boundary: str

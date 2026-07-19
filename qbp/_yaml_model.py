@@ -809,6 +809,14 @@ def build_tight_binding_model(
     sublattice_positions: dict | None = None,
     observables: dict | None = None,
 ) -> Model:
+    """Build a :class:`~qbp.Model` from the tight-binding schema, in Python.
+
+    Takes the same fields as a :doc:`YAML model </models/custom-yaml>` — but as
+    keyword arguments instead of a file — validates them, and returns a ready
+    :class:`~qbp.Model`. Use it for a declarative tight-binding model you want to
+    construct programmatically without writing YAML; pass the result to
+    :func:`~qbp.register_model` to make it runnable by name.
+    """
     data = {
         "name": name,
         "display_name": display_name,

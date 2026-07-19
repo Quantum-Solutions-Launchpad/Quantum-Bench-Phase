@@ -7,8 +7,11 @@ from typing import Any, Callable
 class ModelCapabilityError(Exception):
     """Raised when a :class:`Model` is asked for a capability it does not implement.
 
-    .. todo:: Document the situations that raise this (missing ``bloch_hamiltonian``,
-       unknown observable, momentum-axis mismatch).
+    Typical triggers are a band-structure (momentum-axis) run on a model with no
+    ``bloch_hamiltonian``, a request for an observable the model does not define,
+    or an :class:`~qbp.Investigation` whose model requirements are unmet.
+    Ordinary bad arguments raise ``ValueError``/``TypeError`` instead; this
+    exception specifically signals a missing capability.
     """
     pass
 
@@ -17,9 +20,12 @@ class ModelCapabilityError(Exception):
 class Observable:
     """A scalar (or per-band) quantity computed from a diagonalized Hamiltonian.
 
-    .. todo:: Describe the observable contract, the difference between
-       real-space (``analytic``) and momentum-space (``analytic_bloch``)
-       callbacks, and how custom observables are attached to a :class:`Model`.
+    The ``analytic`` callback evaluates the quantity for a real-space cell, while
+    the optional ``analytic_bloch`` callback handles momentum-space (band)
+    sweeps. Attach custom observables to a model through the
+    :class:`Model` constructor's ``observables`` argument; they merge with the
+    built-in defaults. See ``components/observables.md`` for the full contract
+    and a worked example.
 
     Parameters
     ----------
@@ -198,12 +204,12 @@ def matrix_to_fermionic_op(H, tol: float = 1e-12):
 class Model:
     """A tight-binding lattice model with classical and quantum simulation support.
 
-    .. todo:: Describe the role of :class:`Model` in QuaPh: how it bundles a
-       real-space Hamiltonian, an optional Bloch Hamiltonian, an optimizer /
-       mapper / ansatz triple, and observables into a single object that the
-       runners (:func:`quaph.run_analytic`, :func:`quaph.run_simulated_ideal`,
-       :func:`quaph.run_simulated_noisy`) can drive. Cover when to provide
-       ``hamiltonian_matrix`` vs. ``bloch_hamiltonian`` vs. both.
+    A ``Model`` bundles a real-space Hamiltonian builder, an optional
+    momentum-space (Bloch) Hamiltonian, the optimizer / mapper / ansatz triple
+    used by the quantum methods, and a set of observables into a single object
+    that :func:`~qbp.run` can drive. Provide ``hamiltonian_matrix`` alone for a
+    finite-lattice model, and add ``bloch_hamiltonian`` when you also want
+    band-structure runs; the real-space builder is required either way.
 
     Parameters
     ----------
@@ -435,8 +441,10 @@ class Model:
     def get_observable(self, name: str) -> "Observable":
         """Return the :class:`Observable` registered under ``name``.
 
-        .. todo:: Describe the lookup semantics and the default observables
-           that are always available.
+        The lookup covers both the built-in defaults every model inherits
+        (``E``, ``gap``, ``kinetic_energy``, ``interaction_energy``,
+        ``density_variance``, ``charge_gap``) and any custom observables passed
+        to the constructor.
 
         Parameters
         ----------

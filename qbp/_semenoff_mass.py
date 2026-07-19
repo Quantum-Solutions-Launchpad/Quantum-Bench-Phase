@@ -48,6 +48,14 @@ def radial_mass_values(
     xi: float | None = None,
     center=None,
 ) -> np.ndarray:
+    """Per-site target mass from a radial interface profile.
+
+    Evaluates a mass that switches from ``mass_inner`` to ``mass_outer`` across
+    ``radius`` at each site in ``xy`` (measured from ``center``). ``profile`` is
+    ``'radial_step'`` for a sharp interface or ``'radial_tanh'`` for one
+    smoothed over width ``xi``. This is the profile the :class:`SemenoffMass`
+    investigation imposes on an A/B lattice.
+    """
     mode = normalize_mass_profile(profile)
     if mode == "none":
         return np.zeros(len(xy), dtype=float)
@@ -85,6 +93,16 @@ def _sublattice_signs(model, projection) -> np.ndarray:
 
 @register_investigation
 class SemenoffMass(Investigation):
+    """Radial Semenoff-mass interface investigation for Haldane-like A/B lattices.
+
+    Replaces the uniform sublattice mass with a radial profile :math:`M(r)`,
+    adding :math:`M(r) - M` to the A/B onsite terms so an inner mass meets an
+    outer mass across ``radius`` (sharp ``radial_step`` or smoothed
+    ``radial_tanh``). Select it with ``investigation="semenoff_mass"`` and set
+    the base model parameter ``M`` to ``0.0`` when the profile supplies the full
+    mass.
+    """
+
     NAME = "semenoff_mass"
     LABEL = "Semenoff mass $M(r)$"
     PARAM_SPECS = [

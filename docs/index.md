@@ -59,10 +59,7 @@ api/index
 :caption: More Examples
 :maxdepth: 1
 
-more-examples/haldane-phase-diagram
-more-examples/custom-model
 more-examples/band-structure
-more-examples/noisy-backend
 ```
 
 ```{toctree}

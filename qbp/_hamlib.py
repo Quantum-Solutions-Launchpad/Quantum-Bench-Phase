@@ -66,6 +66,13 @@ def resolve_hamlib_source(source: str) -> str:
 
 
 def list_hamlib_keys(path: str) -> list[str]:
+    """List every dataset key (Hamiltonian) in a HamLib HDF5 source.
+
+    ``path`` may be a local ``.h5``/``.hdf5`` file, a ``.zip`` archive
+    containing one, or an ``http(s)`` URL to either; remote and zipped sources
+    are downloaded and extracted transparently. Returns the keys sorted, ready
+    to pass to :func:`load_hamlib_operator`.
+    """
     import h5py
 
     keys: list[str] = []
@@ -115,6 +122,13 @@ def _parse_qubit_operator_string(op_string: str) -> SparsePauliOp:
 
 
 def load_hamlib_operator(path: str, key: str) -> SparsePauliOp:
+    """Load one HamLib Hamiltonian as a Qiskit ``SparsePauliOp``.
+
+    ``path`` is the HDF5 source (local file, zip archive, or URL) and ``key`` is
+    one of the dataset keys returned by :func:`list_hamlib_keys`. The stored
+    operator string is parsed and simplified into a ``SparsePauliOp`` ready to
+    hand to :func:`qbp.run` through its ``qubit_operator`` argument.
+    """
     import h5py
 
     with h5py.File(resolve_hamlib_source(path), "r", libver="latest") as f:

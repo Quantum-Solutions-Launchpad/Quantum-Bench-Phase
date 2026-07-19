@@ -16,6 +16,15 @@ from qbp._boundary import _normalize_boundary, _with_boundary
 
 @dataclass
 class EdgeSpectrumResult:
+    """Boundary-participation spectrum of an open-boundary Hamiltonian.
+
+    Returned by the edge-spectrum diagnostic. ``eigvals`` are the
+    single-particle energies; ``edge_participation`` and
+    ``inverse_participation_ratio`` give, per eigenstate, how much weight sits on
+    the boundary sites flagged by ``edge_mask`` and how localized the state is.
+    ``figure`` holds the Matplotlib figure when one was produced.
+    """
+
     model_name: str
     lattice: tuple[int, ...]
     boundary: str
@@ -74,6 +83,12 @@ def projected_edge_mask_from_missing_bonds(
 
 
 def edge_participation_all(eigvecs: np.ndarray, edge_mask: np.ndarray, spin: int) -> np.ndarray:
+    """Total probability each eigenstate places on the edge sites.
+
+    For every column of ``eigvecs`` (one per eigenstate) the site density is
+    summed over the sites flagged by ``edge_mask``, collapsing the ``spin``
+    channels. Returns one participation value per eigenstate, in ``[0, 1]``.
+    """
     vals = np.zeros(eigvecs.shape[1], dtype=float)
     for k in range(eigvecs.shape[1]):
         rho = _site_density(eigvecs[:, k], spin)
@@ -82,6 +97,13 @@ def edge_participation_all(eigvecs: np.ndarray, edge_mask: np.ndarray, spin: int
 
 
 def inverse_participation_ratio_all(eigvecs: np.ndarray, spin: int) -> np.ndarray:
+    r"""Inverse participation ratio (IPR) of every eigenstate.
+
+    The IPR :math:`\sum_i \rho_i^2` of each column of ``eigvecs`` measures how
+    localized the state is: close to 1 when the state lives on a single site,
+    and close to :math:`1/N_\text{sites}` when it is spread evenly across the
+    lattice.
+    """
     vals = np.zeros(eigvecs.shape[1], dtype=float)
     for k in range(eigvecs.shape[1]):
         rho = _site_density(eigvecs[:, k], spin)

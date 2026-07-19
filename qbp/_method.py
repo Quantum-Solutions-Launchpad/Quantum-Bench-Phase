@@ -24,6 +24,15 @@ from qbp._mitigation import MitigationConfig
 
 
 class Method(Enum):
+    """The simulation techniques :func:`~qbp.run` can execute.
+
+    Pass one or a list as ``run(method=...)``. ``ANALYTIC`` is exact
+    diagonalization (the ground-truth reference), ``VQE`` and ``IQPE`` are the
+    quantum algorithms, and ``DMRG`` is the classical tensor-network benchmark.
+    Each member's per-run settings go in ``method_params`` keyed by the member
+    itself, e.g. ``method_params={Method.VQE: {"iters": 100}}``.
+    """
+
     ANALYTIC = "analytic"
     VQE = "vqe"
     IQPE = "iqpe"

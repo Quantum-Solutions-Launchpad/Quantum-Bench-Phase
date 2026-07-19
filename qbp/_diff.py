@@ -105,6 +105,15 @@ def plot_diff(
     x_is_momentum: bool = False,
     y_is_momentum: bool = False,
 ):
+    """Plot a quantum method's error relative to the analytic surface.
+
+    Reads a JSON run log written by :func:`~qbp.run` at ``path`` and draws the
+    signed difference ``E_method - E_analytic`` over the swept parameters.
+    ``method`` is ``"vqe"``, ``"iqpe"``, or ``"both"``; ``plot_format`` is
+    ``"3d"``, ``"heatmap"``, or ``"bar_2d"``. Both methods must have been run
+    alongside ``Method.ANALYTIC`` for the difference to exist. Returns the
+    Matplotlib figure(s).
+    """
     _apply_rcparams()
 
     meta = _read_meta(path)

@@ -40,8 +40,9 @@ def _discover_models() -> None:
 def get_model(name: str) -> Model:
     """Fetch a registered :class:`Model` by name.
 
-    .. todo:: Describe the discovery flow (built-in YAMLs are auto-loaded at
-       import time) and link to the model catalog.
+    The six built-in models are registered automatically at import (their YAML
+    specs under ``qbp/models/`` are discovered on load); custom models appear
+    once you call :func:`register_model` or :func:`register_model_from_file`.
 
     Parameters
     ----------
@@ -66,8 +67,9 @@ def get_model(name: str) -> Model:
 def register_model(model: Model) -> None:
     """Register an in-memory :class:`Model` so it can be looked up by name.
 
-    .. todo:: Describe the in-memory vs. on-disk distinction and when to use
-       :func:`register_model_from_file` instead.
+    The registration lives for the current session only. To persist a
+    declarative model across sessions, write it as YAML and use
+    :func:`register_model_from_file` instead.
 
     Parameters
     ----------
@@ -91,8 +93,9 @@ def register_model(model: Model) -> None:
 def register_model_from_file(path: str | Path) -> Model:
     """Load a YAML model from disk, register it, and persist the file.
 
-    .. todo:: Describe the YAML schema (link to ``models/custom-yaml.md``)
-       and explain where the file is copied to under ``quaph/models/``.
+    The spec is validated and copied into ``qbp/models/`` so the model is
+    rediscovered in every future session. The file follows the tight-binding
+    YAML schema documented in ``models/custom-yaml.md``.
 
     Parameters
     ----------
@@ -133,8 +136,10 @@ def register_model_from_file(path: str | Path) -> Model:
 def remove_model(name: str) -> None:
     """Unregister a custom model and delete its YAML file if present.
 
-    .. todo:: Describe why built-ins are protected and how to confirm
-       removal.
+    The six built-in models are protected and cannot be removed. Removal drops
+    the in-memory registration and deletes the persisted YAML (if any); it
+    raises if the name is unknown, so a successful call confirms the model is
+    gone.
 
     Parameters
     ----------

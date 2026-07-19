@@ -9,6 +9,15 @@ from qbp._real_space import real_space_positions
 
 @dataclass(frozen=True)
 class GeometryProjection:
+    """A selection of lattice sites carving a finite geometry out of a flake.
+
+    Produced by :func:`geometry_projection`. ``site_mask`` / ``orbital_mask``
+    flag the retained sites and spin-orbitals of the parent lattice,
+    ``site_indices`` lists the kept site indices, and ``positions`` gives the
+    Cartesian coordinates of the retained sites. Pass it to
+    :func:`apply_geometry_to_hamiltonian` to restrict a Hamiltonian.
+    """
+
     geometry: str
     site_mask: np.ndarray
     orbital_mask: np.ndarray
@@ -54,6 +63,14 @@ def geometry_projection(
     radius: float | None = None,
     center=None,
 ) -> GeometryProjection:
+    """Select the sites of ``model`` on ``lattice`` that fall inside a geometry.
+
+    ``geometry`` is ``'rectangle'`` (keep the whole flake, the default) or
+    ``'disk'`` (keep sites within ``radius`` of ``center``, defaulting to the
+    flake center). Returns a :class:`GeometryProjection` describing the retained
+    sites, which :func:`apply_geometry_to_hamiltonian` uses to build the finite
+    open-boundary Hamiltonian.
+    """
     mode = normalize_geometry(geometry)
     xy = real_space_positions(model, lattice)
 
@@ -83,6 +100,12 @@ def geometry_projection(
 
 
 def apply_geometry_to_hamiltonian(H: np.ndarray, projection: GeometryProjection) -> np.ndarray:
+    """Restrict a single-particle Hamiltonian to a geometry's retained orbitals.
+
+    Returns the submatrix of ``H`` on the spin-orbitals kept by ``projection``.
+    A ``'rectangle'`` projection keeps everything and returns ``H`` unchanged; a
+    ``'disk'`` projection returns the smaller Hamiltonian of the selected sites.
+    """
     if projection.geometry == "rectangle":
         return H
     idx = np.flatnonzero(projection.orbital_mask)
