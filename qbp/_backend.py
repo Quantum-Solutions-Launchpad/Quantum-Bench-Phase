@@ -21,8 +21,13 @@ execution differences behind uniform ``sample_bit`` / ``estimator`` calls.
 
 from __future__ import annotations
 
+import sys
+import time
 import warnings
 from contextlib import contextmanager
+
+_TRANSIENT_RETRY_ATTEMPTS = 5
+_TRANSIENT_RETRY_BASE_DELAY = 1.0
 
 _NO_ACCOUNT_HINT = (
     "No Qiskit Runtime account found. Save one with\n"
@@ -300,6 +305,32 @@ class _RuntimeVQEEstimator:
     def transpile(self, circuit):
         return self._transpile(circuit)
 
+def _is_transient_network_error(exc):
+    try:
+        from requests.exceptions import ConnectionError as ReqConnectionError, SSLError
+    except ImportError:
+        return False
+    return isinstance(exc, (SSLError, ReqConnectionError))
+
+
+def _run_with_transient_retry(orig_run, args, kwargs):
+    for attempt in range(_TRANSIENT_RETRY_ATTEMPTS):
+        try:
+            return orig_run(*args, **kwargs)
+        except Exception as exc:
+            if not _is_transient_network_error(exc) or attempt == _TRANSIENT_RETRY_ATTEMPTS - 1:
+                raise
+            delay = _TRANSIENT_RETRY_BASE_DELAY * (2 ** attempt)
+            print(
+                f"[qbp] transient network error submitting job "
+                f"({type(exc).__name__}); retrying in {delay:.0f}s "
+                f"(attempt {attempt + 1}/{_TRANSIENT_RETRY_ATTEMPTS - 1})",
+                file=sys.stderr,
+                flush=True,
+            )
+            time.sleep(delay)
+
+
 def _drop_unsupported_run_options(backend, *names):
     """Strip run options the backend doesn't accept before they reach its
     ``run``. ``BackendEstimatorV2`` always forwards ``seed_simulator`` (default
@@ -312,7 +343,7 @@ def _drop_unsupported_run_options(backend, *names):
     def run(*args, **kwargs):
         for name in names:
             kwargs.pop(name, None)
-        return orig_run(*args, **kwargs)
+        return _run_with_transient_retry(orig_run, args, kwargs)
 
     backend.run = run
     backend._qbp_run_wrapped = True
