@@ -208,6 +208,12 @@ def _add_operator_dict_flags(parser):
                         help="Classical optimizer for the --qubit-operator path (default: SPSA).")
     parser.add_argument("--vqe-optimizer-kwarg", dest="vqe_optimizer_kwarg", action="append", default=None,
                         metavar="KEY=VALUE", help="Optimizer kwarg; repeatable, e.g. maxiter=@max_iters.")
+    parser.add_argument("--vqe-mitigation", dest="vqe_mitigation", action="append", default=None,
+                        choices=["m3", "dd", "zne"],
+                        help="Error-mitigation technique for VQE; repeatable.")
+    parser.add_argument("--vqe-zne-noise-factors", dest="vqe_zne_noise_factors", type=int,
+                        nargs="+", default=None, metavar="N",
+                        help="Odd noise-scale factors for ZNE folding (default: 1 3 5).")
     parser.add_argument("--iqpe-initial-state", dest="iqpe_initial_state", default=None,
                         choices=list(_INITIAL_STATES),
                         help="Initial state type for IQPE (default: uniform for operator path).")
@@ -299,6 +305,13 @@ def _collect_method_params(args, methods):
                 params["ansatz"] = ansatz
             if optimizer is not None:
                 params["optimizer"] = optimizer
+            techniques = getattr(args, "vqe_mitigation", None)
+            if techniques:
+                mitigation = {name: True for name in techniques}
+                factors = getattr(args, "vqe_zne_noise_factors", None)
+                if factors:
+                    mitigation["zne_noise_factors"] = list(factors)
+                params["mitigation"] = mitigation
         if m == Method.IQPE:
             initial = _iqpe_initial_state_dict(args)
             if initial is not None:
