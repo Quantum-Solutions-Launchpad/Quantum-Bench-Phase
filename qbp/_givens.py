@@ -11,7 +11,8 @@ from __future__ import annotations
 import numpy as np
 
 from qiskit import QuantumCircuit
-from qiskit.circuit.library import UnitaryGate
+from qiskit.circuit.library import XXPlusYYGate
+from qiskit.synthesis import OneQubitEulerDecomposer
 
 
 def one_body_matrix(fermionic_hamiltonian, n_orbitals: int) -> np.ndarray:
@@ -81,16 +82,20 @@ def _givens_eliminations(u: np.ndarray):
     return rotations
 
 
-def _givens_gate(u2: np.ndarray) -> UnitaryGate:
-    """Number-conserving 2-qubit gate implementing the single-particle
+def _givens_gate(u2: np.ndarray) -> QuantumCircuit:
+    """Number-conserving 2-qubit block implementing the single-particle
     unitary ``u2`` on two adjacent Jordan-Wigner modes."""
-    mat = np.array([
-        [1, 0, 0, 0],
-        [0, u2[0, 0], u2[0, 1], 0],
-        [0, u2[1, 0], u2[1, 1], 0],
-        [0, 0, 0, np.linalg.det(u2)],
-    ])
-    return UnitaryGate(mat, label="givens")
+    theta, phi, lam, phase = OneQubitEulerDecomposer(basis="ZYZ").angles_and_phase(u2)
+    qc = QuantumCircuit(2)
+    qc.rz(-lam / 2, 0)
+    qc.rz(lam / 2, 1)
+    qc.append(XXPlusYYGate(theta, np.pi / 2), [0, 1])
+    qc.rz(-phi / 2, 0)
+    qc.rz(phi / 2, 1)
+    qc.rz(phase, 0)
+    qc.rz(phase, 1)
+    qc.global_phase += phase
+    return qc
 
 
 def free_fermion_prep(h: np.ndarray, n_occ: int) -> QuantumCircuit:
@@ -107,5 +112,6 @@ def free_fermion_prep(h: np.ndarray, n_occ: int) -> QuantumCircuit:
     stair = _staircase_basis(occupied)
     rotations = _givens_eliminations(stair)
     for j, g in reversed(rotations):
-        qc.append(_givens_gate(np.conj(g)), [j - 1, j])
+        qc.compose(_givens_gate(np.conj(g)), [j - 1, j], inplace=True)
     return qc
+         

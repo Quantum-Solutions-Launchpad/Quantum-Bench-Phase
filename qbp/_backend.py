@@ -231,9 +231,7 @@ class _IqmIQPESampler:
         return False
 
     def sample_bit(self, qc) -> int:
-        from iqm.qiskit_iqm import transpile_to_IQM
-
-        isa_qc = transpile_to_IQM(qc, backend=self._backend, optimization_level=3)
+        isa_qc = _iqm_transpile(qc, self._backend)
         result = self._backend.run(isa_qc, shots=_IQM_SHOTS).result()
         counts = result.get_counts()
         ones = sum(n for bit, n in counts.items() if bit.replace(" ", "").endswith("1"))
@@ -321,6 +319,27 @@ def _drop_unsupported_run_options(backend, *names):
     return backend
 
 
+def _iqm_transpile(circuit, backend, optimization_level=3):
+    """Transpile ``circuit`` to IQM-native gates (``cz``, ``r``).
+
+    ``transpile_to_IQM`` mis-synthesizes some two-qubit blocks (e.g. XXPlusYY /
+    Givens rotations used by the VQE warm start) at optimization_level >= 2,
+    corrupting the circuit's unitary. Qiskit's own transpiler targeting the same
+    native basis is correct, so it is used for direct-CZ devices. Resonator
+    devices (non-empty ``computational_resonators``) need ``transpile_to_IQM``'s
+    MOVE-gate insertion, which Qiskit cannot do, so they keep the IQM pass.
+    """
+    arch = getattr(backend, "architecture", None)
+    if getattr(arch, "computational_resonators", None):
+        from iqm.qiskit_iqm import transpile_to_IQM
+        return transpile_to_IQM(circuit, backend=backend, optimization_level=optimization_level)
+    from qiskit import transpile
+    return transpile(
+        circuit, coupling_map=backend.coupling_map,
+        basis_gates=["cz", "r"], optimization_level=optimization_level,
+    )
+
+
 class _IqmVQEEstimator:
     """VQE estimator over an IQM Resonance device via ``BackendEstimatorV2``."""
 
@@ -337,9 +356,7 @@ class _IqmVQEEstimator:
         return False
 
     def transpile(self, circuit):
-        from iqm.qiskit_iqm import transpile_to_IQM
-
-        return transpile_to_IQM(circuit, backend=self._backend, optimization_level=3)
+        return _iqm_transpile(circuit, self._backend)
 
 
 @contextmanager
@@ -455,9 +472,7 @@ def circuit_qpu_seconds(backend, circuit, shots: int) -> float:
     circuit, since the IQM ``Target`` carries no per-gate timing.
     """
     if is_iqm_backend(backend):
-        from iqm.qiskit_iqm import transpile_to_IQM
-
-        isa = transpile_to_IQM(circuit, backend=backend, optimization_level=3)
+        isa = _iqm_transpile(circuit, backend)
         seconds = _critical_path_seconds(isa, _iqm_gate_seconds(backend))
     else:
         from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager

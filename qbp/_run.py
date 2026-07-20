@@ -390,6 +390,70 @@ def _plot_run_result(rr: RunResult, *, output_path, hide_plot, hide_legend):
     )
 
 
+def plot_combined(
+    paths,
+    keys=None,
+    *,
+    labels=None,
+    output_path=None,
+    hide_plot: bool = False,
+    hide_legend: bool = False,
+):
+    """Overlay result series from one or more run logs on a single plot.
+
+    ``paths`` is a list of log-file paths. ``keys`` is an optional list of
+    comma-separated result keys, one entry per path (e.g. ``["analytic,vqe",
+    "vqe"]``), selecting which method series to draw from each log; when omitted
+    every method in each log is drawn. ``labels`` optionally overrides the
+    auto-generated legend labels, given as one string per selected series in the
+    flattened path/key order. The first selected series is the reference surface
+    and the rest are overlaid through ``extra_series``, reusing the same
+    rendering path as a normal multi-method run.
+    """
+    palette = ["#2a78d6", "#eb6834", "#008300", "#e87ba4", "#eda100", "#4a3aa7", "#e34948"]
+    markers = ["o", "s", "D", "^", "v", "P", "X"]
+    results = [load_result(p) for p in paths]
+    if keys is None:
+        keys = [None] * len(results)
+    if len(keys) != len(results):
+        raise ValueError(f"expected one --keys entry per path ({len(results)}), got {len(keys)}")
+    multi = len(results) > 1
+
+    series = []
+    for path, res, spec in zip(paths, results, keys):
+        ks = [k.strip() for k in spec.split(",")] if spec else list(res.methods)
+        stem = os.path.splitext(os.path.basename(path))[0]
+        for k in ks:
+            if k not in res.grids:
+                raise KeyError(f"result key {k!r} not in {path} (available: {sorted(res.grids)})")
+            label = get_method_class(Method.coerce(k)).LABEL
+            series.append({"label": f"{stem}: {label}" if multi else label,
+                           "values": res.grids[k]})
+    if not series:
+        raise ValueError("no series selected to plot")
+    if labels is not None:
+        if len(labels) != len(series):
+            raise ValueError(f"expected one label per series ({len(series)}), got {len(labels)}")
+        for s, lab in zip(series, labels):
+            s["label"] = lab
+
+    ref = results[0]
+    x_label, y_label, x_is_mom, y_is_mom = _result_labels(ref.model_name, ref.x_param, ref.y_param)
+    extra = [
+        {"label": s["label"], "values": s["values"],
+         "color": palette[i % len(palette)], "marker": markers[i % len(markers)]}
+        for i, s in enumerate(series[1:])
+    ]
+    return plot_simulated(
+        ref.x_values, ref.y_values, x_label, y_label,
+        series[0]["values"], None, None,
+        plot_format=ref.plot_format, hide_legend=hide_legend,
+        output_path=output_path, hide_plot=hide_plot,
+        x_is_momentum=x_is_mom, y_is_momentum=y_is_mom,
+        surface_label=series[0]["label"], extra_series=extra,
+    )
+
+
 def _diff_output_path(base, tag):
     """Insert a ``-diff-<tag>`` suffix before the extension of an output path."""
     if base is None:
@@ -401,36 +465,47 @@ def _diff_output_path(base, tag):
 
 
 def _plot_diffs(rr: RunResult, *, x_label, y_label, x_is_momentum, y_is_momentum,
-                plot_format, output_path, hide_plot):
-    """Render a difference plot for every pair of methods in ``rr``.
+                plot_format, output_path, hide_plot, methods=None):
+    """Render an error plot for every pair of methods in ``rr``.
 
-    Each plot shows ``E_b - E_a`` where ``a`` precedes ``b`` in METHOD_ORDER, so
-    quantum methods are differenced against the analytic reference by convention.
-    Produced in addition to (not in place of) the normal plots.
+    Each plot shows ``E_b - E_a`` where ``a`` precedes ``b`` in the result's
+    method order, so quantum methods are differenced against the analytic
+    reference by convention (without requiring one). ``methods`` optionally
+    restricts to pairs involving at least one of the named methods. Single
+    implementation shared by :func:`qbp.plot_diff` and the run/plot ``--diff``
+    pipeline.
     """
     from itertools import combinations
 
-    methods = [Method.coerce(m) for m in rr.methods]
+    all_methods = [Method.coerce(m) for m in rr.methods]
+    keep = {Method.coerce(m) for m in methods} if methods is not None else None
+    lattice = "×".join(str(v) for v in rr.lattice) if rr.lattice else ""
+    detail = " ".join(s for s in (str(rr.model_name), lattice) if s)
+    y_vals = list(rr.y_values) if len(rr.y_values) else [0.0]
+
     figs = []
-    for a, b in combinations(methods, 2):
+    for a, b in combinations(all_methods, 2):
+        if keep is not None and a not in keep and b not in keep:
+            continue
         Z_err = np.asarray(rr.grids[b.value], dtype=float) - np.asarray(rr.grids[a.value], dtype=float)
         if Z_err.ndim == 1:
             Z_err = Z_err[:, None]
         la = get_method_class(a).LABEL
         lb = get_method_class(b).LABEL
         z_label = rf"$E_{{\mathrm{{{lb}}}}} - E_{{\mathrm{{{la}}}}}$"
+        title = f"{lb} − {la} Error" + (f" ({detail})" if detail else "")
         shared = dict(
-            x_label=x_label, y_label=y_label, z_label=z_label,
+            x_label=x_label, y_label=y_label, z_label=z_label, title=title,
             x_is_momentum=x_is_momentum, y_is_momentum=y_is_momentum,
             output_path=_diff_output_path(output_path, f"{b.value}-{a.value}"),
             hide_plot=hide_plot,
         )
         if plot_format == "heatmap":
-            fig = _diff_heatmap(rr.x_values, rr.y_values, Z_err, **shared)
+            fig = _diff_heatmap(rr.x_values, y_vals, Z_err, **shared)
         elif plot_format == "bar_2d":
-            fig = _diff_bar_2d(rr.x_values, rr.y_values, Z_err, **shared)
+            fig = _diff_bar_2d(rr.x_values, y_vals, Z_err, **shared)
         else:
-            fig = _diff_3d(rr.x_values, rr.y_values, Z_err,
+            fig = _diff_3d(rr.x_values, y_vals, Z_err,
                            hover_label=f"{lb} − {la}", **shared)
         figs.append(fig)
     return figs
