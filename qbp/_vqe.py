@@ -259,14 +259,16 @@ def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_
     return -energy if extremum == "max" else energy
 
 
-def vqe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
+def vqe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None, warm_start=False):
     simulator = _make_simulator(backend)
-
-    ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
-    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
     fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
+
+    ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
+    if warm_start:
+        ansatz = _warm_start_ansatz(fermionic_hamiltonian, ansatz, n_sites * spin, n_occ, mapper)
+    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
     num_queries = qubit_hamiltonian.size * max_iters * vqe_reps
     full_circuit_depth = ansatz_circuit.depth()
@@ -406,6 +408,7 @@ class VQEMethod(SimulationMethod):
             lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
             ferm_fn, get_ansatz, ctx.mapper,
             self.iters, self.layers, self.reps, backend=backend,
+            warm_start=self.warm_start,
         )
         return {
             "repetitions": reps,

@@ -45,8 +45,8 @@
         "method_params": {
             "analytic": {},
             "vqe": {
-                "iters": 50,
-                "layers": 2,
+                "iters": 5,
+                "layers": 0,
                 "reps": 1,
                 "warm_start": true,
                 "ansatz": {
@@ -54,63 +54,14 @@
                     "kwargs": {
                         "mode": "fsim",
                         "reps": "@n_layers",
-                        "entanglement": [
-                            [
-                                0,
-                                1
-                            ],
-                            [
-                                2,
-                                3
-                            ],
-                            [
-                                1,
-                                2
-                            ],
-                            [
-                                3,
-                                0
-                            ],
-                            [
-                                4,
-                                5
-                            ],
-                            [
-                                6,
-                                7
-                            ],
-                            [
-                                5,
-                                6
-                            ],
-                            [
-                                7,
-                                4
-                            ],
-                            [
-                                0,
-                                4
-                            ],
-                            [
-                                1,
-                                5
-                            ],
-                            [
-                                2,
-                                6
-                            ],
-                            [
-                                3,
-                                7
-                            ]
-                        ]
+                        "entanglement": "linear"
                     },
                     "initial_state_prefix": "hartree_fock"
                 },
                 "optimizer": {
                     "type": "SPSA",
                     "kwargs": {
-                        "maxiter": 5,
+                        "maxiter": 2,
                         "learning_rate": 0.001,
                         "perturbation": 0.01
                     }
@@ -172,94 +123,94 @@
                     "repetitions": [
                         0.0
                     ],
-                    "num_queries": 1450,
+                    "num_queries": 145,
                     "circuit_depth": {
-                        "total": 21,
-                        "two_qubit": 18
+                        "total": 1,
+                        "two_qubit": 0
                     }
                 }
             },
             "1": {
                 "0": {
                     "repetitions": [
-                        -2.999999999999999
+                        -2.9999999999999982
                     ],
-                    "num_queries": 1450,
+                    "num_queries": 145,
                     "circuit_depth": {
-                        "total": 22,
-                        "two_qubit": 18
+                        "total": 19,
+                        "two_qubit": 12
                     }
                 }
             },
             "2": {
                 "0": {
                     "repetitions": [
-                        -5.249999999999999
+                        -5.249999999999998
                     ],
-                    "num_queries": 1450,
+                    "num_queries": 145,
                     "circuit_depth": {
-                        "total": 22,
-                        "two_qubit": 18
+                        "total": 24,
+                        "two_qubit": 14
                     }
                 }
             },
             "3": {
                 "0": {
                     "repetitions": [
-                        -5.5000000000000036
+                        -5.500000000000002
                     ],
-                    "num_queries": 1450,
+                    "num_queries": 145,
                     "circuit_depth": {
-                        "total": 22,
-                        "two_qubit": 18
+                        "total": 21,
+                        "two_qubit": 12
                     }
                 }
             },
             "4": {
                 "0": {
                     "repetitions": [
-                        -5.0000000000000036
+                        -5.000000000000005
                     ],
-                    "num_queries": 1450,
+                    "num_queries": 145,
                     "circuit_depth": {
-                        "total": 22,
-                        "two_qubit": 18
+                        "total": 20,
+                        "two_qubit": 12
                     }
                 }
             },
             "5": {
                 "0": {
                     "repetitions": [
-                        -2.5000000000000036
+                        -2.4999999999999982
                     ],
-                    "num_queries": 1450,
+                    "num_queries": 145,
                     "circuit_depth": {
-                        "total": 22,
-                        "two_qubit": 18
+                        "total": 25,
+                        "two_qubit": 14
                     }
                 }
             },
             "6": {
                 "0": {
                     "repetitions": [
-                        0.7500000000000011
+                        0.7499999999999983
                     ],
-                    "num_queries": 1450,
+                    "num_queries": 145,
                     "circuit_depth": {
-                        "total": 22,
-                        "two_qubit": 18
+                        "total": 26,
+                        "two_qubit": 14
                     }
                 }
             },
             "7": {
                 "0": {
                     "repetitions": [
-                        6.000000000000012
+                        6.000000000000003
                     ],
-                    "num_queries": 1450,
+                    "num_queries": 145,
                     "circuit_depth": {
-                        "total": 22,
-                        "two_qubit": 18
+                        "total": 20,
+                        "two_qubit": 14
                     }
                 }
             },
@@ -268,10 +219,10 @@
                     "repetitions": [
                         12.0
                     ],
-                    "num_queries": 1450,
+                    "num_queries": 145,
                     "circuit_depth": {
-                        "total": 22,
-                        "two_qubit": 18
+                        "total": 2,
+                        "two_qubit": 0
                     }
                 }
             }
