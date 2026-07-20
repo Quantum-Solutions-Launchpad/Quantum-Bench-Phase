@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import time
+
 import numpy as np
 
 from qiskit import transpile
@@ -19,6 +21,41 @@ def _isa(op, circ):
     return op.apply_layout(circ.layout) if circ.layout is not None else op
 
 
+_RETRY_ATTEMPTS = 5
+_RETRY_BASE_DELAY = 2.0
+
+
+def _network_error_types():
+    types: list[type] = []
+    try:
+        import requests.exceptions as rexc
+        types += [rexc.ConnectionError, rexc.Timeout, rexc.SSLError, rexc.ChunkedEncodingError]
+    except Exception:
+        pass
+    try:
+        import urllib3.exceptions as uexc
+        types += [uexc.MaxRetryError, uexc.ProtocolError]
+    except Exception:
+        pass
+    return tuple(types)
+
+
+def _run_pub_with_retry(estimator, pub):
+    errors = _network_error_types()
+    for attempt in range(_RETRY_ATTEMPTS):
+        try:
+            return estimator.run(pubs=[pub]).result()
+        except errors as exc:
+            if attempt == _RETRY_ATTEMPTS - 1:
+                raise
+            delay = _RETRY_BASE_DELAY * (2 ** attempt)
+            logger.warning(
+                f"Estimator submission failed ({type(exc).__name__}: {exc}); "
+                f"retrying in {delay:.0f}s (attempt {attempt + 2}/{_RETRY_ATTEMPTS})"
+            )
+            time.sleep(delay)
+
+
 # --------------------------------------------------------------------- solvers
 
 def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend=None) -> QuantumCircuit:
@@ -33,7 +70,7 @@ def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend
             if cost_history["iters"] >= max_iters and cost_history["prev"] is not None:
                 return cost_history["prev"]
             pub = (ansatz_circuit, [isa_hamiltonian], [params])
-            result = estimator.run(pubs=[pub]).result()
+            result = _run_pub_with_retry(estimator, pub)
             energy = float(result[0].data.evs[0])
             cost_history["iters"] += 1
             cost_history["prev"] = energy
@@ -125,7 +162,7 @@ def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=N
 
         def _base_measure(circuit, op, params):
             pub = (circuit, [_isa(op, circuit)], [params])
-            result = estimator.run(pubs=[pub]).result()
+            result = _run_pub_with_retry(estimator, pub)
             evs = result[0].data.evs
             return float(evs.flat[0]) if hasattr(evs, "flat") else float(evs[0])
 

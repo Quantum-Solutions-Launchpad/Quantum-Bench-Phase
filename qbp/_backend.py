@@ -302,11 +302,30 @@ class _RuntimeVQEEstimator:
     def transpile(self, circuit):
         return self._transpile(circuit)
 
+def _drop_unsupported_run_options(backend, *names):
+    """Strip run options the backend doesn't accept before they reach its
+    ``run``. ``BackendEstimatorV2`` always forwards ``seed_simulator`` (default
+    ``None``), which IQM backends don't support and warn about on every job.
+    """
+    if getattr(backend, "_qbp_run_wrapped", False):
+        return backend
+    orig_run = backend.run
+
+    def run(*args, **kwargs):
+        for name in names:
+            kwargs.pop(name, None)
+        return orig_run(*args, **kwargs)
+
+    backend.run = run
+    backend._qbp_run_wrapped = True
+    return backend
+
+
 class _IqmVQEEstimator:
     """VQE estimator over an IQM Resonance device via ``BackendEstimatorV2``."""
 
     def __init__(self, backend):
-        self._backend = backend
+        self._backend = _drop_unsupported_run_options(backend, "seed_simulator")
 
     def __enter__(self):
         from qiskit.primitives import BackendEstimatorV2
