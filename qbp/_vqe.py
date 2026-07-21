@@ -251,11 +251,11 @@ def vqe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, get_optimizer_fn, max
     return _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=label, strategies=strategies, seed=seed)
 
 
-def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_layers, rep, extremum="min", backend=None, label="", observable="E"):
+def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_layers, rep, extremum="min", backend=None, label="", observable="E", strategies=None):
     op = hamiltonian * -1 if extremum == "max" else hamiltonian
     ansatz = get_vqe_ansatz_fn(hamiltonian.num_qubits, n_layers, 0, 1)
     vqe_label = f"[{observable}] ({label}, rep={rep})" if label else f"[{observable}] (rep={rep})"
-    energy = _vqe_sparse(op, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=vqe_label)
+    energy = _vqe_sparse(op, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=vqe_label, strategies=strategies)
     return -energy if extremum == "max" else energy
 
 
@@ -459,6 +459,7 @@ class VQEMethod(SimulationMethod):
             energy = vqe_operator(
                 op, get_vqe_ansatz, get_optimizer, self.iters, self.layers, rep,
                 extremum, backend, label, observable,
+                strategies=self.mitigation_strategies,
             )
             reps.append(float(energy))
         return {"repetitions": reps}

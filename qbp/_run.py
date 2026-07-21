@@ -1431,6 +1431,7 @@ def _run_operator_methods(
     qubit_operator, methods, method_objs, backend, backend_label,
     *, extremum, select, observable, x_param, x_range, y_param, y_range,
     heatmap, log_path, plot_path, hide_plot, hide_legend,
+    diff=False, diff_format="3d",
 ):
     from loguru import logger
 
@@ -1489,6 +1490,9 @@ def _run_operator_methods(
         if is_1d:
             return f"{x_param}={x_vals[ix]}"
         return f"{x_param}={x_vals[ix]}, {y_param}={y_vals[iy]}"
+
+    for m in methods:
+        method_objs[m].calibrate_mitigation(backend)
 
     raw_cells = {m.value: {str(ix): {} for ix in range(nx)} for m in methods}
 
