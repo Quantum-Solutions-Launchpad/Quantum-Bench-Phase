@@ -4,7 +4,7 @@ import argparse
 import sys
 
 from qbp._registry import get_model, register_model_from_file, remove_model
-from qbp._run import run, load_result
+from qbp._run import run, load_result, plot_combined
 from qbp._estimate import estimate
 from qbp._method import Method, METHOD_ORDER, get_method_class
 from qbp._investigation import registered_investigations, get_investigation_class
@@ -208,6 +208,12 @@ def _add_operator_dict_flags(parser):
                         help="Classical optimizer for the --qubit-operator path (default: SPSA).")
     parser.add_argument("--vqe-optimizer-kwarg", dest="vqe_optimizer_kwarg", action="append", default=None,
                         metavar="KEY=VALUE", help="Optimizer kwarg; repeatable, e.g. maxiter=@max_iters.")
+    parser.add_argument("--vqe-mitigation", dest="vqe_mitigation", action="append", default=None,
+                        choices=["m3", "dd", "zne"],
+                        help="Error-mitigation technique for VQE; repeatable.")
+    parser.add_argument("--vqe-zne-noise-factors", dest="vqe_zne_noise_factors", type=int,
+                        nargs="+", default=None, metavar="N",
+                        help="Odd noise-scale factors for ZNE folding (default: 1 3 5).")
     parser.add_argument("--iqpe-initial-state", dest="iqpe_initial_state", default=None,
                         choices=list(_INITIAL_STATES),
                         help="Initial state type for IQPE (default: uniform for operator path).")
@@ -299,6 +305,13 @@ def _collect_method_params(args, methods):
                 params["ansatz"] = ansatz
             if optimizer is not None:
                 params["optimizer"] = optimizer
+            techniques = getattr(args, "vqe_mitigation", None)
+            if techniques:
+                mitigation = {name: True for name in techniques}
+                factors = getattr(args, "vqe_zne_noise_factors", None)
+                if factors:
+                    mitigation["zne_noise_factors"] = list(factors)
+                params["mitigation"] = mitigation
         if m == Method.IQPE:
             initial = _iqpe_initial_state_dict(args)
             if initial is not None:
@@ -437,7 +450,13 @@ def main(argv=None):
                              help="Required when listing observables")
 
     plot_parser = sub.add_parser("plot")
-    plot_parser.add_argument("path", help="Path to a log JSON file")
+    plot_parser.add_argument("path", nargs="+", help="One or more log JSON files to overlay")
+    plot_parser.add_argument("--keys", nargs="+", default=None, metavar="K1,K2",
+                             help="Per-path comma-separated result keys to draw "
+                                  "(e.g. --keys analytic,vqe vqe); one entry per path.")
+    plot_parser.add_argument("--labels", nargs="+", default=None, metavar="LABEL",
+                             help="Override legend labels, one per selected series "
+                                  "in path/key order.")
     plot_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
     plot_parser.add_argument("--output", default=None, metavar="PATH", help="Output PDF path")
     plot_parser.add_argument("--hide-legend", action="store_true", default=False)
@@ -549,12 +568,19 @@ def main(argv=None):
             return
 
     if args.command == "plot":
+        if len(args.path) == 1 and not args.keys:
+            try:
+                result = load_result(args.path[0])
+            except Exception as e:
+                parser.error(str(e))
+            result.plot(hide_plot=args.hide_plot, output_path=args.output, hide_legend=args.hide_legend,
+                        diff=args.diff, diff_format=args.diff_format)
+            return
         try:
-            result = load_result(args.path)
-        except Exception as e:
+            plot_combined(args.path, args.keys, labels=args.labels, output_path=args.output,
+                          hide_plot=args.hide_plot, hide_legend=args.hide_legend)
+        except (ValueError, FileNotFoundError, KeyError) as e:
             parser.error(str(e))
-        result.plot(hide_plot=args.hide_plot, output_path=args.output, hide_legend=args.hide_legend,
-                    diff=args.diff, diff_format=args.diff_format)
         return
 
     if args.command == "run":

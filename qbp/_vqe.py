@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import time
+
 import numpy as np
 
 from qiskit import transpile
@@ -19,6 +21,41 @@ def _isa(op, circ):
     return op.apply_layout(circ.layout) if circ.layout is not None else op
 
 
+_RETRY_ATTEMPTS = 5
+_RETRY_BASE_DELAY = 2.0
+
+
+def _network_error_types():
+    types: list[type] = []
+    try:
+        import requests.exceptions as rexc
+        types += [rexc.ConnectionError, rexc.Timeout, rexc.SSLError, rexc.ChunkedEncodingError]
+    except Exception:
+        pass
+    try:
+        import urllib3.exceptions as uexc
+        types += [uexc.MaxRetryError, uexc.ProtocolError]
+    except Exception:
+        pass
+    return tuple(types)
+
+
+def _run_pub_with_retry(estimator, pub):
+    errors = _network_error_types()
+    for attempt in range(_RETRY_ATTEMPTS):
+        try:
+            return estimator.run(pubs=[pub]).result()
+        except errors as exc:
+            if attempt == _RETRY_ATTEMPTS - 1:
+                raise
+            delay = _RETRY_BASE_DELAY * (2 ** attempt)
+            logger.warning(
+                f"Estimator submission failed ({type(exc).__name__}: {exc}); "
+                f"retrying in {delay:.0f}s (attempt {attempt + 2}/{_RETRY_ATTEMPTS})"
+            )
+            time.sleep(delay)
+
+
 # --------------------------------------------------------------------- solvers
 
 def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend=None) -> QuantumCircuit:
@@ -33,7 +70,7 @@ def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend
             if cost_history["iters"] >= max_iters and cost_history["prev"] is not None:
                 return cost_history["prev"]
             pub = (ansatz_circuit, [isa_hamiltonian], [params])
-            result = estimator.run(pubs=[pub]).result()
+            result = _run_pub_with_retry(estimator, pub)
             energy = float(result[0].data.evs[0])
             cost_history["iters"] += 1
             cost_history["prev"] = energy
@@ -46,9 +83,35 @@ def _vqe_initial_state(hamiltonian, ansatz, get_optimizer_fn, max_iters, backend
     return ansatz.assign_parameters(param_dict)
 
 
+def _strip_x_prefix(circuit: QuantumCircuit) -> QuantumCircuit:
+    body = circuit.copy_empty_like()
+    in_prefix = True
+    for instruction in circuit.data:
+        if in_prefix and instruction.operation.name == "x":
+            continue
+        in_prefix = False
+        body.append(instruction)
+    return body
+
+
+def _warm_start_ansatz(fermionic_hamiltonian, ansatz, n_orbitals, n_occ, mapper):
+    from qiskit_nature.second_q.mappers import JordanWignerMapper
+
+    from qbp._givens import free_fermion_prep, one_body_matrix
+
+    if not isinstance(mapper, JordanWignerMapper):
+        raise ValueError(
+            "The non-interacting warm start requires the Jordan-Wigner mapper."
+        )
+    h = one_body_matrix(fermionic_hamiltonian, n_orbitals)
+    prep = free_fermion_prep(h, n_occ)
+    return prep.compose(_strip_x_prefix(ansatz))
+
+
 def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=None,
                label="", observable_qubit_ops=None, strategies=None,
-               return_state: bool = False, seed: int | None = None):
+               return_state: bool = False, seed: int | None = None,
+               warm_start: bool = False):
     """Run VQE for a single repetition.
 
     Parameters
@@ -99,13 +162,16 @@ def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=N
 
         def _base_measure(circuit, op, params):
             pub = (circuit, [_isa(op, circuit)], [params])
-            result = estimator.run(pubs=[pub]).result()
+            result = _run_pub_with_retry(estimator, pub)
             evs = result[0].data.evs
             return float(evs.flat[0]) if hasattr(evs, "flat") else float(evs[0])
 
         measure = chain_measure(strategies, _base_measure)
 
-        x0 = 2 * np.pi * np.random.random(ansatz_circuit.num_parameters)
+        if warm_start:
+            x0 = np.zeros(ansatz_circuit.num_parameters)
+        else:
+            x0 = 2 * np.pi * np.random.random(ansatz_circuit.num_parameters)
         cost_history = {"iters": 0, "cost_history": []}
 
         def cost_func(params):
@@ -133,16 +199,20 @@ def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=N
         return energy, observable_values
 
 
-def vqe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, rep, backend=None, observable_qubit_ops=None, strategies=None, return_state: bool = False, seed: int | None = None):
+def vqe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_optimizer_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, rep, backend=None, observable_qubit_ops=None, strategies=None, return_state: bool = False, seed: int | None = None, warm_start: bool = False):
     fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
     ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
+    if warm_start:
+        ansatz = _warm_start_ansatz(
+            fermionic_hamiltonian, ansatz, n_sites * spin, n_occ, mapper
+        )
     label = f"({_fmt_params(lattice, n_occ, model_params, repetition=rep)})"
     return _vqe_sparse(
         qubit_hamiltonian, ansatz, get_optimizer_fn, max_iters, rep,
         backend=backend, label=label, observable_qubit_ops=observable_qubit_ops,
         strategies=strategies, return_state=return_state,
-        seed=seed,
+        seed=seed, warm_start=warm_start,
     )
 
 
@@ -181,22 +251,24 @@ def vqe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, get_optimizer_fn, max
     return _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=label, strategies=strategies, seed=seed)
 
 
-def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_layers, rep, extremum="min", backend=None, label="", observable="E"):
+def vqe_operator(hamiltonian, get_vqe_ansatz_fn, get_optimizer_fn, max_iters, n_layers, rep, extremum="min", backend=None, label="", observable="E", strategies=None):
     op = hamiltonian * -1 if extremum == "max" else hamiltonian
     ansatz = get_vqe_ansatz_fn(hamiltonian.num_qubits, n_layers, 0, 1)
     vqe_label = f"[{observable}] ({label}, rep={rep})" if label else f"[{observable}] (rep={rep})"
-    energy = _vqe_sparse(op, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=vqe_label)
+    energy = _vqe_sparse(op, ansatz, get_optimizer_fn, max_iters, rep, backend=backend, label=vqe_label, strategies=strategies)
     return -energy if extremum == "max" else energy
 
 
-def vqe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None):
+def vqe_other_benchmarks(lattice, n_sites, spin, n_occ, model_params, fermionic_hamiltonian_fn, get_vqe_ansatz_fn, mapper, max_iters, n_layers, vqe_reps=1, backend=None, warm_start=False):
     simulator = _make_simulator(backend)
-
-    ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
-    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
     fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
+
+    ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
+    if warm_start:
+        ansatz = _warm_start_ansatz(fermionic_hamiltonian, ansatz, n_sites * spin, n_occ, mapper)
+    ansatz_circuit = transpile(ansatz, backend=simulator, optimization_level=3)
 
     num_queries = qubit_hamiltonian.size * max_iters * vqe_reps
     full_circuit_depth = ansatz_circuit.depth()
@@ -235,12 +307,17 @@ def _vqe_measured_ansatz_and_groups(qubit_hamiltonian, ansatz):
 
 def vqe_cell_seconds(lattice, n_sites, spin, n_occ, model_params,
                      fermionic_hamiltonian_fn, get_vqe_ansatz_fn, mapper,
-                     max_iters, n_layers, reps, backend, shots):
+                     max_iters, n_layers, reps, backend, shots,
+                     warm_start: bool = False):
     from qbp._backend import circuit_qpu_seconds
 
     fermionic_hamiltonian = fermionic_hamiltonian_fn(lattice, **model_params)
     qubit_hamiltonian = mapper.map(fermionic_hamiltonian)
     ansatz = get_vqe_ansatz_fn(n_sites * spin, n_layers, n_occ, spin)
+    if warm_start:
+        ansatz = _warm_start_ansatz(
+            fermionic_hamiltonian, ansatz, n_sites * spin, n_occ, mapper
+        )
     measured, n_groups = _vqe_measured_ansatz_and_groups(qubit_hamiltonian, ansatz)
     return circuit_qpu_seconds(backend, measured, shots) * n_groups * max_iters * reps
 
@@ -273,6 +350,11 @@ class VQEMethod(SimulationMethod):
         ParamSpec("iters", int, 100, "VQE optimizer iterations per repetition", metavar="N"),
         ParamSpec("layers", int, 1, "Number of ansatz layers (reps)", metavar="N"),
         ParamSpec("reps", int, 1, "Number of independent VQE repetitions", metavar="N"),
+        ParamSpec("warm_start", bool, False,
+                  "Non-interacting warm start: prepare the ground state of the "
+                  "one-body part of the Hamiltonian via a Givens-rotation "
+                  "network (O(N^3) classical work) and start the variational "
+                  "parameters at zero", is_flag=True),
     ]
     # Dict-valued params used only on the --qubit-operator path (no model ansatz).
     EXTRA_PARAMS = ("ansatz", "optimizer")
@@ -280,19 +362,40 @@ class VQEMethod(SimulationMethod):
     SUPPORTS_BAND_STRUCTURE = True
     SUPPORTS_OPERATOR = True
 
+    def _ansatz_fn(self, model):
+        if not self.ansatz:
+            return model.get_vqe_ansatz
+        from qbp._yaml_model import AnsatzSpec, build_ansatz_factory
+
+        return build_ansatz_factory(
+            AnsatzSpec.model_validate(self.ansatz), name="override"
+        )
+
+    def _optimizer_fn(self, model):
+        if not self.optimizer:
+            return model.get_optimizer
+        from qbp._yaml_model import OptimizerSpec, build_optimizer_factory
+
+        return build_optimizer_factory(
+            OptimizerSpec.model_validate(self.optimizer), name="override"
+        )
+
     # ----------------------------------------------------------------- real space
     def compute_cell(self, model, lattice, n_occ, cell_params, observable, *,
                      backend, ctx):
         ferm_fn = ctx.fermionic_hamiltonian_fn or model.fermionic_hamiltonian
+        get_ansatz = self._ansatz_fn(model)
+        get_optimizer = self._optimizer_fn(model)
         reps = []
         for rep in range(1, self.reps + 1):
             if observable == "E":
                 energy = vqe_fermionic(
                     lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
-                    ferm_fn, model.get_optimizer,
-                    model.get_vqe_ansatz, ctx.mapper, self.iters, self.layers, rep,
+                    ferm_fn, get_optimizer,
+                    get_ansatz, ctx.mapper, self.iters, self.layers, rep,
                     backend=backend, strategies=self.mitigation_strategies,
                     seed=ctx.cell_index * 1000 + rep,
+                    warm_start=self.warm_start,
                 )
             else:
                 energy = vqe_observable(
@@ -303,8 +406,9 @@ class VQEMethod(SimulationMethod):
             reps.append(float(energy))
         num_queries, (total, two_q) = vqe_other_benchmarks(
             lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
-            ferm_fn, model.get_vqe_ansatz, ctx.mapper,
+            ferm_fn, get_ansatz, ctx.mapper,
             self.iters, self.layers, self.reps, backend=backend,
+            warm_start=self.warm_start,
         )
         return {
             "repetitions": reps,
@@ -355,6 +459,7 @@ class VQEMethod(SimulationMethod):
             energy = vqe_operator(
                 op, get_vqe_ansatz, get_optimizer, self.iters, self.layers, rep,
                 extremum, backend, label, observable,
+                strategies=self.mitigation_strategies,
             )
             reps.append(float(energy))
         return {"repetitions": reps}
@@ -369,8 +474,9 @@ class VQEMethod(SimulationMethod):
         ferm_fn = ctx.fermionic_hamiltonian_fn or model.fermionic_hamiltonian
         return vqe_cell_seconds(
             lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
-            ferm_fn, model.get_vqe_ansatz, ctx.mapper,
+            ferm_fn, self._ansatz_fn(model), ctx.mapper,
             self.iters, self.layers, self.reps, backend, self._estimate_shots(shots),
+            warm_start=self.warm_start,
         )
 
     def estimate_bloch_cell(self, model, k_tuple, cell_params, observable, *,

@@ -14,6 +14,7 @@ from qbp._method import Method
 from qbp._run import (
     run,
     load_result,
+    plot_combined,
     RunResult,
 )
 from qbp._estimate import estimate
@@ -55,6 +56,7 @@ __all__ = [
     "run",
     "estimate",
     "load_result",
+    "plot_combined",
     "RunResult",
     "plot_diff",
     "real_space_positions",
