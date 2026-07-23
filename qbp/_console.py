@@ -289,6 +289,8 @@ def _prompt_expression(prompt: str, allowed_names: set[str]) -> str:
 
 
 def _coerce_kwarg_value(v: str):
+    import ast
+
     if v.startswith("@"):
         return v
     try:
@@ -298,6 +300,10 @@ def _coerce_kwarg_value(v: str):
     try:
         return float(v)
     except ValueError:
+        pass
+    try:
+        return ast.literal_eval(v)
+    except (ValueError, SyntaxError):
         pass
     return v
 

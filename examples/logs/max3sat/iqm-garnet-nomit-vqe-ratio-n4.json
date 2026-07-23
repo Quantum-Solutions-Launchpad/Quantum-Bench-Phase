@@ -1,0 +1,71 @@
+{
+    "type": "run",
+    "methods": [
+        "analytic",
+        "vqe"
+    ],
+    "backend": "IQMBackend",
+    "plot_format": "2d",
+    "band_structure": false,
+    "observable": "E",
+    "extremum": "max",
+    "x_param": "ratio",
+    "y_param": null,
+    "x_values": [
+        2.0,
+        3.0,
+        4.0,
+        5.0
+    ],
+    "y_values": [],
+    "parameters": {
+        "model": "random_max3sat-hams",
+        "lattice": null,
+        "qubit_operator": "/Users/adamgodel/hamlib/binaryoptimization/max3sat/random/random_max3sat-hams.zip",
+        "keys": [
+            "max3sat_n-4_ratio-2_rinst-05",
+            "max3sat_n-4_ratio-3_rinst-05",
+            "max3sat_n-4_ratio-4_rinst-05",
+            "max3sat_n-4_ratio-5_rinst-05"
+        ],
+        "extremum": "max",
+        "model_params": {},
+        "method_params": {
+            "analytic": {},
+            "vqe": {
+                "iters": 50,
+                "layers": 2,
+                "reps": 1,
+                "warm_start": false,
+                "ansatz": {
+                    "type": "real_amplitudes",
+                    "kwargs": {
+                        "entanglement": "linear",
+                        "reps": "@n_layers"
+                    },
+                    "initial_state_prefix": "none"
+                },
+                "optimizer": {
+                    "type": "COBYLA",
+                    "kwargs": {
+                        "maxiter": "@max_iters"
+                    }
+                }
+            }
+        }
+    },
+    "result": {
+        "analytic": {
+            "0": 8.000000000000002,
+            "1": 12.000000000000005,
+            "2": 15.000000000000004,
+            "3": 18.999999999999996
+        },
+        "vqe": {
+            "0": 7.603515625,
+            "1": 11.71337890625,
+            "2": 14.529296875,
+            "3": 18.5859375
+        }
+    }
+}
