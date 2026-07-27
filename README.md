@@ -32,11 +32,7 @@ Consider the [Su–Schrieffer–Heeger model](https://en.wikipedia.org/wiki/Su%E
 
 Its tight-binding Hamiltonian can be written as
 
-$$
-H = t_1 \sum_{n=1}^N |n,B\rangle \langle n,A|
-  + t_2 \sum_{n=1}^N |n+1,A\rangle \langle n,B|
-  + \text{h.c.}
-$$
+$$H = t_1 \sum_{n=1}^N \lvert n,B \rangle \langle n,A \rvert + t_2 \sum_{n=1}^N \lvert n+1,A \rangle \langle n,B \rvert + \text{h.c.}$$
 
 where $\text{h.c.}$ denotes the [Hermitian conjugate](https://en.wikipedia.org/wiki/Hermitian_conjugate), $t_1$ denotes the intra-cell hopping, and $t_2$ denotes the inter-cell hopping. The relative size of $t_1$ and $t_2$ controls a topological phase transition: the chain is trivial when $t_1 > t_2$ and topological when $t_2 > t_1$.
 
