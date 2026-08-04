@@ -21,8 +21,13 @@ execution differences behind uniform ``sample_bit`` / ``estimator`` calls.
 
 from __future__ import annotations
 
+import sys
+import time
 import warnings
 from contextlib import contextmanager
+
+_TRANSIENT_RETRY_ATTEMPTS = 5
+_TRANSIENT_RETRY_BASE_DELAY = 1.0
 
 _NO_ACCOUNT_HINT = (
     "No Qiskit Runtime account found. Save one with\n"
@@ -40,6 +45,8 @@ _IQM_NO_TOKEN_HINT = (
     "    export IQM_TOKEN=<your token>"
 )
 _IQM_SHOTS = 1024
+_IBM_SAMPLER_SHOTS = 4096
+_VQE_ESTIMATOR_SHOTS = 4096
 
 
 def _service():
@@ -159,22 +166,21 @@ class _AerIQPESampler:
     """IQPE sampler backed by the local Aer V1 ``Sampler`` (ideal / fake noise)."""
 
     def __init__(self, backend):
-        from qiskit_aer.noise import NoiseModel
-        from qiskit_aer.primitives import Sampler
+        from qbp._core import _make_sampler
 
-        if backend:
-            noise_model = NoiseModel.from_backend(backend)
-            self._sampler = Sampler(
-                backend_options={
-                    "noise_model": noise_model,
-                    "basis_gates": noise_model.basis_gates,
-                }
-            )
-        else:
-            self._sampler = Sampler()
+        self._sampler = _make_sampler(backend)
+
+    def raw_dist(self, qc) -> dict:
+        """The raw quasi-probability distribution, before any bit decision.
+
+        Exposed separately from sample_bit so mitigation strategies (M3)
+        can correct it before the majority-vote decision is made. Once
+        collapsed to a single bit there's nothing left to correct.
+        """
+        return self._sampler.run([qc]).result().quasi_dists[0]
 
     def sample_bit(self, qc) -> int:
-        result = self._sampler.run([qc]).result().quasi_dists[0]
+        result = self.raw_dist(qc)
         return 1 if result.get(1, 0) > result.get(0, 0) else 0
 
 
@@ -230,9 +236,7 @@ class _IqmIQPESampler:
         return False
 
     def sample_bit(self, qc) -> int:
-        from iqm.qiskit_iqm import transpile_to_IQM
-
-        isa_qc = transpile_to_IQM(qc, backend=self._backend, optimization_level=3)
+        isa_qc = _iqm_transpile(qc, self._backend)
         result = self._backend.run(isa_qc, shots=_IQM_SHOTS).result()
         counts = result.get_counts()
         ones = sum(n for bit, n in counts.items() if bit.replace(" ", "").endswith("1"))
@@ -262,41 +266,116 @@ def make_iqpe_sampler(backend):
 class _RuntimeVQEEstimator:
     """VQE estimator over Aer (ideal/fake) or a real IBM device via Runtime.
 
-    Preserves the original VQE numerics: circuits are transpiled to the Aer/IBM
-    backend and expectation values come from ``qiskit_ibm_runtime`` ``Estimator``
-    inside a Session opened for the whole optimization.
+    Real IBM hardware needs qiskit_ibm_runtime's Session-backed Estimator. Ideal/fake backends use
+    qiskit_aer.primitives.EstimatorV2 directly instead: it computes exact expectation values (no shot sampling) 
+    straight from the noisy density matrix, which is like 45x faster in practice than shot-based sampling, still
+    correctly reflects the noise model, and needs no Session at all since there's nothing to queue on remote hardware.
     """
 
     def __init__(self, backend):
         from qbp._core import _make_simulator
 
+        self._backend = backend
         self._simulator = _make_simulator(backend)
         self._session = None
 
     def __enter__(self):
         from qiskit import transpile
-        from qiskit_ibm_runtime import Session, Estimator
 
-        self._session = Session(backend=self._simulator)
-        self._session.__enter__()
-        self.estimator = Estimator(mode=self._session)
         self._transpile = lambda c: transpile(
             c, backend=self._simulator, optimization_level=3
         )
+        if is_real_backend(self._backend):
+            from qiskit_ibm_runtime import Session, Estimator
+
+            self._session = Session(backend=self._simulator)
+            self._session.__enter__()
+            self.estimator = Estimator(mode=self._session)
+        else:
+            from qiskit_aer.primitives import EstimatorV2 as AerEstimatorV2
+
+            self.estimator = AerEstimatorV2.from_backend(self._simulator)
         return self
 
     def __exit__(self, *exc):
-        return self._session.__exit__(*exc)
+        if self._session is not None:
+            return self._session.__exit__(*exc)
+        return False
 
     def transpile(self, circuit):
         return self._transpile(circuit)
+
+def _is_transient_network_error(exc):
+    try:
+        from requests.exceptions import ConnectionError as ReqConnectionError, SSLError
+    except ImportError:
+        return False
+    return isinstance(exc, (SSLError, ReqConnectionError))
+
+
+def _run_with_transient_retry(orig_run, args, kwargs):
+    for attempt in range(_TRANSIENT_RETRY_ATTEMPTS):
+        try:
+            return orig_run(*args, **kwargs)
+        except Exception as exc:
+            if not _is_transient_network_error(exc) or attempt == _TRANSIENT_RETRY_ATTEMPTS - 1:
+                raise
+            delay = _TRANSIENT_RETRY_BASE_DELAY * (2 ** attempt)
+            print(
+                f"[qbp] transient network error submitting job "
+                f"({type(exc).__name__}); retrying in {delay:.0f}s "
+                f"(attempt {attempt + 1}/{_TRANSIENT_RETRY_ATTEMPTS - 1})",
+                file=sys.stderr,
+                flush=True,
+            )
+            time.sleep(delay)
+
+
+def _drop_unsupported_run_options(backend, *names):
+    """Strip run options the backend doesn't accept before they reach its
+    ``run``. ``BackendEstimatorV2`` always forwards ``seed_simulator`` (default
+    ``None``), which IQM backends don't support and warn about on every job.
+    """
+    if getattr(backend, "_qbp_run_wrapped", False):
+        return backend
+    orig_run = backend.run
+
+    def run(*args, **kwargs):
+        for name in names:
+            kwargs.pop(name, None)
+        return _run_with_transient_retry(orig_run, args, kwargs)
+
+    backend.run = run
+    backend._qbp_run_wrapped = True
+    return backend
+
+
+def _iqm_transpile(circuit, backend, optimization_level=3):
+    """Transpile ``circuit`` to IQM-native gates (``cz``, ``r``).
+
+    ``transpile_to_IQM`` mis-synthesizes some two-qubit blocks (e.g. XXPlusYY /
+    Givens rotations used by the VQE warm start) at optimization_level >= 2,
+    corrupting the circuit's unitary. Qiskit's own transpiler targeting the same
+    native basis is correct, so it is used for direct-CZ devices. Resonator
+    devices (non-empty ``computational_resonators``) need ``transpile_to_IQM``'s
+    MOVE-gate insertion, which Qiskit cannot do, so they keep the IQM pass.
+    """
+    arch = getattr(backend, "architecture", None)
+    if getattr(arch, "computational_resonators", None):
+        from iqm.qiskit_iqm import transpile_to_IQM
+        return transpile_to_IQM(circuit, backend=backend, optimization_level=optimization_level)
+    from qiskit import transpile
+    return transpile(
+        circuit, coupling_map=backend.coupling_map,
+        basis_gates=["cz", "r"], optimization_level=optimization_level,
+    )
 
 
 class _IqmVQEEstimator:
     """VQE estimator over an IQM Resonance device via ``BackendEstimatorV2``."""
 
     def __init__(self, backend):
-        self._backend = backend
+        self._backend = _drop_unsupported_run_options(backend, "seed_simulator")
 
     def __enter__(self):
         from qiskit.primitives import BackendEstimatorV2
@@ -308,9 +387,7 @@ class _IqmVQEEstimator:
         return False
 
     def transpile(self, circuit):
-        from iqm.qiskit_iqm import transpile_to_IQM
-
-        return transpile_to_IQM(circuit, backend=self._backend, optimization_level=3)
+        return _iqm_transpile(circuit, self._backend)
 
 
 @contextmanager
@@ -327,3 +404,119 @@ def make_vqe_estimator(backend):
     else:
         with _RuntimeVQEEstimator(backend) as est:
             yield est
+
+_IQM_DEFAULT_GATE_SECONDS = {
+    "r": 24e-9,
+    "prx": 24e-9,
+    "cz": 90e-9,
+    "move": 70e-9,
+    "measure": 400e-9,
+    "reset": 350e-6,
+    "id": 0.0,
+    "delay": 0.0,
+    "barrier": 0.0,
+}
+_IQM_CAL_GATE_MAP = {
+    "prx": ("r", "prx"),
+    "cz": ("cz",),
+    "move": ("move",),
+    "measure": ("measure",),
+    "reset_wait": ("reset",),
+}
+_IBM_FALLBACK_LAYER_SECONDS = 5e-7
+
+def _iqm_gate_seconds(backend) -> dict:
+    """Map IQM ISA gate name -> duration (seconds) for ``backend``.
+
+    A real ``IQMBackend`` carries per-gate pulse durations in its calibration
+    set, which it fetches from the server as metadata (no circuits run, no
+    credits spent); the per-locus durations are aggregated to a representative
+    mean per gate. Fake backends expose the same timing via ``error_profile``.
+    Falls back to representative defaults if neither is available. Cached on the
+    backend so the calibration set is fetched only once.
+    """
+    cached = getattr(backend, "_qbp_gate_seconds", None)
+    if cached is not None:
+        return cached
+
+    durations = dict(_IQM_DEFAULT_GATE_SECONDS)
+
+    profile = getattr(backend, "error_profile", None)
+    if profile is not None:
+        for name, ns in (getattr(profile, "single_qubit_gate_durations", None) or {}).items():
+            durations[name] = float(ns) * 1e-9
+            if name == "prx":
+                durations["r"] = float(ns) * 1e-9
+        for name, ns in (getattr(profile, "two_qubit_gate_durations", None) or {}).items():
+            durations[name] = float(ns) * 1e-9
+
+    client = getattr(backend, "client", None)
+    if client is not None:
+        try:
+            observations = client.get_calibration_set().observations
+            aggregated: dict = {}
+            for obs in observations:
+                field = obs.dut_field
+                if field.endswith(".duration"):
+                    gate = field.split(".")[1]
+                    aggregated.setdefault(gate, []).append(float(obs.value))
+            for cal_name, isa_names in _IQM_CAL_GATE_MAP.items():
+                values = aggregated.get(cal_name)
+                if values:
+                    seconds = sum(values) / len(values)
+                    for isa_name in isa_names:
+                        durations[isa_name] = seconds
+        except Exception:
+            pass
+
+    try:
+        backend._qbp_gate_seconds = durations
+    except Exception:
+        pass
+    return durations
+
+
+def _critical_path_seconds(circuit, gate_seconds: dict) -> float:
+    """ASAP critical-path duration (seconds) of an ISA ``circuit`` given a
+    ``{gate_name: seconds}`` map. Gates absent from the map contribute 0."""
+    index = {q: i for i, q in enumerate(circuit.qubits)}
+    end = [0.0] * circuit.num_qubits
+    for instruction in circuit.data:
+        qubits = [index[q] for q in instruction.qubits]
+        if not qubits:
+            continue
+        start = max(end[i] for i in qubits)
+        finish = start + gate_seconds.get(instruction.operation.name, 0.0)
+        for i in qubits:
+            end[i] = finish
+    return max(end) if end else 0.0
+
+
+def circuit_qpu_seconds(backend, circuit, shots: int) -> float:
+    """Estimated QPU execution seconds for one logical ``circuit`` at ``shots``.
+
+    Computed fully offline (no submission, no credits spent): the circuit is
+    transpiled to the device ISA exactly as :func:`run` would, its ASAP-scheduled
+    wall-clock duration is measured, and the result is scaled by the shot count.
+    IBM uses the calibrated ``Target`` via ``QuantumCircuit.estimate_duration``;
+    IQM uses its calibrated (or representative) gate durations over the ISA
+    circuit, since the IQM ``Target`` carries no per-gate timing.
+    """
+    if is_iqm_backend(backend):
+        isa = _iqm_transpile(circuit, backend)
+        seconds = _critical_path_seconds(isa, _iqm_gate_seconds(backend))
+    else:
+        from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
+
+        try:
+            pm = generate_preset_pass_manager(
+                optimization_level=3, backend=backend, scheduling_method="asap"
+            )
+            scheduled = pm.run(circuit)
+            seconds = float(scheduled.estimate_duration(backend.target, unit="s"))
+        except Exception:
+            from qiskit import transpile
+
+            isa = transpile(circuit, backend=backend, optimization_level=3)
+            seconds = isa.depth() * _IBM_FALLBACK_LAYER_SECONDS
+    return seconds * shots

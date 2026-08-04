@@ -13,6 +13,36 @@ from qbp._plotting import (
 from qbp._interactive import attach_hover, lock_camera_azimuth
 
 
+def plot_diff(
+    path: str,
+    *,
+    method: str = "both",
+    plot_format: str = "3d",
+    output_path: str | None = None,
+    hide_plot: bool = False,
+    x_is_momentum: bool = False,
+    y_is_momentum: bool = False,
+):
+    """Plot method-vs-method energy differences for a run log.
+
+    Loads ``path`` and delegates to the shared implementation used by the
+    run/plot ``--diff`` pipeline (every pair of methods). ``method`` restricts to
+    pairs involving that method; ``"both"`` keeps all pairs.
+    """
+    from qbp._run import load_result, _plot_diffs, _result_labels
+
+    _apply_rcparams()
+    rr = load_result(path)
+    x_label, y_label, xm, ym = _result_labels(rr.model_name, rr.x_param, rr.y_param)
+    selected = None if method == "both" else [method]
+    figs = _plot_diffs(
+        rr, x_label=x_label, y_label=y_label,
+        x_is_momentum=x_is_momentum or xm, y_is_momentum=y_is_momentum or ym,
+        plot_format=plot_format, output_path=output_path, hide_plot=hide_plot,
+        methods=selected,
+    )
+    return figs if len(figs) > 1 else figs[0] if figs else None
+
 def _diff_cmap_and_norm(Z: np.ndarray):
     finite = Z[np.isfinite(Z)]
     vmin = float(finite.min()) if len(finite) else -1.0
@@ -46,7 +76,7 @@ def _pcolormesh_edges(a: np.ndarray) -> np.ndarray:
 
 def _diff_3d(
     x_vals, y_vals, Z_err,
-    *, x_label, y_label, z_label, hover_label,
+    *, x_label, y_label, z_label, hover_label, title,
     x_is_momentum, y_is_momentum,
     output_path, hide_plot,
 ):
@@ -60,7 +90,6 @@ def _diff_3d(
         axis.pane.set_edgecolor("#cccccc")
     ax.grid(True, linestyle="--", alpha=0.4)
     ax.view_init(elev=25, azim=-55)
-    ax.dist = 7
 
     ny = len(y_vals)
     X_grid, Y_grid = np.meshgrid(x_vals, y_vals, indexing="ij")
@@ -88,6 +117,7 @@ def _diff_3d(
     ax.set_xlabel(x_label, labelpad=12)
     ax.set_ylabel(y_label, labelpad=12)
     ax.set_zlabel(z_label, labelpad=10)
+    ax.set_title(title, pad=14)
 
     if x_is_momentum:
         _format_momentum_ticks(ax, "x", x_vals)
@@ -104,7 +134,7 @@ def _diff_3d(
 
 def _diff_heatmap(
     x_vals, y_vals, Z_err,
-    *, x_label, y_label, z_label,
+    *, x_label, y_label, z_label, title,
     x_is_momentum, y_is_momentum,
     output_path, hide_plot,
 ):
@@ -125,6 +155,7 @@ def _diff_heatmap(
 
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel(y_label, labelpad=8)
+    ax.set_title(title, pad=10)
     ax.set_xlim(_pcolormesh_edges(x_arr)[0], _pcolormesh_edges(x_arr)[-1])
     ax.set_ylim(_pcolormesh_edges(y_arr)[0], _pcolormesh_edges(y_arr)[-1])
     for spine in ax.spines.values():
@@ -141,7 +172,7 @@ def _diff_heatmap(
 
 def _diff_bar_2d(
     x_vals, y_vals, Z_err,
-    *, x_label, y_label, z_label,
+    *, x_label, y_label, z_label, title,
     x_is_momentum, y_is_momentum,
     output_path, hide_plot,
 ):
@@ -209,6 +240,7 @@ def _diff_bar_2d(
 
     ax.set_xlabel(x_label, labelpad=8)
     ax.set_ylabel(z_label, labelpad=8)
+    ax.set_title(title, pad=10)
     ax.grid(True, axis="y", linestyle="--", alpha=0.4)
     for spine in ax.spines.values():
         spine.set_edgecolor("#cfcece")

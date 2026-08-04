@@ -4,7 +4,8 @@ import argparse
 import sys
 
 from qbp._registry import get_model, register_model_from_file, remove_model
-from qbp._run import run, load_result
+from qbp._run import run, load_result, plot_combined
+from qbp._estimate import estimate
 from qbp._method import Method, METHOD_ORDER, get_method_class
 from qbp._investigation import registered_investigations, get_investigation_class
 from qbp._yaml_model import _QISKIT_ANSATZES, _QISKIT_OPTIMIZERS, _INITIAL_STATES
@@ -207,6 +208,12 @@ def _add_operator_dict_flags(parser):
                         help="Classical optimizer for the --qubit-operator path (default: SPSA).")
     parser.add_argument("--vqe-optimizer-kwarg", dest="vqe_optimizer_kwarg", action="append", default=None,
                         metavar="KEY=VALUE", help="Optimizer kwarg; repeatable, e.g. maxiter=@max_iters.")
+    parser.add_argument("--vqe-mitigation", dest="vqe_mitigation", action="append", default=None,
+                        choices=["m3", "dd", "zne"],
+                        help="Error-mitigation technique for VQE; repeatable.")
+    parser.add_argument("--vqe-zne-noise-factors", dest="vqe_zne_noise_factors", type=int,
+                        nargs="+", default=None, metavar="N",
+                        help="Odd noise-scale factors for ZNE folding (default: 1 3 5).")
     parser.add_argument("--iqpe-initial-state", dest="iqpe_initial_state", default=None,
                         choices=list(_INITIAL_STATES),
                         help="Initial state type for IQPE (default: uniform for operator path).")
@@ -298,6 +305,13 @@ def _collect_method_params(args, methods):
                 params["ansatz"] = ansatz
             if optimizer is not None:
                 params["optimizer"] = optimizer
+            techniques = getattr(args, "vqe_mitigation", None)
+            if techniques:
+                mitigation = {name: True for name in techniques}
+                factors = getattr(args, "vqe_zne_noise_factors", None)
+                if factors:
+                    mitigation["zne_noise_factors"] = list(factors)
+                params["mitigation"] = mitigation
         if m == Method.IQPE:
             initial = _iqpe_initial_state_dict(args)
             if initial is not None:
@@ -308,6 +322,41 @@ def _collect_method_params(args, methods):
 
 def _resolve_backend(args):
     return getattr(args, "backend", None)
+
+
+def _dispatch_estimate(args):
+    methods = [Method.coerce(m) for m in args.method]
+    method_params = _collect_method_params(args, methods)
+    backend = _resolve_backend(args)
+    shots = getattr(args, "shots", None)
+
+    if args.qubit_operator is not None:
+        if args.model:
+            raise ValueError("--model and --qubit-operator are mutually exclusive.")
+        estimate(
+            method=methods, method_params=method_params, backend=backend, shots=shots,
+            qubit_operator=args.qubit_operator, extremum=args.extremum, select=args.select,
+            x_param=args.x_param, x_range=args.x_range,
+            y_param=args.y_param, y_range=args.y_range,
+        )
+        return
+
+    if not args.model:
+        raise ValueError("one of --model or --qubit-operator is required")
+    model = get_model(args.model)
+    investigation, investigation_params = _collect_investigation_params(args)
+    estimate(
+        model, method=methods, method_params=method_params, backend=backend, shots=shots,
+        lattice=tuple(args.lattice) if args.lattice else None,
+        boundary=args.boundary,
+        boundary_params=_collect_boundary_params(args),
+        investigation=investigation,
+        investigation_params=investigation_params,
+        x_param=args.x_param, x_range=args.x_range,
+        y_param=args.y_param, y_range=args.y_range, n_occ=args.n_occ,
+        model_params=_collect_model_params(args, model, args.x_param, args.y_param),
+        observable=args.observable,
+    )
 
 
 def _dispatch_run(args):
@@ -401,7 +450,13 @@ def main(argv=None):
                              help="Required when listing observables")
 
     plot_parser = sub.add_parser("plot")
-    plot_parser.add_argument("path", help="Path to a log JSON file")
+    plot_parser.add_argument("path", nargs="+", help="One or more log JSON files to overlay")
+    plot_parser.add_argument("--keys", nargs="+", default=None, metavar="K1,K2",
+                             help="Per-path comma-separated result keys to draw "
+                                  "(e.g. --keys analytic,vqe vqe); one entry per path.")
+    plot_parser.add_argument("--labels", nargs="+", default=None, metavar="LABEL",
+                             help="Override legend labels, one per selected series "
+                                  "in path/key order.")
     plot_parser.add_argument("--hide-plot", dest="hide_plot", action="store_true", default=False)
     plot_parser.add_argument("--output", default=None, metavar="PATH", help="Output PDF path")
     plot_parser.add_argument("--hide-legend", action="store_true", default=False)
@@ -444,12 +499,42 @@ def main(argv=None):
     _add_method_param_flags(run_parser)
     _add_operator_dict_flags(run_parser)
 
-    if pre_args.command == "run" and pre_args.model:
+    estimate_parser = sub.add_parser(
+        "estimate",
+        help="Estimate the QPU cost (seconds) of the equivalent run on a real backend",
+    )
+    estimate_parser.add_argument("--model", default=None, metavar="MODEL",
+                                 help="Registered model name. Mutually exclusive with --qubit-operator.")
+    estimate_parser.add_argument("--method", nargs="+", required=True,
+                                 choices=[m.value for m in METHOD_ORDER],
+                                 help="One or more simulation methods to estimate.")
+    estimate_parser.add_argument("--lattice", type=int, nargs="+", default=None, metavar="N",
+                                 help="Lattice extents per dimension (omit for band-structure runs).")
+    estimate_parser.add_argument("--observable", default="E", metavar="NAME",
+                                 help="Observable to compute per cell (default: 'E').")
+    estimate_parser.add_argument("--backend", required=True, metavar="NAME",
+                                 help="Real IBM device (e.g. ibm_brisbane) or least_busy, or an IQM "
+                                      "Resonance device (iqm_emerald, iqm_garnet, iqm_sirius). Local "
+                                      "simulators have no credit cost and are rejected.")
+    estimate_parser.add_argument("--shots", type=int, default=None, metavar="N",
+                                 help="Shots per circuit assumed for the estimate (default: 1024).")
+    _add_boundary_args(estimate_parser)
+    _add_geometry_args(estimate_parser)
+    _add_profile_args(estimate_parser)
+    _add_investigation_args(estimate_parser)
+    _add_sweep_args(estimate_parser)
+    _add_operator_args(estimate_parser)
+    _add_method_param_flags(estimate_parser)
+    _add_operator_dict_flags(estimate_parser)
+
+    if pre_args.command in ("run", "estimate") and pre_args.model:
         try:
             model = get_model(pre_args.model)
         except ValueError as e:
             parser.error(str(e))
-        _add_model_params(run_parser, model)
+        _add_model_params(
+            estimate_parser if pre_args.command == "estimate" else run_parser, model
+        )
 
     args = parser.parse_args(argv)
 
@@ -483,17 +568,31 @@ def main(argv=None):
             return
 
     if args.command == "plot":
+        if len(args.path) == 1 and not args.keys:
+            try:
+                result = load_result(args.path[0])
+            except Exception as e:
+                parser.error(str(e))
+            result.plot(hide_plot=args.hide_plot, output_path=args.output, hide_legend=args.hide_legend,
+                        diff=args.diff, diff_format=args.diff_format)
+            return
         try:
-            result = load_result(args.path)
-        except Exception as e:
+            plot_combined(args.path, args.keys, labels=args.labels, output_path=args.output,
+                          hide_plot=args.hide_plot, hide_legend=args.hide_legend)
+        except (ValueError, FileNotFoundError, KeyError) as e:
             parser.error(str(e))
-        result.plot(hide_plot=args.hide_plot, output_path=args.output, hide_legend=args.hide_legend,
-                    diff=args.diff, diff_format=args.diff_format)
         return
 
     if args.command == "run":
         try:
             _dispatch_run(args)
+        except (ValueError, FileNotFoundError, KeyError) as e:
+            parser.error(str(e))
+        return
+
+    if args.command == "estimate":
+        try:
+            _dispatch_estimate(args)
         except (ValueError, FileNotFoundError, KeyError) as e:
             parser.error(str(e))
         return

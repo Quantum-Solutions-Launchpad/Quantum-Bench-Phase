@@ -236,7 +236,7 @@ class DMRGMethod(SimulationMethod):
             result["observable_terms"] = len(spec["observable_terms"])
         return result
 
-    def reduce(self, cell, *, extremum="min"):
+    def reduce(self, cell, *, extremum="min", analytic=None):
         return float(cell.get("value", cell["energy"]))
 
     def parameter_summary(self) -> dict:

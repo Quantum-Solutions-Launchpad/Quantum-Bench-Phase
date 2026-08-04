@@ -1,0 +1,18 @@
+{"timestamp": "2026-07-20T17:01:02", "tag": ["analytic", 0, 0], "cell": {"value": 0.0}}
+{"timestamp": "2026-07-20T17:01:02", "tag": ["analytic", 1, 0], "cell": {"value": -3.0}}
+{"timestamp": "2026-07-20T17:01:02", "tag": ["analytic", 2, 0], "cell": {"value": -5.457675006159522}}
+{"timestamp": "2026-07-20T17:01:02", "tag": ["analytic", 3, 0], "cell": {"value": -5.750630617001001}}
+{"timestamp": "2026-07-20T17:01:02", "tag": ["analytic", 4, 0], "cell": {"value": -5.581560080071576}}
+{"timestamp": "2026-07-20T17:01:02", "tag": ["analytic", 5, 0], "cell": {"value": -2.750630617001002}}
+{"timestamp": "2026-07-20T17:01:02", "tag": ["analytic", 6, 0], "cell": {"value": 0.5423249938404814}}
+{"timestamp": "2026-07-20T17:01:02", "tag": ["analytic", 8, 0], "cell": {"value": 12.0}}
+{"timestamp": "2026-07-20T17:01:02", "tag": ["analytic", 7, 0], "cell": {"value": 5.999999999999997}}
+{"timestamp": "2026-07-20T17:01:04", "tag": ["vqe", 0, 0], "cell": {"repetitions": [0.0], "num_queries": 145, "circuit_depth": {"total": 1, "two_qubit": 0}}}
+{"timestamp": "2026-07-20T17:01:04", "tag": ["vqe", 2, 0], "cell": {"repetitions": [-5.249999999999998], "num_queries": 145, "circuit_depth": {"total": 24, "two_qubit": 14}}}
+{"timestamp": "2026-07-20T17:01:04", "tag": ["vqe", 8, 0], "cell": {"repetitions": [12.0], "num_queries": 145, "circuit_depth": {"total": 2, "two_qubit": 0}}}
+{"timestamp": "2026-07-20T17:01:04", "tag": ["vqe", 4, 0], "cell": {"repetitions": [-5.000000000000005], "num_queries": 145, "circuit_depth": {"total": 20, "two_qubit": 12}}}
+{"timestamp": "2026-07-20T17:01:04", "tag": ["vqe", 5, 0], "cell": {"repetitions": [-2.4999999999999982], "num_queries": 145, "circuit_depth": {"total": 25, "two_qubit": 14}}}
+{"timestamp": "2026-07-20T17:01:04", "tag": ["vqe", 3, 0], "cell": {"repetitions": [-5.500000000000002], "num_queries": 145, "circuit_depth": {"total": 21, "two_qubit": 12}}}
+{"timestamp": "2026-07-20T17:01:04", "tag": ["vqe", 7, 0], "cell": {"repetitions": [6.000000000000003], "num_queries": 145, "circuit_depth": {"total": 20, "two_qubit": 14}}}
+{"timestamp": "2026-07-20T17:01:04", "tag": ["vqe", 6, 0], "cell": {"repetitions": [0.7499999999999983], "num_queries": 145, "circuit_depth": {"total": 26, "two_qubit": 14}}}
+{"timestamp": "2026-07-20T17:01:04", "tag": ["vqe", 1, 0], "cell": {"repetitions": [-2.9999999999999982], "num_queries": 145, "circuit_depth": {"total": 19, "two_qubit": 12}}}
