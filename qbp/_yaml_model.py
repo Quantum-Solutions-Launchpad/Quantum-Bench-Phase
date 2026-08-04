@@ -854,8 +854,40 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
 
     sites_per_cell = spec.sites_per_cell
 
+    MAX_ED_QUBITS = 26
+
+    def _sector_indices(n_qubits, n_occ):
+        from itertools import combinations
+        if n_occ < 0 or n_occ > n_qubits:
+            return np.empty(0, dtype=np.int64)
+        idx = np.fromiter(
+            (sum(1 << p for p in c) for c in combinations(range(n_qubits), n_occ)),
+            dtype=np.int64,
+        )
+        idx.sort()
+        return idx
+
+    def _restrict(qubit_op, idx):
+        return qubit_op.to_matrix(sparse=True).tocsr()[idx][:, idx]
+
+    def _ground_state(H_sector):
+        dim = H_sector.shape[0]
+        if dim <= 512:
+            evs, vecs = _eigh(H_sector.toarray())
+            return evs, vecs[:, 0]
+        k = min(6, dim - 1)
+        try:
+            from scipy.sparse.linalg import eigsh
+            evs, vecs = eigsh(H_sector, k=k, which="SA")
+            order = np.argsort(evs)
+            evs, vecs = evs[order], vecs[:, order]
+            return evs, vecs[:, 0]
+        except Exception:
+            evs, vecs = _eigh(H_sector.toarray())
+            return evs, vecs[:, 0]
+
     def _mb_result_cached(model, lattice, n_occ, params):
-        """Returns (eigvals, ground_state_vec_in_sector, sector_mask)."""
+        """Returns (eigvals, ground_state_vec_in_sector, sector_indices)."""
         ferm_fn = getattr(model, "_analytic_fermionic_fn", None) or model.fermionic_hamiltonian
         proj_sig = getattr(model, "_analytic_projection_sig", None)
         key = (tuple(lattice), int(n_occ), tuple(sorted(params.items())), proj_sig)
@@ -869,32 +901,22 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
         n_sites = fermionic_op.num_spin_orbitals // model.spin
         mapper = model.get_mapper(n_sites, model.spin, n_occ)
         qubit_op = mapper.map(fermionic_op)
-        H_mb = qubit_op.to_matrix()
         n_qubits = qubit_op.num_qubits
-        occ_counts = np.array([bin(i).count('1') for i in range(2**n_qubits)])
-        mask = occ_counts == n_occ
-        H_sector = H_mb[np.ix_(mask, mask)]
-        evs, vecs = _eigh(H_sector)
-        result = (evs, vecs[:, 0], mask)
+        if n_qubits > MAX_ED_QUBITS:
+            raise ValueError(
+                f"Exact diagonalization needs a 2^{n_qubits} Hilbert space for lattice "
+                f"{tuple(lattice)}, which is beyond the {MAX_ED_QUBITS}-qubit limit of this "
+                f"analytic path. Use a smaller lattice or the DMRG method."
+            )
+        idx = _sector_indices(n_qubits, n_occ)
+        if idx.size == 0:
+            result = (np.empty(0), np.empty(0), idx)
+            cache[key] = result
+            return result
+        evs, psi = _ground_state(_restrict(qubit_op, idx))
+        result = (evs, psi, idx)
         cache[key] = result
         return result
-
-    def _spin_sector_expectation(model, lattice, n_occ, psi, mask, *, stagger: bool):
-        from qiskit_nature.second_q.operators import FermionicOp
-        lat = tuple(lattice)
-        n_sites = math.prod(lat) * model.sites_per_cell
-        num_so = n_sites * model.spin
-        terms_dict: dict[str, complex] = {}
-        for s in range(n_sites):
-            sign = (+1.0 if (s % sites_per_cell) % 2 == 0 else -1.0) if stagger else +1.0
-            up, dn = s * 2, s * 2 + 1
-            terms_dict[f"+_{up} -_{up}"] = terms_dict.get(f"+_{up} -_{up}", 0.0) + sign / n_sites
-            terms_dict[f"+_{dn} -_{dn}"] = terms_dict.get(f"+_{dn} -_{dn}", 0.0) - sign / n_sites
-        spin_op = FermionicOp(terms_dict, num_spin_orbitals=num_so)
-        mapper = model.get_mapper(n_sites, model.spin, n_occ)
-        qubit_op = mapper.map(spin_op)
-        Op_sector = qubit_op.to_matrix()[np.ix_(mask, mask)]
-        return float(abs(np.real(psi.conj() @ Op_sector @ psi)))
 
     def _spin_fermionic_op(model, lattice, *, stagger: bool):
         from qiskit_nature.second_q.operators import FermionicOp
@@ -909,6 +931,53 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
             terms_dict[f"+_{dn} -_{dn}"] = terms_dict.get(f"+_{dn} -_{dn}", 0.0) - sign / n_sites
         return FermionicOp(terms_dict, num_spin_orbitals=num_so)
 
+    def _structure_fermionic_op(model, lattice, *, stagger: bool):
+        from qiskit_nature.second_q.operators import FermionicOp
+        lat = tuple(lattice)
+        n_sites = math.prod(lat) * model.sites_per_cell
+        num_so = n_sites * model.spin
+        norm = float(n_sites) ** 2
+        terms_dict: dict[str, complex] = {}
+        for i in range(n_sites):
+            si = (+1.0 if (i % sites_per_cell) % 2 == 0 else -1.0) if stagger else +1.0
+            iu, idn = i * 2, i * 2 + 1
+            for j in range(n_sites):
+                sj = (+1.0 if (j % sites_per_cell) % 2 == 0 else -1.0) if stagger else +1.0
+                ju, jdn = j * 2, j * 2 + 1
+                c = si * sj / norm
+                for label, weight in (
+                    (f"+_{iu} -_{iu} +_{ju} -_{ju}", 0.25),
+                    (f"+_{iu} -_{iu} +_{jdn} -_{jdn}", -0.25),
+                    (f"+_{idn} -_{idn} +_{ju} -_{ju}", -0.25),
+                    (f"+_{idn} -_{idn} +_{jdn} -_{jdn}", 0.25),
+                    (f"+_{iu} -_{idn} +_{jdn} -_{ju}", 0.5),
+                    (f"+_{idn} -_{iu} +_{ju} -_{jdn}", 0.5),
+                ):
+                    terms_dict[label] = terms_dict.get(label, 0.0) + c * weight
+        return FermionicOp(terms_dict, num_spin_orbitals=num_so)
+
+    def _restricted_observable(model, lattice, n_occ, idx, kind):
+        cache = getattr(model, "_obs_matrix_cache", None)
+        if cache is None:
+            cache = {}
+            model._obs_matrix_cache = cache
+        key = (tuple(lattice), int(n_occ), kind)
+        if key in cache:
+            return cache[key]
+        n_sites = math.prod(tuple(lattice)) * model.sites_per_cell
+        fop = _structure_fermionic_op(model, lattice, stagger=(kind == "stag"))
+        mapper = model.get_mapper(n_sites, model.spin, n_occ)
+        mat = _restrict(mapper.map(fop), idx)
+        cache[key] = mat
+        return mat
+
+    def _structure_factor(model, lattice, n_occ, params, kind):
+        _, psi, idx = _mb_result_cached(model, lattice, n_occ, params)
+        if psi.size == 0:
+            return 0.0
+        mat = _restricted_observable(model, lattice, n_occ, idx, kind)
+        return max(0.0, float(np.real(psi.conj() @ (mat @ psi))))
+
     def _e_mb(model, lattice, H, eigvals, eigvecs, n_occ, params):
         evs, _, _ = _mb_result_cached(model, lattice, n_occ, params)
         return float(evs[0]) if len(evs) > 0 else float('nan')
@@ -919,21 +988,53 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
             return 0.0
         return float(evs[1] - evs[0])
 
+    def _s_stag(model, lattice, H, eigvals, eigvecs, n_occ, params):
+        return _structure_factor(model, lattice, n_occ, params, "stag")
+
+    def _s_total(model, lattice, H, eigvals, eigvecs, n_occ, params):
+        return _structure_factor(model, lattice, n_occ, params, "total")
+
+    def _noninteracting_baseline(model, lattice, n_occ):
+        n_sites = math.prod(tuple(lattice)) * model.sites_per_cell
+        n_eff = min(int(n_occ), 2 * n_sites - int(n_occ))
+        if n_eff <= 0:
+            return 0.0
+        return math.sqrt(0.75 * n_eff) / n_sites
+
     def _m_stag(model, lattice, H, eigvals, eigvecs, n_occ, params):
-        _, psi, mask = _mb_result_cached(model, lattice, n_occ, params)
-        return _spin_sector_expectation(model, lattice, n_occ, psi, mask, stagger=True)
+        m = math.sqrt(_structure_factor(model, lattice, n_occ, params, "stag"))
+        return m - _noninteracting_baseline(model, lattice, n_occ)
 
     def _m_total(model, lattice, H, eigvals, eigvecs, n_occ, params):
-        _, psi, mask = _mb_result_cached(model, lattice, n_occ, params)
-        return _spin_sector_expectation(model, lattice, n_occ, psi, mask, stagger=False)
+        return math.sqrt(_structure_factor(model, lattice, n_occ, params, "total"))
 
-    def _m_stag_quantum_op(model, lattice, **params):
-        return _spin_fermionic_op(model, lattice, stagger=True)
+    def _s_stag_quantum_op(model, lattice, **params):
+        return _structure_fermionic_op(model, lattice, stagger=True)
 
-    def _m_total_quantum_op(model, lattice, **params):
-        return _spin_fermionic_op(model, lattice, stagger=False)
+    def _s_total_quantum_op(model, lattice, **params):
+        return _structure_fermionic_op(model, lattice, stagger=False)
+
+    def _sqrt_composite(stagger: bool):
+        def _composite(model, lattice, n_occ, params, mapper, n_orbitals, sub_eval):
+            op = mapper.map(_structure_fermionic_op(model, lattice, stagger=stagger))
+            _, vals = sub_eval(n_occ, observable_qubit_ops=[op])
+            m = math.sqrt(max(0.0, float(vals[0])))
+            if stagger:
+                m -= _noninteracting_baseline(model, lattice, n_occ)
+            return m
+        return _composite
 
     return {
+        "S_stag": Observable(
+            name="S_stag", display_name=r"S(\pi,\pi)",
+            analytic=_s_stag,
+            quantum_operator=_s_stag_quantum_op,
+        ),
+        "S_total": Observable(
+            name="S_total", display_name=r"S(0,0)",
+            analytic=_s_total,
+            quantum_operator=_s_total_quantum_op,
+        ),
         "E": Observable(
             name="E", display_name="E",
             analytic=_e_mb,
@@ -946,12 +1047,12 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
         "M_stag": Observable(
             name="M_stag", display_name=r"|m_{\mathrm{stag}}|",
             analytic=_m_stag,
-            quantum_operator=_m_stag_quantum_op,
+            quantum_composite=_sqrt_composite(True),
         ),
         "M_total": Observable(
             name="M_total", display_name=r"|m_{\mathrm{total}}|",
             analytic=_m_total,
-            quantum_operator=_m_total_quantum_op,
+            quantum_composite=_sqrt_composite(False),
         ),
     }
 
