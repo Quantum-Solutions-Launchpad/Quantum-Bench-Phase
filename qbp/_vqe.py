@@ -24,6 +24,8 @@ def _isa(op, circ):
 _RETRY_ATTEMPTS = 5
 _RETRY_BASE_DELAY = 2.0
 
+WARM_START_JITTER = 0.1
+
 
 def _network_error_types():
     types: list[type] = []
@@ -140,6 +142,22 @@ def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=N
         which do NOT inherit the parent process's seeded RNG state, so a
         top-level np.random.seed() call in a driver script has no effect on
         either of these here.
+    warm_start
+        Start the optimizer from the non-interacting ground state prepared by
+        the Givens network, with parameters drawn from N(0, WARM_START_JITTER)
+        rather than exactly zero. All-zero parameters are a stationary point of
+        the excitation-preserving ansatz -- the gradient there vanishes, so a
+        gradient-based optimizer terminates immediately at the free-fermion
+        state and never builds any correlation.
+
+    Notes
+    -----
+    ``max_iters`` is the optimizer's iteration limit, not an evaluation budget:
+    optimizers vary in how many function evaluations one iteration costs (SPSA
+    ~2, finite-difference methods ~n_params). The internal ``max_evals`` cap is
+    only a runaway guard, sized so it does not truncate a well-formed run. The
+    returned energy and parameters are the best seen over the whole trajectory,
+    since a returned final point can be worse than the starting point.
     """
     if seed is not None:
         np.random.seed(seed)
@@ -168,33 +186,47 @@ def _vqe_sparse(hamiltonian, ansatz, get_optimizer_fn, max_iters, rep, backend=N
 
         measure = chain_measure(strategies, _base_measure)
 
+        n_params = ansatz_circuit.num_parameters
         if warm_start:
-            x0 = np.zeros(ansatz_circuit.num_parameters)
+            x0 = np.random.normal(0.0, WARM_START_JITTER, n_params)
         else:
-            x0 = 2 * np.pi * np.random.random(ansatz_circuit.num_parameters)
-        cost_history = {"iters": 0, "cost_history": []}
+            x0 = 2 * np.pi * np.random.random(n_params)
+
+        max_evals = 2 * max_iters * (n_params + 2)
+        best = {"energy": float("inf"), "params": np.asarray(x0, dtype=float)}
+        cost_history = {"evals": 0, "cost_history": []}
 
         def cost_func(params):
-            if cost_history["iters"] >= max_iters:
+            if cost_history["evals"] >= max_evals:
                 return cost_history["cost_history"][-1]
             energy = measure(ansatz_circuit, hamiltonian, params)
-            cost_history["iters"] += 1
+            cost_history["evals"] += 1
             cost_history["cost_history"].append(energy)
+            if energy < best["energy"]:
+                best["energy"] = energy
+                best["params"] = np.asarray(params, dtype=float).copy()
             return energy
 
         optimizer = get_optimizer_fn(max_iters)
         res = optimizer.minimize(cost_func, x0=x0)
-        energy = float(res.fun)
-        logger.debug(f"VQE {label} = {energy}")
+        if np.isfinite(best["energy"]):
+            energy = float(best["energy"])
+            optimal_params = best["params"]
+        else:
+            energy = float(res.fun)
+            optimal_params = np.asarray(res.x, dtype=float)
+        logger.debug(
+            f"VQE {label} = {energy} "
+            f"(evals={cost_history['evals']}, final={float(res.fun)})"
+        )
 
         if return_state:
-            param_dict = dict(zip(ansatz_circuit.parameters, res.x))
+            param_dict = dict(zip(ansatz_circuit.parameters, optimal_params))
             return energy, ansatz_circuit.assign_parameters(param_dict)
 
         if observable_qubit_ops is None:
             return energy
 
-        optimal_params = np.asarray(res.x)
         observable_values = [measure(ansatz_circuit, op, optimal_params) for op in observable_qubit_ops]
         return energy, observable_values
 
@@ -216,7 +248,7 @@ def vqe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamilto
     )
 
 
-def vqe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, max_iters, n_layers, rep, observable, backend=None, fermionic_hamiltonian_fn=None):
+def vqe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, max_iters, n_layers, rep, observable, backend=None, fermionic_hamiltonian_fn=None, strategies=None, seed: int | None = None, warm_start: bool = False):
     obs = model.get_observable(observable)
     fermionic_hamiltonian_fn = fermionic_hamiltonian_fn or model.fermionic_hamiltonian
 
@@ -226,6 +258,7 @@ def vqe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, m
             fermionic_hamiltonian_fn, model.get_optimizer,
             model.get_vqe_ansatz, mapper, max_iters, n_layers, rep,
             backend=backend, observable_qubit_ops=observable_qubit_ops,
+            strategies=strategies, seed=seed, warm_start=warm_start,
         )
 
     if obs.quantum_composite is not None:
@@ -402,6 +435,9 @@ class VQEMethod(SimulationMethod):
                     model, lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
                     ctx.mapper, self.iters, self.layers, rep, observable,
                     backend=backend, fermionic_hamiltonian_fn=ferm_fn,
+                    strategies=self.mitigation_strategies,
+                    seed=ctx.cell_index * 1000 + rep,
+                    warm_start=self.warm_start,
                 )
             reps.append(float(energy))
         num_queries, (total, two_q) = vqe_other_benchmarks(
