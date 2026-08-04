@@ -31,6 +31,10 @@ _INITIAL_STATES = (
     "hartree_fock", "uniform", "computational_zero", "vqe_informed",
 )
 
+_OPTIMIZER_DEFAULTS = {
+    "L_BFGS_B": {"ftol": 1e-12, "maxfun": 60000},
+}
+
 
 def _make_evaluator(extra_names: dict | None = None) -> Interpreter:
     aeval = Interpreter(use_numpy=True, minimal=False)
@@ -501,6 +505,19 @@ def _build_optimizer_factory(spec: YamlModelSpec):
 
 
 def build_optimizer_factory(optimizer_spec: OptimizerSpec, *, name: str):
+    """Build a ``get_optimizer(max_iters)`` factory from an optimizer spec.
+
+    Two things are filled in when the spec leaves them out. ``maxiter`` is bound
+    to ``@max_iters`` for any optimizer that accepts it, so ``--vqe-iters``
+    still reaches an optimizer selected with ``--vqe-optimizer`` (a spec built
+    from the CLI carries only the kwargs typed on the command line, and without
+    this the optimizer silently falls back to its own default iteration count).
+    Optimizers listed in ``_OPTIMIZER_DEFAULTS`` also get tuned defaults, since
+    the library defaults stop far too early on VQE landscapes. Anything set
+    explicitly in YAML or on the command line always wins.
+    """
+    import inspect
+
     import qiskit_algorithms.optimizers as qopt
     cls = getattr(qopt, optimizer_spec.type, None)
     if cls is None:
@@ -508,6 +525,15 @@ def build_optimizer_factory(optimizer_spec: OptimizerSpec, *, name: str):
             f"qiskit_algorithms.optimizers has no '{optimizer_spec.type}'"
         )
     raw_kwargs = dict(optimizer_spec.kwargs)
+    for key, value in _OPTIMIZER_DEFAULTS.get(optimizer_spec.type, {}).items():
+        raw_kwargs.setdefault(key, value)
+    if "maxiter" not in raw_kwargs:
+        try:
+            accepts_maxiter = "maxiter" in inspect.signature(cls.__init__).parameters
+        except (TypeError, ValueError):
+            accepts_maxiter = False
+        if accepts_maxiter:
+            raw_kwargs["maxiter"] = "@max_iters"
 
     def get_optimizer(max_iters):
         runtime = {"max_iters": max_iters}
