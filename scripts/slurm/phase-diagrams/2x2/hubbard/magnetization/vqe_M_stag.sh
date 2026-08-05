@@ -10,9 +10,7 @@
 #SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.out
 #SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.err
 
-# Hubbard 2x2 magnetization VQE: n_occ vs U sweep for M_stag.
-# Uses unified parallel runner for optimal scheduling.
-# PIPELINE=noisy sbatch ... for the noisy pipeline (default: ideal).
+# Hubbard 2x2 staggered magnetization: analytic reference + VQE heatmap.
 
 set -euo pipefail
 
@@ -29,52 +27,46 @@ setup_visualizer_dmrg_env "${SLURM_CPUS_PER_TASK:-8}"
 
 export QBP_JOBS_PER_SHARD="${QBP_JOBS_PER_SHARD:-2}"
 
-LOG_DIR="${LOG_DIR:-${REPO_ROOT}/manuscript-plots/logs}"
-PLOT_DIR="${PLOT_DIR:-${REPO_ROOT}/manuscript-plots/plots}"
+LOG_DIR="${LOG_DIR:-${REPO_ROOT}/examples/logs}"
+PLOT_DIR="${PLOT_DIR:-${REPO_ROOT}/examples/plots}"
 mkdir -p "${LOG_DIR}" "${PLOT_DIR}"
 
-OUT_LOG_DIR="${LOG_DIR}/hubbard/2x2/magnetization"
-OUT_PLOT_DIR="${PLOT_DIR}/hubbard/2x2/magnetization"
+OUT_LOG_DIR="${LOG_DIR}/hubbard/2x2"
+OUT_PLOT_DIR="${PLOT_DIR}/hubbard/2x2"
 mkdir -p "${OUT_LOG_DIR}" "${OUT_PLOT_DIR}"
 
 OBSERVABLE="M_stag"
 SWEEP_TAG="n_occ-vs-U"
 
-PIPELINE="${PIPELINE:-ideal}"
-backend_args=()
-if [[ "${PIPELINE}" == "noisy" ]]; then
-    backend_args=(--backend "${NOISY_BACKEND:-FakeSherbrooke}")
-fi
-
 echo "==================================================================="
-echo "Hubbard 2x2 magnetization VQE (SHARDED) - M_stag"
+echo "Hubbard 2x2 magnetization analytic+VQE (SHARDED) - M_stag"
 echo "  observable:  ${OBSERVABLE}"
 echo "  sweep:       n_occ [${HUBBARD_N_OCC_START:-0} ${HUBBARD_N_OCC_END:-16} ${HUBBARD_N_OCC_STEP:-1}] vs U [${HUBBARD_U_START:-0.0} ${HUBBARD_U_END:-10.0} ${HUBBARD_U_STEP:-0.5}]"
-echo "  pipeline:    ${PIPELINE}${backend_args[1]:+ (backend: ${backend_args[1]})}"
-echo "  method:      vqe"
+echo "  methods:     analytic vqe"
+echo "  optimizer:   L_BFGS_B"
 echo "  plot format: heatmap"
 echo "  parallelism: distributed across ${SHARDS} shards on multiple nodes"
 echo "==================================================================="
 
 cmd=(
     --model hubbard
-    --method vqe
+    --method analytic vqe
     --lattice 2 2
     --observable "${OBSERVABLE}"
+    --heatmap
     --x-param n_occ
     --x-range "${HUBBARD_N_OCC_START:-0}" "${HUBBARD_N_OCC_END:-16}" "${HUBBARD_N_OCC_STEP:-1}"
     --y-param U
-    --y-range "${HUBBARD_U_START:-0.0}" "${HUBBARD_U_END:-10.0}" "${HUBBARD_U_STEP:-1}"
+    --y-range "${HUBBARD_U_START:-0.0}" "${HUBBARD_U_END:-10.0}" "${HUBBARD_U_STEP:-0.5}"
     --t "${HUBBARD_T:-1.0}"
-    --heatmap
+    --vqe-warm-start
+    --vqe-layers "${VQE_LAYERS:-6}"
+    --vqe-reps "${VQE_REPS:-5}"
+    --vqe-optimizer "${VQE_OPTIMIZER:-L_BFGS_B}"
+    --vqe-iters "${VQE_ITERS:-400}"
 )
 
-if [[ "${PIPELINE}" == "noisy" ]]; then
-    cmd+=("${backend_args[@]}")
-fi
-
-append_vqe_args cmd
-append_qbp_output_paths cmd "${OUT_LOG_DIR}/simulated-${PIPELINE}-vqe-${OBSERVABLE}-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-${PIPELINE}-vqe-${OBSERVABLE}-${SWEEP_TAG}.pdf"
+append_qbp_output_paths cmd "${OUT_LOG_DIR}/vqe-${OBSERVABLE}-heatmap-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/vqe-${OBSERVABLE}-heatmap-${SWEEP_TAG}.pdf"
 
 echo ""
 echo "==================================================================="

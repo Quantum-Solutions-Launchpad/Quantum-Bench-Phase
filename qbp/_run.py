@@ -1015,8 +1015,10 @@ def _run_model_methods(
 
     if heatmap and is_1d:
         raise ValueError("heatmap=True requires both x and y sweep axes; provide y_param/y_range.")
-    if heatmap and len(methods) != 1:
-        raise ValueError("heatmap=True requires exactly one simulation method.")
+    if heatmap and len(methods) != 1 and Method.ANALYTIC not in methods:
+        raise ValueError(
+            "multi-method heatmap=True requires the analytic method as the reference surface."
+        )
 
     plot_format = "2d" if is_1d else ("heatmap" if heatmap else "3d")
 
