@@ -72,18 +72,16 @@ cmd=(
 
 append_qbp_output_paths cmd "${OUT_LOG_DIR}/simulated-ideal-analytic-${OBSERVABLE}-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-ideal-analytic-${OBSERVABLE}-${SWEEP_TAG}.pdf"
 
-run_visualizer_sharded_cmd cmd
-EXIT_STATUS=$?
-
 echo ""
 echo "==================================================================="
-if (( EXIT_STATUS == 0 )); then
+if run_visualizer_sharded_cmd cmd; then
     echo "✓ Completed at $(date)"
     echo "  output: ${OUT_LOG_DIR}/simulated-ideal-analytic-${OBSERVABLE}-${SWEEP_TAG}.json"
     echo "  plot:   ${OUT_PLOT_DIR}/simulated-ideal-analytic-${OBSERVABLE}-${SWEEP_TAG}.pdf"
 else
+    EXIT_STATUS=$?
     echo "✗ FAILED with status ${EXIT_STATUS}"
+    echo "==================================================================="
+    exit "${EXIT_STATUS}"
 fi
 echo "==================================================================="
-
-exit ${EXIT_STATUS}

@@ -89,5 +89,10 @@ append_iqpe_args cmd
 append_dmrg_args cmd
 append_qbp_output_paths cmd "${OUT_LOG_DIR}/simulated-${PIPELINE}-all-E-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-${PIPELINE}-all-E-${SWEEP_TAG}.pdf"
 
-run_visualizer_sharded_cmd cmd
-EXIT_STATUS=$?
+if run_visualizer_sharded_cmd cmd; then
+    echo "Completed at $(date)"
+else
+    EXIT_STATUS=$?
+    echo "ERROR: Computation failed with status ${EXIT_STATUS}"
+    exit "${EXIT_STATUS}"
+fi

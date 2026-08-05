@@ -40,11 +40,11 @@ mkdir -p "${OUT_LOG_DIR}" "${OUT_PLOT_DIR}"
 X_PARAM=M
 X_START="${HALDANE_M_START:--6.0}"
 X_END="${HALDANE_M_END:-6.0}"
-X_STEP="${HALDANE_M_STEP:-0.5}"
+X_STEP="${HALDANE_M_STEP:-1}"
 Y_PARAM=phi
 Y_START="${HALDANE_PHI_START:--3.141592653589793}"
 Y_END="${HALDANE_PHI_END:-3.141592653589793}"
-Y_STEP="${HALDANE_PHI_STEP:-0.39269908169872414}"
+Y_STEP="${HALDANE_PHI_STEP:-0.78539816}"
 SWEEP_TAG="M-vs-phi"
 
 PIPELINE="${PIPELINE:-ideal}"
@@ -87,5 +87,10 @@ append_vqe_args cmd
 append_iqpe_args cmd
 append_qbp_output_paths cmd "${OUT_LOG_DIR}/simulated-${PIPELINE}-vqe-iqpe-E-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-${PIPELINE}-vqe-iqpe-E-${SWEEP_TAG}.pdf"
 
-run_visualizer_sharded_cmd cmd
-EXIT_STATUS=$?
+if run_visualizer_sharded_cmd cmd; then
+    echo "Completed at $(date)"
+else
+    EXIT_STATUS=$?
+    echo "ERROR: Computation failed with status ${EXIT_STATUS}"
+    exit "${EXIT_STATUS}"
+fi

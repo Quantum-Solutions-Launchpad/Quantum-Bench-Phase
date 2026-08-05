@@ -73,7 +73,7 @@ print(f"IQPE shape: {Z_iqpe.shape}, NaN count: {np.isnan(Z_iqpe).sum()}")
 plot_simulated(
     x_values,
     y_values,
-    x_label=r"$n_{occ}$",
+    x_label=r"$N_{occ}$",
     y_label=r"$t_2$",
     Z_exact=Z_analytic,
     Z_vqe=Z_vqe,
@@ -87,7 +87,7 @@ plot_simulated(
     extra_series=[{
         "values": Z_dmrg,
         "label": "DMRG",
-        "color": "#E69F00",
+        "color": "#D7277C",
         "marker": "s",
         "size": 45,
     }],

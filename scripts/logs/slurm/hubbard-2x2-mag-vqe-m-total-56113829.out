@@ -1,0 +1,9 @@
+===================================================================
+Hubbard 2x2 magnetization VQE (SHARDED) - M_total
+  observable:  M_total
+  sweep:       n_occ [0 16 1] vs U [0.0 10.0 0.5]
+  pipeline:    ideal
+  method:      vqe
+  plot format: heatmap
+  parallelism: distributed across 16 shards on multiple nodes
+===================================================================

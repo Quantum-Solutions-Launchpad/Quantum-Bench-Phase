@@ -1,0 +1,9 @@
+===================================================================
+Haldane 2x2 band structure kx vs ky (noisy) - VQE + IQPE
+  sweep:       kx [-3.141592653589793 3.141592653589793 0.39269908169872414] vs ky [-3.141592653589793 3.141592653589793 0.39269908169872414]
+  backend:     FakeSherbrooke
+  methods:     iqpe vqe
+  grid points: ~289 (17 × 17)
+  parallelism: distributed across 16 shards on multiple nodes
+  output:      new-data
+===================================================================

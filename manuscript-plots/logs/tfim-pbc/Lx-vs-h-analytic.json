@@ -1,0 +1,224 @@
+{
+    "type": "run",
+    "methods": [
+        "analytic"
+    ],
+    "backend": "ideal",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "x_param": "Lx",
+    "y_param": "h",
+    "x_values": [
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0,
+        12.0
+    ],
+    "y_values": [
+        0.0,
+        0.1,
+        0.5,
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0
+    ],
+    "parameters": {
+        "model": "tfim",
+        "lattice": null,
+        "qubit_operator": "/pscratch/sd/m/mbao202/tfim.hdf5",
+        "keys": [
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-0.1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-0.1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-0.1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-0.1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-0.1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-0.1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-0.1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-0.1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-6"
+            ]
+        ],
+        "model_params": {},
+        "method_params": {
+            "analytic": {}
+        }
+    },
+    "result": {
+        "analytic": {
+            "0": {
+                "0": -3.9999999999999996,
+                "1": -4.010037405062519,
+                "2": -4.271558410139717,
+                "3": -5.2262518595055045,
+                "4": -8.543116820279423,
+                "5": -12.346784241457332,
+                "6": -16.25576071228446,
+                "7": -20.202968496019313,
+                "8": -24.168390299850422
+            },
+            "1": {
+                "0": -3.0000000000000018,
+                "1": -3.2125051079978113,
+                "2": -4.309940615606395,
+                "3": -6.155367074350498,
+                "4": -10.619881231212803,
+                "5": -15.416407864998764,
+                "6": -20.31269714691961,
+                "7": -25.250200417871724,
+                "8": -30.208488777594066
+            },
+            "2": {
+                "0": -6.000000000000001,
+                "1": -6.015009643654415,
+                "2": -6.384694563603688,
+                "3": -7.727406610312548,
+                "4": -12.769389127207349,
+                "5": -18.504540129955377,
+                "6": -24.376722637117723,
+                "7": -30.300835120120112,
+                "8": -36.25046837531159
+            },
+            "3": {
+                "0": -5.000000000000014,
+                "1": -5.217510942484341,
+                "2": -6.443233762799752,
+                "3": -8.762572535069655,
+                "4": -14.886467525599498,
+                "5": -21.587206768431585,
+                "6": -28.43918270115318,
+                "7": -35.350869688496296,
+                "8": -42.292171807306346
+            },
+            "4": {
+                "0": -8.000000000000004,
+                "1": -8.02001253345865,
+                "2": -8.509082235140319,
+                "3": -10.251661790966043,
+                "4": -17.01816447028057,
+                "5": -24.671522034742917,
+                "6": -32.50199685892572,
+                "7": -40.40101279555691,
+                "8": -48.33391683959728
+            },
+            "5": {
+                "0": -7.000000000000011,
+                "1": -7.222514097598702,
+                "2": -8.57155913899181,
+                "3": -11.342563639235445,
+                "4": -19.14311827798366,
+                "5": -27.7553311705133,
+                "6": -36.56472954686481,
+                "7": -45.451135935193435,
+                "8": -54.37565549699389
+            },
+            "6": {
+                "0": -10.00000000000001,
+                "1": -10.025015664234305,
+                "2": -10.635604409347975,
+                "3": -12.784906442999333,
+                "4": -21.271208818696035,
+                "5": -30.839297462957507,
+                "6": -40.627481202260725,
+                "7": -50.50126279253516,
+                "8": -60.41739514320995
+            },
+            "7": {
+                "0": -12.000000000000025,
+                "1": -12.030018797059176,
+                "2": -12.762569151024042,
+                "3": -15.322595151080765,
+                "4": -25.52513830204817,
+                "5": -37.007147106108384,
+                "6": -48.752976655907,
+                "7": -60.60151524245796,
+                "8": -72.50087415049117
+            }
+        }
+    }
+}

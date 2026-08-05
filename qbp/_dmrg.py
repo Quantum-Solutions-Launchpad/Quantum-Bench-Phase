@@ -7,6 +7,7 @@ import os
 import shlex
 import shutil
 import subprocess
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -38,6 +39,73 @@ def _fermionic_terms(op):
         {"label": label, "coefficient": _complex_payload(coeff)}
         for label, coeff in op.items()
     ]
+
+
+def _pauli_terms(pauli_op, *, scale: float = 1.0) -> list[dict]:
+    simplified = pauli_op.simplify()
+    return [
+        {"pauli": str(pauli), "coefficient": _complex_payload(scale * coeff)}
+        for pauli, coeff in zip(simplified.paulis, simplified.coeffs)
+        if abs(coeff) > 1e-14 and set(str(pauli)) != {"I"}
+    ]
+
+
+def _pauli_constant_shift(pauli_op, *, scale: float = 1.0) -> complex:
+    simplified = pauli_op.simplify()
+    shift = 0.0j
+    for pauli, coeff in zip(simplified.paulis, simplified.coeffs):
+        if abs(coeff) > 1e-14 and set(str(pauli)) == {"I"}:
+            shift += scale * complex(coeff)
+    return shift
+
+
+def _export_pauli_operator(
+    pauli_op,
+    path: str,
+    observable: str = "E",
+    *,
+    scale: float = 1.0,
+    label: str = "hamlib_operator",
+):
+    """Export a SparsePauliOp as native Pauli terms for the Julia DMRG bridge."""
+    n_qubits = int(pauli_op.num_qubits)
+
+    payload = {
+        "format": "qbp_pauli_op_v1",
+        "created_at": datetime.now().isoformat(timespec="seconds"),
+        "model": "hamlib",
+        "display_name": label,
+        "lattice": None,
+        "spin": "pauli",
+        "n_sites": n_qubits,
+        "n_qubits": n_qubits,
+        "n_occ": 0,
+        "model_params": {},
+        "terms": _pauli_terms(pauli_op, scale=scale),
+        "constant_shift": _complex_payload(_pauli_constant_shift(pauli_op, scale=scale)),
+        "observable": observable,
+    }
+
+    with open(path, "w") as f:
+        json.dump(payload, f, indent=2)
+    return payload
+
+
+def _pauli_initial_state(initial_state: str) -> str:
+    return "neel" if initial_state == "packed" else initial_state
+
+
+def _pauli_exact_energy(pauli_op, *, extremum: str = "min") -> float:
+    matrix = pauli_op.to_matrix()
+    eigvals = np.linalg.eigvalsh(matrix)
+    if extremum == "max":
+        return float(np.max(eigvals).real)
+    return float(np.min(eigvals).real)
+
+
+def _pauli_exact_bands(pauli_op) -> list[float]:
+    matrix = pauli_op.to_matrix()
+    return [float(v.real) for v in np.linalg.eigvalsh(matrix)]
 
 
 def _export_fermionic_op(model: Model, lattice, n_occ: int, model_params: dict, path: str,
@@ -193,8 +261,56 @@ class DMRGMethod(SimulationMethod):
         ParamSpec("script_path", str, None, "Override the bundled Julia DMRG script", metavar="PATH"),
     ]
     SUPPORTS_REAL_SPACE = True
-    SUPPORTS_BAND_STRUCTURE = False
-    SUPPORTS_OPERATOR = False
+    SUPPORTS_BAND_STRUCTURE = True
+    SUPPORTS_OPERATOR = True
+
+    def compute_bloch_cell(self, model, k_tuple, cell_params, observable, *,
+                           backend, ctx):
+        """Compute DMRG for momentum-space (Bloch) Hamiltonian."""
+        from qiskit.quantum_info import SparsePauliOp
+
+        H_matrix = model.bloch_hamiltonian(*k_tuple, **cell_params)
+        pauli_op = SparsePauliOp.from_operator(H_matrix)
+        if pauli_op.num_qubits < 2:
+            pauli_op = SparsePauliOp.from_list([
+                (f"{pauli}I", complex(coeff))
+                for pauli, coeff in zip(pauli_op.paulis, pauli_op.coeffs)
+            ])
+
+        cell_tag = f"bloch-{ctx.ix}-{ctx.iy}"
+        hamiltonian_path = os.path.join(ctx.tmp_dir, f"{cell_tag}-hamiltonian.json")
+        output_path = os.path.join(ctx.raw_dir, f"dmrg-{cell_tag}.json")
+
+        _export_pauli_operator(
+            pauli_op, hamiltonian_path, observable=observable,
+            label=f"{model.name}_bloch",
+        )
+
+        _run_julia_dmrg(
+            hamiltonian_path,
+            output_path,
+            julia=self.julia,
+            julia_module=self.julia_module,
+            julia_project=self.julia_project,
+            nsweeps=self.nsweeps,
+            maxdims=self.maxdims,
+            cutoff=self.cutoff,
+            seed=self.seed + ctx.cell_index,
+            conserve_qns=False,
+            conserve_sz=False,
+            initial_state=_pauli_initial_state(self.initial_state),
+            script_path=self.script_path,
+        )
+
+        with open(output_path) as f:
+            raw = json.load(f)
+
+        return {
+            "energy": float(raw["energy"]),
+            "max_link_dim": raw.get("max_link_dim"),
+            "avg_link_dim": raw.get("avg_link_dim"),
+            "profile": raw.get("profile"),
+        }
 
     def compute_cell(self, model, lattice, n_occ, cell_params, observable, *,
                      backend, ctx):
@@ -236,7 +352,64 @@ class DMRGMethod(SimulationMethod):
             result["observable_terms"] = len(spec["observable_terms"])
         return result
 
+    def compute_operator_cell(self, op, *, extremum, backend, label, observable: str = "E"):
+        """Compute DMRG cell for a HamLib Pauli operator."""
+        if observable != "E":
+            raise ValueError(
+                "DMRG only supports energy on the --qubit-operator/HamLib path."
+            )
+        if op.num_qubits < 2:
+            return {
+                "energy": _pauli_exact_energy(op, extremum=extremum),
+                "hamiltonian_terms": len(op.simplify().paulis),
+                "profile": {"dmrg": {"skipped": "one_site_pauli_exact"}},
+                "initial_state": None,
+            }
+        sign = -1.0 if extremum == "max" else 1.0
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            hamiltonian_path = os.path.join(tmp_dir, "hamiltonian.json")
+            output_path = os.path.join(tmp_dir, "dmrg_result.json")
+
+            _export_pauli_operator(
+                op, hamiltonian_path, observable=observable, scale=sign,
+                label=label or "hamlib_operator",
+            )
+
+            _run_julia_dmrg(
+                hamiltonian_path,
+                output_path,
+                julia=self.julia,
+                julia_module=self.julia_module,
+                julia_project=self.julia_project,
+                nsweeps=self.nsweeps,
+                maxdims=self.maxdims,
+                cutoff=self.cutoff,
+                seed=self.seed,
+                conserve_qns=False,
+                conserve_sz=False,
+                initial_state=_pauli_initial_state(self.initial_state),
+                script_path=self.script_path,
+            )
+
+            with open(output_path) as f:
+                raw = json.load(f)
+            with open(hamiltonian_path) as f:
+                spec = json.load(f)
+            energy = sign * float(raw["energy"])
+
+            return {
+                "energy": energy,
+                "hamiltonian_terms": len(spec["terms"]),
+                "max_link_dim": raw.get("max_link_dim"),
+                "avg_link_dim": raw.get("avg_link_dim"),
+                "profile": raw.get("profile"),
+                "initial_state": raw.get("initial_state"),
+            }
+
     def reduce(self, cell, *, extremum="min", analytic=None):
+        if "bands" in cell:
+            return cell["bands"]
         return float(cell.get("value", cell["energy"]))
 
     def parameter_summary(self) -> dict:

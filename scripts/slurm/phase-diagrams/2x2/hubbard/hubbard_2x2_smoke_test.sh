@@ -73,12 +73,9 @@ cmd=(
 append_vqe_args cmd
 append_qbp_output_paths cmd "${OUT_LOG_DIR}/smoke-test-${OBSERVABLE}.json" "${OUT_PLOT_DIR}/smoke-test-${OBSERVABLE}.pdf"
 
-run_visualizer_sharded_cmd cmd
-EXIT_STATUS=$?
-
 echo ""
 echo "==================================================================="
-if (( EXIT_STATUS == 0 )); then
+if run_visualizer_sharded_cmd cmd; then
     echo "✓ SMOKE TEST PASSED at $(date)"
     echo ""
     echo "Data:  ${OUT_LOG_DIR}/smoke-test-${OBSERVABLE}.json"
@@ -86,8 +83,10 @@ if (( EXIT_STATUS == 0 )); then
     ls -lh "${OUT_LOG_DIR}"/smoke-test-${OBSERVABLE}.* 2>/dev/null | sed 's/^/  /'
     ls -lh "${OUT_PLOT_DIR}"/smoke-test-${OBSERVABLE}.* 2>/dev/null | sed 's/^/  /'
 else
+    EXIT_STATUS=$?
     echo "✗ SMOKE TEST FAILED"
+    echo "status: ${EXIT_STATUS}"
+    echo "==================================================================="
+    exit "${EXIT_STATUS}"
 fi
 echo "==================================================================="
-
-exit ${EXIT_STATUS}

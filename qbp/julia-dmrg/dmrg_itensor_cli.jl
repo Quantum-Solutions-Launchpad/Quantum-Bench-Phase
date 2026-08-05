@@ -100,9 +100,6 @@ function add_term(os::OpSum, coeff, label::AbstractString, spin::Int)
         os += coeff
         return os
     end
-    if length(tokens) % 2 != 0
-        error("Malformed FermionicOp label: $label")
-    end
 
     args = Any[coeff]
     for token in tokens
@@ -116,6 +113,36 @@ function add_term(os::OpSum, coeff, label::AbstractString, spin::Int)
         push!(args, site)
     end
     os += tuple(args...)
+    return os
+end
+
+function add_pauli_term(os::OpSum, coeff, label::AbstractString)
+    scaled_coeff = coeff
+    args = Any[]
+    for (site_offset, pauli) in enumerate(label)
+        if pauli == 'I'
+            continue
+        elseif pauli == 'X'
+            push!(args, "Sx")
+            scaled_coeff *= 2
+        elseif pauli == 'Y'
+            push!(args, "Sy")
+            scaled_coeff *= 2
+        elseif pauli == 'Z'
+            push!(args, "Sz")
+            scaled_coeff *= 2
+        else
+            error("Unsupported Pauli token: $pauli")
+        end
+        push!(args, site_offset)
+    end
+    if isempty(args)
+        return os
+    else
+        term_args = Any[scaled_coeff]
+        append!(term_args, args)
+        os += tuple(term_args...)
+    end
     return os
 end
 
@@ -183,6 +210,15 @@ function build_initial_state(
     error("Unsupported spin=$spin")
 end
 
+function build_pauli_initial_state(n_sites::Int, strategy::AbstractString)
+    if strategy == "neel"
+        return [isodd(i) ? "Up" : "Dn" for i in 1:n_sites]
+    elseif strategy == "packed"
+        return fill("Dn", n_sites)
+    end
+    error("Unsupported Pauli initial-state strategy: $strategy")
+end
+
 function collect_link_dims(psi)
     dims = Int[]
     for bond in 1:(length(psi) - 1)
@@ -198,37 +234,56 @@ function main()
     overall_t0 = time_ns()
     config = parse_args(ARGS)
     spec = JSON.parsefile(config["hamiltonian"])
-    spin = Int(spec["spin"])
+    operator_format = get(spec, "format", "qbp_fermionic_op_v1")
     n_sites = Int(spec["n_sites"])
-    n_occ = Int(spec["n_occ"])
+    n_occ = Int(get(spec, "n_occ", 0))
+    constant_shift = if operator_format == "qbp_pauli_op_v1"
+        real(complex_coeff(get(spec, "constant_shift", Dict("re" => 0.0, "im" => 0.0))))
+    else
+        0.0
+    end
 
-    sites = if spin == 2
+    spin = get(spec, "spin", 1)
+    sites = if operator_format == "qbp_pauli_op_v1"
+        siteinds("S=1/2", n_sites; conserve_qns=false)
+    elseif Int(spin) == 2
         siteinds(
             "Electron",
             n_sites;
             conserve_nf=config["conserve_qns"],
             conserve_sz=config["conserve_qns"] && config["conserve_sz"],
         )
-    elseif spin == 1
+    elseif Int(spin) == 1
         siteinds("Fermion", n_sites; conserve_qns=config["conserve_qns"])
     else
         error("Unsupported spin=$spin")
     end
 
     os = OpSum()
-    for term in spec["terms"]
-        os = add_term(os, complex_coeff(term["coefficient"]), term["label"], spin)
+    if operator_format == "qbp_pauli_op_v1"
+        for term in spec["terms"]
+            os = add_pauli_term(os, complex_coeff(term["coefficient"]), term["pauli"])
+        end
+    else
+        fermion_spin = Int(spin)
+        for term in spec["terms"]
+            os = add_term(os, complex_coeff(term["coefficient"]), term["label"], fermion_spin)
+        end
     end
 
     H = MPO(os, sites)
 
-    state = build_initial_state(
-        n_sites,
-        spin,
-        n_occ,
-        config["seed"],
-        config["initial_state"],
-    )
+    state = if operator_format == "qbp_pauli_op_v1"
+        build_pauli_initial_state(n_sites, config["initial_state"])
+    else
+        build_initial_state(
+            n_sites,
+            Int(spin),
+            n_occ,
+            config["seed"],
+            config["initial_state"],
+        )
+    end
 
     psi0 = productMPS(sites, state)
 
@@ -241,17 +296,20 @@ function main()
         cutoff=config["cutoff"],
     )
     dmrg_elapsed_s = (time_ns() - dmrg_time_t0) / 1e9
-    dmrg_result = (energy=energy, psi=psi)
+    dmrg_result = (energy=energy + constant_shift, psi=psi)
 
     observable_value = nothing
     if haskey(spec, "observable_terms")
+        operator_format == "qbp_pauli_op_v1" &&
+            error("Pauli-format DMRG does not support observable_terms")
+        fermion_spin = Int(spin)
         observable_os = OpSum()
         for term in spec["observable_terms"]
             observable_os = add_term(
                 observable_os,
                 complex_coeff(term["coefficient"]),
                 term["label"],
-                spin,
+                fermion_spin,
             )
         end
         O = MPO(observable_os, sites)

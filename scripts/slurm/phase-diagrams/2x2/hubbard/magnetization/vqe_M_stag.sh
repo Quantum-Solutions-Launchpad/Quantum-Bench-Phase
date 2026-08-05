@@ -64,7 +64,7 @@ cmd=(
     --x-param n_occ
     --x-range "${HUBBARD_N_OCC_START:-0}" "${HUBBARD_N_OCC_END:-16}" "${HUBBARD_N_OCC_STEP:-1}"
     --y-param U
-    --y-range "${HUBBARD_U_START:-0.0}" "${HUBBARD_U_END:-10.0}" "${HUBBARD_U_STEP:-0.5}"
+    --y-range "${HUBBARD_U_START:-0.0}" "${HUBBARD_U_END:-10.0}" "${HUBBARD_U_STEP:-1}"
     --t "${HUBBARD_T:-1.0}"
     --heatmap
 )
@@ -76,16 +76,15 @@ fi
 append_vqe_args cmd
 append_qbp_output_paths cmd "${OUT_LOG_DIR}/simulated-${PIPELINE}-vqe-${OBSERVABLE}-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-${PIPELINE}-vqe-${OBSERVABLE}-${SWEEP_TAG}.pdf"
 
-run_visualizer_sharded_cmd cmd
-EXIT_STATUS=$?
-
 echo ""
 echo "==================================================================="
-if (( EXIT_STATUS == 0 )); then
+if run_visualizer_sharded_cmd cmd; then
     echo "✓ JOB PASSED at $(date)"
 else
+    EXIT_STATUS=$?
     echo "✗ JOB FAILED"
+    echo "status: ${EXIT_STATUS}"
+    echo "==================================================================="
+    exit "${EXIT_STATUS}"
 fi
 echo "==================================================================="
-
-exit ${EXIT_STATUS}

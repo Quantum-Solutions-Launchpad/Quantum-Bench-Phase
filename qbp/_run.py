@@ -351,6 +351,8 @@ def _plot_run_result(rr: RunResult, *, output_path, hide_plot, hide_legend):
             Z = rr.analytic_bands
         else:
             Z = rr.grids[m.value]
+            if is_band and np.asarray(Z).ndim == 2:
+                Z = np.asarray(Z, dtype=float)[..., np.newaxis]
         z_label = (
             obs_label
             if rr.observable != "E" or m == Method.ANALYTIC
@@ -562,9 +564,12 @@ def load_result(path: str) -> RunResult:
     analytic_bands = None
     for m in methods:
         block = data["result"][m]
-        if band_structure and m == "analytic":
-            analytic_bands = _bands_grid(block)
-            grids[m] = analytic_bands[..., 0]
+        probe = block["0"] if is_1d else block["0"]["0"]
+        if band_structure and isinstance(probe, list):
+            bands = _bands_grid(block)
+            if m == "analytic":
+                analytic_bands = bands
+            grids[m] = bands
         else:
             grids[m] = _scalar_grid(block)
 
@@ -1221,7 +1226,7 @@ def _run_model_methods(
     else:
         if task_index is None:
             selected = all_tags
-            n_jobs = -1
+            n_jobs = jobs_per_shard()
         else:
             init_worker_logging()
             selected = [t for i, t in enumerate(all_tags) if i % task_count == task_index]
@@ -1270,15 +1275,18 @@ def _run_model_methods(
     ordered_methods = sorted(methods, key=lambda m: 0 if m == Method.ANALYTIC else 1)
     for m in ordered_methods:
         m_obj = method_objs[m]
-        if is_band and m == Method.ANALYTIC:
-            probe = raw_cells["analytic"]["0"]["0"]["bands"]
-            n_bands = len(probe)
+        probe_cell = raw_cells[m.value]["0"]["0"] if is_band else None
+        if is_band and probe_cell is not None and "bands" in probe_cell:
+            probe = probe_cell["bands"]
+            n_bands = max(n_bands, len(probe))
             arr = np.full((nx, ny, n_bands), np.nan)
             for ix in range(nx):
                 for iy in range(ny):
-                    arr[ix, iy, :] = m_obj.reduce(raw_cells["analytic"][str(ix)][str(iy)])
-            analytic_bands = arr
-            grids_full[m.value] = arr[..., 0]
+                    bands = m_obj.reduce(raw_cells[m.value][str(ix)][str(iy)])
+                    arr[ix, iy, :len(bands)] = bands
+            if m == Method.ANALYTIC:
+                analytic_bands = arr
+            grids_full[m.value] = arr
         else:
             arr = np.full((nx, ny), np.nan)
             # Use median for IQPE, min for other methods
@@ -1314,8 +1322,8 @@ def _run_model_methods(
 
     result_block = {}
     for m in methods:
-        if is_band and m == Method.ANALYTIC:
-            result_block[m.value] = bands_block(analytic_bands)
+        if is_band and np.asarray(grids_full[m.value]).ndim == 3:
+            result_block[m.value] = bands_block(grids_full[m.value])
         else:
             result_block[m.value] = scalar_block(grids_full[m.value])
 
@@ -1356,8 +1364,8 @@ def _run_model_methods(
     # squeeze grids for the result object
     grids_out = {}
     for m in methods:
-        if is_band and m == Method.ANALYTIC:
-            grids_out[m.value] = _squeeze_bands(analytic_bands, is_1d)[..., 0] if is_1d else analytic_bands[..., 0]
+        if is_band and np.asarray(grids_full[m.value]).ndim == 3:
+            grids_out[m.value] = _squeeze_bands(grids_full[m.value], is_1d)
         else:
             grids_out[m.value] = _squeeze_scalar(grids_full[m.value], is_1d)
     analytic_bands_out = _squeeze_bands(analytic_bands, is_1d) if analytic_bands is not None else None
@@ -1627,6 +1635,7 @@ def _run_operator_methods(
             json.dump(summary, f, indent=4)
 
     grids_out = {m.value: _squeeze_scalar(grids_full[m.value], is_1d) for m in methods}
+    summary_extremum = "median" if Method.IQPE in methods else extremum
     result = RunResult(
         model_name=model_name, lattice=None, x_param=x_param, y_param=y_param,
         x_values=x_vals, y_values=y_vals if not is_1d else [],
