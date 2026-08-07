@@ -60,6 +60,7 @@ api/index
 :maxdepth: 1
 
 more-examples/band-structure
+more-examples/boundary-conditions
 ```
 
 ```{toctree}
