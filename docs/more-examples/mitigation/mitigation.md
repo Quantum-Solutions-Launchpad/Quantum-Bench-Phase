@@ -12,10 +12,34 @@ show, are not interchangeable.
 
 import io
 import sys
+from pathlib import Path
 from loguru import logger
 
 logger.remove()
 sys.stdout = sys.stderr = io.StringIO()
+
+import qbp
+from qbp import Method
+
+
+def _find_data_dir() -> Path:
+    for base in (Path.cwd(), *Path.cwd().parents):
+        for candidate in (base / "docs" / "_data", base / "_data"):
+            if candidate.is_dir():
+                return candidate
+    raise FileNotFoundError("docs/_data not found relative to cwd")
+
+
+_DATA_DIR = _find_data_dir()
+
+
+def _mitigated(kwargs, technique) -> bool:
+    """True if any method_params entry enables *technique* (e.g. "zne",
+    "dd", "m3") for this qbp.run call."""
+    for params in kwargs.get("method_params", {}).values():
+        if isinstance(params, dict) and params.get("mitigation", {}).get(technique):
+            return True
+    return False
 ```
 
 ## Zero-Noise Extrapolation
@@ -36,6 +60,19 @@ factors and reads off the zero-noise intercept.
 
 Because it operates on an expectation value rather than raw counts, ZNE
 applies to `Method.VQE`:
+
+```{jupyter-execute}
+:hide-code:
+
+def _patched_run(*args, **kwargs):
+    filename = "sweep-vqe-zne-gate.json" if _mitigated(kwargs, "zne") else "sweep-vqe-raw-gate.json"
+    result = qbp.load_result(str(_DATA_DIR / filename))
+    result.plot(hide_plot=kwargs.get("hide_plot", False))
+    return result
+
+
+qbp.run = _patched_run
+```
 
 ```{jupyter-execute}
 import math
@@ -84,6 +121,19 @@ sequence that refocuses a noise process which stays roughly constant
 across the sequence's timescale.
 
 ```{jupyter-execute}
+:hide-code:
+
+def _patched_run(*args, **kwargs):
+    filename = "sweep-vqe-dd-decoherence.json" if _mitigated(kwargs, "dd") else "sweep-vqe-raw-decoherence.json"
+    result = qbp.load_result(str(_DATA_DIR / filename))
+    result.plot(hide_plot=kwargs.get("hide_plot", False))
+    return result
+
+
+qbp.run = _patched_run
+```
+
+```{jupyter-execute}
 from qiskit_aer.noise import thermal_relaxation_error
 
 def decoherence_noise(t1_us=150.0, t2_us=100.0):
@@ -98,10 +148,10 @@ def decoherence_noise(t1_us=150.0, t2_us=100.0):
 shared_dd = {**shared, "backend": AerSimulator(noise_model=decoherence_noise())}
 
 raw_dd = qbp.run(**shared_dd, method=[Method.ANALYTIC, Method.VQE],
-                  method_params={Method.VQE: {"iters": 3000, "layers": 4, "reps": 4}})
+                  method_params={Method.VQE: {"iters": 3000, "layers": 6, "reps": 6}})
 
 dd = qbp.run(**shared_dd, method=[Method.ANALYTIC, Method.VQE],
-             method_params={Method.VQE: {"iters": 3000, "layers": 4, "reps": 4,
+             method_params={Method.VQE: {"iters": 3000, "layers": 6, "reps": 6,
                                           "mitigation": {"dd": True}}})
 ```
 
@@ -161,6 +211,19 @@ with that install instruction, rather than failing silently.
 ```
 
 ```{jupyter-execute}
+:hide-code:
+
+def _patched_run(*args, **kwargs):
+    filename = "sweep-iqpe-m3-readout-lo.json" if _mitigated(kwargs, "m3") else "sweep-iqpe-raw-readout-lo.json"
+    result = qbp.load_result(str(_DATA_DIR / filename))
+    result.plot(hide_plot=kwargs.get("hide_plot", False))
+    return result
+
+
+qbp.run = _patched_run
+```
+
+```{jupyter-execute}
 from qiskit_aer.noise import ReadoutError
 
 def readout_noise(p=0.08):
@@ -168,8 +231,15 @@ def readout_noise(p=0.08):
     nm.add_all_qubit_readout_error(ReadoutError([[1 - p, p], [p, 1 - p]]))
     return nm
 
-shared_m3 = {**shared, "backend": AerSimulator(noise_model=readout_noise())}
-iqpe_params = {"time": 0.5, "trot": 4, "iters": 6, "reps": 4}
+# The real M3-vs-readout-error sweep splits n_occ across two runs for
+# checkpointing; this is the "lo" half (n_occ = 2, 3) at the same 8%
+# readout error used throughout. See examples/run_mitigation_sweep.py for
+# the "hi" half (n_occ = 5, 6) and the full picture.
+shared_m3 = {**shared, "x_range": (2, 3, 1), "backend": AerSimulator(noise_model=readout_noise())}
+iqpe_params = {
+    "time": 0.5, "trot": 4, "iters": 6, "reps": 6,
+    "warm_start_vqe": True, "warm_start_iters": 3000, "warm_start_layers": 4,
+}
 
 raw_m3 = qbp.run(**shared_m3, method=[Method.ANALYTIC, Method.IQPE],
                   method_params={Method.IQPE: iqpe_params})

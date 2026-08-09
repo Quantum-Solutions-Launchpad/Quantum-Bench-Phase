@@ -38,10 +38,37 @@ An empty dict (or omitting the key) means "no mitigation" :
 
 import io
 import sys
+from pathlib import Path
 from loguru import logger
 
 logger.remove()
 sys.stdout = sys.stderr = io.StringIO()
+
+import qbp
+from qbp import Method
+
+
+def _find_data_dir() -> Path:
+    for base in (Path.cwd(), *Path.cwd().parents):
+        for candidate in (base / "docs" / "_data", base / "_data"):
+            if candidate.is_dir():
+                return candidate
+    raise FileNotFoundError("docs/_data not found relative to cwd")
+
+
+_DATA_DIR = _find_data_dir()
+
+
+def _patched_run(*args, **kwargs):
+    # Single call in this example, always mitigated: load the pre-computed
+    # ZNE-vs-gate-noise result rather than re-running 3000-iteration VQE at
+    # doc-build time.
+    result = qbp.load_result(str(_DATA_DIR / "sweep-vqe-zne-gate.json"))
+    result.plot(hide_plot=kwargs.get("hide_plot", False))
+    return result
+
+
+qbp.run = _patched_run
 ```
 
 ```{jupyter-execute}

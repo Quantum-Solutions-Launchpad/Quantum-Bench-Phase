@@ -1,0 +1,84 @@
+{
+    "type": "run",
+    "methods": [
+        "analytic",
+        "iqpe"
+    ],
+    "backend": "AerSimulator",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "extremum": "min",
+    "x_param": "n_occ",
+    "y_param": "t2",
+    "x_values": [
+        2,
+        3
+    ],
+    "y_values": [
+        0.2,
+        0.5,
+        0.8
+    ],
+    "parameters": {
+        "model": "haldane",
+        "lattice": [
+            2,
+            2
+        ],
+        "model_params": {
+            "t1": 1.0,
+            "phi": 0.7853981633974483,
+            "M": 0.1
+        },
+        "method_params": {
+            "analytic": {},
+            "iqpe": {
+                "time": 0.5,
+                "trot": 4,
+                "iters": 6,
+                "reps": 6,
+                "warm_start_vqe": true,
+                "warm_start_iters": 3000,
+                "warm_start_layers": 4,
+                "initial_state": null,
+                "mitigation": {
+                    "m3": true,
+                    "dd": false,
+                    "zne": false,
+                    "zne_noise_factors": [
+                        1,
+                        3,
+                        5
+                    ]
+                }
+            }
+        }
+    },
+    "result": {
+        "analytic": {
+            "0": {
+                "0": -4.572339191022054,
+                "1": -5.420867328445912,
+                "2": -6.788225099390862
+            },
+            "1": {
+                "0": -5.2944840406595235,
+                "1": -5.718748109371452,
+                "2": -6.661841811604475
+            }
+        },
+        "iqpe": {
+            "0": {
+                "0": -4.516039439535327,
+                "1": -5.497787143782138,
+                "2": -6.283185307179586
+            },
+            "1": {
+                "0": -5.301437602932776,
+                "1": -3.730641276137879,
+                "2": -6.675884388878311
+            }
+        }
+    }
+}
