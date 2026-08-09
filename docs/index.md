@@ -61,6 +61,7 @@ api/index
 
 more-examples/band-structure
 more-examples/boundary-conditions
+more-examples/mitigation/overview
 ```
 
 ```{toctree}

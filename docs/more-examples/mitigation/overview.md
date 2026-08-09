@@ -162,3 +162,11 @@ to add your own.
   including when DD helps versus hurts.
 - [Writing a Custom Strategy](custom-strategies.md) — implement a new
   technique against the same interface.
+
+```{toctree}
+:hidden:
+:maxdepth: 1
+
+mitigation
+custom-strategies
+```
