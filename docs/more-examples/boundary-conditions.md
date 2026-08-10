@@ -34,9 +34,15 @@ The command-line examples below use decimal approximations for common angles:
 import io
 import sys
 from loguru import logger
+from IPython.display import display
 
 logger.remove()
 sys.stdout = sys.stderr = io.StringIO()
+
+def show_run(result):
+    """Display one QBP figure explicitly for jupyter-sphinx."""
+    display(result.plot(hide_plot=True))
+    return result
 ```
 
 ## Hard-Wall Open Flake
@@ -50,7 +56,7 @@ import math
 import qbp
 from qbp import Method
 
-result = qbp.run(
+result = show_run(qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
     lattice=(3, 3),
@@ -58,7 +64,8 @@ result = qbp.run(
     x_param="n_occ",
     x_range=(0, 6, 1),
     model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 4, "M": 0.0},
-)
+    hide_plot=True,
+))
 ```
 
 The same run from the command line:
@@ -97,7 +104,7 @@ import math
 import qbp
 from qbp import Method
 
-density = qbp.run(
+density = show_run(qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
@@ -106,7 +113,8 @@ density = qbp.run(
     x_param="Lx",
     y_param="Ly",
     model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.2},
-)
+    hide_plot=True,
+))
 ```
 
 This separate cell renders the edge-participation spectrum for the same dot:
@@ -116,7 +124,7 @@ import math
 import qbp
 from qbp import Method
 
-edge_spectrum = qbp.run(
+edge_spectrum = show_run(qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
@@ -124,7 +132,8 @@ edge_spectrum = qbp.run(
     boundary_params={"geometry": "disk", "radius": 3.2},
     x_param="eigenstate",
     model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.2},
-)
+    hide_plot=True,
+))
 ```
 
 The matching CLI commands are:
@@ -189,7 +198,7 @@ import math
 import qbp
 from qbp import Method
 
-qbp.run(
+soft_density = show_run(qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
@@ -203,7 +212,8 @@ qbp.run(
     x_param="Lx",
     y_param="Ly",
     model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.2},
-)
+    hide_plot=True,
+))
 ```
 
 The edge spectrum is a separate plot because it is a different observable:
@@ -213,7 +223,7 @@ import math
 import qbp
 from qbp import Method
 
-qbp.run(
+soft_edge_spectrum = show_run(qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
@@ -226,7 +236,8 @@ qbp.run(
     },
     x_param="eigenstate",
     model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.2},
-)
+    hide_plot=True,
+))
 ```
 
 And from the CLI:
@@ -287,7 +298,7 @@ import math
 import qbp
 from qbp import Method, SemenoffMass
 
-qbp.run(
+interface_density = show_run(qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
@@ -302,7 +313,8 @@ qbp.run(
         outer=0.8,
         xi=0.8,
     ),
-)
+    hide_plot=True,
+))
 ```
 
 This separate cell renders the edge-participation spectrum:
@@ -312,7 +324,7 @@ import math
 import qbp
 from qbp import Method, SemenoffMass
 
-qbp.run(
+interface_edge_spectrum = show_run(qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
@@ -326,7 +338,8 @@ qbp.run(
         outer=0.8,
         xi=0.8,
     ),
-)
+    hide_plot=True,
+))
 ```
 
 The CLI selects the same investigation by name:
@@ -386,7 +399,7 @@ import math
 import qbp
 from qbp import Method
 
-result = qbp.run(
+result = show_run(qbp.run(
     model="haldane",
     method=[Method.ANALYTIC, Method.VQE],
     lattice=(1, 2),
@@ -397,7 +410,8 @@ result = qbp.run(
     method_params={
         Method.VQE: {"iters": 20, "layers": 1, "reps": 1},
     },
-)
+    hide_plot=True,
+))
 ```
 
 CLI equivalent:
