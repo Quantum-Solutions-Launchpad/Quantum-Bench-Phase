@@ -60,7 +60,7 @@ cmd=(
     --y-range "${HUBBARD_U_START:-0.0}" "${HUBBARD_U_END:-10.0}" "${HUBBARD_U_STEP:-0.5}"
     --t "${HUBBARD_T:-1.0}"
     --vqe-warm-start
-    --vqe-layers "${VQE_LAYERS:-6}"
+    --vqe-layers "${VQE_LAYERS:-4}"
     --vqe-reps "${VQE_REPS:-5}"
     --vqe-optimizer "${VQE_OPTIMIZER:-L_BFGS_B}"
     --vqe-iters "${VQE_ITERS:-400}"

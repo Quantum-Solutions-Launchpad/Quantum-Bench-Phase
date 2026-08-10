@@ -1,0 +1,118 @@
+{
+    "type": "run",
+    "methods": [
+        "vqe"
+    ],
+    "backend": "ideal",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "x_param": "Lx",
+    "y_param": "h",
+    "x_values": [
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0
+    ],
+    "y_values": [
+        0.0,
+        0.5,
+        1.0,
+        2.0,
+        3.0
+    ],
+    "parameters": {
+        "model": "tfim",
+        "lattice": null,
+        "qubit_operator": "/pscratch/sd/m/mbao202/tfim.hdf5",
+        "keys": [
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-3"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-3"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-3"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-3"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-3"
+            ]
+        ],
+        "model_params": {},
+        "method_params": {
+            "vqe": {
+                "iters": 10000,
+                "layers": 5,
+                "reps": 10,
+                "ansatz": null,
+                "optimizer": null,
+                "extremum": "min"
+            }
+        }
+    },
+    "result": {
+        "vqe": {
+            "0": {
+                "0": -3.890625,
+                "1": -4.149169921875,
+                "2": -4.92626953125,
+                "3": -8.220703125,
+                "4": -11.8837890625
+            },
+            "1": {
+                "0": -2.9169921875,
+                "1": -4.0068359375,
+                "2": -5.7275390625,
+                "3": -10.1259765625,
+                "4": -14.72021484375
+            },
+            "2": {
+                "0": -5.7890625,
+                "1": -6.119873046875,
+                "2": -7.20703125,
+                "3": -12.0888671875,
+                "4": -17.64111328125
+            },
+            "3": {
+                "0": -4.81640625,
+                "1": -5.977783203125,
+                "2": -8.197265625,
+                "3": -14.08984375,
+                "4": -20.1103515625
+            },
+            "4": {
+                "0": -7.5751953125,
+                "1": -8.029296875,
+                "2": -9.626953125,
+                "3": -15.849609375,
+                "4": -23.12939453125
+            }
+        }
+    }
+}

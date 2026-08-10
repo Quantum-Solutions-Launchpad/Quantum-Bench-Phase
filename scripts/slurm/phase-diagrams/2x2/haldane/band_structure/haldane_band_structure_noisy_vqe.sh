@@ -76,9 +76,10 @@ cmd=(
     --y-range "${Y_START}" "${Y_END}" "${Y_STEP}"
     "${fixed_args[@]}"
     "${backend_args[@]}"
+    --vqe-layers "${VQE_LAYERS:-4}"
+    --vqe-reps "${VQE_REPS:-5}"
+    --vqe-iters "${VQE_ITERS:-400}"
 )
-
-append_vqe_args cmd
 append_qbp_output_paths cmd "${OUT_LOG_DIR}/simulated-${PIPELINE}-vqe-E-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-${PIPELINE}-vqe-E-${SWEEP_TAG}.pdf"
 
 if run_visualizer_sharded_cmd cmd; then
