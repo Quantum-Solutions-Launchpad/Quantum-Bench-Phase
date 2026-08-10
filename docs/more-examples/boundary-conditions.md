@@ -28,13 +28,24 @@ edge-participation spectrum.
 The command-line examples below use decimal approximations for common angles:
 `pi / 4 = 0.7853981634` and `pi / 2 = 1.5707963268`.
 
+```{jupyter-execute}
+:hide-code:
+
+import io
+import sys
+from loguru import logger
+
+logger.remove()
+sys.stdout = sys.stderr = io.StringIO()
+```
+
 ## Hard-Wall Open Flake
 
 The simplest open-boundary run keeps the full rectangular parent lattice but
 omits any hopping that would wrap through the boundary. This is the direct
 open-boundary analogue of a periodic real-space sweep.
 
-```{code-block} python
+```{jupyter-execute}
 import math
 import qbp
 from qbp import Method
@@ -47,9 +58,6 @@ result = qbp.run(
     x_param="n_occ",
     x_range=(0, 6, 1),
     model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 4, "M": 0.0},
-    log_path="examples/logs/haldane/3x3/hard-wall-n_occ.json",
-    plot_path="examples/plots/haldane/3x3/hard-wall-n_occ.pdf",
-    hide_plot=True,
 )
 ```
 
@@ -82,41 +90,40 @@ set `boundary_params={"geometry": "disk", "radius": ...}`. The disk projection
 keeps sites inside the chosen radius and drops the rest of the Hamiltonian. The
 edge of the retained disk is therefore a hard wall.
 
-```{code-block} python
+This cell renders the real-space density of the state closest to zero energy:
+
+```{jupyter-execute}
 import math
 import qbp
 from qbp import Method
 
-params = {
-    "t1": 1.0,
-    "t2": 0.1,
-    "phi": math.pi / 2,
-    "M": 0.2,
-}
-
 density = qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
-    lattice=(14, 14),
+    lattice=(8, 8),
     boundary="open",
-    boundary_params={"geometry": "disk", "radius": 5.5},
+    boundary_params={"geometry": "disk", "radius": 3.2},
     x_param="Lx",
     y_param="Ly",
-    model_params=params,
-    plot_path="examples/plots/haldane/disk/disk-density-hard-wall.pdf",
-    hide_plot=True,
+    model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.2},
 )
+```
+
+This separate cell renders the edge-participation spectrum for the same dot:
+
+```{jupyter-execute}
+import math
+import qbp
+from qbp import Method
 
 edge_spectrum = qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
-    lattice=(14, 14),
+    lattice=(8, 8),
     boundary="open",
-    boundary_params={"geometry": "disk", "radius": 5.5},
+    boundary_params={"geometry": "disk", "radius": 3.2},
     x_param="eigenstate",
-    model_params=params,
-    plot_path="examples/plots/haldane/disk/disk-edge-spectrum-hard-wall.pdf",
-    hide_plot=True,
+    model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.2},
 )
 ```
 
@@ -126,10 +133,10 @@ The matching CLI commands are:
 qbp run \
   --model haldane \
   --method analytic \
-  --lattice 14 14 \
+  --lattice 8 8 \
   --boundary open \
   --geometry disk \
-  --radius 5.5 \
+  --radius 3.2 \
   --x-param Lx \
   --y-param Ly \
   --t1 1.0 \
@@ -142,10 +149,10 @@ qbp run \
 qbp run \
   --model haldane \
   --method analytic \
-  --lattice 14 14 \
+  --lattice 8 8 \
   --boundary open \
   --geometry disk \
-  --radius 5.5 \
+  --radius 3.2 \
   --x-param eigenstate \
   --t1 1.0 \
   --t2 0.1 \
@@ -174,42 +181,51 @@ where `potential_radius` is $R_\text{dot}$, `potential_v0` is $V_0$, and
 `potential_xi` controls the wall width. This creates an internal confinement
 boundary inside the finite open flake.
 
-```{code-block} python
+The density diagnostic shows where the near-zero state localizes relative to
+the soft confinement wall:
+
+```{jupyter-execute}
 import math
 import qbp
 from qbp import Method
 
-params = {"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.2}
-soft_dot = {
-    "potential_profile": "soft_dot",
-    "potential_radius": 5.5,
-    "potential_v0": 3.0,
-    "potential_xi": 0.8,
-}
-
 qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
-    lattice=(18, 18),
+    lattice=(8, 8),
     boundary="open",
-    boundary_params=soft_dot,
+    boundary_params={
+        "potential_profile": "soft_dot",
+        "potential_radius": 3.0,
+        "potential_v0": 3.0,
+        "potential_xi": 0.8,
+    },
     x_param="Lx",
     y_param="Ly",
-    model_params=params,
-    plot_path="examples/plots/haldane/18x18/soft-dot-density.pdf",
-    hide_plot=True,
+    model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.2},
 )
+```
+
+The edge spectrum is a separate plot because it is a different observable:
+
+```{jupyter-execute}
+import math
+import qbp
+from qbp import Method
 
 qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
-    lattice=(18, 18),
+    lattice=(8, 8),
     boundary="open",
-    boundary_params=soft_dot,
+    boundary_params={
+        "potential_profile": "soft_dot",
+        "potential_radius": 3.0,
+        "potential_v0": 3.0,
+        "potential_xi": 0.8,
+    },
     x_param="eigenstate",
-    model_params=params,
-    plot_path="examples/plots/haldane/18x18/soft-dot-edge-spectrum.pdf",
-    hide_plot=True,
+    model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.2},
 )
 ```
 
@@ -219,10 +235,10 @@ And from the CLI:
 qbp run \
   --model haldane \
   --method analytic \
-  --lattice 18 18 \
+  --lattice 8 8 \
   --boundary open \
   --potential-profile soft-dot \
-  --potential-radius 5.5 \
+  --potential-radius 3.0 \
   --potential-v0 3.0 \
   --potential-xi 0.8 \
   --x-param Lx \
@@ -231,16 +247,16 @@ qbp run \
   --t2 0.1 \
   --phi 1.5707963268 \
   --M 0.2 \
-  --plot-path examples/plots/haldane/18x18/soft-dot-density.pdf \
+  --plot-path examples/plots/haldane/8x8/soft-dot-density.pdf \
   --hide-plot
 
 qbp run \
   --model haldane \
   --method analytic \
-  --lattice 18 18 \
+  --lattice 8 8 \
   --boundary open \
   --potential-profile soft-dot \
-  --potential-radius 5.5 \
+  --potential-radius 3.0 \
   --potential-v0 3.0 \
   --potential-xi 0.8 \
   --x-param eigenstate \
@@ -248,7 +264,7 @@ qbp run \
   --t2 0.1 \
   --phi 1.5707963268 \
   --M 0.2 \
-  --plot-path examples/plots/haldane/18x18/soft-dot-edge-spectrum.pdf \
+  --plot-path examples/plots/haldane/8x8/soft-dot-edge-spectrum.pdf \
   --hide-plot
 ```
 
@@ -264,45 +280,52 @@ $M(r)$. A sharp `radial_step` or smooth `radial_tanh` profile separates an inner
 mass from an outer mass at the selected radius.
 
 Set the base model parameter `M` to `0.0` when the radial profile supplies the
-full mass:
+full mass. This cell renders the density plot:
 
-```{code-block} python
+```{jupyter-execute}
 import math
 import qbp
 from qbp import Method, SemenoffMass
 
-params = {"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.0}
-interface = SemenoffMass(
-    profile="radial_tanh",
-    radius=5.5,
-    inner=0.2,
-    outer=0.8,
-    xi=0.8,
-)
-
 qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
-    lattice=(18, 18),
+    lattice=(8, 8),
     boundary="open",
     x_param="Lx",
     y_param="Ly",
-    model_params=params,
-    investigation=interface,
-    plot_path="examples/plots/haldane/18x18/topological-interface-density.pdf",
-    hide_plot=True,
+    model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.0},
+    investigation=SemenoffMass(
+        profile="radial_tanh",
+        radius=3.0,
+        inner=0.2,
+        outer=0.8,
+        xi=0.8,
+    ),
 )
+```
+
+This separate cell renders the edge-participation spectrum:
+
+```{jupyter-execute}
+import math
+import qbp
+from qbp import Method, SemenoffMass
 
 qbp.run(
     model="haldane",
     method=[Method.ANALYTIC],
-    lattice=(18, 18),
+    lattice=(8, 8),
     boundary="open",
     x_param="eigenstate",
-    model_params=params,
-    investigation=interface,
-    plot_path="examples/plots/haldane/18x18/topological-interface-edge-spectrum.pdf",
-    hide_plot=True,
+    model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 2, "M": 0.0},
+    investigation=SemenoffMass(
+        profile="radial_tanh",
+        radius=3.0,
+        inner=0.2,
+        outer=0.8,
+        xi=0.8,
+    ),
 )
 ```
 
@@ -312,13 +335,13 @@ The CLI selects the same investigation by name:
 qbp run \
   --model haldane \
   --method analytic \
-  --lattice 18 18 \
+  --lattice 8 8 \
   --boundary open \
   --x-param Lx \
   --y-param Ly \
   --investigation semenoff_mass \
   --semenoff-mass-profile radial_tanh \
-  --semenoff-mass-radius 5.5 \
+  --semenoff-mass-radius 3.0 \
   --semenoff-mass-inner 0.2 \
   --semenoff-mass-outer 0.8 \
   --semenoff-mass-xi 0.8 \
@@ -326,18 +349,18 @@ qbp run \
   --t2 0.1 \
   --phi 1.5707963268 \
   --M 0.0 \
-  --plot-path examples/plots/haldane/18x18/topological-interface-density.pdf \
+  --plot-path examples/plots/haldane/8x8/topological-interface-density.pdf \
   --hide-plot
 
 qbp run \
   --model haldane \
   --method analytic \
-  --lattice 18 18 \
+  --lattice 8 8 \
   --boundary open \
   --x-param eigenstate \
   --investigation semenoff_mass \
   --semenoff-mass-profile radial_tanh \
-  --semenoff-mass-radius 5.5 \
+  --semenoff-mass-radius 3.0 \
   --semenoff-mass-inner 0.2 \
   --semenoff-mass-outer 0.8 \
   --semenoff-mass-xi 0.8 \
@@ -345,7 +368,7 @@ qbp run \
   --t2 0.1 \
   --phi 1.5707963268 \
   --M 0.0 \
-  --plot-path examples/plots/haldane/18x18/topological-interface-edge-spectrum.pdf \
+  --plot-path examples/plots/haldane/8x8/topological-interface-edge-spectrum.pdf \
   --hide-plot
 ```
 
@@ -358,7 +381,7 @@ Boundary conditions also flow into the real-space fermionic Hamiltonian used by
 the quantum-method pipeline. Keep the lattice small for VQE/IQPE examples,
 because every retained spin-orbital becomes a qubit after mapping.
 
-```{code-block} python
+```{jupyter-execute}
 import math
 import qbp
 from qbp import Method
@@ -366,15 +389,14 @@ from qbp import Method
 result = qbp.run(
     model="haldane",
     method=[Method.ANALYTIC, Method.VQE],
-    lattice=(2, 2),
+    lattice=(1, 2),
     boundary="open",
     x_param="n_occ",
-    x_range=(2, 6, 2),
+    x_range=(1, 4, 1),
     model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 4, "M": 0.0},
     method_params={
-        Method.VQE: {"iters": 200, "layers": 1, "reps": 1},
+        Method.VQE: {"iters": 20, "layers": 1, "reps": 1},
     },
-    hide_plot=True,
 )
 ```
 
@@ -384,15 +406,15 @@ CLI equivalent:
 qbp run \
   --model haldane \
   --method analytic vqe \
-  --lattice 2 2 \
+  --lattice 1 2 \
   --boundary open \
   --x-param n_occ \
-  --x-range 2 6 2 \
+  --x-range 1 4 1 \
   --t1 1.0 \
   --t2 0.1 \
   --phi 0.7853981634 \
   --M 0.0 \
-  --vqe-iters 200 \
+  --vqe-iters 20 \
   --vqe-layers 1 \
   --vqe-reps 1 \
   --hide-plot
