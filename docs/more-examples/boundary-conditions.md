@@ -30,18 +30,30 @@ The command-line examples below use decimal approximations for common angles:
 
 ```{jupyter-execute}
 :hide-code:
+:hide-output:
+:stderr:
 
-import io
-import sys
+import os
+import tempfile
+
+os.environ.setdefault("MPLBACKEND", "Agg")
+os.environ.setdefault("MPLCONFIGDIR", tempfile.mkdtemp())
+os.environ.setdefault("XDG_CACHE_HOME", tempfile.mkdtemp())
+
+import matplotlib.pyplot as plt
 from loguru import logger
-from IPython.display import display
+from IPython.display import Image, display
 
 logger.remove()
-sys.stdout = sys.stderr = io.StringIO()
 
 def show_run(result):
     """Display one QBP figure explicitly for jupyter-sphinx."""
-    display(result.plot(hide_plot=True))
+    fig = result.plot(hide_plot=True)
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+        image_path = tmp.name
+    fig.savefig(image_path, bbox_inches="tight", dpi=160)
+    display(Image(filename=image_path))
+    plt.close(fig)
     return result
 ```
 
@@ -136,7 +148,7 @@ edge_spectrum = show_run(qbp.run(
 ))
 ```
 
-The matching CLI commands are:
+The matching density CLI command is:
 
 ```{code-block} shell
 qbp run \
@@ -154,7 +166,11 @@ qbp run \
   --M 0.2 \
   --plot-path examples/plots/haldane/disk/disk-density-hard-wall.pdf \
   --hide-plot
+```
 
+The matching edge-spectrum CLI command is:
+
+```{code-block} shell
 qbp run \
   --model haldane \
   --method analytic \
@@ -240,7 +256,7 @@ soft_edge_spectrum = show_run(qbp.run(
 ))
 ```
 
-And from the CLI:
+The matching density CLI command is:
 
 ```{code-block} shell
 qbp run \
@@ -260,7 +276,11 @@ qbp run \
   --M 0.2 \
   --plot-path examples/plots/haldane/8x8/soft-dot-density.pdf \
   --hide-plot
+```
 
+The matching edge-spectrum CLI command is:
+
+```{code-block} shell
 qbp run \
   --model haldane \
   --method analytic \
@@ -342,7 +362,7 @@ interface_edge_spectrum = show_run(qbp.run(
 ))
 ```
 
-The CLI selects the same investigation by name:
+The density CLI selects the same investigation by name:
 
 ```{code-block} shell
 qbp run \
@@ -364,7 +384,12 @@ qbp run \
   --M 0.0 \
   --plot-path examples/plots/haldane/8x8/topological-interface-density.pdf \
   --hide-plot
+```
 
+The edge-spectrum CLI uses the same investigation parameters with
+`x_param="eigenstate"`:
+
+```{code-block} shell
 qbp run \
   --model haldane \
   --method analytic \
