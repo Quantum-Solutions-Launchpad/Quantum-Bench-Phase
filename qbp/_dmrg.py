@@ -131,18 +131,12 @@ def _export_fermionic_op(model: Model, lattice, n_occ: int, model_params: dict, 
     if observable != "E":
         obs = model.get_observable(observable)
         if obs.quantum_composite is not None:
-            raise ValueError(
-                f"DMRG does not support composite observable '{observable}'."
-            )
+            raise ValueError(f"DMRG does not support composite observable '{observable}'.")
         if obs.quantum_operator is None:
-            raise ValueError(
-                f"Observable '{observable}' has no fermionic operator for DMRG."
-            )
+            raise ValueError(f"Observable '{observable}' has no fermionic operator for DMRG.")
         observable_op = obs.quantum_operator(model, lattice, **model_params)
         if observable_op is None:
-            raise ValueError(
-                f"Observable '{observable}' produced no fermionic operator for DMRG."
-            )
+            raise ValueError(f"Observable '{observable}' produced no fermionic operator for DMRG.")
         payload["observable_terms"] = _fermionic_terms(observable_op)
 
     with open(path, "w") as f:

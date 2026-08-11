@@ -2734,3 +2734,435 @@ Traceback (most recent call last):
         f'Cannot register {name} for automatic cleanup: '
         f'unknown resource type {rtype}')
 ValueError: Cannot register /loky-1297977-2d191h45 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-4nq77s2t for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-xs0207dn for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-vwrplmvu for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-m65rxbv0 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-bw91v0vb for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-zhlscoqf for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-fwwc0_5_ for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-j6rqabxx for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-0qa77215 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-2lm06q0k for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-7uj0hsky for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-jo30ntu6 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-jtj0iyco for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-kul5z87l for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-1xgc6yar for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-ih2diyq2 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-py2pxldf for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-_24fyl1c for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-nr2qt6pk for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-lomw51w5 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-l747effv for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-ir70jxpa for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-v275w5g3 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-xybcyaku for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-2hh5v6x8 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-b0dc23yc for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-kr5bmr_g for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-iizaqggj for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-bq9ln6kb for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-j_hq6l8z for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-u2z5bl3f for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-dx_b_6d3 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-9bwv5n8e for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-jzbhn9bt for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-rnslxay3 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-2w8_2qst for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-5oivemll for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-2l58f986 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-itoqny2g for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-5sc8gw4o for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-gvop9608 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-0z0n3o52 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-ig5d0sp5 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-v4cf19av for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-rdf4jzv2 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-9hp3ra67 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-gx4mm_u6 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-qhsr9y52 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-xj0jtwpt for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-0vjmvnyq for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-ix18t9xv for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-9bjtc9pw for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-jn90r9pw for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-qmhtrse5 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-o5mhjdui for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-1u08t2bh for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-axtfsefi for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /dev/shm/joblib_memmapping_folder_1297977_12a27b3355934603a928aa9c25e34d2f_3bf01ff0aaad493e83b6e4ced57f3d18 for automatic cleanup: unknown resource type folder
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-5cxgyeti for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-2f5hk0v2 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-pr0majy3 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-s6lf5u76 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-qwydx6l9 for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-rub47azz for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-ijxyjz2l for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /dev/shm/joblib_memmapping_folder_1297977_12a27b3355934603a928aa9c25e34d2f_0729418843e3476ca9440cb37193929a for automatic cleanup: unknown resource type folder
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-6p6t3cvv for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-6hjqmq8_ for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-f4137phm for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-81jrz1x_ for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-wkx5yqcb for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1297977-ogtb1ppu for automatic cleanup: unknown resource type semlock

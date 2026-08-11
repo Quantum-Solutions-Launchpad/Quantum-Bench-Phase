@@ -37,7 +37,7 @@ run_qbp_sharded_config() {
 
     for shard in $(seq 0 $((SHARDS - 1))); do
         srun -N 1 -n 1 -c "${CPUS_PER_SHARD}" --exact \
-            bash -c "${QBP_CLI} run ${cmd} --task-index ${shard} --task-count ${SHARDS}" 2>/dev/null &
+            bash -c "${QBP_CLI} run ${cmd} --task-index ${shard} --task-count ${SHARDS}" &
         pids+=("$!")
     done
     for pid in "${pids[@]}"; do

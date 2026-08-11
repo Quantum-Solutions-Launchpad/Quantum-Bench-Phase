@@ -1,0 +1,744 @@
+===================================================================
+Hubbard 2x2 magnetization ANALYTIC (SHARDED)
+  observable:  M_stag
+  sweep:       n_occ [0 16 1] vs U [0.0 10.0 0.5]
+  method:      analytic (exact diagonalization)
+  plot format: heatmap
+  parallelism: distributed across 16 shards on multiple nodes
+===================================================================
+
+===================================================================
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=6) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=4.5) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=0) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=5) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=1) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=3) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=5.5) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=2) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=0.5) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=8) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=9) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mExact diagonalization backend: numpy[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=10) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=7) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=8.5) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=2.5) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=1.5) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=6.5) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=9.5) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=4) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=3.5) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=2) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=3.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=3) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=2.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=0.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=10) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=5.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=6.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=8.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=7.5) = 0.0[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=7.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=4.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=6) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=4) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=8) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:19[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=7) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=1.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=1) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=9) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=9.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=1) = 0.0012102878750108181[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=0) = 1.6653345369377348e-16[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=0.5) = 0.0006927554086585963[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=9) = 0.00233190033622524[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=3) = 0.0022329096803443416[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=8) = 0.002395605445904919[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=7.5) = 0.002423626941311985[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=8.5) = 0.0023647631649962586[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=6) = 0.002479068160862574[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=5) = 0.002473879902153975[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=2) = 0.0018780309338707057[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=3.5) = 0.002336662544607182[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=10) = 0.0022624930143319566[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=4) = 0.0024064098338779927[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=1.5) = 0.0015946789100028391[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=5.5) = 0.002482335048275691[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=4.5) = 0.0024501229489553578[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=9.5) = 0.002297645584322633[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=6.5) = 0.002466844251888506[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=7) = 0.002447807554546738[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=2.5) = 0.0020846548358392503[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=5) = 0.005290216087525945[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=0.5) = 0.0014425169253633185[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=3.5) = 0.005030320611763145[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=2.5) = 0.00448459901547929[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=1) = 0.0025558959873240583[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=8.5) = 0.004929610305135418[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=6.5) = 0.0052203523814902675[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=1.5) = 0.0033996626309454325[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=5.5) = 0.0052910219607078535[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=6) = 0.005265517870032266[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=9) = 0.004843286832731747[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=2) = 0.004027356840142715[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=3) = 0.004808889314894704[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=9.5) = 0.004755006048487387[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=7.5) = 0.00509037872873272[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=10) = 0.004665840656419479[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=4) = 0.005172659380561551[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=4.5) = 0.0052544823311283795[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=7) = 0.005160653896924272[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=0) = 8.326672684688674e-17[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=8) = 0.005012579312009574[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=2.5) = 0.005747961941789864[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=0) = -5.551115123125783e-17[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=1) = 0.0033772347110444245[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=4) = 0.006551122342406596[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=3) = 0.006132694239151859[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=8) = 0.00620989300477337[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=6) = 0.006601056506353731[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=9) = 0.0059570407188944685[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=3.5) = 0.006390586909143708[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=0.5) = 0.0019440029762197997[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=6.5) = 0.006526948286367018[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=5) = 0.006665333419392544[0m
+[[1m[32m09:38:20[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=7) = 0.006433924593450574[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=8.5) = 0.0060857997814591225[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=7.5) = 0.006326946335494271[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=1.5) = 0.004430410134258017[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=2) = 0.005197656866042455[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=4.5) = 0.00663689958561095[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=0) = 1.1102230246251565e-16[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=9.5) = 0.005825470782219677[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=10) = 0.00569253636139444[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=5.5) = 0.0066498988526125236[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=1.5) = 0.0069556119411542106[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=8) = 0.011684768752131647[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=0.5) = 0.0026358188442996977[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=1) = 0.004964494351164195[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=3.5) = 0.01165130394363062[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=5.5) = 0.012632267380353057[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=6.5) = 0.012410221180593206[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=2.5) = 0.009913338095487334[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=4) = 0.012151768684281916[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=4.5) = 0.012458604559735353[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=5) = 0.012608064542896313[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=9.5) = 0.01076852009537499[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=6) = 0.012558688027309972[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=8.5) = 0.011389961258844339[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=2) = 0.008601289313095062[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=9) = 0.01108266169478156[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=7) = 0.012205567840599396[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=3) = 0.010918214173016916[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=7.5) = 0.011959768160752282[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=10) = 0.01045186127572828[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=0) = 2.220446049250313e-16[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=4) = 0.03347849590843982[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=1) = 0.012974786985027131[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=5.5) = 0.036823629100917354[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=1.5) = 0.018165172756677728[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=3) = 0.029178178517851094[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=2) = 0.022548692808714743[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=2.5) = 0.02619390236194441[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=8) = 0.03764162372926638[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=3.5) = 0.031580806758395974[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=7) = 0.0377895403114335[0m
+[[1m[32m09:38:21[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=6) = 0.037348870338738294[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=6.5) = 0.03765824627948866[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=9.5) = 0.036740429417384646[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=0.5) = 0.006927132837812711[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=4.5) = 0.034942750061174754[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=5) = 0.036038510670658774[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=9) = 0.037106796797570285[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=10) = 0.036326708399016194[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=7.5) = 0.03777492734951754[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=0) = -3.3306690738754696e-16[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=8.5) = 0.03741252380866961[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=1.5) = 0.03497862797048562[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=3) = 0.06979014426291169[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=0.5) = 0.01143273327755806[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=1) = 0.023118713658731138[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=3.5) = 0.08031570723263814[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=2) = 0.04686274256015732[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=4.5) = 0.09847284150590718[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=4) = 0.08992030514794552[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=2.5) = 0.058553222569849184[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=5.5) = 0.11230946517099177[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=6.5) = 0.12218505763119342[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=7) = 0.12589180780198805[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=5) = 0.10592727089519627[0m
+[[1m[32m09:38:22[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=7.5) = 0.1289238603045948[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=6) = 0.11769469816693995[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=0) = 0.0[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=8.5) = 0.1333532198836933[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=8) = 0.13138141566100642[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=0.5) = 0.015222022098741295[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=9.5) = 0.13613525760826323[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=1) = 0.03151474653488351[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=2) = 0.06803233652597107[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=9) = 0.13491602852656598[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=3) = 0.11018522469910697[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=1.5) = 0.04906694722750832[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=10) = 0.13706617151218453[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=4.5) = 0.1764637538059841[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=4) = 0.15516776427109424[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=2.5) = 0.08846022670541093[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=5) = 0.19558204975598814[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=3.5) = 0.1327098923522126[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=5.5) = 0.21188934126547287[0m
+[[1m[32m09:38:23[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=6) = 0.2252436761716814[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=0.5) = 0.011432733277558116[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=0) = 1.1102230246251565e-16[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=9) = 0.2634775455119239[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=2) = 0.04686274256015732[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=1.5) = 0.034978627970485676[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=2.5) = 0.05855322256984952[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=8.5) = 0.2601421364330573[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=9.5) = 0.26620836282433535[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=1) = 0.02311871365873097[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=8) = 0.2560114767767683[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=6.5) = 0.2358887084043655[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=10) = 0.2684750767310232[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=7) = 0.24426075124697777[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=3) = 0.06979014426291147[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=7.5) = 0.25082944121515427[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=3.5) = 0.08031570723263826[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=0) = -3.885780586188048e-16[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=8) = 0.1313814156610033[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=8.5) = 0.13335321988369137[0m
+[[1m[32m09:38:24[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=8) = 0.03764162372926605[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=0.5) = 0.006927132837812544[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=10) = 0.13706617151218004[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=6.5) = 0.12218505763119197[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=4) = 0.08992030514794658[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=7) = 0.12589180780198767[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=9.5) = 0.1361352576082604[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=4.5) = 0.09847284150590724[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=6) = 0.11769469816693728[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=1) = 0.01297478698502702[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=5.5) = 0.11230946517099172[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=8.5) = 0.03741252380866855[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=9) = 0.13491602852656243[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=5.5) = 0.012632267380352225[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=5) = 0.10592727089519516[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=7.5) = 0.12892386030459224[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=5.5) = 0.03682362910091691[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=6) = 0.037348870338738516[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=9) = 0.03710679679757045[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=7.5) = 0.03777492734951826[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=3) = 0.006132694239151332[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=4) = 0.03347849590843793[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=1.5) = 0.01816517275667745[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=6) = 0.012558688027308529[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=7) = 0.037789540311432335[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=4.5) = 0.0349427500611727[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=2) = 0.02254869280871402[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=3) = 0.02917817851785154[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=3) = 0.010918214173016139[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=3.5) = 0.01165130394362962[0m
+[[1m[32m09:38:25[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=6.5) = 0.037658246279487884[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=9.5) = 0.0367404294173842[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=3.5) = 0.03158080675839425[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=6.5) = 0.012410221180592595[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=2.5) = 0.026193902361943355[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=5) = 0.012608064542894759[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=0.5) = 0.0014425169253633185[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=10) = 0.036326708399016416[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=5) = 0.03603851067065711[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=8.5) = 0.0049296103051345574[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=3.5) = 0.006390586909143264[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=1.5) = 0.0069556119411542106[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=0.5) = 0.001944002976219661[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=2) = 0.008601289313094895[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=4.5) = 0.012458604559734687[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=0.5) = 0.002635818844299892[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=1) = 0.0033772347110446466[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=8.5) = 0.006085799781458484[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=9.5) = 0.01076852009537399[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=4) = 0.012151768684280917[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=9) = 0.00595704071889408[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=0) = -8.326672684688674e-17[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=4) = 0.006551122342406568[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=2.5) = 0.00574796194178917[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=10) = 0.010451861275727281[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=1) = 0.004964494351164583[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=8.5) = 0.011389961258843728[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=7) = 0.01220556784059873[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=1) = 0.0025558959873242526[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=9) = 0.004843286832731303[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=8) = 0.011684768752130814[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=6) = 0.0024790681608626852[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=2.5) = 0.009913338095487056[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=7.5) = 0.011959768160751172[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=9) = 0.011082661694780782[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=2) = 0.005197656866042538[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=6) = 0.005265517870031877[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=1.5) = 0.004430410134257934[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=6.5) = 0.00522035238148949[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=0) = 2.7755575615628914e-17[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=10) = 0.0056925363613933855[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=7) = 0.006433924593450768[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=1.5) = 0.003399662630944822[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=8) = 0.005012579312009102[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=9.5) = 0.00475500604848722[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=7.5) = 0.00632694633549355[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=9.5) = 0.00582547078221915[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=6) = 0.0066010565063537585[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=4.5) = 0.0066368995856109225[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=3.5) = -6.938893903907228e-17[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=0) = 5.551115123125783e-17[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=5) = 0.006665333419392266[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=5.5) = 0.006649898852612357[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=6.5) = 0.002466844251888617[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=8) = 0.006209893004772926[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=6.5) = 0.006526948286366796[0m
+[[1m[32m09:38:26[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=3.5) = 0.002336662544607293[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=4) = 0.002406409833878048[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=4.5) = 0.005254482331127769[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=7.5) = 0.005090378728732359[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=5) = 0.005290216087525668[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=1) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=3.5) = 0.00503032061176259[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=2) = 0.00402735684014241[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=7) = 0.005160653896923911[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=9) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=5.5) = 0.00248233504827558[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=7) = 0.0024478075545466826[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=10) = 0.0046658406564192845[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=4) = 6.938893903907228e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=2.5) = 0.004484599015479096[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=3) = 0.004808889314894066[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=1) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=4) = 0.005172659380561051[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=13, t=1, boundary=periodic, U=5.5) = 0.005291021960707548[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=9) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=1.5) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=9.5) = 2.7755575615628914e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=2) = 0.0018780309338709833[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=5) = 0.002473879902154058[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=10) = 0.002262493014332123[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=2.5) = 0.002084654835839278[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=1) = 0.0012102878750108736[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=3) = -2.7755575615628914e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=4.5) = 0.002450122948955108[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=9) = 0.002331900336225129[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=4.5) = -2.7755575615628914e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=1.5) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=9.5) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=0) = -1.1102230246251565e-16[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=0.5) = 0.0006927554086584575[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=8) = 0.0023956054459049747[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=6.5) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=1.5) = 0.0015946789100027836[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=3) = 0.0022329096803442305[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=7.5) = 0.002423626941311985[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=8.5) = 0.0023647631649958978[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=14, t=1, boundary=periodic, U=9.5) = 0.002297645584322855[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=7) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=2.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=0) = -5.551115123125783e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=8) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=0.5) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=7.5) = 5.551115123125783e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=2) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=8.5) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=10) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=2) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=6.5) = 5.551115123125783e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=10) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=0.5) = 5.551115123125783e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=5) = -4.163336342344337e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=8.5) = 2.7755575615628914e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=5.5) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=6) = 2.7755575615628914e-17[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=15, t=1, boundary=periodic, U=7) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=0) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=8) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=5.5) = 0.0[0m
+[[1m[32m09:38:27[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=5) = 0.0[0m
+[[1m[32m09:38:28[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=7.5) = 0.0[0m
+[[1m[32m09:38:28[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=4) = 0.0[0m
+[[1m[32m09:38:28[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=2.5) = 0.0[0m
+[[1m[32m09:38:28[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=6) = 0.0[0m
+[[1m[32m09:38:28[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=3) = 0.0[0m
+[[1m[32m09:38:28[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=3.5) = 0.0[0m
+[[1m[32m09:38:28[0m[1m[0m] [37mAnalytic [M_stag] (lattice=(2, 2), n_occ=16, t=1, boundary=periodic, U=4.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=0.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=0.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=1.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=1.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=2.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=2.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=3.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=3.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=4.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=4.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=5.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=5.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=6.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=6.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=7.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=7.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=8.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=8.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=9.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=9.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=0, U=10.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=0.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=0.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=1.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=1.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=2.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=2.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=3.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=3.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=4.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=4.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=5.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=5.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=6.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=6.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=7.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=7.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=8.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=8.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=9.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=9.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=1, U=10.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=0.0) = 1.6653345369377348e-16[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=0.5) = 0.0006927554086585963[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=1.0) = 0.0012102878750108181[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=1.5) = 0.0015946789100028391[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=2.0) = 0.0018780309338707057[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=2.5) = 0.0020846548358392503[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=3.0) = 0.0022329096803443416[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=3.5) = 0.002336662544607182[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=4.0) = 0.0024064098338779927[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=4.5) = 0.0024501229489553578[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=5.0) = 0.002473879902153975[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=5.5) = 0.002482335048275691[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=6.0) = 0.002479068160862574[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=6.5) = 0.002466844251888506[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=7.0) = 0.002447807554546738[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=7.5) = 0.002423626941311985[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=8.0) = 0.002395605445904919[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=8.5) = 0.0023647631649962586[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=9.0) = 0.00233190033622524[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=9.5) = 0.002297645584322633[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=2, U=10.0) = 0.0022624930143319566[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=0.0) = 8.326672684688674e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=0.5) = 0.0014425169253633185[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=1.0) = 0.0025558959873240583[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=1.5) = 0.0033996626309454325[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=2.0) = 0.004027356840142715[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=2.5) = 0.00448459901547929[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=3.0) = 0.004808889314894704[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=3.5) = 0.005030320611763145[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=4.0) = 0.005172659380561551[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=4.5) = 0.0052544823311283795[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=5.0) = 0.005290216087525945[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=5.5) = 0.0052910219607078535[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=6.0) = 0.005265517870032266[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=6.5) = 0.0052203523814902675[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=7.0) = 0.005160653896924272[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=7.5) = 0.00509037872873272[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=8.0) = 0.005012579312009574[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=8.5) = 0.004929610305135418[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=9.0) = 0.004843286832731747[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=9.5) = 0.004755006048487387[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=3, U=10.0) = 0.004665840656419479[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=0.0) = -5.551115123125783e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=0.5) = 0.0019440029762197997[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=1.0) = 0.0033772347110444245[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=1.5) = 0.004430410134258017[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=2.0) = 0.005197656866042455[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=2.5) = 0.005747961941789864[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=3.0) = 0.006132694239151859[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=3.5) = 0.006390586909143708[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=4.0) = 0.006551122342406596[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=4.5) = 0.00663689958561095[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=5.0) = 0.006665333419392544[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=5.5) = 0.0066498988526125236[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=6.0) = 0.006601056506353731[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=6.5) = 0.006526948286367018[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=7.0) = 0.006433924593450574[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=7.5) = 0.006326946335494271[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=8.0) = 0.00620989300477337[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=8.5) = 0.0060857997814591225[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=9.0) = 0.0059570407188944685[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=9.5) = 0.005825470782219677[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=4, U=10.0) = 0.00569253636139444[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=0.0) = 1.1102230246251565e-16[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=0.5) = 0.0026358188442996977[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=1.0) = 0.004964494351164195[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=1.5) = 0.0069556119411542106[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=2.0) = 0.008601289313095062[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=2.5) = 0.009913338095487334[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=3.0) = 0.010918214173016916[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=3.5) = 0.01165130394363062[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=4.0) = 0.012151768684281916[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=4.5) = 0.012458604559735353[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=5.0) = 0.012608064542896313[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=5.5) = 0.012632267380353057[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=6.0) = 0.012558688027309972[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=6.5) = 0.012410221180593206[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=7.0) = 0.012205567840599396[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=7.5) = 0.011959768160752282[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=8.0) = 0.011684768752131647[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=8.5) = 0.011389961258844339[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=9.0) = 0.01108266169478156[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=9.5) = 0.01076852009537499[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=5, U=10.0) = 0.01045186127572828[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=0.0) = 2.220446049250313e-16[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=0.5) = 0.006927132837812711[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=1.0) = 0.012974786985027131[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=1.5) = 0.018165172756677728[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=2.0) = 0.022548692808714743[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=2.5) = 0.02619390236194441[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=3.0) = 0.029178178517851094[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=3.5) = 0.031580806758395974[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=4.0) = 0.03347849590843982[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=4.5) = 0.034942750061174754[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=5.0) = 0.036038510670658774[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=5.5) = 0.036823629100917354[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=6.0) = 0.037348870338738294[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=6.5) = 0.03765824627948866[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=7.0) = 0.0377895403114335[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=7.5) = 0.03777492734951754[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=8.0) = 0.03764162372926638[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=8.5) = 0.03741252380866961[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=9.0) = 0.037106796797570285[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=9.5) = 0.036740429417384646[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=6, U=10.0) = 0.036326708399016194[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=0.0) = -3.3306690738754696e-16[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=0.5) = 0.01143273327755806[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=1.0) = 0.023118713658731138[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=1.5) = 0.03497862797048562[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=2.0) = 0.04686274256015732[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=2.5) = 0.058553222569849184[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=3.0) = 0.06979014426291169[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=3.5) = 0.08031570723263814[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=4.0) = 0.08992030514794552[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=4.5) = 0.09847284150590718[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=5.0) = 0.10592727089519627[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=5.5) = 0.11230946517099177[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=6.0) = 0.11769469816693995[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=6.5) = 0.12218505763119342[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=7.0) = 0.12589180780198805[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=7.5) = 0.1289238603045948[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=8.0) = 0.13138141566100642[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=8.5) = 0.1333532198836933[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=9.0) = 0.13491602852656598[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=9.5) = 0.13613525760826323[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=7, U=10.0) = 0.13706617151218453[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=0.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=0.5) = 0.015222022098741295[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=1.0) = 0.03151474653488351[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=1.5) = 0.04906694722750832[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=2.0) = 0.06803233652597107[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=2.5) = 0.08846022670541093[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=3.0) = 0.11018522469910697[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=3.5) = 0.1327098923522126[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=4.0) = 0.15516776427109424[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=4.5) = 0.1764637538059841[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=5.0) = 0.19558204975598814[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=5.5) = 0.21188934126547287[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=6.0) = 0.2252436761716814[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=6.5) = 0.2358887084043655[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=7.0) = 0.24426075124697777[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=7.5) = 0.25082944121515427[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=8.0) = 0.2560114767767683[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=8.5) = 0.2601421364330573[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=9.0) = 0.2634775455119239[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=9.5) = 0.26620836282433535[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=8, U=10.0) = 0.2684750767310232[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=0.0) = 1.1102230246251565e-16[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=0.5) = 0.011432733277558116[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=1.0) = 0.02311871365873097[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=1.5) = 0.034978627970485676[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=2.0) = 0.04686274256015732[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=2.5) = 0.05855322256984952[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=3.0) = 0.06979014426291147[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=3.5) = 0.08031570723263826[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=4.0) = 0.08992030514794658[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=4.5) = 0.09847284150590724[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=5.0) = 0.10592727089519516[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=5.5) = 0.11230946517099172[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=6.0) = 0.11769469816693728[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=6.5) = 0.12218505763119197[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=7.0) = 0.12589180780198767[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=7.5) = 0.12892386030459224[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=8.0) = 0.1313814156610033[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=8.5) = 0.13335321988369137[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=9.0) = 0.13491602852656243[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=9.5) = 0.1361352576082604[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=9, U=10.0) = 0.13706617151218004[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=0.0) = -3.885780586188048e-16[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=0.5) = 0.006927132837812544[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=1.0) = 0.01297478698502702[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=1.5) = 0.01816517275667745[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=2.0) = 0.02254869280871402[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=2.5) = 0.026193902361943355[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=3.0) = 0.02917817851785154[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=3.5) = 0.03158080675839425[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=4.0) = 0.03347849590843793[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=4.5) = 0.0349427500611727[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=5.0) = 0.03603851067065711[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=5.5) = 0.03682362910091691[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=6.0) = 0.037348870338738516[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=6.5) = 0.037658246279487884[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=7.0) = 0.037789540311432335[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=7.5) = 0.03777492734951826[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=8.0) = 0.03764162372926605[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=8.5) = 0.03741252380866855[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=9.0) = 0.03710679679757045[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=9.5) = 0.0367404294173842[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=10, U=10.0) = 0.036326708399016416[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=0.0) = -8.326672684688674e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=0.5) = 0.002635818844299892[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=1.0) = 0.004964494351164583[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=1.5) = 0.0069556119411542106[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=2.0) = 0.008601289313094895[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=2.5) = 0.009913338095487056[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=3.0) = 0.010918214173016139[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=3.5) = 0.01165130394362962[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=4.0) = 0.012151768684280917[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=4.5) = 0.012458604559734687[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=5.0) = 0.012608064542894759[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=5.5) = 0.012632267380352225[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=6.0) = 0.012558688027308529[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=6.5) = 0.012410221180592595[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=7.0) = 0.01220556784059873[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=7.5) = 0.011959768160751172[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=8.0) = 0.011684768752130814[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=8.5) = 0.011389961258843728[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=9.0) = 0.011082661694780782[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=9.5) = 0.01076852009537399[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=11, U=10.0) = 0.010451861275727281[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=0.0) = 5.551115123125783e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=0.5) = 0.001944002976219661[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=1.0) = 0.0033772347110446466[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=1.5) = 0.004430410134257934[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=2.0) = 0.005197656866042538[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=2.5) = 0.00574796194178917[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=3.0) = 0.006132694239151332[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=3.5) = 0.006390586909143264[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=4.0) = 0.006551122342406568[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=4.5) = 0.0066368995856109225[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=5.0) = 0.006665333419392266[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=5.5) = 0.006649898852612357[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=6.0) = 0.0066010565063537585[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=6.5) = 0.006526948286366796[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=7.0) = 0.006433924593450768[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=7.5) = 0.00632694633549355[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=8.0) = 0.006209893004772926[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=8.5) = 0.006085799781458484[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=9.0) = 0.00595704071889408[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=9.5) = 0.00582547078221915[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=12, U=10.0) = 0.0056925363613933855[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=0.0) = 2.7755575615628914e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=0.5) = 0.0014425169253633185[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=1.0) = 0.0025558959873242526[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=1.5) = 0.003399662630944822[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=2.0) = 0.00402735684014241[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=2.5) = 0.004484599015479096[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=3.0) = 0.004808889314894066[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=3.5) = 0.00503032061176259[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=4.0) = 0.005172659380561051[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=4.5) = 0.005254482331127769[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=5.0) = 0.005290216087525668[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=5.5) = 0.005291021960707548[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=6.0) = 0.005265517870031877[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=6.5) = 0.00522035238148949[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=7.0) = 0.005160653896923911[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=7.5) = 0.005090378728732359[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=8.0) = 0.005012579312009102[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=8.5) = 0.0049296103051345574[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=9.0) = 0.004843286832731303[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=9.5) = 0.00475500604848722[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=13, U=10.0) = 0.0046658406564192845[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=0.0) = -1.1102230246251565e-16[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=0.5) = 0.0006927554086584575[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=1.0) = 0.0012102878750108736[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=1.5) = 0.0015946789100027836[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=2.0) = 0.0018780309338709833[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=2.5) = 0.002084654835839278[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=3.0) = 0.0022329096803442305[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=3.5) = 0.002336662544607293[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=4.0) = 0.002406409833878048[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=4.5) = 0.002450122948955108[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=5.0) = 0.002473879902154058[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=5.5) = 0.00248233504827558[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=6.0) = 0.0024790681608626852[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=6.5) = 0.002466844251888617[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=7.0) = 0.0024478075545466826[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=7.5) = 0.002423626941311985[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=8.0) = 0.0023956054459049747[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=8.5) = 0.0023647631649958978[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=9.0) = 0.002331900336225129[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=9.5) = 0.002297645584322855[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=14, U=10.0) = 0.002262493014332123[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=0.0) = -5.551115123125783e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=0.5) = 5.551115123125783e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=1.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=1.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=2.0) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=2.5) = -1.3877787807814457e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=3.0) = -2.7755575615628914e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=3.5) = -6.938893903907228e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=4.0) = 6.938893903907228e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=4.5) = -2.7755575615628914e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=5.0) = -4.163336342344337e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=5.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=6.0) = 2.7755575615628914e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=6.5) = 5.551115123125783e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=7.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=7.5) = 5.551115123125783e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=8.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=8.5) = 2.7755575615628914e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=9.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=9.5) = 2.7755575615628914e-17[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=15, U=10.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=0.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=0.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=1.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=1.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=2.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=2.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=3.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=3.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=4.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=4.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=5.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=5.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=6.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=6.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=7.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=7.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=8.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=8.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=9.0) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=9.5) = 0.0[0m
+[[1m[32m09:38:32[0m[1m[0m] [37mAnalytic (n_occ=16, U=10.0) = 0.0[0m
+✓ Completed at Mon Aug 10 09:38:33 AM PDT 2026
+  output: /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/hubbard/2x2/magnetization/simulated-ideal-analytic-M_stag-n_occ-vs-U.json
+  plot:   /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/plots/hubbard/2x2/magnetization/simulated-ideal-analytic-M_stag-n_occ-vs-U.pdf
+===================================================================
