@@ -1,9 +1,5 @@
 #!/bin/bash
-# Hubbard 2x2 magnetization DMRG: n_occ vs U sweep for M_stag/M_total.
-# Uses unified parallel runner for optimal scheduling (even for single method).
-# For interactive session: TASK_ID=0 bash dmrg.sh (or TASK_ID=1 for M_total)
-# For batch: sbatch dmrg.sh
-# PIPELINE=noisy TASK_ID=0 bash dmrg.sh for noisy pipeline (default: ideal).
+# Hubbard 2x2 magnetization VQE: n_occ vs U sweep for M_stag/M_total.
 
 set -euo pipefail
 
@@ -14,13 +10,8 @@ module load python
 source "${REPO_ROOT}/venv/bin/activate"
 
 source "${REPO_ROOT}/scripts/slurm/phase-diagrams/common_visualizer.sh"
-# For interactive sessions: use fewer shards for faster execution
-SHARDS="${SHARDS:-4}"
-CPUS_PER_TASK="${SLURM_CPUS_PER_TASK:-8}"
 setup_visualizer_env
-setup_visualizer_dmrg_env "${CPUS_PER_TASK}"
-
-export QBP_JOBS_PER_SHARD="${QBP_JOBS_PER_SHARD:-2}"
+setup_visualizer_vqe_env
 
 LOG_DIR="${LOG_DIR:-${REPO_ROOT}/manuscript-plots/logs}"
 PLOT_DIR="${PLOT_DIR:-${REPO_ROOT}/manuscript-plots/plots}"
@@ -47,40 +38,35 @@ if [[ "${PIPELINE}" == "noisy" ]]; then
 fi
 
 echo "==================================================================="
-echo "Hubbard 2x2 magnetization DMRG (SHARDED)"
+echo "Hubbard 2x2 magnetization VQE"
 echo "  observable:  ${OBSERVABLE}"
-echo "  sweep:       n_occ [${HUBBARD_N_OCC_START:-0} ${HUBBARD_N_OCC_END:-16} ${HUBBARD_N_OCC_STEP:-1}] vs U [${HUBBARD_U_START:-0.0} ${HUBBARD_U_END:-10.0} ${HUBBARD_U_STEP:-0.5}]"
+echo "  sweep:       n_occ [0-16] vs U [0-10]"
 echo "  pipeline:    ${PIPELINE}${backend_args[1]:+ (backend: ${backend_args[1]})}"
-echo "  method:      dmrg"
-echo "  plot format: heatmap"
-echo "  parallelism: distributed across ${SHARDS} shards on multiple nodes"
+echo "  method:      vqe"
 echo "==================================================================="
 
 cmd=(
     --model hubbard
-    --method dmrg
+    --method vqe
     --lattice 2 2
     --observable "${OBSERVABLE}"
     --x-param n_occ
-    --x-range "${HUBBARD_N_OCC_START:-0}" "${HUBBARD_N_OCC_END:-16}" "${HUBBARD_N_OCC_STEP:-1}"
+    --x-range 0 16 1
     --y-param U
-    --y-range "${HUBBARD_U_START:-0.0}" "${HUBBARD_U_END:-10.0}" "${HUBBARD_U_STEP:-0.5}"
-    --t "${HUBBARD_T:-1.0}"
-    --no-dmrg-conserve-sz
-    --dmrg-initial-state "${DMRG_INITIAL_STATE:-neel}"
-    --heatmap
+    --y-range 0.0 10.0 0.5
+    --t 1.0
+    --vqe-ansatz uccsd
+    --vqe-optimizer cobyla
 )
 
 if [[ "${PIPELINE}" == "noisy" ]]; then
     cmd+=("${backend_args[@]}")
 fi
 
-append_dmrg_args cmd
-append_qbp_output_paths cmd "${OUT_EVAL_DIR}/hubbard-2x2-${PIPELINE}-dmrg-${OBSERVABLE}-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-${PIPELINE}-dmrg-${OBSERVABLE}-${SWEEP_TAG}.pdf"
+append_qbp_output_paths cmd "${OUT_EVAL_DIR}/hubbard-2x2-${PIPELINE}-vqe-${OBSERVABLE}-${SWEEP_TAG}.json" "${OUT_PLOT_DIR}/simulated-${PIPELINE}-vqe-${OBSERVABLE}-${SWEEP_TAG}.pdf"
 
-# For interactive sessions: run without sharding
 if [[ -z "${SLURM_JOB_ID:-}" ]]; then
-    echo "Running in interactive mode (no sharding)"
+    echo "Running in interactive mode"
     if ${QBP_CLI} run "${cmd[@]}"; then
         echo "Completed at $(date)"
     else
