@@ -71,7 +71,7 @@ def _patched_run(*args, **kwargs):
     return qbp.load_result(str(_DATA_DIR / filename))
 
 def _patched_plot_combined(paths, *args, **kwargs):
-    return _real_plot_combined([str(_DATA_DIR / p) for p in paths], *args, **kwargs)
+    _real_plot_combined([str(_DATA_DIR / p) for p in paths], *args, **kwargs)
 
 qbp.run = _patched_run
 qbp.plot_combined = _patched_plot_combined
@@ -141,7 +141,7 @@ def _patched_run(*args, **kwargs):
     return qbp.load_result(str(_DATA_DIR / filename))
 
 def _patched_plot_combined(paths, *args, **kwargs):
-    return _real_plot_combined([str(_DATA_DIR / p) for p in paths], *args, **kwargs)
+    _real_plot_combined([str(_DATA_DIR / p) for p in paths], *args, **kwargs)
 
 qbp.run = _patched_run
 qbp.plot_combined = _patched_plot_combined
@@ -240,7 +240,7 @@ def _patched_run(*args, **kwargs):
     return qbp.load_result(str(_DATA_DIR / filename))
 
 def _patched_plot_combined(paths, *args, **kwargs):
-    return _real_plot_combined([str(_DATA_DIR / p) for p in paths], *args, **kwargs)
+    _real_plot_combined([str(_DATA_DIR / p) for p in paths], *args, **kwargs)
 
 qbp.run = _patched_run
 qbp.plot_combined = _patched_plot_combined
