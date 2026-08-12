@@ -11,8 +11,8 @@ from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import efficient_su2
 from qiskit.quantum_info import SparsePauliOp
 
+from qbp._core import _fmt_params, _make_simulator, run_reps_parallel, logger
 from qbp._backend import make_vqe_estimator
-from qbp._core import _fmt_params, _make_simulator, logger
 from qbp._mitigation import chain_measure, transform_circuit_chain
 from qbp._method import Method, ParamSpec, SimulationMethod, register_method
 
@@ -419,8 +419,8 @@ class VQEMethod(SimulationMethod):
         ferm_fn = ctx.fermionic_hamiltonian_fn or model.fermionic_hamiltonian
         get_ansatz = self._ansatz_fn(model)
         get_optimizer = self._optimizer_fn(model)
-        reps = []
-        for rep in range(1, self.reps + 1):
+
+        def run_one_rep(rep):
             if observable == "E":
                 energy = vqe_fermionic(
                     lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
@@ -439,7 +439,9 @@ class VQEMethod(SimulationMethod):
                     seed=ctx.cell_index * 1000 + rep,
                     warm_start=self.warm_start,
                 )
-            reps.append(float(energy))
+            return float(energy)
+
+        reps = run_reps_parallel(self.reps, run_one_rep)
         num_queries, (total, two_q) = vqe_other_benchmarks(
             lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
             ferm_fn, get_ansatz, ctx.mapper,
@@ -455,14 +457,15 @@ class VQEMethod(SimulationMethod):
     # -------------------------------------------------------------- band structure
     def compute_bloch_cell(self, model, k_tuple, cell_params, observable, *,
                            backend, ctx):
-        reps = []
-        for rep in range(1, self.reps + 1):
+        def run_one_rep(rep):
             energy = vqe_bloch(
                 k_tuple, cell_params, model.bloch_hamiltonian, model.get_optimizer,
                 self.iters, self.layers, rep, backend=backend,
                 strategies=self.mitigation_strategies, seed=ctx.cell_index * 1000 + rep,
             )
-            reps.append(float(energy))
+            return float(energy)
+
+        reps = run_reps_parallel(self.reps, run_one_rep)
         num_queries, (total, two_q) = vqe_bloch_other_benchmarks(
             k_tuple, cell_params, model.bloch_hamiltonian,
             self.iters, self.layers, self.reps, backend=backend,
@@ -490,14 +493,16 @@ class VQEMethod(SimulationMethod):
             else OptimizerSpec(type="SPSA", kwargs={"maxiter": "@max_iters"})
         )
         get_optimizer = build_optimizer_factory(optimizer_spec, name="operator")
-        reps = []
-        for rep in range(1, self.reps + 1):
+
+        def run_one_rep(rep):
             energy = vqe_operator(
                 op, get_vqe_ansatz, get_optimizer, self.iters, self.layers, rep,
                 extremum, backend, label, observable,
                 strategies=self.mitigation_strategies,
             )
-            reps.append(float(energy))
+            return float(energy)
+
+        reps = run_reps_parallel(self.reps, run_one_rep)
         return {"repetitions": reps}
 
     def _estimate_shots(self, shots):

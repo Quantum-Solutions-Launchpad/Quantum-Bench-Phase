@@ -197,7 +197,13 @@ class SimulationMethod:
             return float("nan")
         if analytic is not None:
             return float(min(reps, key=lambda r: abs(r - analytic)))
-        return float(max(reps) if extremum == "max" else min(reps))
+        if extremum == "max":
+            return float(max(reps))
+        elif extremum == "median":
+            import statistics
+            return float(statistics.median(reps))
+        else:  # min
+            return float(min(reps))
 
     # -------------------------------------------------------------- diagnostics
     def parameter_summary(self) -> dict:

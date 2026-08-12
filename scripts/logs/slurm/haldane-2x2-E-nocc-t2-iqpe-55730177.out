@@ -1,0 +1,189 @@
+Running Haldane 2x2 ground-state energy phase diagram (nocc-vs-t2, ideal)
+  job id:      55730177
+  nodes:       4
+  shards:      64
+  log dir:     /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs
+  plot dir:    /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/plots
+  sweep:       n_occ [0 8 1] vs t2 [0.0 1.0 0.1]
+  pipeline:    ideal
+  methods:     iqpe (running in parallel)
+  plot format: 3d
+  fixed:       t1=1.0 M=0.0 phi=0.785398369 
+Starting method: iqpe
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 1 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+Resuming from progress log: skipping 2 already-computed cell(s), 0 remaining.
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=0, t2=0.0) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=0, t2=0.1) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=0, t2=0.2) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=0, t2=0.30000000000000004) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=0, t2=0.4) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=0, t2=0.5) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=0, t2=0.6000000000000001) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=0, t2=0.7000000000000001) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=0, t2=0.8) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=0, t2=0.9) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=0, t2=1.0) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=1, t2=0.0) = -30.434178831651117[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=1, t2=0.1) = -30.311460368620267[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=1, t2=0.2) = -30.188741905589417[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=1, t2=0.30000000000000004) = -30.066023442558567[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=1, t2=0.4) = -29.820586516496864[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=1, t2=0.5) = -29.697868053466014[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=1, t2=0.6000000000000001) = -29.575149590435164[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=1, t2=0.7000000000000001) = -29.452431127404306[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=1, t2=0.8) = -31.293208072867078[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=1, t2=0.9) = -31.170489609836228[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=1, t2=1.0) = -31.047771146805378[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=2, t2=0.0) = -29.452431127404306[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=2, t2=0.1) = -31.170489609836228[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=2, t2=0.2) = -30.802334220743674[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=2, t2=0.30000000000000004) = -30.55689729468197[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=2, t2=0.4) = -30.311460368620267[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=2, t2=0.5) = -30.066023442558567[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=2, t2=0.6000000000000001) = -29.697868053466014[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=2, t2=0.7000000000000001) = -29.452431127404306[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=2, t2=0.8) = -31.170489609836228[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=2, t2=0.9) = -28.838838812250053[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=2, t2=1.0) = -28.59340188618835[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=3, t2=0.0) = -30.434178831651117[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=3, t2=0.1) = -30.55689729468197[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=3, t2=0.2) = -30.55689729468197[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=3, t2=0.30000000000000004) = -31.170489609836228[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=3, t2=0.4) = -30.67961575771282[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=3, t2=0.5) = -30.311460368620267[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=3, t2=0.6000000000000001) = -29.820586516496864[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=3, t2=0.7000000000000001) = -29.452431127404306[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=3, t2=0.8) = -29.697868053466014[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=3, t2=0.9) = -29.575149590435164[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=3, t2=1.0) = -30.066023442558567[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=4, t2=0.0) = -29.452431127404306[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=4, t2=0.1) = -30.925052683774528[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=4, t2=0.2) = -31.293208072867078[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=4, t2=0.30000000000000004) = -31.170489609836228[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=4, t2=0.4) = -29.452431127404306[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=4, t2=0.5) = -29.575149590435164[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=4, t2=0.6000000000000001) = -29.452431127404306[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=4, t2=0.7000000000000001) = -29.452431127404306[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=4, t2=0.8) = -29.452431127404306[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=4, t2=0.9) = -29.452431127404306[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=4, t2=1.0) = -31.170489609836228[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=5, t2=0.0) = -30.434178831651117[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=5, t2=0.1) = -30.802334220743674[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=5, t2=0.2) = -31.293208072867078[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=5, t2=0.30000000000000004) = -28.102528034064942[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=5, t2=0.4) = -28.2252464970958[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=5, t2=0.5) = -28.59340188618835[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=5, t2=0.6000000000000001) = -27.61165418194154[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=5, t2=0.7000000000000001) = -3.9269908169872414[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=5, t2=0.8) = -4.417864669110647[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=5, t2=0.9) = -4.7860200582032[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=5, t2=1.0) = -5.399612373357456[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=6, t2=0.0) = -29.452431127404306[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=6, t2=0.1) = -29.697868053466014[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=6, t2=0.2) = -2.5770877236478773[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=6, t2=0.30000000000000004) = -0.859029241215959[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=6, t2=0.4) = -1.1044661672776617[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=6, t2=0.5) = -3.436116964863836[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=6, t2=0.6000000000000001) = -3.6815538909255383[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=6, t2=0.7000000000000001) = -3.9269908169872414[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=6, t2=0.8) = -2.2089323345553233[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=6, t2=0.9) = -2.5770877236478773[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=6, t2=1.0) = -2.8225246497095795[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=7, t2=0.0) = -30.434178831651117[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=7, t2=0.1) = -30.55689729468197[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=7, t2=0.2) = -30.67961575771282[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=7, t2=0.30000000000000004) = -30.802334220743674[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=7, t2=0.4) = -31.047771146805378[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=7, t2=0.5) = -31.170489609836228[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=7, t2=0.6000000000000001) = -31.293208072867078[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=7, t2=0.7000000000000001) = -1.9634954084936207[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=7, t2=0.8) = -2.086213871524472[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=7, t2=0.9) = -2.2089323345553233[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=7, t2=1.0) = -2.4543692606170255[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=8, t2=0.0) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=8, t2=0.1) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=8, t2=0.2) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=8, t2=0.30000000000000004) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=8, t2=0.4) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=8, t2=0.5) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=8, t2=0.6000000000000001) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=8, t2=0.7000000000000001) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=8, t2=0.8) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=8, t2=0.9) = -0.0[0m
+[[1m[32m07:46:58[0m[1m[0m] [37mIQPE (n_occ=8, t2=1.0) = -0.0[0m
+Completed iqpe run at Fri Jul 10 07:46:59 PDT 2026
+  summary: /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/haldane/2x2/ground-state-energy/nocc-vs-t2/simulated-ideal-iqpe-E-nocc-vs-t2.json
+  plot:    /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/plots/haldane/2x2/ground-state-energy/nocc-vs-t2/simulated-ideal-iqpe-E-nocc-vs-t2.pdf
+
+=== Output verification ===
+OK  summary:  /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/haldane/2x2/ground-state-energy/nocc-vs-t2/simulated-ideal-iqpe-E-nocc-vs-t2.json
+OK  plot:     /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/plots/haldane/2x2/ground-state-energy/nocc-vs-t2/simulated-ideal-iqpe-E-nocc-vs-t2.pdf
+OK  progress: /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/haldane/2x2/ground-state-energy/nocc-vs-t2/simulated-ideal-iqpe-E-nocc-vs-t2.progress.jsonl (99 cells logged)
+
+All methods completed at Fri Jul 10 07:46:59 PDT 2026
+==================================================================
+FINAL PLOT: /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/plots/haldane/2x2/ground-state-energy/nocc-vs-t2/simulated-ideal-iqpe-E-nocc-vs-t2.pdf
+Per-method outputs: /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/haldane/2x2/ground-state-energy/nocc-vs-t2/simulated-ideal-<method>-E-nocc-vs-t2.{json,pdf,progress.jsonl}
+==================================================================

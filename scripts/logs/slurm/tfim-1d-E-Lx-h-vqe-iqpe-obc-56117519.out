@@ -1,0 +1,85 @@
+===================================================================
+TFIM 1D ground-state energy Lx vs h (OBC)
+  Methods: VQE, IQPE
+  Boundary: open
+  Data dir: /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/tfim/1d/ground-state-energy/Lx-vs-h-obc
+  Started: Sun Jul 19 01:35:05 PM PDT 2026
+===================================================================
+Running computation...
+Command: qbp run --method vqe iqpe --observable E --qubit-operator /pscratch/sd/m/mbao202/tfim.hdf5 --select 1D --select grid-nonpbc --x-param Lx --x-range 4 8 1 --y-param h --y-range 0.0 3.0 0.5 --vqe-iters 10000 --vqe-layers 5 --vqe-reps 10 --iqpe-time 0.2 --iqpe-trot 5 --iqpe-iters 8 --iqpe-reps 20 --iqpe-initial-state vqe_informed --iqpe-initial-vqe-ansatz excitation_preserving --iqpe-initial-vqe-n-layers 2 --iqpe-initial-vqe-ansatz-kwarg reps=2 --iqpe-initial-vqe-max-iters 1000 --log-path /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/tfim/1d/ground-state-energy/Lx-vs-h-obc/tfim-1d-obc-E-Lx-vs-h-vqe-iqpe.json --plot-path /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/plots/tfim/1d/ground-state-energy/Lx-vs-h-obc/tfim-1d-obc-E-Lx-vs-h-vqe-iqpe.pdf
+
+[[2m[37m13:35:42[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=3.0, rep=1) iteration=1 = 0.0[0m
+[[2m[37m13:35:43[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=3.0, rep=1) iteration=2 = 0.5[0m
+[[2m[37m13:35:43[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=3.0, rep=1) iteration=3 = 0.75[0m
+[[2m[37m13:35:43[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=1.0, rep=1) iteration=1 = 0.5[0m
+[[2m[37m13:35:43[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=0.5, rep=1) iteration=1 = 0.0[0m
+[[2m[37m13:35:43[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=3.0, rep=1) iteration=4 = 0.875[0m
+[[2m[37m13:35:43[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=3.0, rep=1) iteration=5 = 0.9375[0m
+[[2m[37m13:35:43[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=3.0, rep=1) iteration=6 = 0.96875[0m
+[[2m[37m13:35:43[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=3.0, rep=1) iteration=7 = 0.484375[0m
+[[2m[37m13:35:43[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=0.5, rep=1) iteration=1 = 0.0[0m
+[[2m[37m13:35:44[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=3.0, rep=1) iteration=8 = 0.7421875[0m
+[[2m[37m13:35:44[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=3.0, rep=1) = -23.316507975861747[0m
+[[2m[37m13:35:44[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=1.0, rep=1) iteration=2 = 0.75[0m
+[[2m[37m13:35:44[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=0.5, rep=1) iteration=2 = 0.0[0m
+[[2m[37m13:35:44[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=1.0, rep=1) iteration=3 = 0.875[0m
+[[2m[37m13:35:44[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=0.5, rep=1) iteration=3 = 0.5[0m
+[[2m[37m13:35:44[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=1.0, rep=1) iteration=4 = 0.9375[0m
+[[2m[37m13:35:44[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=2.0, rep=1) iteration=1 = 0.0[0m
+[[2m[37m13:35:44[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=0.5, rep=1) iteration=2 = 0.0[0m
+[[2m[37m13:35:44[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=0.5, rep=1) iteration=4 = 0.25[0m
+[[2m[37m13:35:44[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=1.0, rep=1) iteration=5 = 0.96875[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=0.5, rep=1) iteration=5 = 0.125[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=1.0, rep=1) iteration=6 = 0.484375[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=0.5, rep=1) iteration=6 = 0.5625[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=1.0, rep=1) iteration=7 = 0.7421875[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=0.5, rep=1) iteration=3 = 0.5[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=1.0, rep=1) iteration=8 = 0.87109375[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=1.0, rep=1) = -27.36621725587984[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=0.5, rep=1) iteration=7 = 0.78125[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=0.5, rep=1) iteration=8 = 0.890625[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=0.5, rep=1) = -27.979809571034092[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=0.5, rep=1) iteration=4 = 0.75[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=2.0, rep=1) iteration=2 = 0.5[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=0.5, rep=1) iteration=5 = 0.875[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=0.5, rep=1) iteration=6 = 0.4375[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=2.0, rep=1) iteration=3 = 0.75[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=0.5, rep=1) iteration=7 = 0.71875[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=0.5, rep=1) iteration=8 = 0.859375[0m
+[[2m[37m13:35:45[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=0.5, rep=1) = -26.998061866787285[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=1.0, rep=1) iteration=1 = 0.5[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=2.0, rep=1) iteration=4 = 0.875[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=3.0, rep=1) iteration=1 = 0.5[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=2.0, rep=1) iteration=5 = 0.4375[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=2.0, rep=1) iteration=6 = 0.21875[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=1.0, rep=1) iteration=1 = 0.0[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=2.0, rep=1) iteration=7 = 0.609375[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=2.0, rep=1) iteration=8 = 0.8046875[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=4.0, h=2.0, rep=1) = -25.280003384355364[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=1.0, rep=1) iteration=2 = 0.75[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=3.0, rep=1) iteration=1 = 0.0[0m
+[[2m[37m13:35:46[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=3.0, rep=1) iteration=2 = 0.75[0m
+[[2m[37m13:35:47[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=1.0, rep=1) iteration=3 = 0.875[0m
+[[2m[37m13:35:47[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=3.0, rep=1) iteration=3 = 0.875[0m
+[[2m[37m13:35:47[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=1.0, rep=1) iteration=4 = 0.9375[0m
+[[2m[37m13:35:47[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=3.0, rep=1) iteration=4 = 0.9375[0m
+[[2m[37m13:35:47[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=1.0, rep=1) iteration=5 = 0.46875[0m
+[[2m[37m13:35:47[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=3.0, rep=1) iteration=2 = 0.0[0m
+[[2m[37m13:35:47[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=3.0, rep=1) iteration=5 = 0.96875[0m
+[[2m[37m13:35:47[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=1.0, rep=1) iteration=6 = 0.234375[0m
+[[2m[37m13:35:47[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=0.5, rep=1) iteration=1 = 0.5[0m
+[[2m[37m13:35:47[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=1.0, rep=1) iteration=7 = 0.6171875[0m
+[[2m[37m13:35:47[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=3.0, rep=1) iteration=6 = 0.984375[0m
+[[2m[37m13:35:48[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=1.0, rep=1) iteration=8 = 0.80859375[0m
+[[2m[37m13:35:48[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=1.0, rep=1) = -25.402721847386214[0m
+[[2m[37m13:35:48[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=3.0, rep=1) iteration=7 = 0.4921875[0m
+[[2m[37m13:35:48[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=3.0, rep=1) iteration=8 = 0.74609375[0m
+[[2m[37m13:35:48[0m[2m[0m] [2mIQPE [E] (Lx=5.0, h=3.0, rep=1) = -23.439226438892597[0m
+[[2m[37m13:35:48[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=3.0, rep=1) iteration=3 = 0.5[0m
+[[2m[37m13:35:48[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=2.0, rep=1) iteration=1 = 0.0[0m
+[[2m[37m13:35:48[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=3.0, rep=1) iteration=4 = 0.25[0m
+[[2m[37m13:35:48[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=3.0, rep=1) iteration=5 = 0.625[0m
+[[2m[37m13:35:48[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=3.0, rep=1) iteration=6 = 0.3125[0m
+[[2m[37m13:35:49[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=3.0, rep=1) iteration=7 = 0.15625[0m
+[[2m[37m13:35:49[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=3.0, rep=1) iteration=8 = 0.578125[0m
+[[2m[37m13:35:49[0m[2m[0m] [2mIQPE [E] (Lx=6.0, h=3.0, rep=1) = -18.16233252856599[0m

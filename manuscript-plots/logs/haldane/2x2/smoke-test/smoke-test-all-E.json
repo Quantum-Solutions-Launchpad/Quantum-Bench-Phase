@@ -1,0 +1,142 @@
+{
+    "type": "run",
+    "methods": [
+        "analytic",
+        "vqe",
+        "iqpe",
+        "dmrg"
+    ],
+    "backend": "ideal",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "x_param": "n_occ",
+    "y_param": "t2",
+    "x_values": [
+        0,
+        4,
+        8
+    ],
+    "y_values": [
+        0.0,
+        0.5,
+        1.0
+    ],
+    "parameters": {
+        "model": "haldane",
+        "lattice": [
+            2,
+            2
+        ],
+        "geometry": "rectangle",
+        "radius": null,
+        "center": null,
+        "potential_profile": "none",
+        "potential_radius": null,
+        "potential_v0": null,
+        "potential_xi": null,
+        "investigation": null,
+        "model_params": {
+            "t1": 1.0,
+            "phi": 0.7853981633974483,
+            "M": 0.0,
+            "boundary": "periodic"
+        },
+        "method_params": {
+            "analytic": {},
+            "vqe": {
+                "iters": 100,
+                "layers": 2,
+                "reps": 1,
+                "ansatz": null,
+                "optimizer": null,
+                "extremum": "min"
+            },
+            "iqpe": {
+                "time": 0.1,
+                "trot": 1,
+                "iters": 2,
+                "reps": 1,
+                "initial_state": null,
+                "extremum": "median"
+            },
+            "dmrg": {
+                "nsweeps": 4,
+                "maxdims": "20\\,50\\,100\\,200",
+                "cutoff": 1e-09,
+                "seed": 1234,
+                "initial_state": "packed"
+            }
+        }
+    },
+    "result": {
+        "analytic": {
+            "0": {
+                "0": 0.0,
+                "1": 0.0,
+                "2": 0.0
+            },
+            "1": {
+                "0": -6.0,
+                "1": -6.0,
+                "2": -7.65685424949238
+            },
+            "2": {
+                "0": -8.881784197001252e-16,
+                "1": -8.881784197001252e-16,
+                "2": 0.0
+            }
+        },
+        "vqe": {
+            "0": {
+                "0": -0.052001953125,
+                "1": -0.05144005976802612,
+                "2": 0.06025242657210449
+            },
+            "1": {
+                "0": -0.460693359375,
+                "1": -2.3530411703577183,
+                "2": -0.0256266449228197
+            },
+            "2": {
+                "0": -0.055419921875,
+                "1": -0.012386490414134347,
+                "2": 0.11544730217923385
+            }
+        },
+        "iqpe": {
+            "0": {
+                "0": -0.0,
+                "1": -0.0,
+                "2": -0.0
+            },
+            "1": {
+                "0": -0.0,
+                "1": -0.0,
+                "2": -0.0
+            },
+            "2": {
+                "0": -0.0,
+                "1": -0.0,
+                "2": -0.0
+            }
+        },
+        "dmrg": {
+            "0": {
+                "0": 0.0,
+                "1": 0.0,
+                "2": 0.0
+            },
+            "1": {
+                "0": -5.999999999999183,
+                "1": -5.999999981756072,
+                "2": -7.656854189586862
+            },
+            "2": {
+                "0": 0.0,
+                "1": 0.0,
+                "2": 0.0
+            }
+        }
+    }
+}

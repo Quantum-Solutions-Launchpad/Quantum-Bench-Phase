@@ -1,0 +1,3461 @@
+{
+    "type": "run",
+    "methods": [
+        "dmrg"
+    ],
+    "backend": "ideal",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "extremum": "min",
+    "x_param": "n_occ",
+    "y_param": "t2",
+    "x_values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+    ],
+    "y_values": [
+        0.0,
+        0.1,
+        0.2,
+        0.30000000000000004,
+        0.4,
+        0.5,
+        0.6000000000000001,
+        0.7000000000000001,
+        0.8,
+        0.9,
+        1.0
+    ],
+    "parameters": {
+        "model": "haldane",
+        "lattice": [
+            2,
+            2
+        ],
+        "geometry": "rectangle",
+        "radius": null,
+        "center": null,
+        "potential_profile": "none",
+        "potential_radius": null,
+        "potential_v0": null,
+        "potential_xi": null,
+        "investigation": null,
+        "model_params": {
+            "t1": 1.0,
+            "phi": 0.785398369,
+            "M": 0.0,
+            "boundary": "periodic"
+        },
+        "method_params": {
+            "dmrg": {
+                "nsweeps": 4,
+                "maxdims": "20\\,50\\,100\\,200",
+                "cutoff": 1e-09,
+                "seed": 1234,
+                "conserve_qns": true,
+                "conserve_sz": true,
+                "initial_state": "packed",
+                "julia": "julia",
+                "julia_module": "julia/1.11.7",
+                "julia_project": null,
+                "script_path": null
+            }
+        }
+    },
+    "cells": {
+        "dmrg": {
+            "0": {
+                "7": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-nolqorn0/dmrg-cell-x0-y7.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 48.346886997,
+                            "alloc_bytes": 3884898584.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.57894177,
+                            "alloc_bytes": 610843248.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.511519012,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.292435784,
+                            "alloc_bytes": 2272579872.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.2551574,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.231268462,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "6": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-vyvq0f8w/dmrg-cell-x0-y6.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 48.553844261,
+                            "alloc_bytes": 3884898584.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.628762679,
+                            "alloc_bytes": 610843248.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.505612351,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.349645462,
+                            "alloc_bytes": 2272571600.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.25694807,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.228106465,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "5": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-_c1jvx8l/dmrg-cell-x0-y5.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 48.389560434,
+                            "alloc_bytes": 3884898584.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.61585937,
+                            "alloc_bytes": 610843248.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.50016667,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.240153006,
+                            "alloc_bytes": 2272575736.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.256853489,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.225357972,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-alr2vukt/dmrg-cell-x0-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.788249677,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.023556433,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.366871129,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.119210845,
+                            "alloc_bytes": 10873520.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.057314661,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.258832283,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "9": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-9u7fhohu/dmrg-cell-x0-y9.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.447261302,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.023067369,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.323172559,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.197156472,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.053481596,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.232145973,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "10": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-kn1s4vb4/dmrg-cell-x0-y10.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.815152199,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.024119893,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.344677158,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.124607976,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.054959842,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.242786506,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "2": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-k8da79qf/dmrg-cell-x0-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.021782203,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.023990432,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.35681929,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.182897592,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.064364553,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.25103951,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "3": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-wraa2ysv/dmrg-cell-x0-y3.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.288638876,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.023761197,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.405048954,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.125103344,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.059024811,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.25685893,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "8": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-6wfuh5xq/dmrg-cell-x0-y8.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.381216686,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.032773648,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.336969958,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.140253006,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.060784751,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.264305677,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "4": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-uzjmgb5d/dmrg-cell-x0-y4.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.118687603,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.022616408,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.359452209,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.103088699,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.050059136,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.228585536,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "1": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-ag8xb7_c/dmrg-cell-x0-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.204250682,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.019807258,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.354880815,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.107835255,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.055076802,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.229574043,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            },
+            "1": {
+                "7": {
+                    "energy": -5.96984787037501,
+                    "output": "/tmp/qbp-run-_c11uakg/dmrg-cell-x1-y7.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 50.458967026,
+                            "alloc_bytes": 4400372736.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.557547077,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.526376249,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.117826152,
+                            "alloc_bytes": 2272579872.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.256447929,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.225555866,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "5": {
+                    "energy": -5.121319907409988,
+                    "output": "/tmp/qbp-run-da3kxivy/dmrg-cell-x1-y5.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 50.638024781,
+                            "alloc_bytes": 4400372288.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.582404891,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.520262418,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.357282612,
+                            "alloc_bytes": 2272579872.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.261309862,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.230124846,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "6": {
+                    "energy": -5.545583888892778,
+                    "output": "/tmp/qbp-run-auu0nt7b/dmrg-cell-x1-y6.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 50.861631322,
+                            "alloc_bytes": 4400236080.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.601766957,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.497282618,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.24582104,
+                            "alloc_bytes": 2272579872.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.256815857,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.223516327,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "4": {
+                    "energy": -4.697055925928064,
+                    "output": "/tmp/qbp-run-9yc_9vd6/dmrg-cell-x1-y4.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 20.045217147,
+                            "alloc_bytes": 1515432320.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.029330982,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.325110876,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.169014059,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.052260664,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.235136441,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": -2.9999999943035394,
+                    "output": "/tmp/qbp-run-805yneo8/dmrg-cell-x1-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 20.371508243,
+                            "alloc_bytes": 1516285232.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.03420415,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.333268982,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.252786329,
+                            "alloc_bytes": 10871432.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.054961704,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.26509225,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "10": {
+                    "energy": -7.242639814748387,
+                    "output": "/tmp/qbp-run-cm7tbcn8/dmrg-cell-x1-y10.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 21.214910398,
+                            "alloc_bytes": 1517395584.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.033757637,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.350998705,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.1172679,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.057313088,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.250832463,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "1": {
+                    "energy": -3.424263981107946,
+                    "output": "/tmp/qbp-run-fgvquvek/dmrg-cell-x1-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 21.33802562,
+                            "alloc_bytes": 1516285232.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.03138738,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.450408398,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.129941247,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.064291288,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.289741063,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "3": {
+                    "energy": -4.272791944443952,
+                    "output": "/tmp/qbp-run-knycqc07/dmrg-cell-x1-y3.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.789050138,
+                            "alloc_bytes": 1516285232.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.027652331,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.319169108,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.113995014,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.053949629,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.27715104,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "9": {
+                    "energy": -6.818375833338765,
+                    "output": "/tmp/qbp-run-0vezjqrk/dmrg-cell-x1-y9.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 20.083746877,
+                            "alloc_bytes": 1516285296.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.025874903,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.361742015,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.122632852,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.057997135,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.241474373,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "2": {
+                    "energy": -3.8485279625116844,
+                    "output": "/tmp/qbp-run-tq5y7inh/dmrg-cell-x1-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 21.087943421,
+                            "alloc_bytes": 1514551072.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.065352513,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.355515963,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.104427465,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.050993709,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.232740387,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "8": {
+                    "energy": -6.394111851857073,
+                    "output": "/tmp/qbp-run-m3zw35mu/dmrg-cell-x1-y8.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 20.325267499,
+                            "alloc_bytes": 1515410992.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.029327007,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.339796953,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.124480277,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.107870148,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.268855994,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            },
+            "2": {
+                "1": {
+                    "energy": -4.282842654294638,
+                    "output": "/tmp/qbp-run-_76s4r5x/dmrg-cell-x2-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.674787739,
+                            "alloc_bytes": 1573808216.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.04137683,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.334803818,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.26039848,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.05366636,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.240843289,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "9": {
+                    "energy": -7.636750925895753,
+                    "output": "/tmp/qbp-run-zcpoaqcg/dmrg-cell-x2-y9.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 5,
+                    "avg_link_dim": 3.7142857142857144,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.902880381,
+                            "alloc_bytes": 1567480896.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.072747237,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.396174061,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.22409017,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.122029491,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.271866518,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "8": {
+                    "energy": -6.787047594632996,
+                    "output": "/tmp/qbp-run-_w56beaa/dmrg-cell-x2-y8.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 5,
+                    "avg_link_dim": 3.5714285714285716,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.026977637,
+                            "alloc_bytes": 1574758048.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.028508531,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.353930805,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.234844395,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.059760346,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.276743691,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "6": {
+                    "energy": -5.697055924448568,
+                    "output": "/tmp/qbp-run-xdtc5qcn/dmrg-cell-x2-y6.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.107887969,
+                            "alloc_bytes": 1567367304.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.038200051,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.349069456,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.251631679,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.056531407,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.254594113,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "5": {
+                    "energy": -5.414213271583098,
+                    "output": "/tmp/qbp-run-el_01gir/dmrg-cell-x2-y5.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.633495498,
+                            "alloc_bytes": 1572529080.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.028898547,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.426855125,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.142467592,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.070318344,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.287520711,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "10": {
+                    "energy": -8.485278979954728,
+                    "output": "/tmp/qbp-run-fktbtg3b/dmrg-cell-x2-y10.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 24.01410372,
+                            "alloc_bytes": 1571944680.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.030000702,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.368763582,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.171896807,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.059301908,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.256006158,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "2": {
+                    "energy": -4.5656853086427525,
+                    "output": "/tmp/qbp-run-kzhowj1p/dmrg-cell-x2-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 24.147965321,
+                            "alloc_bytes": 1575288240.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.031894482,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.382174473,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.136664551,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.108945998,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.294030511,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "4": {
+                    "energy": -5.13137061728571,
+                    "output": "/tmp/qbp-run-134o5yck/dmrg-cell-x2-y4.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.707989601,
+                            "alloc_bytes": 1575298848.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.031363508,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.354297167,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.115500127,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.056924055,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.238184278,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "7": {
+                    "energy": -5.979874025371187,
+                    "output": "/tmp/qbp-run-a8nrixzh/dmrg-cell-x2-y7.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.684814521,
+                            "alloc_bytes": 1575191416.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.039104208,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.373446516,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.132971918,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.063132172,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.267987403,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": -3.9999999998406457,
+                    "output": "/tmp/qbp-run-odgb6f0w/dmrg-cell-x2-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.19018275,
+                            "alloc_bytes": 1575442200.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.027141602,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.348280713,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.099528939,
+                            "alloc_bytes": 10873520.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049910401,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.226812454,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "3": {
+                    "energy": -4.8485279629642895,
+                    "output": "/tmp/qbp-run-hv_s7mpw/dmrg-cell-x2-y3.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.256826882,
+                            "alloc_bytes": 1575298848.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.028372348,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.351170631,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.106612293,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.050373978,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.220937873,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            },
+            "3": {
+                "6": {
+                    "energy": -5.8485268572009685,
+                    "output": "/tmp/qbp-run-nolqorn0/dmrg-cell-x3-y6.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 5.142857142857143,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 54.964923541,
+                            "alloc_bytes": 4920944768.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.599777885,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.494467934,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.226583546,
+                            "alloc_bytes": 2272575736.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.258548637,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.224281319,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "5": {
+                    "energy": -5.707106635493845,
+                    "output": "/tmp/qbp-run-vyvq0f8w/dmrg-cell-x3-y5.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 5.142857142857143,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 54.833282513,
+                            "alloc_bytes": 4923782480.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.580272015,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.495275785,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.128735041,
+                            "alloc_bytes": 2272575736.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.258174659,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.225106283,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "4": {
+                    "energy": -5.565685308642827,
+                    "output": "/tmp/qbp-run-_c1jvx8l/dmrg-cell-x3-y4.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 5.142857142857143,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 54.824236672,
+                            "alloc_bytes": 4917773552.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.580873438,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.493134019,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.16642466,
+                            "alloc_bytes": 2272575736.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.257559144,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.235177466,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "2": {
+                    "energy": -5.282842654319355,
+                    "output": "/tmp/qbp-run-mjg2uqtt/dmrg-cell-x3-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 5.142857142857143,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.555782343,
+                            "alloc_bytes": 1592657664.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.064494184,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.339577894,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.260643764,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.055005328,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.236948312,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "1": {
+                    "energy": -5.141421326996257,
+                    "output": "/tmp/qbp-run-7igg01pf/dmrg-cell-x3-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 4.857142857142857,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.975003701,
+                            "alloc_bytes": 1594689384.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.062071321,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.424278956,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.122925094,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.058092926,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.245059208,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "7": {
+                    "energy": -5.9889757704781985,
+                    "output": "/tmp/qbp-run-d9jxvf3i/dmrg-cell-x3-y7.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 10,
+                    "avg_link_dim": 5.428571428571429,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.264279454,
+                            "alloc_bytes": 1589685376.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.061583231,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.316211253,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.214072987,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.055678963,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.227098708,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "10": {
+                    "energy": -8.071066356106934,
+                    "output": "/tmp/qbp-run-8ohv5x26/dmrg-cell-x3-y10.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 5.142857142857143,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.84422198,
+                            "alloc_bytes": 1591845712.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.062492064,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.334530373,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.207123875,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.0532969,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.233665353,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": -4.999999999995522,
+                    "output": "/tmp/qbp-run-f9hj07k8/dmrg-cell-x3-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 5.142857142857143,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.476131801,
+                            "alloc_bytes": 1595654232.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.028683541,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.351338272,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.099517528,
+                            "alloc_bytes": 10871432.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.050082214,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.221436556,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "9": {
+                    "energy": -7.36395971785211,
+                    "output": "/tmp/qbp-run-33sjtdcb/dmrg-cell-x3-y9.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 5.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.969673317,
+                            "alloc_bytes": 1594847912.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.034435009,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.421803492,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.127556974,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.062108143,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.23052494,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "8": {
+                    "energy": -6.656839131103331,
+                    "output": "/tmp/qbp-run-ti7zff6o/dmrg-cell-x3-y8.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 10,
+                    "avg_link_dim": 5.428571428571429,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.330165817,
+                            "alloc_bytes": 1598035792.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.02724721,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.336971481,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.12888497,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.055746566,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.257922457,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "3": {
+                    "energy": -5.424263972216949,
+                    "output": "/tmp/qbp-run-jo66g9xa/dmrg-cell-x3-y3.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 7,
+                    "avg_link_dim": 4.571428571428571,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.220926956,
+                            "alloc_bytes": 1592612616.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.029373006,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.376397406,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.102692551,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.052859742,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.252554984,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            },
+            "4": {
+                "6": {
+                    "energy": -5.999999860584065,
+                    "output": "/tmp/qbp-run-_c11uakg/dmrg-cell-x4-y6.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 9,
+                    "avg_link_dim": 5.285714285714286,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 55.033665189,
+                            "alloc_bytes": 4930437040.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.615920603,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.493155145,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.273734412,
+                            "alloc_bytes": 2272579872.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.25842737,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.222687537,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "4": {
+                    "energy": -5.999999999998147,
+                    "output": "/tmp/qbp-run-da3kxivy/dmrg-cell-x4-y4.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 4.571428571428571,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 55.147379257,
+                            "alloc_bytes": 4923428576.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.60583983,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.498693468,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.19780036,
+                            "alloc_bytes": 2272579872.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.256187788,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.22597981,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "5": {
+                    "energy": -5.999999999904527,
+                    "output": "/tmp/qbp-run-auu0nt7b/dmrg-cell-x4-y5.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 4.571428571428571,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 54.801774728,
+                            "alloc_bytes": 4922200104.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.556732751,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.496223815,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.114135487,
+                            "alloc_bytes": 2272575736.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.258224357,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.22101109,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "3": {
+                    "energy": -5.9999999999999165,
+                    "output": "/tmp/qbp-run-ol91ozqj/dmrg-cell-x4-y3.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 4.571428571428571,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.756388997,
+                            "alloc_bytes": 1597731648.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.068521892,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.452067782,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.235330495,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.063369993,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.269355113,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": -5.999999999999351,
+                    "output": "/tmp/qbp-run-ai024i1t/dmrg-cell-x4-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 4.571428571428571,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.873459268,
+                            "alloc_bytes": 1596039232.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.035352376,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.444974337,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.152622008,
+                            "alloc_bytes": 10873520.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.063626954,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.272530621,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "1": {
+                    "energy": -5.999999999985461,
+                    "output": "/tmp/qbp-run-pwc7nm4h/dmrg-cell-x4-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 4.571428571428571,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.682930527,
+                            "alloc_bytes": 1592167976.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.029986574,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.462693743,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.129949589,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.06335683,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.270926014,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "8": {
+                    "energy": -6.5254803004621,
+                    "output": "/tmp/qbp-run-_uhd_9we/dmrg-cell-x4-y8.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 14,
+                    "avg_link_dim": 6.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.859190289,
+                            "alloc_bytes": 1603241712.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.035954253,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.421374787,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.122773039,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.061142097,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.271546814,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "2": {
+                    "energy": -5.999999999997854,
+                    "output": "/tmp/qbp-run-czqa8zpw/dmrg-cell-x4-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 4.571428571428571,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.531530005,
+                            "alloc_bytes": 1597958336.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.039944668,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.325706405,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.213961933,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.055446385,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.232319056,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "10": {
+                    "energy": -7.656853084320465,
+                    "output": "/tmp/qbp-run-emhwzcby/dmrg-cell-x4-y10.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 12,
+                    "avg_link_dim": 5.714285714285714,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 24.78688972,
+                            "alloc_bytes": 1605155816.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.03118589,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.386068206,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.128888357,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.062887659,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.281704255,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "9": {
+                    "energy": -7.091167777482745,
+                    "output": "/tmp/qbp-run-nhbczci8/dmrg-cell-x4-y9.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 12,
+                    "avg_link_dim": 5.714285714285714,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.792595244,
+                            "alloc_bytes": 1605129392.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.031093158,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.33753594,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.172122219,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.055483898,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.242077898,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "7": {
+                    "energy": -5.98771380994202,
+                    "output": "/tmp/qbp-run-owuote0f/dmrg-cell-x4-y7.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 16,
+                    "avg_link_dim": 6.285714285714286,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.856661051,
+                            "alloc_bytes": 1602731216.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.030580096,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.349796834,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.119006916,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.06220673,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.263221131,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            },
+            "5": {
+                "4": {
+                    "energy": -4.695775837804252,
+                    "output": "/tmp/qbp-run-37wroq0i/dmrg-cell-x5-y4.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 10,
+                    "avg_link_dim": 5.428571428571429,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.524810914,
+                            "alloc_bytes": 1578461680.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.051952007,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.342434454,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.26047112,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.058730707,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.238424475,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "3": {
+                    "energy": -4.575735588236795,
+                    "output": "/tmp/qbp-run-jpuizilr/dmrg-cell-x5-y3.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 9,
+                    "avg_link_dim": 5.285714285714286,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.435819402,
+                            "alloc_bytes": 1595051624.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.030836482,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.326720973,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.197331779,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.053616426,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.234218088,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "6": {
+                    "energy": -5.545583755421182,
+                    "output": "/tmp/qbp-run-4kn1uuw_/dmrg-cell-x5-y6.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 5.142857142857143,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.958000626,
+                            "alloc_bytes": 1595777040.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.035977206,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.4084918,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.133731637,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.059854709,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.276864411,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "7": {
+                    "energy": -5.969847819958972,
+                    "output": "/tmp/qbp-run-8qlgb_5x/dmrg-cell-x5-y7.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 5.142857142857143,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.562451884,
+                            "alloc_bytes": 1594830168.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.036139925,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.398760471,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.137288299,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.062439691,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.269519371,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "5": {
+                    "energy": -5.121316189543009,
+                    "output": "/tmp/qbp-run-jxgb54f1/dmrg-cell-x5-y5.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 10,
+                    "avg_link_dim": 5.428571428571429,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.186541096,
+                            "alloc_bytes": 1594162760.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.03403456,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.405096159,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.129028979,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.059957014,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.272417762,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "1": {
+                    "energy": -4.858578672833366,
+                    "output": "/tmp/qbp-run-zaycun5v/dmrg-cell-x5-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 4.857142857142857,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.348984595,
+                            "alloc_bytes": 1598326424.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.030394708,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.362901768,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.11079447,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.056006913,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.228013576,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": -4.9999999998992495,
+                    "output": "/tmp/qbp-run-nhpb0_k_/dmrg-cell-x5-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 4.857142857142857,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.761028098,
+                            "alloc_bytes": 1578307160.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.027124348,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.319074813,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.105604912,
+                            "alloc_bytes": 10871432.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.05039615,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.233442738,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "8": {
+                    "energy": -4.394111713030548,
+                    "output": "/tmp/qbp-run-xy1ff65r/dmrg-cell-x5-y8.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 2.5714285714285716,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.663413006,
+                            "alloc_bytes": 1546294232.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.072463676,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.360182853,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.137697971,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.055811736,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.277506621,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "2": {
+                    "energy": -4.717157295220275,
+                    "output": "/tmp/qbp-run-06_y8cr1/dmrg-cell-x5-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 9,
+                    "avg_link_dim": 5.285714285714286,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.762282441,
+                            "alloc_bytes": 1577585720.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.028708529,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.391216997,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.121437254,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.056728484,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.249130532,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "9": {
+                    "energy": -6.818370480713966,
+                    "output": "/tmp/qbp-run-alr2vukt/dmrg-cell-x5-y9.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 8,
+                    "avg_link_dim": 5.142857142857143,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.205557455,
+                            "alloc_bytes": 1591967976.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.027604754,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.349374045,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.103988733,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049939156,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.228974605,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "10": {
+                    "energy": -5.242629226590973,
+                    "output": "/tmp/qbp-run-ag8xb7_c/dmrg-cell-x5-y10.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 2.5714285714285716,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 21.833272275,
+                            "alloc_bytes": 1548112424.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.027132201,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.303782759,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.142177677,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.048708518,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.222649374,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            },
+            "6": {
+                "5": {
+                    "energy": -3.414213270233165,
+                    "output": "/tmp/qbp-run-nolqorn0/dmrg-cell-x6-y5.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 54.936937911,
+                            "alloc_bytes": 4899139632.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.586842698,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.493273598,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.227431738,
+                            "alloc_bytes": 2272571600.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.259514761,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.224617909,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "4": {
+                    "energy": -3.1313691226273264,
+                    "output": "/tmp/qbp-run-vyvq0f8w/dmrg-cell-x6-y4.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 6,
+                    "avg_link_dim": 4.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 55.415689839,
+                            "alloc_bytes": 4899207352.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.650812705,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.500156337,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.347262628,
+                            "alloc_bytes": 2272575736.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.260392711,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.223448776,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "3": {
+                    "energy": -3.151471636121446,
+                    "output": "/tmp/qbp-run-_c1jvx8l/dmrg-cell-x6-y3.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 5,
+                    "avg_link_dim": 3.857142857142857,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 54.954129703,
+                            "alloc_bytes": 4899191224.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.576267986,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.494643597,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.20648468,
+                            "alloc_bytes": 2272575736.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.259333687,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.22776999,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "7": {
+                    "energy": -3.9798985631647334,
+                    "output": "/tmp/qbp-run-9u7fhohu/dmrg-cell-x6-y7.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 5,
+                    "avg_link_dim": 3.7142857142857144,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 21.888734776,
+                            "alloc_bytes": 1573192496.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.02581847,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.308866417,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.101284373,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049445975,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.230109497,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "8": {
+                    "energy": -4.262741106177126,
+                    "output": "/tmp/qbp-run-kn1s4vb4/dmrg-cell-x6-y8.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.322856434,
+                            "alloc_bytes": 1572115176.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.027624451,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.352541341,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.101833069,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049835266,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.224483684,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": -3.9999999998406466,
+                    "output": "/tmp/qbp-run-k8da79qf/dmrg-cell-x6-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.297654041,
+                            "alloc_bytes": 1575442200.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.02711386,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.340105229,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.099758379,
+                            "alloc_bytes": 10873520.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049010988,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.216999195,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "9": {
+                    "energy": -4.545583258612369,
+                    "output": "/tmp/qbp-run-805yneo8/dmrg-cell-x6-y9.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 6,
+                    "avg_link_dim": 4.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 23.119246456,
+                            "alloc_bytes": 1572090536.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.039486671,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.309727605,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.148212457,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.050684676,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.22700474,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "10": {
+                    "energy": -4.828426528663032,
+                    "output": "/tmp/qbp-run-fgvquvek/dmrg-cell-x6-y10.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 6,
+                    "avg_link_dim": 3.857142857142857,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.395635571,
+                            "alloc_bytes": 1575795976.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.028612274,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.386681814,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.110754801,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.053488922,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.236751758,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "1": {
+                    "energy": -3.7171573136684155,
+                    "output": "/tmp/qbp-run-wraa2ysv/dmrg-cell-x6-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 5,
+                    "avg_link_dim": 3.5714285714285716,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 22.697379775,
+                            "alloc_bytes": 1567120920.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.031981658,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.360864975,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.10600642,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.051450523,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.233431688,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "6": {
+                    "energy": -3.6970559245149435,
+                    "output": "/tmp/qbp-run-6wfuh5xq/dmrg-cell-x6-y6.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 4,
+                    "avg_link_dim": 3.4285714285714284,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 24.008830128,
+                            "alloc_bytes": 1572893216.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.028298692,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.369753735,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.106671722,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.055261079,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.234425821,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "2": {
+                    "energy": -3.434314550069117,
+                    "output": "/tmp/qbp-run-uzjmgb5d/dmrg-cell-x6-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 5,
+                    "avg_link_dim": 3.5714285714285716,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 21.84518362,
+                            "alloc_bytes": 1573726928.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.026543467,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.305289149,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.100199641,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.048987951,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.233379754,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            },
+            "7": {
+                "5": {
+                    "energy": -1.7071064047036741,
+                    "output": "/tmp/qbp-run-_c11uakg/dmrg-cell-x7-y5.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 50.634856347,
+                            "alloc_bytes": 4401232208.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.583357476,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.491734089,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.177146184,
+                            "alloc_bytes": 2272579872.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.256068256,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.224605979,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "3": {
+                    "energy": -1.7267900012545963,
+                    "output": "/tmp/qbp-run-da3kxivy/dmrg-cell-x7-y3.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 50.614097842,
+                            "alloc_bytes": 4400236080.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.584050118,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.504790763,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.127681084,
+                            "alloc_bytes": 2272579872.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.279022553,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.225276359,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "4": {
+                    "energy": -1.565685173208536,
+                    "output": "/tmp/qbp-run-auu0nt7b/dmrg-cell-x7-y4.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 50.599607672,
+                            "alloc_bytes": 4400236080.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 4.573936722,
+                            "alloc_bytes": 611645648.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.494036953,
+                            "alloc_bytes": 39165728.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 17.187112346,
+                            "alloc_bytes": 2272579872.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.257203231,
+                            "alloc_bytes": 27573664.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.225764039,
+                            "alloc_bytes": 1144392.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "2": {
+                    "energy": -2.151465310559603,
+                    "output": "/tmp/qbp-run-9yc_9vd6/dmrg-cell-x7-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.365469999,
+                            "alloc_bytes": 1515410992.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.02733352,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.313605528,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.102199787,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.098298299,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.225418263,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "1": {
+                    "energy": -2.5757359137916747,
+                    "output": "/tmp/qbp-run-knycqc07/dmrg-cell-x7-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.339762842,
+                            "alloc_bytes": 1516285232.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.02728079,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.355721646,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.109656408,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.051847145,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.235630224,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "8": {
+                    "energy": -2.1313690019160125,
+                    "output": "/tmp/qbp-run-cm7tbcn8/dmrg-cell-x7-y8.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 20.067751455,
+                            "alloc_bytes": 1518231456.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.032381693,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.356014154,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.104165175,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.050569714,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.229408133,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "7": {
+                    "energy": -1.9899467343499224,
+                    "output": "/tmp/qbp-run-0vezjqrk/dmrg-cell-x7-y7.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.595542033,
+                            "alloc_bytes": 1514415152.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.027171208,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.351568496,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.101589461,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.04976,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.222734765,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "10": {
+                    "energy": -1.4142132716071483,
+                    "output": "/tmp/qbp-run-_76s4r5x/dmrg-cell-x7-y10.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 1.2857142857142858,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.479225663,
+                            "alloc_bytes": 1487345488.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.026804718,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.304942891,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.144085363,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049823092,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.225240761,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": -2.99999999124084,
+                    "output": "/tmp/qbp-run-tq5y7inh/dmrg-cell-x7-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 21.054591207,
+                            "alloc_bytes": 1515410992.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.032019335,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.370172414,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.13280787,
+                            "alloc_bytes": 10873520.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.064265848,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.255286119,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "9": {
+                    "energy": -2.272788368613883,
+                    "output": "/tmp/qbp-run-odgb6f0w/dmrg-cell-x7-y9.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.218474233,
+                            "alloc_bytes": 1518231456.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.027044282,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.304772442,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.125929815,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.059298248,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.216624694,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "6": {
+                    "energy": -1.8485233936800822,
+                    "output": "/tmp/qbp-run-m3zw35mu/dmrg-cell-x7-y6.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 2,
+                    "avg_link_dim": 2.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 20.202313721,
+                            "alloc_bytes": 1514551072.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.030620572,
+                            "alloc_bytes": 5862960.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.354235365,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.165427808,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.059738504,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.256759537,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            },
+            "8": {
+                "7": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-zcpoaqcg/dmrg-cell-x8-y7.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.025448952,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.01967933,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.346373384,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.104483012,
+                            "alloc_bytes": 12317424.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.051339178,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.229279643,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "10": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-7igg01pf/dmrg-cell-x8-y10.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.119246955,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.020333159,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.306271875,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.142083739,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049165567,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.22322355,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "6": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-_w56beaa/dmrg-cell-x8-y6.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.215906702,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.020326165,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.306210578,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.147753529,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049661338,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.222677321,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "4": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-xdtc5qcn/dmrg-cell-x8-y4.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.964459238,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.021114304,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.355943437,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.102943665,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.050201644,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.225282111,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "0": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-kzhowj1p/dmrg-cell-x8-y0.json",
+                    "hamiltonian_terms": 24,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.214205512,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.020447859,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.371118467,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.105993949,
+                            "alloc_bytes": 10873520.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.054177547,
+                            "alloc_bytes": 1265952.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.2449823,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "3": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-el_01gir/dmrg-cell-x8-y3.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.492029681,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.02192928,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.327506601,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.126100675,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.052393539,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.250863879,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "2": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-134o5yck/dmrg-cell-x8-y2.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.061484663,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.020720338,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.347482737,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.100222415,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049587407,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.219943943,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "8": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-fktbtg3b/dmrg-cell-x8-y8.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.393544313,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.021454079,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.362307458,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.105454961,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.051760974,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.245255669,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "9": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-f9hj07k8/dmrg-cell-x8-y9.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.0113166,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.019863337,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.346362216,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.100116842,
+                            "alloc_bytes": 12321560.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049093952,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.220193078,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "5": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-a8nrixzh/dmrg-cell-x8-y5.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 19.68203943,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.02118176,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.361946731,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.103918839,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.051048004,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.228284656,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                },
+                "1": {
+                    "energy": 0.0,
+                    "output": "/tmp/qbp-run-hv_s7mpw/dmrg-cell-x8-y1.json",
+                    "hamiltonian_terms": 48,
+                    "max_link_dim": 1,
+                    "avg_link_dim": 1.0,
+                    "profile": {
+                        "dmrg": {
+                            "elapsed_s": 18.074339824,
+                            "alloc_bytes": 1096973776.0
+                        },
+                        "build_product_mps": {
+                            "elapsed_s": 0.020204199,
+                            "alloc_bytes": 5060176.0
+                        },
+                        "siteinds": {
+                            "elapsed_s": 0.35823984,
+                            "alloc_bytes": 34882656.0
+                        },
+                        "build_mpo": {
+                            "elapsed_s": 0.100955287,
+                            "alloc_bytes": 12325696.0
+                        },
+                        "build_opsum": {
+                            "elapsed_s": 0.049481328,
+                            "alloc_bytes": 1355216.0
+                        },
+                        "build_init_state": {
+                            "elapsed_s": 0.222949709,
+                            "alloc_bytes": 1144424.0
+                        }
+                    },
+                    "initial_state": "packed"
+                }
+            }
+        }
+    }
+}

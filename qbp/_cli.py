@@ -596,3 +596,7 @@ def main(argv=None):
         except (ValueError, FileNotFoundError, KeyError) as e:
             parser.error(str(e))
         return
+
+
+if __name__ == "__main__":
+    main()

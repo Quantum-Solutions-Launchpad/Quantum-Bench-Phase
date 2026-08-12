@@ -1,0 +1,215 @@
+{
+    "type": "run",
+    "methods": [
+        "vqe"
+    ],
+    "backend": "ideal",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "x_param": "Lx",
+    "y_param": "h",
+    "x_values": [
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0,
+        12.0
+    ],
+    "y_values": [
+        0.0,
+        0.5,
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0
+    ],
+    "parameters": {
+        "model": "tfim",
+        "lattice": null,
+        "qubit_operator": "/pscratch/sd/m/mbao202/tfim.hdf5",
+        "keys": [
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-4_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-5_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-6_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-7_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-8_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-9_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-10_h-6"
+            ],
+            [
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-0",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-0.5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-1",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-2",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-3",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-4",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-5",
+                "graph-1D-grid-pbc-qubitnodes_Lx-12_h-6"
+            ]
+        ],
+        "model_params": {},
+        "method_params": {
+            "vqe": {
+                "iters": 10000,
+                "layers": 5,
+                "reps": 10,
+                "warm_start": false,
+                "ansatz": null,
+                "optimizer": null,
+                "extremum": "min"
+            }
+        }
+    },
+    "result": {
+        "vqe": {
+            "0": {
+                "0": -3.999852953870559,
+                "1": -4.269172281020105,
+                "2": -5.225035748528724,
+                "3": -8.542220556027647,
+                "4": -12.344556074920199,
+                "5": -16.25196242918016,
+                "6": -20.199291502214972,
+                "7": -24.164758141709804
+            },
+            "1": {
+                "0": -2.999920033787549,
+                "1": -4.231404198745249,
+                "2": -6.115590219845806,
+                "3": -10.599144800665657,
+                "4": -15.40163912919583,
+                "5": -20.27576489336093,
+                "6": -25.230971813440433,
+                "7": -30.189718286103066
+            },
+            "2": {
+                "0": -5.999599586912101,
+                "1": -6.378198053496683,
+                "2": -7.600628557522763,
+                "3": -12.705662729177298,
+                "4": -18.469787690022386,
+                "5": -24.304956468195122,
+                "6": -30.245745537501488,
+                "7": -36.180949418269705
+            },
+            "3": {
+                "0": -4.999485832704052,
+                "1": -6.303626943890032,
+                "2": -8.518179844610456,
+                "3": -14.747721119225691,
+                "4": -21.49599307486679,
+                "5": -28.357018160791508,
+                "6": -35.30832822653815,
+                "7": -42.226006749738275
+            },
+            "4": {
+                "0": -7.999255825406451,
+                "1": -8.504245461241899,
+                "2": -10.116242568023244,
+                "3": -16.871317936725113,
+                "4": -24.573190101751802,
+                "5": -32.409295464228045,
+                "6": -40.309320211588506,
+                "7": -48.23275627950022
+            },
+            "5": {
+                "0": -6.999334415628587,
+                "1": -8.417156199143893,
+                "2": -11.08383730825391,
+                "3": -18.960631875539878,
+                "4": -27.645463607682544,
+                "5": -36.48694901941609,
+                "6": -45.32572643827221,
+                "7": -54.240771182529066
+            },
+            "6": {
+                "0": -9.99863270234386,
+                "1": -10.627795474551453,
+                "2": -12.65253330471289,
+                "3": -21.0723943732474,
+                "4": -30.70830374211033,
+                "5": -40.38044057050493,
+                "6": -50.37391998222172,
+                "7": -60.310423589625344
+            },
+            "7": {
+                "0": -11.99800557890653,
+                "1": -12.753199643359178,
+                "2": -15.155163099185199,
+                "3": -25.32777815519841,
+                "4": -36.85132848724847,
+                "5": -48.51380242563259,
+                "6": -60.45931773897725,
+                "7": -72.34085349289242
+            }
+        }
+    }
+}

@@ -7,6 +7,7 @@ sweep-axis resolution, the noisy/ideal backend constructors, and the
 initial-state circuit builders reused across VQE/IQPE and the model layer.
 """
 
+import os
 import sys
 
 import numpy as np
@@ -45,6 +46,44 @@ def setup_logging():
     )
 
     return logger
+
+
+def _rep_jobs(n_reps):
+    """Worker count for parallel repetitions within a cell.
+
+    QBP_REP_JOBS overrides; otherwise divide this shard's CPUs by the number
+    of cells it computes concurrently (QBP_JOBS_PER_SHARD) so nesting reps
+    inside cell-level parallelism doesn't oversubscribe cores.
+    """
+    override = os.environ.get("QBP_REP_JOBS")
+    if override:
+        try:
+            return max(1, min(n_reps, int(override)))
+        except ValueError:
+            pass
+    try:
+        cpus = int(os.environ.get("SLURM_CPUS_PER_TASK") or 0)
+    except ValueError:
+        cpus = 0
+    if cpus <= 0:
+        cpus = os.cpu_count() or 1
+    try:
+        cells = max(1, int(os.environ.get("QBP_JOBS_PER_SHARD") or 1))
+    except ValueError:
+        cells = 1
+    return max(1, min(n_reps, cpus // cells))
+
+
+def run_reps_parallel(n_reps, run_one):
+    """Run independent repetitions (1..n_reps) of run_one, in parallel when
+    cores allow. Results are returned ordered by repetition index."""
+    n_jobs = _rep_jobs(n_reps)
+    if n_jobs <= 1 or n_reps <= 1:
+        return [run_one(rep) for rep in range(1, n_reps + 1)]
+    from joblib import Parallel, delayed
+    return Parallel(n_jobs=n_jobs)(
+        delayed(run_one)(rep) for rep in range(1, n_reps + 1)
+    )
 
 
 def _fmt_params(lattice, n_occ, model_params=None, **extra):
@@ -108,10 +147,24 @@ def _resolve_noise_model(backend) -> NoiseModel:
 def _make_simulator(backend):
     if is_real_backend(backend):
         return backend
+    simulator_options = {}
+    aer_method = os.environ.get("QBP_AER_METHOD")
+    if aer_method:
+        simulator_options["method"] = aer_method
+    max_bond_dimension = os.environ.get("QBP_AER_MPS_MAX_BOND_DIMENSION")
+    if max_bond_dimension:
+        simulator_options["matrix_product_state_max_bond_dimension"] = int(max_bond_dimension)
+    truncation_threshold = os.environ.get("QBP_AER_MPS_TRUNCATION_THRESHOLD")
+    if truncation_threshold:
+        simulator_options["matrix_product_state_truncation_threshold"] = float(truncation_threshold)
     if backend:
         noise_model = _resolve_noise_model(backend)
-        return AerSimulator(noise_model=noise_model, basis_gates=noise_model.basis_gates)
-    return AerSimulator()
+        return AerSimulator(
+            noise_model=noise_model,
+            basis_gates=noise_model.basis_gates,
+            **simulator_options,
+        )
+    return AerSimulator(**simulator_options)
 
 
 def _make_sampler(backend):
