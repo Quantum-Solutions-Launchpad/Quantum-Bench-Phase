@@ -64,14 +64,17 @@ applies to `Method.VQE`:
 ```{jupyter-execute}
 :hide-code:
 
+_real_plot_combined = qbp.plot_combined
+
 def _patched_run(*args, **kwargs):
     filename = "sweep-vqe-zne-gate.json" if _mitigated(kwargs, "zne") else "sweep-vqe-raw-gate.json"
-    result = qbp.load_result(str(_DATA_DIR / filename))
-    result.plot(hide_plot=kwargs.get("hide_plot", False))
-    return result
+    return qbp.load_result(str(_DATA_DIR / filename))
 
+def _patched_plot_combined(paths, *args, **kwargs):
+    return _real_plot_combined([str(_DATA_DIR / p) for p in paths], *args, **kwargs)
 
 qbp.run = _patched_run
+qbp.plot_combined = _patched_plot_combined
 ```
 
 ```{jupyter-execute}
@@ -96,11 +99,21 @@ shared = dict(
 )
 
 raw = qbp.run(**shared, method=[Method.ANALYTIC, Method.VQE],
-              method_params={Method.VQE: {"iters": 3000, "layers": 4, "reps": 4}})
+              method_params={Method.VQE: {"iters": 3000, "layers": 4, "reps": 4}},
+              log_path="sweep-vqe-raw-gate.json")
 
 zne = qbp.run(**shared, method=[Method.ANALYTIC, Method.VQE],
               method_params={Method.VQE: {"iters": 3000, "layers": 4, "reps": 4,
-                                           "mitigation": {"zne": True}}})
+                                           "mitigation": {"zne": True}}},
+              log_path="sweep-vqe-zne-gate.json")
+
+# Overlay both runs on one plot instead of drawing two separate ones:
+# analytic is the reference surface, raw and ZNE VQE are overlaid markers.
+qbp.plot_combined(
+    ["sweep-vqe-raw-gate.json", "sweep-vqe-zne-gate.json"],
+    keys=["analytic,vqe", "vqe"],
+    labels=["Analytic", "VQE (raw)", "VQE (ZNE)"],
+)
 ```
 
 Against pure gate error, ZNE consistently reduces VQE's mean absolute
@@ -125,12 +138,13 @@ across the sequence's timescale.
 
 def _patched_run(*args, **kwargs):
     filename = "sweep-vqe-dd-decoherence.json" if _mitigated(kwargs, "dd") else "sweep-vqe-raw-decoherence.json"
-    result = qbp.load_result(str(_DATA_DIR / filename))
-    result.plot(hide_plot=kwargs.get("hide_plot", False))
-    return result
+    return qbp.load_result(str(_DATA_DIR / filename))
 
+def _patched_plot_combined(paths, *args, **kwargs):
+    return _real_plot_combined([str(_DATA_DIR / p) for p in paths], *args, **kwargs)
 
 qbp.run = _patched_run
+qbp.plot_combined = _patched_plot_combined
 ```
 
 ```{jupyter-execute}
@@ -148,11 +162,19 @@ def decoherence_noise(t1_us=150.0, t2_us=100.0):
 shared_dd = {**shared, "backend": AerSimulator(noise_model=decoherence_noise())}
 
 raw_dd = qbp.run(**shared_dd, method=[Method.ANALYTIC, Method.VQE],
-                  method_params={Method.VQE: {"iters": 3000, "layers": 6, "reps": 6}})
+                  method_params={Method.VQE: {"iters": 3000, "layers": 6, "reps": 6}},
+                  log_path="sweep-vqe-raw-decoherence.json")
 
 dd = qbp.run(**shared_dd, method=[Method.ANALYTIC, Method.VQE],
              method_params={Method.VQE: {"iters": 3000, "layers": 6, "reps": 6,
-                                          "mitigation": {"dd": True}}})
+                                          "mitigation": {"dd": True}}},
+             log_path="sweep-vqe-dd-decoherence.json")
+
+qbp.plot_combined(
+    ["sweep-vqe-raw-decoherence.json", "sweep-vqe-dd-decoherence.json"],
+    keys=["analytic,vqe", "vqe"],
+    labels=["Analytic", "VQE (raw)", "VQE (DD)"],
+)
 ```
 
 ### DD is not free, and not always the right tool
@@ -215,12 +237,13 @@ with that install instruction, rather than failing silently.
 
 def _patched_run(*args, **kwargs):
     filename = "sweep-iqpe-m3-readout-lo.json" if _mitigated(kwargs, "m3") else "sweep-iqpe-raw-readout-lo.json"
-    result = qbp.load_result(str(_DATA_DIR / filename))
-    result.plot(hide_plot=kwargs.get("hide_plot", False))
-    return result
+    return qbp.load_result(str(_DATA_DIR / filename))
 
+def _patched_plot_combined(paths, *args, **kwargs):
+    return _real_plot_combined([str(_DATA_DIR / p) for p in paths], *args, **kwargs)
 
 qbp.run = _patched_run
+qbp.plot_combined = _patched_plot_combined
 ```
 
 ```{jupyter-execute}
@@ -242,10 +265,18 @@ iqpe_params = {
 }
 
 raw_m3 = qbp.run(**shared_m3, method=[Method.ANALYTIC, Method.IQPE],
-                  method_params={Method.IQPE: iqpe_params})
+                  method_params={Method.IQPE: iqpe_params},
+                  log_path="sweep-iqpe-raw-readout-lo.json")
 
 m3 = qbp.run(**shared_m3, method=[Method.ANALYTIC, Method.IQPE],
-             method_params={Method.IQPE: {**iqpe_params, "mitigation": {"m3": True}}})
+             method_params={Method.IQPE: {**iqpe_params, "mitigation": {"m3": True}}},
+             log_path="sweep-iqpe-m3-readout-lo.json")
+
+qbp.plot_combined(
+    ["sweep-iqpe-raw-readout-lo.json", "sweep-iqpe-m3-readout-lo.json"],
+    keys=["analytic,iqpe", "iqpe"],
+    labels=["Analytic", "IQPE (raw)", "IQPE (M3)"],
+)
 ```
 
 Against a readout-error-only noise model like the one above, M3 removes
