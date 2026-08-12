@@ -29,9 +29,46 @@ A typical QBP run follows the same pipeline regardless of the model or algorithm
 
 Suppose you want to explore the phase diagrams of the [Haldane model](https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.61.2015). It lives on a honeycomb lattice with two sublattices, $A$ and $B$. Electrons hop between nearest-neighbor sites with amplitude $t_1$ and between next-nearest-neighbor sites with a complex amplitude $t_2 e^{\pm i \phi}$, whose sign depends on the orientation of the hopping. A staggered onsite potential $\pm M$ distinguishes the two sublattices.
 
-```{eval-rst}
-.. todo:: Add Haldane lattice diagram here (made using TikZ)
-```
+<figure class="qbp-figure qbp-figure--tall">
+  <svg class="qbp-diagram" viewBox="180 34 260 288" role="img" aria-labelledby="haldane-fig-title haldane-fig-desc">
+    <title id="haldane-fig-title">The Haldane model on the honeycomb lattice</title>
+    <desc id="haldane-fig-desc">One hexagonal plaquette of a honeycomb lattice, with bonds continuing outward to the rest of the lattice. Its six sites alternate between the A and B sublattices. Solid bonds join nearest neighbors on opposite sublattices with amplitude t1. Two dashed triangles join next-nearest neighbors within each sublattice; arrows on them circulate counterclockwise and mark the direction in which a hop picks up phase plus phi. The A sublattice carries onsite energy plus M and the B sublattice minus M.</desc>
+    <line class="dg-t1" x1="310" y1="90" x2="310" y2="48"/>
+    <line class="dg-t1" x1="233.8" y1="134" x2="197.4" y2="113"/>
+    <line class="dg-t1" x1="233.8" y1="222" x2="197.4" y2="243"/>
+    <line class="dg-t1" x1="310" y1="266" x2="310" y2="308"/>
+    <line class="dg-t1" x1="386.2" y1="222" x2="422.6" y2="243"/>
+    <line class="dg-t1" x1="386.2" y1="134" x2="422.6" y2="113"/>
+    <polygon class="dg-t1" points="310,90 233.8,134 233.8,222 310,266 386.2,222 386.2,134" stroke-linejoin="round"/>
+    <polygon class="dg-nnn" points="310,90 233.8,222 386.2,222"/>
+    <polygon class="dg-nnn" points="233.8,134 310,266 386.2,134"/>
+    <path class="dg-arrow" d="M -7,-5.5 L 7,0 L -7,5.5 Z" transform="translate(271.9,156) rotate(120)"/>
+    <path class="dg-arrow" d="M -7,-5.5 L 7,0 L -7,5.5 Z" transform="translate(310,222) rotate(0)"/>
+    <path class="dg-arrow" d="M -7,-5.5 L 7,0 L -7,5.5 Z" transform="translate(348.1,156) rotate(-120)"/>
+    <path class="dg-arrow" d="M -7,-5.5 L 7,0 L -7,5.5 Z" transform="translate(271.9,200) rotate(60)"/>
+    <path class="dg-arrow" d="M -7,-5.5 L 7,0 L -7,5.5 Z" transform="translate(348.1,200) rotate(-60)"/>
+    <path class="dg-arrow" d="M -7,-5.5 L 7,0 L -7,5.5 Z" transform="translate(310,134) rotate(180)"/>
+    <circle class="dg-site-a" cx="310" cy="90" r="13"/>
+    <circle class="dg-site-b" cx="233.8" cy="134" r="13"/>
+    <circle class="dg-site-a" cx="233.8" cy="222" r="13"/>
+    <circle class="dg-site-b" cx="310" cy="266" r="13"/>
+    <circle class="dg-site-a" cx="386.2" cy="222" r="13"/>
+    <circle class="dg-site-b" cx="386.2" cy="134" r="13"/>
+    <text class="dg-in-a" x="310" y="90" dy="0.34em">A</text>
+    <text class="dg-in-b" x="233.8" y="134" dy="0.34em">B</text>
+    <text class="dg-in-a" x="233.8" y="222" dy="0.34em">A</text>
+    <text class="dg-in-b" x="310" y="266" dy="0.34em">B</text>
+    <text class="dg-in-a" x="386.2" y="222" dy="0.34em">A</text>
+    <text class="dg-in-b" x="386.2" y="134" dy="0.34em">B</text>
+    <text class="dg-label" x="338" y="76" text-anchor="start">+<tspan class="dg-var">M</tspan></text>
+    <text class="dg-label" x="338" y="286" text-anchor="start">&#8722;<tspan class="dg-var">M</tspan></text>
+  </svg>
+  <ul class="qbp-legend">
+    <li><span class="sw sw-t1"></span><span>nearest neighbor, <em>t</em><sub>1</sub></span></li>
+    <li><span class="sw sw-t2"></span><span>next-nearest neighbor, <em>t</em><sub>2</sub>e<sup><em>i&phi;</em></sup></span></li>
+  </ul>
+  <figcaption>One plaquette of the honeycomb lattice, with bonds continuing out into the rest of the lattice. Solid bonds connect the two sublattices with amplitude <em>t</em><sub>1</sub>, and the filled <em>A</em> and open <em>B</em> sites carry the staggered onsite energies &plusmn;<em>M</em>. The two dashed triangles are the next-nearest-neighbor hoppings, which stay within a single sublattice: a hop taken <em>along</em> an arrow picks up the phase <em>e</em><sup>+<em>i&phi;</em></sup> (that is, <em>&nu;<sub>ij</sub></em> = +1), and a hop against one picks up <em>e</em><sup>&minus;<em>i&phi;</em></sup>.</figcaption>
+</figure>
 
 Its tight-binding Hamiltonian can be written as
 

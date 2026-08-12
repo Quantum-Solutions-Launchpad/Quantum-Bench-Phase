@@ -1,9 +1,9 @@
 /* QBP pipeline diagram (used on docs/user-guide/workflow.md) */
 
 .qbp-pipeline {
-    --pipeline-fill: #ebe4ff;
-    --pipeline-stroke: #6e56cf;
-    --pipeline-text: #2b1c5c;
+    --pipeline-fill: var(--accent-3, #ebe4ff);
+    --pipeline-stroke: var(--accent-9, #6e56cf);
+    --pipeline-text: var(--accent-12, #2b1c5c);
     display: grid;
     grid-template-columns: 1fr 4.5rem 1fr;
     grid-template-rows: 3.6rem 3rem 3.6rem 3rem 3.6rem;
@@ -54,10 +54,189 @@
     height: 2.3rem;
 }
 
-@media (prefers-color-scheme: dark) {
-    .qbp-pipeline {
-        --pipeline-fill: #2b1c5c;
-        --pipeline-stroke: #aa99ec;
-        --pipeline-text: #ebe4ff;
-    }
+html.dark .qbp-pipeline {
+    --pipeline-fill: var(--accent-3, #2b1c5c);
+    --pipeline-stroke: var(--accent-9, #aa99ec);
+    --pipeline-text: var(--accent-12, #ebe4ff);
+}
+
+/* Lattice diagrams (SSH chain, Haldane honeycomb) */
+
+.qbp-figure {
+    margin: 1.75rem auto;
+    max-width: 38rem;
+}
+
+.qbp-figure > svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.qbp-figure--tall > svg {
+    max-width: 21rem;
+}
+
+.qbp-figure figcaption {
+    margin: 0.9rem 0 0;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    text-align: center;
+    color: var(--gray-11, #63636b);
+}
+
+.qbp-figure .qbp-legend + figcaption {
+    margin-top: 1.2rem;
+}
+
+.qbp-diagram {
+    --dg-t1: var(--accent-11, #644fc1);
+    --dg-t2: var(--teal-11, #008573);
+    --dg-ink: var(--gray-12, #1c1c1f);
+    --dg-paper: var(--sy-c-background, #ffffff);
+    --dg-guide: var(--gray-8, #b9bbc6);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.qbp-diagram .dg-t1,
+.qbp-diagram .dg-t2 {
+    fill: none;
+    stroke-width: 3.5;
+    stroke-linecap: round;
+}
+
+.qbp-diagram .dg-t1 {
+    stroke: var(--dg-t1);
+}
+
+.qbp-diagram .dg-t2 {
+    stroke: var(--dg-t2);
+}
+
+.qbp-diagram .dg-nnn {
+    fill: none;
+    stroke: var(--dg-t2);
+    stroke-width: 2;
+    stroke-dasharray: 7 5;
+}
+
+.qbp-diagram .dg-arrow {
+    fill: var(--dg-t2);
+    stroke: none;
+}
+
+.qbp-diagram .dg-site-a,
+.qbp-diagram .dg-site-b {
+    stroke: var(--dg-ink);
+    stroke-width: 2.5;
+}
+
+.qbp-diagram .dg-site-a {
+    fill: var(--dg-ink);
+}
+
+.qbp-diagram .dg-site-b {
+    fill: var(--dg-paper);
+}
+
+.qbp-diagram .dg-in-a,
+.qbp-diagram .dg-in-b {
+    font-size: 15px;
+    font-weight: 700;
+    text-anchor: middle;
+}
+
+.qbp-diagram .dg-in-a {
+    fill: var(--dg-paper);
+}
+
+.qbp-diagram .dg-in-b {
+    fill: var(--dg-ink);
+}
+
+.qbp-diagram .dg-label {
+    fill: var(--dg-ink);
+    font-size: 19px;
+    font-weight: 600;
+    text-anchor: middle;
+}
+
+.qbp-diagram .dg-cell {
+    fill: none;
+    stroke: var(--dg-guide);
+    stroke-width: 2;
+    stroke-dasharray: 6 5;
+}
+
+.qbp-diagram .dg-cell-label {
+    fill: var(--gray-11, #63636b);
+    font-size: 15px;
+    text-anchor: middle;
+}
+
+.qbp-diagram .dg-dot {
+    fill: var(--dg-guide);
+}
+
+.qbp-diagram .dg-var {
+    font-style: italic;
+}
+
+.qbp-diagram .dg-sub,
+.qbp-diagram .dg-sup {
+    font-size: 0.68em;
+    font-weight: 500;
+}
+
+.qbp-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.45rem 1.5rem;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.86rem;
+    line-height: 1.4;
+}
+
+.qbp-legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.qbp-legend .sw {
+    flex: none;
+    display: inline-block;
+}
+
+.qbp-legend .sw-t1 {
+    width: 1.6rem;
+    border-top: 3px solid var(--accent-11, #644fc1);
+}
+
+.qbp-legend .sw-t2 {
+    width: 1.6rem;
+    border-top: 3px dashed var(--teal-11, #008573);
+}
+
+.qbp-legend .sw-a,
+.qbp-legend .sw-b {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+}
+
+.qbp-legend .sw-a {
+    background: var(--gray-12, #1c1c1f);
+}
+
+.qbp-legend .sw-b {
+    background: var(--sy-c-background, #ffffff);
+    box-shadow: inset 0 0 0 2px var(--gray-12, #1c1c1f);
 }
