@@ -9,12 +9,12 @@ Since most runs will be expensive, QBP is built to compute a sweep once and relo
 ```{code-block} python
 qbp.run(
     model="haldane",
-    method=[Method.ANALYTIC, Method.VQE, Method.IQPE],
+    method=[Method.ANALYTIC, Method.VQE, Method.DMRG],
     lattice=(2, 2),
     x_param="n_occ",
     y_param="t2",
-    y_range=(0.0, 1.0, 0.25),
-    model_params={"t1": 1.0, "phi": math.pi / 4, "M": 0.1},
+    y_range=(0.0, 1.0, 0.1),
+    model_params={"t1": 1.0, "phi": math.pi / 4, "M": 0.0},
     log_path="runs/haldane-ideal.json",
 )
 ```
@@ -28,7 +28,7 @@ The log is a single JSON object—the run's complete state, not just the numbers
 ```{code-block} json
 {
     "type": "run",
-    "methods": ["analytic", "vqe", "iqpe"],
+    "methods": ["analytic", "vqe", "dmrg"],
     "backend": "ideal",
     "plot_format": "3d",
     "band_structure": false,
@@ -37,25 +37,25 @@ The log is a single JSON object—the run's complete state, not just the numbers
     "x_param": "n_occ",
     "y_param": "t2",
     "x_values": [0, 1, 2, 3, 4, 5, 6, 7, 8],
-    "y_values": [0.0, 0.25, 0.5, 0.75, 1.0],
+    "y_values": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
     "parameters": {
         "model": "haldane",
         "lattice": [2, 2],
-        "model_params": {"t1": 1.0, "phi": 0.7853981633974483, "M": 0.1},
+        "model_params": {"t1": 1.0, "phi": 0.7853981633974483, "M": 0.0},
         "method_params": {
-            "vqe": {"iters": 50, "layers": 1, "reps": 1},
-            "iqpe": {"time": 0.1, "trot": 1, "iters": 1, "reps": 1}
+            "vqe": {"iters": 10000, "layers": 5, "reps": 10},
+            "dmrg": {"nsweeps": 4, "maxdims": "20,50,100,200", "cutoff": 1e-9}
         }
     },
     "result": {
-        "analytic": {"0": {"0": -1.53, "1": -1.61, "2": -1.66, "3": -1.69, "4": -1.70}},
-        "vqe":      {"0": {"0": -1.49, "1": -1.55, "2": -1.60, "3": -1.63, "4": -1.64}},
-        "iqpe":     {"0": {"0": -1.44, "1": -1.52, "2": -1.57, "3": -1.61, "4": -1.62}}
+        "analytic": {"1": {"0": -3.00, "1": -3.42, "2": -3.85, "3": -4.27, "4": -4.70}},
+        "vqe":      {"1": {"0": -2.85, "1": -3.23, "2": -3.72, "3": -4.04, "4": -4.47}},
+        "dmrg":     {"1": {"0": -3.00, "1": -3.42, "2": -3.85, "3": -4.27, "4": -4.70}}
     }
 }
 ```
 
-The top level records the sweep shape (`x_param` / `y_param` and their sampled `x_values` / `y_values`), the methods present, the backend, and the observable. The `parameters` block captures everything needed to reproduce the run—the model, lattice, fixed `model_params`, and the per-method `method_params`. The `result` block holds the computed values, nested by method and then indexed by grid position: `result[method][ix][iy]` for a two-dimensional sweep, or `result[method][ix]` for a one-dimensional one. It is abbreviated above to the first grid column (`ix` of `0`); a full run carries one entry per point in `x_values` × `y_values`.
+The top level records the sweep shape (`x_param` / `y_param` and their sampled `x_values` / `y_values`), the methods present, the backend, and the observable. The `parameters` block captures everything needed to reproduce the run—the model, lattice, fixed `model_params`, and the per-method `method_params`. The `result` block holds the computed values, nested by method and then indexed by grid position: `result[method][ix][iy]` for a two-dimensional sweep, or `result[method][ix]` for a one-dimensional one. It is abbreviated above to one grid column (`ix` of `1`, i.e. $N_\text{occ} = 1$) and its first five $t_2$ values; a full run carries one entry per point in `x_values` × `y_values`.
 
 ### Sidecar files for parallel runs
 

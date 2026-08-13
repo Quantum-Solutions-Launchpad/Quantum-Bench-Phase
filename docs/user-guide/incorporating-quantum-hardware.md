@@ -11,7 +11,7 @@ The `backend` argument accepts four kinds of value:
 
 ## Local Noisy Simulation
 
-The quickest way to see noise is a fake backend. Here we reuse the Haldane sweep from [Performing Simulation](performing-simulation.md), passing `backend="FakeSherbrooke"` to route the circuits through a snapshot of IBM's Sherbrooke device:
+The quickest way to see noise is a fake backend. Here we sweep the Haldane model's bands across the Brillouin zone with the analytic reference, VQE, and IQPE at once, passing `backend="FakeSherbrooke"` to route the circuits through a snapshot of IBM's Sherbrooke device. A momentum-space sweep is a good first noisy benchmark: each $\mathbf{k}$ point is an independent two-level Bloch Hamiltonian, so the circuits stay shallow enough that the run finishes in minutes and any deviation you see is genuinely the device's noise rather than an unconverged optimization.
 
 ```{jupyter-execute}
 :hide-code:
@@ -43,15 +43,12 @@ _DATA_DIR = _find_data_dir()
 _real_run = qbp.run
 
 def _patched_run(*args, **kwargs):
+    """Serve the pre-computed noisy sweep from docs/_data instead of
+    re-running it against FakeSherbrooke at documentation-build time."""
     methods = kwargs.get("method") or []
     names = {getattr(m, "value", m) for m in methods}
     if names & {"vqe", "iqpe"}:
-        fname = (
-            "simulated-noisy-3d-n_occ-vs-t2.json"
-            if kwargs.get("backend")
-            else "simulated-ideal-3d-n_occ-vs-t2.json"
-        )
-        result = qbp.load_result(str(_DATA_DIR / fname))
+        result = qbp.load_result(str(_DATA_DIR / "simulated-noisy-band-E-kx-vs-ky.json"))
         result.plot(hide_plot=kwargs.get("hide_plot", False))
         return result
     return _real_run(*args, **kwargs)
@@ -67,24 +64,24 @@ from qbp import Method
 result = qbp.run(
     model="haldane",
     method=[Method.ANALYTIC, Method.VQE, Method.IQPE],
-    lattice=(2, 2),
-    x_param="n_occ",
-    y_param="t2",
-    y_range=(0.0, 1.0, 0.25),
-    model_params={"t1": 1.0, "phi": math.pi / 4, "M": 0.1},
+    x_param="kx",
+    y_param="ky",
+    x_range=(-math.pi, math.pi, math.pi / 8),
+    y_range=(-math.pi, math.pi, math.pi / 8),
+    model_params={"t1": 1.0, "t2": 0.1, "phi": math.pi / 4, "M": 0.0},
     method_params={
-        Method.VQE: {"iters": 50, "layers": 1, "reps": 1},
-        Method.IQPE: {"time": 0.1, "trot": 1, "iters": 1, "reps": 1},
+        Method.VQE: {"iters": 400, "layers": 4, "reps": 5},
+        Method.IQPE: {"time": 0.2, "trot": 5, "iters": 8, "reps": 20},
     },
     backend="FakeSherbrooke",
 )
 ```
 
-The analytic surface is unchanged—it never sees the backend—but the VQE and IQPE markers drift off of it. IQPE tends to scatter more aggressively, because its single-shot phase readout amplifies gate errors, while VQE's variational averaging hides some of the noise but biases the energy upward. Any fake backend shipped with `qiskit-ibm-runtime` works here; pass the class name (`"FakeSherbrooke"`, `"FakeBrisbane"`, …) or your own Qiskit backend object.
+The analytic result is the pair of exact Bloch bands—it never sees the backend—and the quantum markers track its lower band. Both stay close on a problem this shallow: VQE lands within about $0.02$ of the exact band on average and IQPE within about $0.03$, with IQPE scattering more because its bit-by-bit phase readout has no variational averaging to absorb a bad shot. Any fake backend shipped with `qiskit-ibm-runtime` works here; pass the class name (`"FakeSherbrooke"`, `"FakeBrisbane"`, …) or your own Qiskit backend object.
 
 ## Running on Real Hardware
 
-Swapping the fake backend for a device name sends the same circuits to physical qubits:
+Swapping the fake backend for a device name sends the circuits to physical qubits instead. Nothing else about the call changes—here on a small real-space sweep, since queued hardware runs want as few cells as you can get away with:
 
 ```{code-block} python
 result = qbp.run(

@@ -42,18 +42,17 @@ _DATA_DIR = _find_data_dir()
 _real_run = qbp.run
 
 def _patched_run(*args, **kwargs):
+    """Serve the pre-computed sweep from docs/_data instead of re-running a
+    ten-thousand-iteration VQE at documentation-build time. Only the method
+    series named in the visible cell are kept, so the figure matches the
+    code exactly."""
     methods = kwargs.get("method") or []
-    names = {getattr(m, "value", m) for m in methods}
-    if names & {"vqe", "iqpe", "dmrg"}:
-        fname = (
-            "simulated-noisy-3d-n_occ-vs-t2.json"
-            if kwargs.get("backend")
-            else "simulated-ideal-3d-n_occ-vs-t2.json"
-        )
-        result = qbp.load_result(str(_DATA_DIR / fname))
-        if "dmrg" in names and "dmrg" not in result.methods:
-            result.methods = result.methods + ["dmrg"]
-            result.grids["dmrg"] = result.grids["analytic"]
+    names = [getattr(m, "value", m) for m in methods]
+    if {"vqe", "iqpe", "dmrg"} & set(names):
+        result = qbp.load_result(str(_DATA_DIR / "simulated-ideal-3d-n_occ-vs-t2.json"))
+        keep = [m for m in result.methods if m in names]
+        result.methods = keep
+        result.grids = {m: result.grids[m] for m in keep}
         result.plot(hide_plot=kwargs.get("hide_plot", False))
         return result
     return _real_run(*args, **kwargs)
@@ -68,21 +67,22 @@ from qbp import Method
 
 result = qbp.run(
     model="haldane",
-    method=[Method.ANALYTIC, Method.VQE, Method.IQPE, Method.DMRG],
+    method=[Method.ANALYTIC, Method.VQE, Method.DMRG],
     lattice=(2, 2),
     x_param="n_occ",
     y_param="t2",
-    y_range=(0.0, 1.0, 0.25),
-    model_params={"t1": 1.0, "phi": math.pi / 4, "M": 0.1},
+    y_range=(0.0, 1.0, 0.1),
+    model_params={"t1": 1.0, "phi": math.pi / 4, "M": 0.0},
     method_params={
-        Method.VQE: {"iters": 50, "layers": 1, "reps": 1},
-        Method.IQPE: {"time": 0.1, "trot": 1, "iters": 1, "reps": 1},
+        Method.VQE: {"iters": 10000, "layers": 5, "reps": 10},
         Method.DMRG: {"nsweeps": 4, "maxdims": "20,50,100,200", "cutoff": 1e-9},
     },
 )
 ```
 
-The analytic surface is the smooth baseline; the VQE, IQPE, and DMRG markers sit on top of it. On an ideal simulator any gap between them is a property of the algorithm's settings, not of hardware noise—and DMRG, being numerically exact for a system this small, lands right on the baseline.
+The analytic surface is the smooth baseline; the VQE and DMRG markers sit on top of it. On an ideal simulator any gap between them is a property of the algorithm's settings, not of hardware noise. DMRG lands on the baseline to within $10^{-2}$ almost everywhere—it is effectively exact for a system this small—except at a couple of large-$t_2$ cells where the fixed `maxdims` schedule stalls on a nearby state and the marker jumps a whole unit above the surface. VQE trails the baseline by up to about one unit of energy, most visibly at the fillings with the most correlation to capture. Both gaps are the settings talking, and the sections below say which knob moves which gap.
+
+IQPE is left out of this particular figure for a reason worth understanding before you add it to a real-space sweep of your own. Classical-feedback phase estimation only converges to *the* ground-state phase when the state it is handed already has substantial overlap with the ground state. On this eight-orbital Haldane lattice the ground state is correlated and often near-degenerate, so a Hartree–Fock reference—or a warm-start VQE that was itself given too small a budget—leaves IQPE locking onto a *different* eigenphase in many cells. Those cells do not come back slightly wrong; they come back wrong by whole units of energy, which is how you recognize the failure. Raising `warm_start_iters`/`warm_start_layers` (or passing a better `initial_state`) is the fix, not raising `iters`. The IQPE figure on [Incorporating Quantum Hardware](incorporating-quantum-hardware.md) uses a momentum-space sweep, where QBP can prepare the exact Bloch eigenstate at each $\mathbf{k}$ and the problem does not arise.
 
 ### VQE parameters
 

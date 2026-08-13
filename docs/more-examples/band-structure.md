@@ -68,4 +68,4 @@ result = qbp.run(
 )
 ```
 
-Band-structure runs are always analytic (`Method.ANALYTIC`): they diagonalize $H(\mathbf{k})$ exactly at each momentum point, so there is no quantum-method or noise dimension to them. To add a Bloch Hamiltonian to your own model and sweep its bands, see [Defining a Model in Python](../models/custom-python.md#adding-a-bloch-hamiltonian).
+`Method.ANALYTIC` diagonalizes $H(\mathbf{k})$ exactly at each momentum point and returns every band, which is what makes it the reference for a band-structure run. `Method.VQE` and `Method.IQPE` also accept momentum axes—each $\mathbf{k}$ point becomes its own small ground-state problem, so they return the lowest band only—and running them against a noisy backend is a cheap way to see what a device does to a known-exact surface; [Incorporating Quantum Hardware](../user-guide/incorporating-quantum-hardware.md) does exactly that. `Method.DMRG` is the exception: it currently has no momentum-space path and QBP rejects it for these sweeps. To add a Bloch Hamiltonian to your own model and sweep its bands, see [Defining a Model in Python](../models/custom-python.md#adding-a-bloch-hamiltonian).

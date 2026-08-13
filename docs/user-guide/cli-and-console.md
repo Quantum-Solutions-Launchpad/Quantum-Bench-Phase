@@ -7,13 +7,13 @@ Everything you can do with the Python API you can also do from the command line.
 `qbp run` is the CLI face of `qbp.run`. The Python call from [Performing Simulation](performing-simulation.md) translates directly:
 
 ```{code-block} console
-$ qbp run --model haldane --method analytic vqe iqpe \
+$ qbp run --model haldane --method analytic vqe dmrg \
     --lattice 2 2 \
     --x-param n_occ \
-    --y-param t2 --y-range 0.0 1.0 0.25 \
-    --t1 1.0 --phi 0.7853981633974483 --M 0.1 \
-    --vqe-iters 50 --vqe-layers 1 \
-    --iqpe-time 0.1 --iqpe-trot 1 --iqpe-iters 1
+    --y-param t2 --y-range 0.0 1.0 0.1 \
+    --t1 1.0 --phi 0.7853981633974483 --M 0.0 \
+    --vqe-iters 10000 --vqe-layers 5 --vqe-reps 10 \
+    --dmrg-nsweeps 4 --dmrg-maxdims 20,50,100,200 --dmrg-cutoff 1e-9
 ```
 
 The mapping is mechanical:
