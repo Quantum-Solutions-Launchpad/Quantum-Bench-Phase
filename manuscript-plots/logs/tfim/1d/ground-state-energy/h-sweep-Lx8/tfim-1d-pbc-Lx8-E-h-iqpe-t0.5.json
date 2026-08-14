@@ -1,0 +1,75 @@
+{
+    "type": "run",
+    "methods": [
+        "iqpe"
+    ],
+    "backend": "ideal",
+    "plot_format": "2d",
+    "band_structure": false,
+    "observable": "E",
+    "x_param": "h",
+    "y_param": null,
+    "x_values": [
+        0.0,
+        0.5,
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0
+    ],
+    "y_values": [],
+    "parameters": {
+        "model": "tfim",
+        "lattice": null,
+        "qubit_operator": "/pscratch/sd/m/mbao202/tfim.hdf5",
+        "keys": [
+            "graph-1D-grid-pbc-qubitnodes_Lx-8_h-0",
+            "graph-1D-grid-pbc-qubitnodes_Lx-8_h-0.5",
+            "graph-1D-grid-pbc-qubitnodes_Lx-8_h-1",
+            "graph-1D-grid-pbc-qubitnodes_Lx-8_h-2",
+            "graph-1D-grid-pbc-qubitnodes_Lx-8_h-3",
+            "graph-1D-grid-pbc-qubitnodes_Lx-8_h-4",
+            "graph-1D-grid-pbc-qubitnodes_Lx-8_h-5",
+            "graph-1D-grid-pbc-qubitnodes_Lx-8_h-6"
+        ],
+        "model_params": {},
+        "method_params": {
+            "iqpe": {
+                "time": 0.5,
+                "trot": 5,
+                "iters": 8,
+                "reps": 20,
+                "warm_start_vqe": false,
+                "warm_start_iters": 200,
+                "warm_start_layers": 4,
+                "initial_state": {
+                    "type": "vqe_informed",
+                    "vqe_ansatz": {
+                        "type": "excitation_preserving",
+                        "kwargs": {
+                            "reps": 2
+                        },
+                        "initial_state_prefix": "hartree_fock"
+                    },
+                    "vqe_n_layers": 2,
+                    "vqe_max_iters": 1000
+                },
+                "extremum": "median"
+            }
+        }
+    },
+    "result": {
+        "iqpe": {
+            "0": -4.565126824747668,
+            "1": -4.074252972624263,
+            "2": -2.356194490192345,
+            "3": -0.14726215563702155,
+            "4": -7.804894248762142,
+            "5": -5.890486225480862,
+            "6": -7.0685834705770345,
+            "7": -7.461282552275758
+        }
+    }
+}

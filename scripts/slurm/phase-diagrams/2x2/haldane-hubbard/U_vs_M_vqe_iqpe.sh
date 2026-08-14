@@ -27,7 +27,7 @@ source "${REPO_ROOT}/scripts/slurm/phase-diagrams/common_visualizer.sh"
 SHARDS="${SHARDS:-${SLURM_NTASKS:-16}}"
 setup_visualizer_env
 
-export QBP_JOBS_PER_SHARD="${QBP_JOBS_PER_SHARD:-2}"
+export QBP_JOBS_PER_SHARD="${QBP_JOBS_PER_SHARD:-1}"
 
 LOG_DIR="${LOG_DIR:-${REPO_ROOT}/manuscript-plots/logs/new-data}"
 PLOT_DIR="${PLOT_DIR:-${REPO_ROOT}/manuscript-plots/plots/new-data}"

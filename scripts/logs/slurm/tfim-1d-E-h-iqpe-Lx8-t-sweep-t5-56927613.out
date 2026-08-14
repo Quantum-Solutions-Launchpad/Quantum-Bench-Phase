@@ -1,0 +1,1470 @@
+Running TFIM IQPE t-sweep array task 5/10
+===================================================================
+TFIM 1D ground-state energy: h sweep (PBC, Lx=8, t=0.5)
+  Method: IQPE
+  Boundary: periodic
+  System size: Lx = 8
+  t value: 0.5
+  h range: 0.0 to 6.0 step 0.5
+  Data dir: /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/tfim/1d/ground-state-energy/h-sweep-Lx8
+  Started: Thu Aug 13 11:33:47 PM PDT 2026
+===================================================================
+Running computation...
+Command: qbp run --method iqpe --observable E --qubit-operator /pscratch/sd/m/mbao202/tfim.hdf5 --select 1D --select grid-pbc --select Lx-8 --x-param h --x-range 0.0 6.0 0.5 --iqpe-time 0.5 --iqpe-trot 5 --iqpe-iters 8 --iqpe-reps 20 --iqpe-initial-state vqe_informed --iqpe-initial-vqe-ansatz excitation_preserving --iqpe-initial-vqe-n-layers 2 --iqpe-initial-vqe-ansatz-kwarg reps=2 --iqpe-initial-vqe-max-iters 1000 --log-path /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/tfim/1d/ground-state-energy/h-sweep-Lx8/tfim-1d-pbc-Lx8-E-h-iqpe-t0.5.json --plot-path /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/plots/tfim/1d/ground-state-energy/h-sweep-Lx8/tfim-1d-pbc-Lx8-E-h-iqpe-t0.5.pdf
+
+[[2m[37m23:34:32[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=1) iteration=1 = 0.0[0m
+[[2m[37m23:34:32[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=1) iteration=1 = 0.5[0m
+[[2m[37m23:34:32[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=1) iteration=1 = 0.0[0m
+[[2m[37m23:34:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=1) iteration=1 = 0.5[0m
+[[2m[37m23:34:32[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=1) iteration=1 = 0.0[0m
+[[2m[37m23:34:32[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=1) iteration=1 = 0.5[0m
+[[2m[37m23:34:32[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=1) iteration=1 = 0.0[0m
+[[2m[37m23:34:32[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=1) iteration=1 = 0.5[0m
+[[2m[37m23:34:33[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=1) iteration=2 = 0.0[0m
+[[2m[37m23:34:33[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=1) iteration=2 = 0.75[0m
+[[2m[37m23:34:33[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=1) iteration=2 = 0.0[0m
+[[2m[37m23:34:33[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=1) iteration=2 = 0.75[0m
+[[2m[37m23:34:33[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=1) iteration=2 = 0.0[0m
+[[2m[37m23:34:33[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=1) iteration=2 = 0.75[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=1) iteration=3 = 0.0[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=1) iteration=3 = 0.375[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=1) iteration=3 = 0.0[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=1) iteration=2 = 0.0[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=1) iteration=2 = 0.25[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=1) iteration=3 = 0.375[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=1) iteration=4 = 0.5[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=1) iteration=3 = 0.0[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=1) iteration=4 = 0.1875[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=1) iteration=4 = 0.0[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=1) iteration=5 = 0.75[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=1) iteration=3 = 0.875[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=1) iteration=5 = 0.09375[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=1) iteration=4 = 0.1875[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=1) iteration=6 = 0.375[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=1) iteration=4 = 0.0[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=1) iteration=6 = 0.046875[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=1) iteration=5 = 0.5[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=1) iteration=7 = 0.1875[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=1) iteration=3 = 0.625[0m
+[[2m[37m23:34:34[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=1) iteration=7 = 0.5234375[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=1) iteration=3 = 0.0[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=1) iteration=5 = 0.59375[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=1) iteration=8 = 0.59375[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=1) = -7.461282552275758[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=1) iteration=4 = 0.9375[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=1) iteration=6 = 0.25[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=1) iteration=5 = 0.5[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=1) iteration=8 = 0.76171875[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=1) = -9.5720401164064[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=1) iteration=6 = 0.296875[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=1) iteration=7 = 0.625[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=1) iteration=6 = 0.75[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=1) iteration=4 = 0.8125[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=1) iteration=5 = 0.96875[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=1) iteration=7 = 0.6484375[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=1) iteration=8 = 0.8125[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=1) = -10.210176124166829[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=1) iteration=7 = 0.375[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=1) iteration=8 = 0.32421875[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=1) = -4.074252972624263[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=1) iteration=4 = 0.5[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=1) iteration=6 = 0.484375[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=1) iteration=5 = 0.90625[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=1) iteration=8 = 0.1875[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=1) = -2.356194490192345[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=1) iteration=7 = 0.2421875[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=1) iteration=6 = 0.453125[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=1) iteration=5 = 0.75[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=1) iteration=8 = 0.12109375[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=1) = -1.521708941582556[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=1) iteration=7 = 0.7265625[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=1) iteration=8 = 0.36328125[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=1) = -4.565126824747668[0m
+[[2m[37m23:34:35[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=1) iteration=6 = 0.875[0m
+[[2m[37m23:34:36[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=1) iteration=7 = 0.9375[0m
+[[2m[37m23:34:36[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=1) iteration=8 = 0.46875[0m
+[[2m[37m23:34:36[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=1) = -5.890486225480862[0m
+[[2m[37m23:34:46[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=2) iteration=1 = 0.0[0m
+[[2m[37m23:34:46[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=2) iteration=1 = 0.5[0m
+[[2m[37m23:34:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=2) iteration=1 = 0.5[0m
+[[2m[37m23:34:47[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=2) iteration=1 = 0.0[0m
+[[2m[37m23:34:47[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=2) iteration=1 = 0.5[0m
+[[2m[37m23:34:47[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=2) iteration=2 = 0.0[0m
+[[2m[37m23:34:47[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=2) iteration=2 = 0.75[0m
+[[2m[37m23:34:47[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=2) iteration=1 = 0.0[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=2) iteration=3 = 0.0[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=2) iteration=3 = 0.375[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=2) iteration=1 = 0.5[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=2) iteration=1 = 0.0[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=2) iteration=4 = 0.5[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=2) iteration=2 = 0.75[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=2) iteration=2 = 0.0[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=2) iteration=4 = 0.6875[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=2) iteration=5 = 0.75[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=2) iteration=2 = 0.75[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=2) iteration=6 = 0.375[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=2) iteration=5 = 0.34375[0m
+[[2m[37m23:34:48[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=2) iteration=7 = 0.1875[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=2) iteration=6 = 0.171875[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=2) iteration=8 = 0.59375[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=2) = -7.461282552275758[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=2) iteration=7 = 0.0859375[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=2) iteration=3 = 0.375[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=2) iteration=8 = 0.04296875[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=2) = -0.5399612373357456[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=2) iteration=3 = 0.0[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=2) iteration=2 = 0.0[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=2) iteration=3 = 0.875[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=2) iteration=4 = 0.1875[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=2) iteration=4 = 0.0[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=2) iteration=5 = 0.59375[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=2) iteration=4 = 0.9375[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=2) iteration=2 = 0.5[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=2) iteration=5 = 0.5[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=2) iteration=2 = 0.25[0m
+[[2m[37m23:34:49[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=2) iteration=6 = 0.296875[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=2) iteration=3 = 0.0[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=2) iteration=7 = 0.6484375[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=2) iteration=5 = 0.96875[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=2) iteration=6 = 0.25[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=2) iteration=8 = 0.32421875[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=2) = -4.074252972624263[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=2) iteration=7 = 0.625[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=2) iteration=6 = 0.484375[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=2) iteration=8 = 0.8125[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=2) = -10.210176124166829[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=2) iteration=7 = 0.2421875[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=2) iteration=4 = 0.0[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=2) iteration=8 = 0.62109375[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=2) = -7.804894248762142[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=2) iteration=3 = 0.625[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=2) iteration=3 = 0.75[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=2) iteration=5 = 0.5[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=2) iteration=4 = 0.8125[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=2) iteration=6 = 0.75[0m
+[[2m[37m23:34:50[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=2) iteration=4 = 0.375[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=2) iteration=7 = 0.375[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=2) iteration=5 = 0.90625[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=2) iteration=8 = 0.1875[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=2) = -2.356194490192345[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=2) iteration=6 = 0.453125[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=2) iteration=5 = 0.6875[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=2) iteration=7 = 0.7265625[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=2) iteration=6 = 0.84375[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=2) iteration=8 = 0.36328125[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=2) = -4.565126824747668[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=2) iteration=7 = 0.921875[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=2) iteration=8 = 0.4609375[0m
+[[2m[37m23:34:51[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=2) = -5.792311455056181[0m
+[[2m[37m23:35:00[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=3) iteration=1 = 0.0[0m
+[[2m[37m23:35:00[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=3) iteration=1 = 0.5[0m
+[[2m[37m23:35:01[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=3) iteration=2 = 0.0[0m
+[[2m[37m23:35:01[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=3) iteration=2 = 0.75[0m
+[[2m[37m23:35:01[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=3) iteration=1 = 0.5[0m
+[[2m[37m23:35:01[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=3) iteration=3 = 0.0[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=3) iteration=1 = 0.5[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=3) iteration=3 = 0.375[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=3) iteration=1 = 0.0[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=3) iteration=4 = 0.5[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=3) iteration=5 = 0.75[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=3) iteration=4 = 0.1875[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=3) iteration=6 = 0.375[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=3) iteration=5 = 0.09375[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=3) iteration=7 = 0.1875[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=3) iteration=8 = 0.59375[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=3) = -7.461282552275758[0m
+[[2m[37m23:35:02[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=3) iteration=6 = 0.046875[0m
+[[2m[37m23:35:03[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=3) iteration=2 = 0.75[0m
+[[2m[37m23:35:03[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=3) iteration=7 = 0.0234375[0m
+[[2m[37m23:35:03[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=3) iteration=8 = 0.01171875[0m
+[[2m[37m23:35:03[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=3) = -0.14726215563702155[0m
+[[2m[37m23:35:03[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=3) iteration=1 = 0.0[0m
+[[2m[37m23:35:03[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=3) iteration=2 = 0.75[0m
+[[2m[37m23:35:03[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=3) iteration=2 = 0.0[0m
+[[2m[37m23:35:03[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=3) iteration=3 = 0.375[0m
+[[2m[37m23:35:03[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=3) iteration=1 = 0.0[0m
+[[2m[37m23:35:03[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=3) iteration=1 = 0.5[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=3) iteration=4 = 0.1875[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=3) iteration=3 = 0.875[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=3) iteration=3 = 0.0[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=3) iteration=5 = 0.59375[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=3) iteration=6 = 0.296875[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=3) iteration=4 = 0.9375[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=3) iteration=4 = 0.0[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=3) iteration=7 = 0.6484375[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=3) iteration=2 = 0.0[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=3) iteration=8 = 0.32421875[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=3) = -4.074252972624263[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=3) iteration=5 = 0.96875[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=3) iteration=5 = 0.5[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=3) iteration=6 = 0.484375[0m
+[[2m[37m23:35:04[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=3) iteration=6 = 0.25[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=3) iteration=7 = 0.2421875[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=3) iteration=2 = 0.0[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=3) iteration=7 = 0.625[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=3) iteration=8 = 0.62109375[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=3) = -7.804894248762142[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=3) iteration=8 = 0.3125[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=3) = -3.9269908169872414[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=3) iteration=2 = 0.25[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=3) iteration=3 = 0.0[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=3) iteration=4 = 0.0[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=3) iteration=3 = 0.0[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=3) iteration=3 = 0.625[0m
+[[2m[37m23:35:05[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=3) iteration=5 = 0.5[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=3) iteration=6 = 0.75[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=3) iteration=4 = 0.5[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=3) iteration=4 = 0.8125[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=3) iteration=7 = 0.375[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=3) iteration=8 = 0.1875[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=3) = -2.356194490192345[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=3) iteration=5 = 0.90625[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=3) iteration=5 = 0.75[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=3) iteration=6 = 0.453125[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=3) iteration=6 = 0.875[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=3) iteration=7 = 0.7265625[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=3) iteration=7 = 0.9375[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=3) iteration=8 = 0.36328125[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=3) = -4.565126824747668[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=3) iteration=8 = 0.46875[0m
+[[2m[37m23:35:06[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=3) = -5.890486225480862[0m
+[[2m[37m23:35:14[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=4) iteration=1 = 0.0[0m
+[[2m[37m23:35:14[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=4) iteration=1 = 0.5[0m
+[[2m[37m23:35:15[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=4) iteration=2 = 0.0[0m
+[[2m[37m23:35:15[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=4) iteration=2 = 0.75[0m
+[[2m[37m23:35:16[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=4) iteration=3 = 0.0[0m
+[[2m[37m23:35:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=4) iteration=1 = 0.5[0m
+[[2m[37m23:35:16[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=4) iteration=3 = 0.375[0m
+[[2m[37m23:35:16[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=4) iteration=4 = 0.5[0m
+[[2m[37m23:35:16[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=4) iteration=5 = 0.75[0m
+[[2m[37m23:35:16[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=4) iteration=4 = 0.1875[0m
+[[2m[37m23:35:16[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=4) iteration=6 = 0.375[0m
+[[2m[37m23:35:16[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=4) iteration=5 = 0.09375[0m
+[[2m[37m23:35:17[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=4) iteration=7 = 0.1875[0m
+[[2m[37m23:35:17[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=4) iteration=8 = 0.59375[0m
+[[2m[37m23:35:17[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=4) = -7.461282552275758[0m
+[[2m[37m23:35:17[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=4) iteration=6 = 0.046875[0m
+[[2m[37m23:35:17[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=4) iteration=1 = 0.0[0m
+[[2m[37m23:35:17[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=4) iteration=7 = 0.0234375[0m
+[[2m[37m23:35:17[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=4) iteration=8 = 0.01171875[0m
+[[2m[37m23:35:17[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=4) = -0.14726215563702155[0m
+[[2m[37m23:35:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=4) iteration=2 = 0.75[0m
+[[2m[37m23:35:17[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=4) iteration=1 = 0.5[0m
+[[2m[37m23:35:18[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=4) iteration=3 = 0.375[0m
+[[2m[37m23:35:18[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=4) iteration=2 = 0.0[0m
+[[2m[37m23:35:18[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=4) iteration=4 = 0.1875[0m
+[[2m[37m23:35:18[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=4) iteration=5 = 0.59375[0m
+[[2m[37m23:35:18[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=4) iteration=2 = 0.75[0m
+[[2m[37m23:35:18[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=4) iteration=1 = 0.0[0m
+[[2m[37m23:35:18[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=4) iteration=1 = 0.5[0m
+[[2m[37m23:35:19[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=4) iteration=6 = 0.296875[0m
+[[2m[37m23:35:19[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=4) iteration=1 = 0.0[0m
+[[2m[37m23:35:19[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=4) iteration=3 = 0.0[0m
+[[2m[37m23:35:19[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=4) iteration=7 = 0.6484375[0m
+[[2m[37m23:35:19[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=4) iteration=8 = 0.32421875[0m
+[[2m[37m23:35:19[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=4) = -4.074252972624263[0m
+[[2m[37m23:35:19[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=4) iteration=4 = 0.0[0m
+[[2m[37m23:35:19[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=4) iteration=3 = 0.875[0m
+[[2m[37m23:35:19[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=4) iteration=5 = 0.5[0m
+[[2m[37m23:35:19[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=4) iteration=6 = 0.25[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=4) iteration=7 = 0.125[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=4) iteration=4 = 0.9375[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=4) iteration=8 = 0.5625[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=4) = -7.0685834705770345[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=4) iteration=2 = 0.0[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=4) iteration=5 = 0.96875[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=4) iteration=2 = 0.0[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=4) iteration=6 = 0.484375[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=4) iteration=7 = 0.2421875[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=4) iteration=2 = 0.25[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=4) iteration=8 = 0.12109375[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=4) = -1.521708941582556[0m
+[[2m[37m23:35:20[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=4) iteration=3 = 0.0[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=4) iteration=3 = 0.0[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=4) iteration=3 = 0.625[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=4) iteration=4 = 0.0[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=4) iteration=4 = 0.5[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=4) iteration=5 = 0.5[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=4) iteration=4 = 0.8125[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=4) iteration=5 = 0.75[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=4) iteration=6 = 0.75[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=4) iteration=5 = 0.90625[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=4) iteration=6 = 0.875[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=4) iteration=7 = 0.375[0m
+[[2m[37m23:35:21[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=4) iteration=6 = 0.453125[0m
+[[2m[37m23:35:22[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=4) iteration=7 = 0.9375[0m
+[[2m[37m23:35:22[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=4) iteration=8 = 0.1875[0m
+[[2m[37m23:35:22[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=4) = -2.356194490192345[0m
+[[2m[37m23:35:22[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=4) iteration=7 = 0.7265625[0m
+[[2m[37m23:35:22[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=4) iteration=8 = 0.96875[0m
+[[2m[37m23:35:22[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=4) = -12.173671532660448[0m
+[[2m[37m23:35:22[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=4) iteration=8 = 0.36328125[0m
+[[2m[37m23:35:22[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=4) = -4.565126824747668[0m
+[[2m[37m23:35:28[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=5) iteration=1 = 0.0[0m
+[[2m[37m23:35:28[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=5) iteration=1 = 0.5[0m
+[[2m[37m23:35:29[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=5) iteration=2 = 0.0[0m
+[[2m[37m23:35:29[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=5) iteration=2 = 0.75[0m
+[[2m[37m23:35:30[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=5) iteration=3 = 0.0[0m
+[[2m[37m23:35:30[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=5) iteration=3 = 0.375[0m
+[[2m[37m23:35:30[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=5) iteration=4 = 0.5[0m
+[[2m[37m23:35:30[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=5) iteration=5 = 0.25[0m
+[[2m[37m23:35:30[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=5) iteration=4 = 0.1875[0m
+[[2m[37m23:35:30[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=5) iteration=6 = 0.625[0m
+[[2m[37m23:35:30[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=5) iteration=1 = 0.5[0m
+[[2m[37m23:35:31[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=5) iteration=7 = 0.3125[0m
+[[2m[37m23:35:31[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=5) iteration=5 = 0.09375[0m
+[[2m[37m23:35:31[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=5) iteration=8 = 0.65625[0m
+[[2m[37m23:35:31[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=5) = -8.246680715673207[0m
+[[2m[37m23:35:31[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=5) iteration=6 = 0.046875[0m
+[[2m[37m23:35:31[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=5) iteration=7 = 0.0234375[0m
+[[2m[37m23:35:31[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=5) iteration=8 = 0.01171875[0m
+[[2m[37m23:35:31[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=5) = -0.14726215563702155[0m
+[[2m[37m23:35:32[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=5) iteration=1 = 0.0[0m
+[[2m[37m23:35:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=5) iteration=2 = 0.75[0m
+[[2m[37m23:35:33[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=5) iteration=1 = 0.5[0m
+[[2m[37m23:35:33[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=5) iteration=3 = 0.375[0m
+[[2m[37m23:35:33[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=5) iteration=4 = 0.1875[0m
+[[2m[37m23:35:33[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=5) iteration=2 = 0.0[0m
+[[2m[37m23:35:33[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=5) iteration=5 = 0.59375[0m
+[[2m[37m23:35:33[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=5) iteration=6 = 0.296875[0m
+[[2m[37m23:35:33[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=5) iteration=7 = 0.6484375[0m
+[[2m[37m23:35:34[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=5) iteration=8 = 0.32421875[0m
+[[2m[37m23:35:34[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=5) = -4.074252972624263[0m
+[[2m[37m23:35:34[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=5) iteration=1 = 0.0[0m
+[[2m[37m23:35:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=5) iteration=3 = 0.0[0m
+[[2m[37m23:35:34[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=5) iteration=1 = 0.0[0m
+[[2m[37m23:35:34[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=5) iteration=1 = 0.5[0m
+[[2m[37m23:35:34[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=5) iteration=2 = 0.75[0m
+[[2m[37m23:35:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=5) iteration=4 = 0.0[0m
+[[2m[37m23:35:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=5) iteration=5 = 0.5[0m
+[[2m[37m23:35:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=5) iteration=6 = 0.25[0m
+[[2m[37m23:35:35[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=5) iteration=3 = 0.875[0m
+[[2m[37m23:35:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=5) iteration=7 = 0.625[0m
+[[2m[37m23:35:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=5) iteration=8 = 0.3125[0m
+[[2m[37m23:35:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=5) = -3.9269908169872414[0m
+[[2m[37m23:35:35[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=5) iteration=4 = 0.9375[0m
+[[2m[37m23:35:35[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=5) iteration=2 = 0.0[0m
+[[2m[37m23:35:35[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=5) iteration=2 = 0.0[0m
+[[2m[37m23:35:35[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=5) iteration=2 = 0.25[0m
+[[2m[37m23:35:35[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=5) iteration=5 = 0.96875[0m
+[[2m[37m23:35:35[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=5) iteration=6 = 0.484375[0m
+[[2m[37m23:35:36[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=5) iteration=7 = 0.2421875[0m
+[[2m[37m23:35:36[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=5) iteration=8 = 0.62109375[0m
+[[2m[37m23:35:36[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=5) = -7.804894248762142[0m
+[[2m[37m23:35:36[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=5) iteration=3 = 0.0[0m
+[[2m[37m23:35:36[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=5) iteration=3 = 0.625[0m
+[[2m[37m23:35:36[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=5) iteration=3 = 0.0[0m
+[[2m[37m23:35:36[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=5) iteration=4 = 0.8125[0m
+[[2m[37m23:35:36[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=5) iteration=4 = 0.0[0m
+[[2m[37m23:35:36[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=5) iteration=4 = 0.5[0m
+[[2m[37m23:35:36[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=5) iteration=5 = 0.90625[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=5) iteration=5 = 0.5[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=5) iteration=5 = 0.75[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=5) iteration=6 = 0.453125[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=5) iteration=6 = 0.75[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=5) iteration=7 = 0.7265625[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=5) iteration=6 = 0.875[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=5) iteration=7 = 0.375[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=5) iteration=8 = 0.36328125[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=5) = -4.565126824747668[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=5) iteration=7 = 0.9375[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=5) iteration=8 = 0.1875[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=5) = -2.356194490192345[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=5) iteration=8 = 0.46875[0m
+[[2m[37m23:35:37[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=5) = -5.890486225480862[0m
+[[2m[37m23:35:42[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=6) iteration=1 = 0.0[0m
+[[2m[37m23:35:42[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=6) iteration=1 = 0.5[0m
+[[2m[37m23:35:43[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=6) iteration=2 = 0.0[0m
+[[2m[37m23:35:43[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=6) iteration=2 = 0.75[0m
+[[2m[37m23:35:44[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=6) iteration=3 = 0.0[0m
+[[2m[37m23:35:44[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=6) iteration=3 = 0.375[0m
+[[2m[37m23:35:44[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=6) iteration=4 = 0.5[0m
+[[2m[37m23:35:44[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=6) iteration=4 = 0.1875[0m
+[[2m[37m23:35:45[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=6) iteration=5 = 0.75[0m
+[[2m[37m23:35:45[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=6) iteration=6 = 0.375[0m
+[[2m[37m23:35:45[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=6) iteration=5 = 0.09375[0m
+[[2m[37m23:35:45[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=6) iteration=7 = 0.1875[0m
+[[2m[37m23:35:45[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=6) iteration=6 = 0.046875[0m
+[[2m[37m23:35:45[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=6) iteration=8 = 0.59375[0m
+[[2m[37m23:35:45[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=6) = -7.461282552275758[0m
+[[2m[37m23:35:45[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=6) iteration=7 = 0.0234375[0m
+[[2m[37m23:35:45[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=6) iteration=8 = 0.01171875[0m
+[[2m[37m23:35:45[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=6) = -0.14726215563702155[0m
+[[2m[37m23:35:45[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=6) iteration=1 = 0.5[0m
+[[2m[37m23:35:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=6) iteration=2 = 0.75[0m
+[[2m[37m23:35:47[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=6) iteration=1 = 0.0[0m
+[[2m[37m23:35:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=6) iteration=3 = 0.375[0m
+[[2m[37m23:35:48[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=6) iteration=4 = 0.1875[0m
+[[2m[37m23:35:48[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=6) iteration=1 = 0.5[0m
+[[2m[37m23:35:48[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=6) iteration=5 = 0.59375[0m
+[[2m[37m23:35:48[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=6) iteration=2 = 0.0[0m
+[[2m[37m23:35:48[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=6) iteration=6 = 0.296875[0m
+[[2m[37m23:35:48[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=6) iteration=7 = 0.6484375[0m
+[[2m[37m23:35:48[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=6) iteration=8 = 0.32421875[0m
+[[2m[37m23:35:48[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=6) = -4.074252972624263[0m
+[[2m[37m23:35:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=6) iteration=3 = 0.0[0m
+[[2m[37m23:35:49[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=6) iteration=1 = 0.5[0m
+[[2m[37m23:35:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=6) iteration=4 = 0.0[0m
+[[2m[37m23:35:49[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=6) iteration=1 = 0.0[0m
+[[2m[37m23:35:49[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=6) iteration=1 = 0.0[0m
+[[2m[37m23:35:49[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=6) iteration=2 = 0.75[0m
+[[2m[37m23:35:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=6) iteration=5 = 0.5[0m
+[[2m[37m23:35:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=6) iteration=6 = 0.25[0m
+[[2m[37m23:35:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=6) iteration=7 = 0.125[0m
+[[2m[37m23:35:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=6) iteration=8 = 0.5625[0m
+[[2m[37m23:35:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=6) = -7.0685834705770345[0m
+[[2m[37m23:35:50[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=6) iteration=3 = 0.875[0m
+[[2m[37m23:35:50[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=6) iteration=4 = 0.9375[0m
+[[2m[37m23:35:51[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=6) iteration=5 = 0.96875[0m
+[[2m[37m23:35:51[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=6) iteration=2 = 0.0[0m
+[[2m[37m23:35:51[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=6) iteration=2 = 0.0[0m
+[[2m[37m23:35:51[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=6) iteration=6 = 0.484375[0m
+[[2m[37m23:35:51[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=6) iteration=2 = 0.25[0m
+[[2m[37m23:35:51[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=6) iteration=7 = 0.2421875[0m
+[[2m[37m23:35:51[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=6) iteration=8 = 0.62109375[0m
+[[2m[37m23:35:51[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=6) = -7.804894248762142[0m
+[[2m[37m23:35:51[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=6) iteration=3 = 0.0[0m
+[[2m[37m23:35:51[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=6) iteration=3 = 0.0[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=6) iteration=3 = 0.625[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=6) iteration=4 = 0.0[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=6) iteration=4 = 0.8125[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=6) iteration=4 = 0.5[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=6) iteration=5 = 0.90625[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=6) iteration=5 = 0.5[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=6) iteration=5 = 0.75[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=6) iteration=6 = 0.453125[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=6) iteration=6 = 0.75[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=6) iteration=6 = 0.875[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=6) iteration=7 = 0.7265625[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=6) iteration=7 = 0.375[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=6) iteration=8 = 0.36328125[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=6) = -4.565126824747668[0m
+[[2m[37m23:35:52[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=6) iteration=7 = 0.9375[0m
+[[2m[37m23:35:53[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=6) iteration=8 = 0.1875[0m
+[[2m[37m23:35:53[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=6) = -2.356194490192345[0m
+[[2m[37m23:35:53[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=6) iteration=8 = 0.46875[0m
+[[2m[37m23:35:53[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=6) = -5.890486225480862[0m
+[[2m[37m23:35:56[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=7) iteration=1 = 0.0[0m
+[[2m[37m23:35:56[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=7) iteration=1 = 0.5[0m
+[[2m[37m23:35:58[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=7) iteration=2 = 0.0[0m
+[[2m[37m23:35:58[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=7) iteration=2 = 0.75[0m
+[[2m[37m23:35:58[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=7) iteration=3 = 0.0[0m
+[[2m[37m23:35:58[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=7) iteration=3 = 0.375[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=7) iteration=4 = 0.5[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=7) iteration=4 = 0.1875[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=7) iteration=5 = 0.75[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=7) iteration=5 = 0.09375[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=7) iteration=6 = 0.375[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=7) iteration=6 = 0.046875[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=7) iteration=7 = 0.1875[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=7) iteration=8 = 0.59375[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=7) = -7.461282552275758[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=7) iteration=7 = 0.0234375[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=7) iteration=8 = 0.01171875[0m
+[[2m[37m23:35:59[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=7) = -0.14726215563702155[0m
+[[2m[37m23:36:00[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=7) iteration=1 = 0.5[0m
+[[2m[37m23:36:01[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=7) iteration=2 = 0.75[0m
+[[2m[37m23:36:02[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=7) iteration=1 = 0.0[0m
+[[2m[37m23:36:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=7) iteration=3 = 0.375[0m
+[[2m[37m23:36:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=7) iteration=4 = 0.1875[0m
+[[2m[37m23:36:03[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=7) iteration=5 = 0.59375[0m
+[[2m[37m23:36:03[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=7) iteration=6 = 0.296875[0m
+[[2m[37m23:36:03[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=7) iteration=7 = 0.6484375[0m
+[[2m[37m23:36:03[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=7) iteration=8 = 0.32421875[0m
+[[2m[37m23:36:03[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=7) = -4.074252972624263[0m
+[[2m[37m23:36:03[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=7) iteration=2 = 0.0[0m
+[[2m[37m23:36:03[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=7) iteration=1 = 0.5[0m
+[[2m[37m23:36:04[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=7) iteration=3 = 0.0[0m
+[[2m[37m23:36:04[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=7) iteration=4 = 0.0[0m
+[[2m[37m23:36:04[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=7) iteration=5 = 0.5[0m
+[[2m[37m23:36:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=7) iteration=6 = 0.25[0m
+[[2m[37m23:36:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=7) iteration=7 = 0.125[0m
+[[2m[37m23:36:05[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=7) iteration=1 = 0.0[0m
+[[2m[37m23:36:05[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=7) iteration=2 = 0.75[0m
+[[2m[37m23:36:05[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=7) iteration=1 = 0.0[0m
+[[2m[37m23:36:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=7) iteration=8 = 0.5625[0m
+[[2m[37m23:36:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=7) = -7.0685834705770345[0m
+[[2m[37m23:36:05[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=7) iteration=1 = 0.5[0m
+[[2m[37m23:36:06[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=7) iteration=3 = 0.875[0m
+[[2m[37m23:36:06[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=7) iteration=4 = 0.9375[0m
+[[2m[37m23:36:06[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=7) iteration=5 = 0.96875[0m
+[[2m[37m23:36:06[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=7) iteration=2 = 0.0[0m
+[[2m[37m23:36:06[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=7) iteration=2 = 0.0[0m
+[[2m[37m23:36:06[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=7) iteration=6 = 0.484375[0m
+[[2m[37m23:36:06[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=7) iteration=7 = 0.2421875[0m
+[[2m[37m23:36:06[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=7) iteration=2 = 0.25[0m
+[[2m[37m23:36:07[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=7) iteration=8 = 0.62109375[0m
+[[2m[37m23:36:07[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=7) = -7.804894248762142[0m
+[[2m[37m23:36:07[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=7) iteration=3 = 0.0[0m
+[[2m[37m23:36:07[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=7) iteration=3 = 0.0[0m
+[[2m[37m23:36:07[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=7) iteration=3 = 0.625[0m
+[[2m[37m23:36:07[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=7) iteration=4 = 0.0[0m
+[[2m[37m23:36:07[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=7) iteration=4 = 0.8125[0m
+[[2m[37m23:36:07[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=7) iteration=4 = 0.5[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=7) iteration=5 = 0.5[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=7) iteration=5 = 0.90625[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=7) iteration=5 = 0.75[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=7) iteration=6 = 0.75[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=7) iteration=6 = 0.453125[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=7) iteration=7 = 0.375[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=7) iteration=6 = 0.875[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=7) iteration=7 = 0.7265625[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=7) iteration=8 = 0.36328125[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=7) = -4.565126824747668[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=7) iteration=8 = 0.1875[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=7) = -2.356194490192345[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=7) iteration=7 = 0.9375[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=7) iteration=8 = 0.96875[0m
+[[2m[37m23:36:08[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=7) = -12.173671532660448[0m
+[[2m[37m23:36:11[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=8) iteration=1 = 0.0[0m
+[[2m[37m23:36:11[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=8) iteration=1 = 0.5[0m
+[[2m[37m23:36:12[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=8) iteration=2 = 0.0[0m
+[[2m[37m23:36:12[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=8) iteration=2 = 0.75[0m
+[[2m[37m23:36:12[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=8) iteration=3 = 0.0[0m
+[[2m[37m23:36:13[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=8) iteration=3 = 0.375[0m
+[[2m[37m23:36:13[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=8) iteration=4 = 0.5[0m
+[[2m[37m23:36:13[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=8) iteration=4 = 0.1875[0m
+[[2m[37m23:36:13[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=8) iteration=5 = 0.75[0m
+[[2m[37m23:36:13[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=8) iteration=5 = 0.09375[0m
+[[2m[37m23:36:13[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=8) iteration=6 = 0.375[0m
+[[2m[37m23:36:13[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=8) iteration=6 = 0.046875[0m
+[[2m[37m23:36:13[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=8) iteration=7 = 0.1875[0m
+[[2m[37m23:36:13[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=8) iteration=7 = 0.0234375[0m
+[[2m[37m23:36:14[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=8) iteration=8 = 0.59375[0m
+[[2m[37m23:36:14[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=8) = -7.461282552275758[0m
+[[2m[37m23:36:14[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=8) iteration=8 = 0.01171875[0m
+[[2m[37m23:36:14[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=8) = -0.14726215563702155[0m
+[[2m[37m23:36:14[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=8) iteration=1 = 0.5[0m
+[[2m[37m23:36:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=8) iteration=2 = 0.75[0m
+[[2m[37m23:36:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=8) iteration=3 = 0.375[0m
+[[2m[37m23:36:17[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=8) iteration=1 = 0.0[0m
+[[2m[37m23:36:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=8) iteration=4 = 0.1875[0m
+[[2m[37m23:36:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=8) iteration=5 = 0.59375[0m
+[[2m[37m23:36:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=8) iteration=6 = 0.296875[0m
+[[2m[37m23:36:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=8) iteration=7 = 0.6484375[0m
+[[2m[37m23:36:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=8) iteration=8 = 0.32421875[0m
+[[2m[37m23:36:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=8) = -4.074252972624263[0m
+[[2m[37m23:36:18[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=8) iteration=2 = 0.0[0m
+[[2m[37m23:36:19[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=8) iteration=3 = 0.0[0m
+[[2m[37m23:36:19[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=8) iteration=1 = 0.5[0m
+[[2m[37m23:36:19[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=8) iteration=4 = 0.0[0m
+[[2m[37m23:36:19[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=8) iteration=5 = 0.5[0m
+[[2m[37m23:36:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=8) iteration=6 = 0.25[0m
+[[2m[37m23:36:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=8) iteration=7 = 0.625[0m
+[[2m[37m23:36:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=8) iteration=8 = 0.8125[0m
+[[2m[37m23:36:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=8) = -10.210176124166829[0m
+[[2m[37m23:36:20[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=8) iteration=2 = 0.75[0m
+[[2m[37m23:36:20[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=8) iteration=1 = 0.0[0m
+[[2m[37m23:36:20[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=8) iteration=1 = 0.0[0m
+[[2m[37m23:36:20[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=8) iteration=1 = 0.5[0m
+[[2m[37m23:36:21[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=8) iteration=3 = 0.875[0m
+[[2m[37m23:36:21[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=8) iteration=4 = 0.9375[0m
+[[2m[37m23:36:21[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=8) iteration=5 = 0.96875[0m
+[[2m[37m23:36:21[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=8) iteration=2 = 0.0[0m
+[[2m[37m23:36:22[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=8) iteration=2 = 0.0[0m
+[[2m[37m23:36:22[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=8) iteration=6 = 0.484375[0m
+[[2m[37m23:36:22[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=8) iteration=7 = 0.2421875[0m
+[[2m[37m23:36:22[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=8) iteration=8 = 0.62109375[0m
+[[2m[37m23:36:22[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=8) = -7.804894248762142[0m
+[[2m[37m23:36:22[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=8) iteration=2 = 0.25[0m
+[[2m[37m23:36:22[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=8) iteration=3 = 0.0[0m
+[[2m[37m23:36:22[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=8) iteration=3 = 0.0[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=8) iteration=4 = 0.0[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=8) iteration=4 = 0.5[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=8) iteration=3 = 0.625[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=8) iteration=5 = 0.5[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=8) iteration=5 = 0.75[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=8) iteration=6 = 0.75[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=8) iteration=4 = 0.8125[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=8) iteration=6 = 0.875[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=8) iteration=7 = 0.375[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=8) iteration=5 = 0.90625[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=8) iteration=8 = 0.1875[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=8) = -2.356194490192345[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=8) iteration=7 = 0.9375[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=8) iteration=8 = 0.96875[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=8) = -12.173671532660448[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=8) iteration=6 = 0.453125[0m
+[[2m[37m23:36:23[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=8) iteration=7 = 0.7265625[0m
+[[2m[37m23:36:24[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=8) iteration=8 = 0.36328125[0m
+[[2m[37m23:36:24[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=8) = -4.565126824747668[0m
+[[2m[37m23:36:25[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=9) iteration=1 = 0.0[0m
+[[2m[37m23:36:25[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=9) iteration=1 = 0.5[0m
+[[2m[37m23:36:26[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=9) iteration=2 = 0.0[0m
+[[2m[37m23:36:26[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=9) iteration=2 = 0.75[0m
+[[2m[37m23:36:27[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=9) iteration=3 = 0.0[0m
+[[2m[37m23:36:27[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=9) iteration=3 = 0.375[0m
+[[2m[37m23:36:27[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=9) iteration=4 = 0.5[0m
+[[2m[37m23:36:27[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=9) iteration=4 = 0.1875[0m
+[[2m[37m23:36:27[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=9) iteration=5 = 0.75[0m
+[[2m[37m23:36:27[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=9) iteration=5 = 0.09375[0m
+[[2m[37m23:36:27[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=9) iteration=6 = 0.375[0m
+[[2m[37m23:36:28[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=9) iteration=6 = 0.046875[0m
+[[2m[37m23:36:28[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=9) iteration=7 = 0.1875[0m
+[[2m[37m23:36:28[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=9) iteration=7 = 0.0234375[0m
+[[2m[37m23:36:28[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=9) iteration=8 = 0.59375[0m
+[[2m[37m23:36:28[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=9) = -7.461282552275758[0m
+[[2m[37m23:36:28[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=9) iteration=8 = 0.01171875[0m
+[[2m[37m23:36:28[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=9) = -0.14726215563702155[0m
+[[2m[37m23:36:29[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=9) iteration=1 = 0.5[0m
+[[2m[37m23:36:31[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=9) iteration=2 = 0.75[0m
+[[2m[37m23:36:31[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=9) iteration=1 = 0.0[0m
+[[2m[37m23:36:31[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=9) iteration=3 = 0.375[0m
+[[2m[37m23:36:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=9) iteration=4 = 0.1875[0m
+[[2m[37m23:36:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=9) iteration=5 = 0.59375[0m
+[[2m[37m23:36:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=9) iteration=6 = 0.296875[0m
+[[2m[37m23:36:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=9) iteration=7 = 0.6484375[0m
+[[2m[37m23:36:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=9) iteration=8 = 0.32421875[0m
+[[2m[37m23:36:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=9) = -4.074252972624263[0m
+[[2m[37m23:36:33[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=9) iteration=2 = 0.0[0m
+[[2m[37m23:36:33[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=9) iteration=3 = 0.0[0m
+[[2m[37m23:36:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=9) iteration=4 = 0.0[0m
+[[2m[37m23:36:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=9) iteration=5 = 0.5[0m
+[[2m[37m23:36:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=9) iteration=6 = 0.25[0m
+[[2m[37m23:36:34[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=9) iteration=1 = 0.5[0m
+[[2m[37m23:36:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=9) iteration=7 = 0.625[0m
+[[2m[37m23:36:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=9) iteration=8 = 0.8125[0m
+[[2m[37m23:36:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=9) = -10.210176124166829[0m
+[[2m[37m23:36:36[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=9) iteration=2 = 0.75[0m
+[[2m[37m23:36:36[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=9) iteration=1 = 0.0[0m
+[[2m[37m23:36:36[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=9) iteration=1 = 0.0[0m
+[[2m[37m23:36:36[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=9) iteration=1 = 0.5[0m
+[[2m[37m23:36:36[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=9) iteration=3 = 0.875[0m
+[[2m[37m23:36:37[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=9) iteration=4 = 0.9375[0m
+[[2m[37m23:36:37[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=9) iteration=2 = 0.0[0m
+[[2m[37m23:36:37[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=9) iteration=5 = 0.96875[0m
+[[2m[37m23:36:37[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=9) iteration=6 = 0.484375[0m
+[[2m[37m23:36:37[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=9) iteration=2 = 0.0[0m
+[[2m[37m23:36:37[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=9) iteration=7 = 0.2421875[0m
+[[2m[37m23:36:37[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=9) iteration=8 = 0.62109375[0m
+[[2m[37m23:36:37[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=9) = -7.804894248762142[0m
+[[2m[37m23:36:37[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=9) iteration=2 = 0.25[0m
+[[2m[37m23:36:38[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=9) iteration=3 = 0.0[0m
+[[2m[37m23:36:38[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=9) iteration=3 = 0.0[0m
+[[2m[37m23:36:38[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=9) iteration=4 = 0.0[0m
+[[2m[37m23:36:38[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=9) iteration=3 = 0.625[0m
+[[2m[37m23:36:38[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=9) iteration=5 = 0.5[0m
+[[2m[37m23:36:38[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=9) iteration=4 = 0.5[0m
+[[2m[37m23:36:38[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=9) iteration=6 = 0.75[0m
+[[2m[37m23:36:38[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=9) iteration=4 = 0.8125[0m
+[[2m[37m23:36:38[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=9) iteration=5 = 0.75[0m
+[[2m[37m23:36:38[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=9) iteration=7 = 0.375[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=9) iteration=5 = 0.90625[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=9) iteration=8 = 0.1875[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=9) = -2.356194490192345[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=9) iteration=6 = 0.875[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=9) iteration=6 = 0.453125[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=10) iteration=1 = 0.0[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=9) iteration=7 = 0.9375[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=9) iteration=7 = 0.7265625[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=9) iteration=8 = 0.96875[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=9) = -12.173671532660448[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=9) iteration=8 = 0.36328125[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=9) = -4.565126824747668[0m
+[[2m[37m23:36:39[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=10) iteration=1 = 0.5[0m
+[[2m[37m23:36:40[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=10) iteration=2 = 0.0[0m
+[[2m[37m23:36:40[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=10) iteration=2 = 0.75[0m
+[[2m[37m23:36:41[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=10) iteration=3 = 0.0[0m
+[[2m[37m23:36:41[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=10) iteration=3 = 0.375[0m
+[[2m[37m23:36:41[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=10) iteration=4 = 0.5[0m
+[[2m[37m23:36:41[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=10) iteration=5 = 0.75[0m
+[[2m[37m23:36:41[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=10) iteration=4 = 0.1875[0m
+[[2m[37m23:36:42[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=10) iteration=6 = 0.375[0m
+[[2m[37m23:36:42[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=10) iteration=5 = 0.09375[0m
+[[2m[37m23:36:42[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=10) iteration=7 = 0.1875[0m
+[[2m[37m23:36:42[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=10) iteration=8 = 0.59375[0m
+[[2m[37m23:36:42[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=10) = -7.461282552275758[0m
+[[2m[37m23:36:42[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=10) iteration=6 = 0.046875[0m
+[[2m[37m23:36:42[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=10) iteration=7 = 0.0234375[0m
+[[2m[37m23:36:42[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=10) iteration=8 = 0.01171875[0m
+[[2m[37m23:36:42[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=10) = -0.14726215563702155[0m
+[[2m[37m23:36:44[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=10) iteration=1 = 0.5[0m
+[[2m[37m23:36:46[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=10) iteration=2 = 0.75[0m
+[[2m[37m23:36:46[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=10) iteration=3 = 0.375[0m
+[[2m[37m23:36:46[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=10) iteration=1 = 0.0[0m
+[[2m[37m23:36:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=10) iteration=4 = 0.1875[0m
+[[2m[37m23:36:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=10) iteration=5 = 0.59375[0m
+[[2m[37m23:36:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=10) iteration=6 = 0.296875[0m
+[[2m[37m23:36:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=10) iteration=7 = 0.6484375[0m
+[[2m[37m23:36:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=10) iteration=8 = 0.32421875[0m
+[[2m[37m23:36:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=10) = -4.074252972624263[0m
+[[2m[37m23:36:48[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=10) iteration=2 = 0.0[0m
+[[2m[37m23:36:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=10) iteration=3 = 0.0[0m
+[[2m[37m23:36:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=10) iteration=4 = 0.0[0m
+[[2m[37m23:36:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=10) iteration=5 = 0.5[0m
+[[2m[37m23:36:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=10) iteration=6 = 0.25[0m
+[[2m[37m23:36:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=10) iteration=7 = 0.625[0m
+[[2m[37m23:36:50[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=10) iteration=1 = 0.5[0m
+[[2m[37m23:36:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=10) iteration=8 = 0.8125[0m
+[[2m[37m23:36:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=10) = -10.210176124166829[0m
+[[2m[37m23:36:51[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=10) iteration=1 = 0.0[0m
+[[2m[37m23:36:51[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=10) iteration=2 = 0.75[0m
+[[2m[37m23:36:51[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=10) iteration=1 = 0.0[0m
+[[2m[37m23:36:52[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=10) iteration=1 = 0.5[0m
+[[2m[37m23:36:52[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=10) iteration=3 = 0.875[0m
+[[2m[37m23:36:52[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=10) iteration=4 = 0.9375[0m
+[[2m[37m23:36:52[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=10) iteration=5 = 0.96875[0m
+[[2m[37m23:36:53[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=10) iteration=2 = 0.0[0m
+[[2m[37m23:36:53[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=10) iteration=6 = 0.484375[0m
+[[2m[37m23:36:53[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=10) iteration=2 = 0.0[0m
+[[2m[37m23:36:53[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=10) iteration=7 = 0.2421875[0m
+[[2m[37m23:36:53[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=11) iteration=1 = 0.0[0m
+[[2m[37m23:36:53[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=10) iteration=8 = 0.12109375[0m
+[[2m[37m23:36:53[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=10) = -1.521708941582556[0m
+[[2m[37m23:36:53[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=10) iteration=2 = 0.25[0m
+[[2m[37m23:36:53[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=10) iteration=3 = 0.0[0m
+[[2m[37m23:36:53[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=10) iteration=3 = 0.0[0m
+[[2m[37m23:36:53[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=11) iteration=1 = 0.0[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=10) iteration=3 = 0.625[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=10) iteration=4 = 0.0[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=10) iteration=4 = 0.5[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=10) iteration=5 = 0.5[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=10) iteration=5 = 0.75[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=10) iteration=6 = 0.75[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=10) iteration=4 = 0.8125[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=10) iteration=7 = 0.375[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=10) iteration=6 = 0.875[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=11) iteration=2 = 0.0[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=10) iteration=8 = 0.1875[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=10) = -2.356194490192345[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=10) iteration=7 = 0.9375[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=10) iteration=5 = 0.90625[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=10) iteration=8 = 0.46875[0m
+[[2m[37m23:36:54[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=10) = -5.890486225480862[0m
+[[2m[37m23:36:55[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=10) iteration=6 = 0.453125[0m
+[[2m[37m23:36:55[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=10) iteration=7 = 0.7265625[0m
+[[2m[37m23:36:55[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=10) iteration=8 = 0.36328125[0m
+[[2m[37m23:36:55[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=10) = -4.565126824747668[0m
+[[2m[37m23:36:55[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=11) iteration=2 = 0.5[0m
+[[2m[37m23:36:55[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=11) iteration=3 = 0.0[0m
+[[2m[37m23:36:55[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=11) iteration=4 = 0.5[0m
+[[2m[37m23:36:55[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=11) iteration=3 = 0.25[0m
+[[2m[37m23:36:55[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=11) iteration=5 = 0.75[0m
+[[2m[37m23:36:56[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=11) iteration=6 = 0.375[0m
+[[2m[37m23:36:56[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=11) iteration=7 = 0.1875[0m
+[[2m[37m23:36:56[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=11) iteration=4 = 0.625[0m
+[[2m[37m23:36:56[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=11) iteration=8 = 0.59375[0m
+[[2m[37m23:36:56[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=11) = -7.461282552275758[0m
+[[2m[37m23:36:56[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=11) iteration=5 = 0.3125[0m
+[[2m[37m23:36:56[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=11) iteration=6 = 0.15625[0m
+[[2m[37m23:36:56[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=11) iteration=7 = 0.078125[0m
+[[2m[37m23:36:57[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=11) iteration=8 = 0.0390625[0m
+[[2m[37m23:36:57[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=11) = -0.4908738521234052[0m
+[[2m[37m23:36:59[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=11) iteration=1 = 0.5[0m
+[[2m[37m23:37:00[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=11) iteration=2 = 0.75[0m
+[[2m[37m23:37:01[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=11) iteration=3 = 0.375[0m
+[[2m[37m23:37:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=11) iteration=4 = 0.1875[0m
+[[2m[37m23:37:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=11) iteration=5 = 0.59375[0m
+[[2m[37m23:37:02[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=11) iteration=1 = 0.0[0m
+[[2m[37m23:37:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=11) iteration=6 = 0.296875[0m
+[[2m[37m23:37:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=11) iteration=7 = 0.6484375[0m
+[[2m[37m23:37:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=11) iteration=8 = 0.32421875[0m
+[[2m[37m23:37:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=11) = -4.074252972624263[0m
+[[2m[37m23:37:03[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=11) iteration=2 = 0.0[0m
+[[2m[37m23:37:04[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=11) iteration=3 = 0.0[0m
+[[2m[37m23:37:04[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=11) iteration=4 = 0.0[0m
+[[2m[37m23:37:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=11) iteration=5 = 0.5[0m
+[[2m[37m23:37:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=11) iteration=6 = 0.25[0m
+[[2m[37m23:37:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=11) iteration=7 = 0.625[0m
+[[2m[37m23:37:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=11) iteration=8 = 0.8125[0m
+[[2m[37m23:37:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=11) = -10.210176124166829[0m
+[[2m[37m23:37:05[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=11) iteration=1 = 0.5[0m
+[[2m[37m23:37:07[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=11) iteration=2 = 0.75[0m
+[[2m[37m23:37:07[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=11) iteration=1 = 0.0[0m
+[[2m[37m23:37:07[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=11) iteration=1 = 0.0[0m
+[[2m[37m23:37:07[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=12) iteration=1 = 0.0[0m
+[[2m[37m23:37:07[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=11) iteration=3 = 0.875[0m
+[[2m[37m23:37:08[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=11) iteration=1 = 0.5[0m
+[[2m[37m23:37:08[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=12) iteration=1 = 0.5[0m
+[[2m[37m23:37:08[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=11) iteration=4 = 0.9375[0m
+[[2m[37m23:37:08[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=11) iteration=5 = 0.96875[0m
+[[2m[37m23:37:08[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=11) iteration=6 = 0.484375[0m
+[[2m[37m23:37:08[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=11) iteration=2 = 0.0[0m
+[[2m[37m23:37:08[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=11) iteration=7 = 0.2421875[0m
+[[2m[37m23:37:08[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=11) iteration=2 = 0.0[0m
+[[2m[37m23:37:08[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=11) iteration=8 = 0.62109375[0m
+[[2m[37m23:37:08[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=11) = -7.804894248762142[0m
+[[2m[37m23:37:08[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=12) iteration=2 = 0.0[0m
+[[2m[37m23:37:09[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=11) iteration=3 = 0.0[0m
+[[2m[37m23:37:09[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=11) iteration=3 = 0.0[0m
+[[2m[37m23:37:09[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=11) iteration=2 = 0.25[0m
+[[2m[37m23:37:09[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=12) iteration=2 = 0.75[0m
+[[2m[37m23:37:09[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=12) iteration=3 = 0.0[0m
+[[2m[37m23:37:09[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=11) iteration=4 = 0.5[0m
+[[2m[37m23:37:09[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=11) iteration=4 = 0.0[0m
+[[2m[37m23:37:09[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=12) iteration=4 = 0.5[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=11) iteration=5 = 0.75[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=11) iteration=3 = 0.625[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=11) iteration=5 = 0.5[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=12) iteration=5 = 0.75[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=11) iteration=6 = 0.875[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=12) iteration=3 = 0.375[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=11) iteration=6 = 0.75[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=11) iteration=7 = 0.9375[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=12) iteration=6 = 0.375[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=11) iteration=4 = 0.8125[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=11) iteration=8 = 0.96875[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=11) = -12.173671532660448[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=11) iteration=7 = 0.375[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=12) iteration=7 = 0.1875[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=11) iteration=8 = 0.1875[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=11) = -2.356194490192345[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=12) iteration=8 = 0.59375[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=12) = -7.461282552275758[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=12) iteration=4 = 0.1875[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=11) iteration=5 = 0.90625[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=11) iteration=6 = 0.453125[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=12) iteration=5 = 0.09375[0m
+[[2m[37m23:37:10[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=11) iteration=7 = 0.7265625[0m
+[[2m[37m23:37:11[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=11) iteration=8 = 0.36328125[0m
+[[2m[37m23:37:11[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=11) = -4.565126824747668[0m
+[[2m[37m23:37:11[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=12) iteration=6 = 0.046875[0m
+[[2m[37m23:37:11[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=12) iteration=7 = 0.0234375[0m
+[[2m[37m23:37:11[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=12) iteration=8 = 0.01171875[0m
+[[2m[37m23:37:11[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=12) = -0.14726215563702155[0m
+[[2m[37m23:37:14[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=12) iteration=1 = 0.5[0m
+[[2m[37m23:37:15[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=12) iteration=2 = 0.75[0m
+[[2m[37m23:37:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=12) iteration=3 = 0.375[0m
+[[2m[37m23:37:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=12) iteration=4 = 0.1875[0m
+[[2m[37m23:37:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=12) iteration=5 = 0.59375[0m
+[[2m[37m23:37:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=12) iteration=6 = 0.296875[0m
+[[2m[37m23:37:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=12) iteration=7 = 0.6484375[0m
+[[2m[37m23:37:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=12) iteration=8 = 0.32421875[0m
+[[2m[37m23:37:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=12) = -4.074252972624263[0m
+[[2m[37m23:37:17[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=12) iteration=1 = 0.0[0m
+[[2m[37m23:37:19[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=12) iteration=2 = 0.0[0m
+[[2m[37m23:37:19[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=12) iteration=3 = 0.0[0m
+[[2m[37m23:37:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=12) iteration=4 = 0.0[0m
+[[2m[37m23:37:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=12) iteration=5 = 0.5[0m
+[[2m[37m23:37:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=12) iteration=6 = 0.25[0m
+[[2m[37m23:37:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=12) iteration=7 = 0.125[0m
+[[2m[37m23:37:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=12) iteration=8 = 0.5625[0m
+[[2m[37m23:37:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=12) = -7.0685834705770345[0m
+[[2m[37m23:37:21[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=12) iteration=1 = 0.5[0m
+[[2m[37m23:37:21[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=13) iteration=1 = 0.0[0m
+[[2m[37m23:37:22[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=13) iteration=1 = 0.5[0m
+[[2m[37m23:37:22[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=12) iteration=2 = 0.75[0m
+[[2m[37m23:37:22[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=12) iteration=1 = 0.0[0m
+[[2m[37m23:37:22[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=12) iteration=1 = 0.0[0m
+[[2m[37m23:37:23[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=13) iteration=2 = 0.0[0m
+[[2m[37m23:37:23[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=12) iteration=3 = 0.875[0m
+[[2m[37m23:37:23[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=12) iteration=1 = 0.5[0m
+[[2m[37m23:37:23[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=13) iteration=3 = 0.0[0m
+[[2m[37m23:37:23[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=13) iteration=2 = 0.75[0m
+[[2m[37m23:37:23[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=12) iteration=4 = 0.9375[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=13) iteration=4 = 0.5[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=12) iteration=5 = 0.96875[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=12) iteration=2 = 0.0[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=12) iteration=6 = 0.484375[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=13) iteration=5 = 0.75[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=12) iteration=2 = 0.0[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=12) iteration=7 = 0.2421875[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=13) iteration=6 = 0.375[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=13) iteration=3 = 0.375[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=12) iteration=8 = 0.12109375[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=12) = -1.521708941582556[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=13) iteration=7 = 0.1875[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=13) iteration=8 = 0.59375[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=13) = -7.461282552275758[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=13) iteration=4 = 0.1875[0m
+[[2m[37m23:37:24[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=12) iteration=3 = 0.0[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=13) iteration=5 = 0.09375[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=12) iteration=3 = 0.0[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=12) iteration=2 = 0.25[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=13) iteration=6 = 0.046875[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=12) iteration=4 = 0.5[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=13) iteration=7 = 0.0234375[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=12) iteration=4 = 0.0[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=13) iteration=8 = 0.01171875[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=13) = -0.14726215563702155[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=12) iteration=5 = 0.75[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=12) iteration=5 = 0.5[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=12) iteration=6 = 0.875[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=12) iteration=3 = 0.625[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=12) iteration=7 = 0.9375[0m
+[[2m[37m23:37:25[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=12) iteration=6 = 0.75[0m
+[[2m[37m23:37:26[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=12) iteration=8 = 0.96875[0m
+[[2m[37m23:37:26[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=12) = -12.173671532660448[0m
+[[2m[37m23:37:26[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=12) iteration=7 = 0.375[0m
+[[2m[37m23:37:26[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=12) iteration=4 = 0.8125[0m
+[[2m[37m23:37:26[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=12) iteration=8 = 0.1875[0m
+[[2m[37m23:37:26[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=12) = -2.356194490192345[0m
+[[2m[37m23:37:26[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=12) iteration=5 = 0.90625[0m
+[[2m[37m23:37:26[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=12) iteration=6 = 0.453125[0m
+[[2m[37m23:37:26[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=12) iteration=7 = 0.7265625[0m
+[[2m[37m23:37:26[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=12) iteration=8 = 0.36328125[0m
+[[2m[37m23:37:26[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=12) = -4.565126824747668[0m
+[[2m[37m23:37:29[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=13) iteration=1 = 0.5[0m
+[[2m[37m23:37:30[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=13) iteration=2 = 0.75[0m
+[[2m[37m23:37:31[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=13) iteration=3 = 0.375[0m
+[[2m[37m23:37:31[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=13) iteration=4 = 0.1875[0m
+[[2m[37m23:37:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=13) iteration=5 = 0.59375[0m
+[[2m[37m23:37:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=13) iteration=6 = 0.296875[0m
+[[2m[37m23:37:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=13) iteration=7 = 0.6484375[0m
+[[2m[37m23:37:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=13) iteration=8 = 0.32421875[0m
+[[2m[37m23:37:32[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=13) = -4.074252972624263[0m
+[[2m[37m23:37:32[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=13) iteration=1 = 0.0[0m
+[[2m[37m23:37:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=13) iteration=2 = 0.0[0m
+[[2m[37m23:37:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=13) iteration=3 = 0.0[0m
+[[2m[37m23:37:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=13) iteration=4 = 0.0[0m
+[[2m[37m23:37:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=13) iteration=5 = 0.5[0m
+[[2m[37m23:37:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=13) iteration=6 = 0.25[0m
+[[2m[37m23:37:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=13) iteration=7 = 0.625[0m
+[[2m[37m23:37:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=13) iteration=8 = 0.3125[0m
+[[2m[37m23:37:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=13) = -3.9269908169872414[0m
+[[2m[37m23:37:35[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=14) iteration=1 = 0.0[0m
+[[2m[37m23:37:36[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=14) iteration=1 = 0.5[0m
+[[2m[37m23:37:36[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=13) iteration=1 = 0.5[0m
+[[2m[37m23:37:37[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=14) iteration=2 = 0.0[0m
+[[2m[37m23:37:37[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=14) iteration=3 = 0.0[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=14) iteration=2 = 0.75[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=14) iteration=4 = 0.5[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=13) iteration=2 = 0.75[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=14) iteration=5 = 0.75[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=13) iteration=1 = 0.0[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=14) iteration=6 = 0.375[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=14) iteration=7 = 0.1875[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=14) iteration=3 = 0.375[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=13) iteration=1 = 0.0[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=14) iteration=8 = 0.59375[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=14) = -7.461282552275758[0m
+[[2m[37m23:37:38[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=13) iteration=3 = 0.875[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=14) iteration=4 = 0.1875[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=14) iteration=5 = 0.09375[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=13) iteration=4 = 0.9375[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=14) iteration=6 = 0.046875[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=13) iteration=5 = 0.96875[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=13) iteration=1 = 0.5[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=14) iteration=7 = 0.0234375[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=13) iteration=2 = 0.0[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=14) iteration=8 = 0.01171875[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=14) = -0.14726215563702155[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=13) iteration=6 = 0.484375[0m
+[[2m[37m23:37:39[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=13) iteration=7 = 0.2421875[0m
+[[2m[37m23:37:40[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=13) iteration=8 = 0.62109375[0m
+[[2m[37m23:37:40[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=13) = -7.804894248762142[0m
+[[2m[37m23:37:40[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=13) iteration=2 = 0.0[0m
+[[2m[37m23:37:40[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=13) iteration=3 = 0.0[0m
+[[2m[37m23:37:40[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=13) iteration=3 = 0.0[0m
+[[2m[37m23:37:40[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=13) iteration=4 = 0.5[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=13) iteration=5 = 0.75[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=13) iteration=2 = 0.25[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=13) iteration=4 = 0.0[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=13) iteration=6 = 0.875[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=13) iteration=7 = 0.9375[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=13) iteration=5 = 0.5[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=13) iteration=8 = 0.46875[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=13) = -5.890486225480862[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=13) iteration=6 = 0.75[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=13) iteration=7 = 0.375[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=13) iteration=3 = 0.625[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=13) iteration=8 = 0.1875[0m
+[[2m[37m23:37:41[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=13) = -2.356194490192345[0m
+[[2m[37m23:37:42[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=13) iteration=4 = 0.8125[0m
+[[2m[37m23:37:42[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=13) iteration=5 = 0.90625[0m
+[[2m[37m23:37:42[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=13) iteration=6 = 0.453125[0m
+[[2m[37m23:37:42[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=13) iteration=7 = 0.7265625[0m
+[[2m[37m23:37:42[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=13) iteration=8 = 0.36328125[0m
+[[2m[37m23:37:42[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=13) = -4.565126824747668[0m
+[[2m[37m23:37:44[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=14) iteration=1 = 0.5[0m
+[[2m[37m23:37:45[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=14) iteration=2 = 0.75[0m
+[[2m[37m23:37:46[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=14) iteration=3 = 0.375[0m
+[[2m[37m23:37:46[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=14) iteration=4 = 0.1875[0m
+[[2m[37m23:37:46[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=14) iteration=5 = 0.59375[0m
+[[2m[37m23:37:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=14) iteration=6 = 0.296875[0m
+[[2m[37m23:37:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=14) iteration=7 = 0.6484375[0m
+[[2m[37m23:37:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=14) iteration=8 = 0.32421875[0m
+[[2m[37m23:37:47[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=14) = -4.074252972624263[0m
+[[2m[37m23:37:48[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=14) iteration=1 = 0.0[0m
+[[2m[37m23:37:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=14) iteration=2 = 0.0[0m
+[[2m[37m23:37:49[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=15) iteration=1 = 0.0[0m
+[[2m[37m23:37:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=14) iteration=3 = 0.0[0m
+[[2m[37m23:37:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=14) iteration=4 = 0.0[0m
+[[2m[37m23:37:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=14) iteration=5 = 0.5[0m
+[[2m[37m23:37:51[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=15) iteration=1 = 0.5[0m
+[[2m[37m23:37:51[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=14) iteration=6 = 0.25[0m
+[[2m[37m23:37:51[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=14) iteration=7 = 0.625[0m
+[[2m[37m23:37:51[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=15) iteration=2 = 0.0[0m
+[[2m[37m23:37:51[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=14) iteration=8 = 0.8125[0m
+[[2m[37m23:37:51[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=14) = -10.210176124166829[0m
+[[2m[37m23:37:51[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=15) iteration=3 = 0.0[0m
+[[2m[37m23:37:52[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=15) iteration=4 = 0.5[0m
+[[2m[37m23:37:52[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=15) iteration=2 = 0.75[0m
+[[2m[37m23:37:52[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=14) iteration=1 = 0.5[0m
+[[2m[37m23:37:52[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=15) iteration=5 = 0.75[0m
+[[2m[37m23:37:52[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=15) iteration=6 = 0.375[0m
+[[2m[37m23:37:52[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=15) iteration=7 = 0.1875[0m
+[[2m[37m23:37:52[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=15) iteration=8 = 0.59375[0m
+[[2m[37m23:37:52[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=15) = -7.461282552275758[0m
+[[2m[37m23:37:53[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=15) iteration=3 = 0.375[0m
+[[2m[37m23:37:53[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=15) iteration=4 = 0.1875[0m
+[[2m[37m23:37:53[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=15) iteration=5 = 0.09375[0m
+[[2m[37m23:37:53[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=14) iteration=2 = 0.75[0m
+[[2m[37m23:37:53[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=15) iteration=6 = 0.046875[0m
+[[2m[37m23:37:53[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=15) iteration=7 = 0.0234375[0m
+[[2m[37m23:37:53[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=14) iteration=1 = 0.0[0m
+[[2m[37m23:37:53[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=15) iteration=8 = 0.01171875[0m
+[[2m[37m23:37:53[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=15) = -0.14726215563702155[0m
+[[2m[37m23:37:54[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=14) iteration=1 = 0.0[0m
+[[2m[37m23:37:54[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=14) iteration=3 = 0.875[0m
+[[2m[37m23:37:54[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=14) iteration=4 = 0.9375[0m
+[[2m[37m23:37:55[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=14) iteration=5 = 0.96875[0m
+[[2m[37m23:37:55[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=14) iteration=2 = 0.0[0m
+[[2m[37m23:37:55[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=14) iteration=6 = 0.484375[0m
+[[2m[37m23:37:55[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=14) iteration=1 = 0.5[0m
+[[2m[37m23:37:55[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=14) iteration=7 = 0.2421875[0m
+[[2m[37m23:37:55[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=14) iteration=8 = 0.12109375[0m
+[[2m[37m23:37:55[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=14) = -1.521708941582556[0m
+[[2m[37m23:37:55[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=14) iteration=2 = 0.0[0m
+[[2m[37m23:37:55[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=14) iteration=3 = 0.0[0m
+[[2m[37m23:37:56[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=14) iteration=3 = 0.0[0m
+[[2m[37m23:37:56[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=14) iteration=4 = 0.5[0m
+[[2m[37m23:37:56[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=14) iteration=5 = 0.75[0m
+[[2m[37m23:37:56[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=14) iteration=4 = 0.0[0m
+[[2m[37m23:37:56[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=14) iteration=2 = 0.25[0m
+[[2m[37m23:37:56[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=14) iteration=6 = 0.875[0m
+[[2m[37m23:37:56[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=14) iteration=7 = 0.9375[0m
+[[2m[37m23:37:56[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=14) iteration=5 = 0.5[0m
+[[2m[37m23:37:57[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=14) iteration=8 = 0.46875[0m
+[[2m[37m23:37:57[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=14) = -5.890486225480862[0m
+[[2m[37m23:37:57[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=14) iteration=6 = 0.75[0m
+[[2m[37m23:37:57[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=14) iteration=7 = 0.375[0m
+[[2m[37m23:37:57[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=14) iteration=8 = 0.1875[0m
+[[2m[37m23:37:57[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=14) = -2.356194490192345[0m
+[[2m[37m23:37:57[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=14) iteration=3 = 0.625[0m
+[[2m[37m23:37:57[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=14) iteration=4 = 0.8125[0m
+[[2m[37m23:37:58[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=14) iteration=5 = 0.90625[0m
+[[2m[37m23:37:58[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=14) iteration=6 = 0.453125[0m
+[[2m[37m23:37:58[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=14) iteration=7 = 0.7265625[0m
+[[2m[37m23:37:58[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=14) iteration=8 = 0.36328125[0m
+[[2m[37m23:37:58[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=14) = -4.565126824747668[0m
+[[2m[37m23:37:59[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=15) iteration=1 = 0.5[0m
+[[2m[37m23:38:00[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=15) iteration=2 = 0.75[0m
+[[2m[37m23:38:01[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=15) iteration=3 = 0.375[0m
+[[2m[37m23:38:01[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=15) iteration=4 = 0.1875[0m
+[[2m[37m23:38:01[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=15) iteration=5 = 0.59375[0m
+[[2m[37m23:38:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=15) iteration=6 = 0.296875[0m
+[[2m[37m23:38:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=15) iteration=7 = 0.6484375[0m
+[[2m[37m23:38:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=15) iteration=8 = 0.32421875[0m
+[[2m[37m23:38:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=15) = -4.074252972624263[0m
+[[2m[37m23:38:03[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=15) iteration=1 = 0.0[0m
+[[2m[37m23:38:04[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=16) iteration=1 = 0.0[0m
+[[2m[37m23:38:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=15) iteration=2 = 0.0[0m
+[[2m[37m23:38:05[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=16) iteration=1 = 0.5[0m
+[[2m[37m23:38:05[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=16) iteration=2 = 0.0[0m
+[[2m[37m23:38:06[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=15) iteration=3 = 0.0[0m
+[[2m[37m23:38:06[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=16) iteration=3 = 0.0[0m
+[[2m[37m23:38:06[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=15) iteration=4 = 0.0[0m
+[[2m[37m23:38:06[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=16) iteration=4 = 0.5[0m
+[[2m[37m23:38:06[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=16) iteration=2 = 0.75[0m
+[[2m[37m23:38:06[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=15) iteration=5 = 0.5[0m
+[[2m[37m23:38:06[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=15) iteration=6 = 0.25[0m
+[[2m[37m23:38:06[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=16) iteration=5 = 0.75[0m
+[[2m[37m23:38:07[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=15) iteration=7 = 0.125[0m
+[[2m[37m23:38:07[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=16) iteration=6 = 0.375[0m
+[[2m[37m23:38:07[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=15) iteration=8 = 0.5625[0m
+[[2m[37m23:38:07[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=15) = -7.0685834705770345[0m
+[[2m[37m23:38:07[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=16) iteration=7 = 0.1875[0m
+[[2m[37m23:38:07[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=16) iteration=8 = 0.59375[0m
+[[2m[37m23:38:07[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=16) = -7.461282552275758[0m
+[[2m[37m23:38:07[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=16) iteration=3 = 0.375[0m
+[[2m[37m23:38:07[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=15) iteration=1 = 0.5[0m
+[[2m[37m23:38:07[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=16) iteration=4 = 0.1875[0m
+[[2m[37m23:38:08[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=16) iteration=5 = 0.09375[0m
+[[2m[37m23:38:08[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=16) iteration=6 = 0.046875[0m
+[[2m[37m23:38:08[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=16) iteration=7 = 0.0234375[0m
+[[2m[37m23:38:08[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=16) iteration=8 = 0.01171875[0m
+[[2m[37m23:38:08[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=16) = -0.14726215563702155[0m
+[[2m[37m23:38:09[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=15) iteration=2 = 0.75[0m
+[[2m[37m23:38:09[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=15) iteration=1 = 0.0[0m
+[[2m[37m23:38:09[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=15) iteration=1 = 0.0[0m
+[[2m[37m23:38:09[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=15) iteration=3 = 0.875[0m
+[[2m[37m23:38:10[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=15) iteration=4 = 0.9375[0m
+[[2m[37m23:38:10[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=15) iteration=5 = 0.96875[0m
+[[2m[37m23:38:10[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=15) iteration=6 = 0.484375[0m
+[[2m[37m23:38:10[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=15) iteration=7 = 0.2421875[0m
+[[2m[37m23:38:10[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=15) iteration=1 = 0.5[0m
+[[2m[37m23:38:10[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=15) iteration=2 = 0.0[0m
+[[2m[37m23:38:10[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=15) iteration=8 = 0.12109375[0m
+[[2m[37m23:38:10[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=15) = -1.521708941582556[0m
+[[2m[37m23:38:11[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=15) iteration=2 = 0.0[0m
+[[2m[37m23:38:11[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=15) iteration=3 = 0.0[0m
+[[2m[37m23:38:11[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=15) iteration=3 = 0.0[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=15) iteration=4 = 0.5[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=15) iteration=4 = 0.0[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=15) iteration=5 = 0.75[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=15) iteration=2 = 0.25[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=15) iteration=6 = 0.875[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=15) iteration=5 = 0.5[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=15) iteration=7 = 0.9375[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=15) iteration=6 = 0.75[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=15) iteration=8 = 0.46875[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=15) = -5.890486225480862[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=15) iteration=7 = 0.375[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=15) iteration=8 = 0.1875[0m
+[[2m[37m23:38:12[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=15) = -2.356194490192345[0m
+[[2m[37m23:38:13[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=15) iteration=3 = 0.625[0m
+[[2m[37m23:38:13[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=15) iteration=4 = 0.8125[0m
+[[2m[37m23:38:13[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=15) iteration=5 = 0.90625[0m
+[[2m[37m23:38:13[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=15) iteration=6 = 0.453125[0m
+[[2m[37m23:38:13[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=16) iteration=1 = 0.5[0m
+[[2m[37m23:38:13[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=15) iteration=7 = 0.7265625[0m
+[[2m[37m23:38:14[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=15) iteration=8 = 0.36328125[0m
+[[2m[37m23:38:14[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=15) = -4.565126824747668[0m
+[[2m[37m23:38:15[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=16) iteration=2 = 0.75[0m
+[[2m[37m23:38:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=16) iteration=3 = 0.375[0m
+[[2m[37m23:38:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=16) iteration=4 = 0.1875[0m
+[[2m[37m23:38:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=16) iteration=5 = 0.59375[0m
+[[2m[37m23:38:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=16) iteration=6 = 0.296875[0m
+[[2m[37m23:38:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=16) iteration=7 = 0.6484375[0m
+[[2m[37m23:38:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=16) iteration=8 = 0.32421875[0m
+[[2m[37m23:38:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=16) = -4.074252972624263[0m
+[[2m[37m23:38:18[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=17) iteration=1 = 0.0[0m
+[[2m[37m23:38:19[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=16) iteration=1 = 0.0[0m
+[[2m[37m23:38:19[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=17) iteration=1 = 0.5[0m
+[[2m[37m23:38:20[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=17) iteration=2 = 0.0[0m
+[[2m[37m23:38:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=16) iteration=2 = 0.0[0m
+[[2m[37m23:38:20[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=17) iteration=3 = 0.0[0m
+[[2m[37m23:38:21[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=17) iteration=2 = 0.75[0m
+[[2m[37m23:38:21[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=17) iteration=4 = 0.5[0m
+[[2m[37m23:38:21[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=16) iteration=3 = 0.0[0m
+[[2m[37m23:38:21[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=17) iteration=5 = 0.75[0m
+[[2m[37m23:38:21[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=17) iteration=6 = 0.375[0m
+[[2m[37m23:38:21[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=16) iteration=4 = 0.0[0m
+[[2m[37m23:38:21[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=17) iteration=7 = 0.1875[0m
+[[2m[37m23:38:21[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=17) iteration=3 = 0.375[0m
+[[2m[37m23:38:21[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=17) iteration=8 = 0.59375[0m
+[[2m[37m23:38:21[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=17) = -7.461282552275758[0m
+[[2m[37m23:38:21[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=16) iteration=5 = 0.5[0m
+[[2m[37m23:38:22[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=16) iteration=6 = 0.25[0m
+[[2m[37m23:38:22[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=17) iteration=4 = 0.1875[0m
+[[2m[37m23:38:22[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=16) iteration=7 = 0.625[0m
+[[2m[37m23:38:22[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=16) iteration=8 = 0.3125[0m
+[[2m[37m23:38:22[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=16) = -3.9269908169872414[0m
+[[2m[37m23:38:22[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=17) iteration=5 = 0.09375[0m
+[[2m[37m23:38:22[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=17) iteration=6 = 0.046875[0m
+[[2m[37m23:38:22[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=17) iteration=7 = 0.5234375[0m
+[[2m[37m23:38:22[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=17) iteration=8 = 0.26171875[0m
+[[2m[37m23:38:22[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=17) = -3.2888548092268146[0m
+[[2m[37m23:38:23[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=16) iteration=1 = 0.5[0m
+[[2m[37m23:38:25[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=16) iteration=1 = 0.0[0m
+[[2m[37m23:38:25[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=16) iteration=1 = 0.0[0m
+[[2m[37m23:38:25[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=16) iteration=2 = 0.75[0m
+[[2m[37m23:38:26[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=16) iteration=3 = 0.875[0m
+[[2m[37m23:38:26[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=16) iteration=4 = 0.9375[0m
+[[2m[37m23:38:26[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=16) iteration=1 = 0.5[0m
+[[2m[37m23:38:26[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=16) iteration=2 = 0.0[0m
+[[2m[37m23:38:26[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=16) iteration=2 = 0.0[0m
+[[2m[37m23:38:26[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=16) iteration=5 = 0.96875[0m
+[[2m[37m23:38:26[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=16) iteration=6 = 0.484375[0m
+[[2m[37m23:38:27[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=16) iteration=7 = 0.2421875[0m
+[[2m[37m23:38:27[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=16) iteration=8 = 0.12109375[0m
+[[2m[37m23:38:27[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=16) = -1.521708941582556[0m
+[[2m[37m23:38:27[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=16) iteration=3 = 0.0[0m
+[[2m[37m23:38:27[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=16) iteration=3 = 0.0[0m
+[[2m[37m23:38:27[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=16) iteration=4 = 0.5[0m
+[[2m[37m23:38:27[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=16) iteration=4 = 0.0[0m
+[[2m[37m23:38:27[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=16) iteration=5 = 0.75[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=16) iteration=2 = 0.25[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=16) iteration=5 = 0.5[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=16) iteration=6 = 0.875[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=16) iteration=6 = 0.75[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=16) iteration=7 = 0.9375[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=16) iteration=8 = 0.46875[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=16) = -5.890486225480862[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=16) iteration=7 = 0.375[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=16) iteration=8 = 0.1875[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=16) = -2.356194490192345[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=16) iteration=3 = 0.625[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=17) iteration=1 = 0.5[0m
+[[2m[37m23:38:28[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=16) iteration=4 = 0.8125[0m
+[[2m[37m23:38:29[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=16) iteration=5 = 0.90625[0m
+[[2m[37m23:38:29[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=16) iteration=6 = 0.453125[0m
+[[2m[37m23:38:29[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=16) iteration=7 = 0.7265625[0m
+[[2m[37m23:38:29[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=16) iteration=8 = 0.36328125[0m
+[[2m[37m23:38:29[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=16) = -4.565126824747668[0m
+[[2m[37m23:38:30[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=17) iteration=2 = 0.75[0m
+[[2m[37m23:38:30[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=17) iteration=3 = 0.375[0m
+[[2m[37m23:38:31[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=17) iteration=4 = 0.1875[0m
+[[2m[37m23:38:31[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=17) iteration=5 = 0.59375[0m
+[[2m[37m23:38:31[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=17) iteration=6 = 0.296875[0m
+[[2m[37m23:38:31[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=17) iteration=7 = 0.6484375[0m
+[[2m[37m23:38:31[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=17) iteration=8 = 0.32421875[0m
+[[2m[37m23:38:31[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=17) = -4.074252972624263[0m
+[[2m[37m23:38:33[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=18) iteration=1 = 0.0[0m
+[[2m[37m23:38:34[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=17) iteration=1 = 0.0[0m
+[[2m[37m23:38:34[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=18) iteration=1 = 0.5[0m
+[[2m[37m23:38:34[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=18) iteration=2 = 0.0[0m
+[[2m[37m23:38:35[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=18) iteration=3 = 0.0[0m
+[[2m[37m23:38:35[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=18) iteration=4 = 0.5[0m
+[[2m[37m23:38:35[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=17) iteration=2 = 0.0[0m
+[[2m[37m23:38:35[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=18) iteration=2 = 0.75[0m
+[[2m[37m23:38:35[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=18) iteration=5 = 0.75[0m
+[[2m[37m23:38:35[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=18) iteration=6 = 0.375[0m
+[[2m[37m23:38:36[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=18) iteration=7 = 0.1875[0m
+[[2m[37m23:38:36[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=18) iteration=8 = 0.59375[0m
+[[2m[37m23:38:36[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=18) = -7.461282552275758[0m
+[[2m[37m23:38:36[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=17) iteration=3 = 0.0[0m
+[[2m[37m23:38:36[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=18) iteration=3 = 0.375[0m
+[[2m[37m23:38:36[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=17) iteration=4 = 0.0[0m
+[[2m[37m23:38:36[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=18) iteration=4 = 0.1875[0m
+[[2m[37m23:38:36[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=17) iteration=5 = 0.5[0m
+[[2m[37m23:38:37[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=18) iteration=5 = 0.09375[0m
+[[2m[37m23:38:37[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=17) iteration=6 = 0.25[0m
+[[2m[37m23:38:37[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=18) iteration=6 = 0.046875[0m
+[[2m[37m23:38:37[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=17) iteration=7 = 0.625[0m
+[[2m[37m23:38:37[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=17) iteration=8 = 0.3125[0m
+[[2m[37m23:38:37[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=17) = -3.9269908169872414[0m
+[[2m[37m23:38:37[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=18) iteration=7 = 0.0234375[0m
+[[2m[37m23:38:37[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=18) iteration=8 = 0.01171875[0m
+[[2m[37m23:38:37[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=18) = -0.14726215563702155[0m
+[[2m[37m23:38:39[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=17) iteration=1 = 0.5[0m
+[[2m[37m23:38:40[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=17) iteration=1 = 0.0[0m
+[[2m[37m23:38:40[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=17) iteration=1 = 0.0[0m
+[[2m[37m23:38:40[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=17) iteration=2 = 0.75[0m
+[[2m[37m23:38:41[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=17) iteration=3 = 0.875[0m
+[[2m[37m23:38:41[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=17) iteration=2 = 0.5[0m
+[[2m[37m23:38:41[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=17) iteration=1 = 0.5[0m
+[[2m[37m23:38:42[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=17) iteration=4 = 0.9375[0m
+[[2m[37m23:38:42[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=17) iteration=5 = 0.96875[0m
+[[2m[37m23:38:42[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=17) iteration=2 = 0.0[0m
+[[2m[37m23:38:42[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=17) iteration=6 = 0.484375[0m
+[[2m[37m23:38:42[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=17) iteration=3 = 0.75[0m
+[[2m[37m23:38:42[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=17) iteration=7 = 0.2421875[0m
+[[2m[37m23:38:42[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=17) iteration=8 = 0.62109375[0m
+[[2m[37m23:38:42[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=17) = -7.804894248762142[0m
+[[2m[37m23:38:42[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=17) iteration=4 = 0.375[0m
+[[2m[37m23:38:43[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=17) iteration=3 = 0.0[0m
+[[2m[37m23:38:43[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=17) iteration=5 = 0.6875[0m
+[[2m[37m23:38:43[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=17) iteration=6 = 0.84375[0m
+[[2m[37m23:38:43[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=18) iteration=1 = 0.5[0m
+[[2m[37m23:38:43[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=17) iteration=7 = 0.921875[0m
+[[2m[37m23:38:43[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=17) iteration=4 = 0.0[0m
+[[2m[37m23:38:43[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=17) iteration=8 = 0.9609375[0m
+[[2m[37m23:38:43[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=17) = -12.075496762235767[0m
+[[2m[37m23:38:43[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=17) iteration=2 = 0.25[0m
+[[2m[37m23:38:43[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=17) iteration=5 = 0.5[0m
+[[2m[37m23:38:43[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=17) iteration=6 = 0.75[0m
+[[2m[37m23:38:44[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=17) iteration=7 = 0.375[0m
+[[2m[37m23:38:44[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=17) iteration=8 = 0.1875[0m
+[[2m[37m23:38:44[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=17) = -2.356194490192345[0m
+[[2m[37m23:38:44[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=17) iteration=3 = 0.625[0m
+[[2m[37m23:38:44[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=17) iteration=4 = 0.8125[0m
+[[2m[37m23:38:44[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=18) iteration=2 = 0.75[0m
+[[2m[37m23:38:44[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=17) iteration=5 = 0.90625[0m
+[[2m[37m23:38:44[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=17) iteration=6 = 0.453125[0m
+[[2m[37m23:38:45[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=17) iteration=7 = 0.7265625[0m
+[[2m[37m23:38:45[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=17) iteration=8 = 0.36328125[0m
+[[2m[37m23:38:45[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=17) = -4.565126824747668[0m
+[[2m[37m23:38:45[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=18) iteration=3 = 0.375[0m
+[[2m[37m23:38:45[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=18) iteration=4 = 0.1875[0m
+[[2m[37m23:38:46[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=18) iteration=5 = 0.59375[0m
+[[2m[37m23:38:46[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=18) iteration=6 = 0.296875[0m
+[[2m[37m23:38:46[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=18) iteration=7 = 0.6484375[0m
+[[2m[37m23:38:46[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=18) iteration=8 = 0.32421875[0m
+[[2m[37m23:38:46[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=18) = -4.074252972624263[0m
+[[2m[37m23:38:47[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=19) iteration=1 = 0.0[0m
+[[2m[37m23:38:48[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=19) iteration=1 = 0.5[0m
+[[2m[37m23:38:49[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=18) iteration=1 = 0.0[0m
+[[2m[37m23:38:49[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=19) iteration=2 = 0.0[0m
+[[2m[37m23:38:49[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=19) iteration=3 = 0.0[0m
+[[2m[37m23:38:50[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=19) iteration=2 = 0.75[0m
+[[2m[37m23:38:50[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=19) iteration=4 = 0.5[0m
+[[2m[37m23:38:50[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=18) iteration=2 = 0.0[0m
+[[2m[37m23:38:50[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=19) iteration=5 = 0.75[0m
+[[2m[37m23:38:50[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=19) iteration=6 = 0.375[0m
+[[2m[37m23:38:50[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=19) iteration=7 = 0.1875[0m
+[[2m[37m23:38:50[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=19) iteration=8 = 0.59375[0m
+[[2m[37m23:38:50[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=19) = -7.461282552275758[0m
+[[2m[37m23:38:50[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=19) iteration=3 = 0.375[0m
+[[2m[37m23:38:51[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=18) iteration=3 = 0.0[0m
+[[2m[37m23:38:51[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=19) iteration=4 = 0.1875[0m
+[[2m[37m23:38:51[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=18) iteration=4 = 0.0[0m
+[[2m[37m23:38:51[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=19) iteration=5 = 0.09375[0m
+[[2m[37m23:38:51[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=18) iteration=5 = 0.5[0m
+[[2m[37m23:38:51[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=19) iteration=6 = 0.046875[0m
+[[2m[37m23:38:51[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=18) iteration=6 = 0.25[0m
+[[2m[37m23:38:51[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=19) iteration=7 = 0.0234375[0m
+[[2m[37m23:38:52[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=19) iteration=8 = 0.01171875[0m
+[[2m[37m23:38:52[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=19) = -0.14726215563702155[0m
+[[2m[37m23:38:52[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=18) iteration=7 = 0.125[0m
+[[2m[37m23:38:52[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=18) iteration=8 = 0.5625[0m
+[[2m[37m23:38:52[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=18) = -7.0685834705770345[0m
+[[2m[37m23:38:54[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=18) iteration=1 = 0.0[0m
+[[2m[37m23:38:54[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=18) iteration=1 = 0.5[0m
+[[2m[37m23:38:56[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=18) iteration=2 = 0.5[0m
+[[2m[37m23:38:56[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=18) iteration=2 = 0.75[0m
+[[2m[37m23:38:56[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=18) iteration=1 = 0.0[0m
+[[2m[37m23:38:56[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=18) iteration=3 = 0.75[0m
+[[2m[37m23:38:56[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=18) iteration=3 = 0.875[0m
+[[2m[37m23:38:56[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=18) iteration=1 = 0.5[0m
+[[2m[37m23:38:57[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=18) iteration=4 = 0.9375[0m
+[[2m[37m23:38:57[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=18) iteration=4 = 0.375[0m
+[[2m[37m23:38:57[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=18) iteration=5 = 0.96875[0m
+[[2m[37m23:38:57[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=18) iteration=5 = 0.6875[0m
+[[2m[37m23:38:57[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=18) iteration=2 = 0.0[0m
+[[2m[37m23:38:57[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=18) iteration=6 = 0.484375[0m
+[[2m[37m23:38:57[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=18) iteration=6 = 0.84375[0m
+[[2m[37m23:38:57[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=18) iteration=7 = 0.2421875[0m
+[[2m[37m23:38:57[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=18) iteration=7 = 0.921875[0m
+[[2m[37m23:38:58[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=18) iteration=8 = 0.12109375[0m
+[[2m[37m23:38:58[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=18) = -1.521708941582556[0m
+[[2m[37m23:38:58[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=18) iteration=8 = 0.4609375[0m
+[[2m[37m23:38:58[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=18) = -5.792311455056181[0m
+[[2m[37m23:38:58[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=18) iteration=3 = 0.0[0m
+[[2m[37m23:38:58[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=18) iteration=2 = 0.25[0m
+[[2m[37m23:38:58[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=18) iteration=4 = 0.0[0m
+[[2m[37m23:38:58[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=19) iteration=1 = 0.5[0m
+[[2m[37m23:38:58[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=18) iteration=5 = 0.5[0m
+[[2m[37m23:38:59[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=18) iteration=3 = 0.625[0m
+[[2m[37m23:38:59[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=18) iteration=6 = 0.75[0m
+[[2m[37m23:38:59[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=18) iteration=7 = 0.375[0m
+[[2m[37m23:38:59[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=18) iteration=4 = 0.8125[0m
+[[2m[37m23:38:59[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=18) iteration=8 = 0.1875[0m
+[[2m[37m23:38:59[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=18) = -2.356194490192345[0m
+[[2m[37m23:38:59[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=18) iteration=5 = 0.90625[0m
+[[2m[37m23:38:59[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=18) iteration=6 = 0.453125[0m
+[[2m[37m23:38:59[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=18) iteration=7 = 0.7265625[0m
+[[2m[37m23:38:59[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=18) iteration=8 = 0.36328125[0m
+[[2m[37m23:38:59[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=18) = -4.565126824747668[0m
+[[2m[37m23:39:00[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=19) iteration=2 = 0.75[0m
+[[2m[37m23:39:00[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=19) iteration=3 = 0.375[0m
+[[2m[37m23:39:01[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=19) iteration=4 = 0.1875[0m
+[[2m[37m23:39:01[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=19) iteration=5 = 0.59375[0m
+[[2m[37m23:39:01[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=19) iteration=6 = 0.296875[0m
+[[2m[37m23:39:01[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=19) iteration=7 = 0.6484375[0m
+[[2m[37m23:39:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=19) iteration=8 = 0.32421875[0m
+[[2m[37m23:39:02[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=19) = -4.074252972624263[0m
+[[2m[37m23:39:02[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=20) iteration=1 = 0.0[0m
+[[2m[37m23:39:03[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=20) iteration=1 = 0.5[0m
+[[2m[37m23:39:03[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=20) iteration=2 = 0.0[0m
+[[2m[37m23:39:04[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=19) iteration=1 = 0.0[0m
+[[2m[37m23:39:04[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=20) iteration=3 = 0.0[0m
+[[2m[37m23:39:04[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=20) iteration=2 = 0.75[0m
+[[2m[37m23:39:05[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=20) iteration=4 = 0.5[0m
+[[2m[37m23:39:05[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=20) iteration=5 = 0.75[0m
+[[2m[37m23:39:05[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=19) iteration=2 = 0.0[0m
+[[2m[37m23:39:05[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=20) iteration=6 = 0.375[0m
+[[2m[37m23:39:05[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=20) iteration=7 = 0.1875[0m
+[[2m[37m23:39:05[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=20) iteration=8 = 0.59375[0m
+[[2m[37m23:39:05[0m[2m[0m] [2mIQPE [E] (h=6.0, rep=20) = -7.461282552275758[0m
+[[2m[37m23:39:05[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=20) iteration=3 = 0.375[0m
+[[2m[37m23:39:06[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=19) iteration=3 = 0.0[0m
+[[2m[37m23:39:06[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=20) iteration=4 = 0.1875[0m
+[[2m[37m23:39:06[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=20) iteration=5 = 0.09375[0m
+[[2m[37m23:39:06[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=19) iteration=4 = 0.0[0m
+[[2m[37m23:39:06[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=20) iteration=6 = 0.046875[0m
+[[2m[37m23:39:06[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=20) iteration=7 = 0.0234375[0m
+[[2m[37m23:39:06[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=19) iteration=5 = 0.5[0m
+[[2m[37m23:39:06[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=20) iteration=8 = 0.01171875[0m
+[[2m[37m23:39:06[0m[2m[0m] [2mIQPE [E] (h=2.0, rep=20) = -0.14726215563702155[0m
+[[2m[37m23:39:06[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=19) iteration=6 = 0.25[0m
+[[2m[37m23:39:07[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=19) iteration=7 = 0.625[0m
+[[2m[37m23:39:07[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=19) iteration=8 = 0.3125[0m
+[[2m[37m23:39:07[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=19) = -3.9269908169872414[0m
+[[2m[37m23:39:10[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=19) iteration=1 = 0.0[0m
+[[2m[37m23:39:10[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=19) iteration=1 = 0.5[0m
+[[2m[37m23:39:11[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=19) iteration=2 = 0.0[0m
+[[2m[37m23:39:11[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=19) iteration=1 = 0.0[0m
+[[2m[37m23:39:11[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=19) iteration=2 = 0.75[0m
+[[2m[37m23:39:12[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=19) iteration=3 = 0.0[0m
+[[2m[37m23:39:12[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=19) iteration=1 = 0.5[0m
+[[2m[37m23:39:12[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=19) iteration=3 = 0.875[0m
+[[2m[37m23:39:12[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=19) iteration=4 = 0.5[0m
+[[2m[37m23:39:12[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=19) iteration=2 = 0.0[0m
+[[2m[37m23:39:12[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=19) iteration=5 = 0.75[0m
+[[2m[37m23:39:12[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=19) iteration=4 = 0.9375[0m
+[[2m[37m23:39:12[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=19) iteration=6 = 0.875[0m
+[[2m[37m23:39:12[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=19) iteration=7 = 0.9375[0m
+[[2m[37m23:39:13[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=19) iteration=5 = 0.96875[0m
+[[2m[37m23:39:13[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=19) iteration=8 = 0.46875[0m
+[[2m[37m23:39:13[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=19) = -5.890486225480862[0m
+[[2m[37m23:39:13[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=19) iteration=6 = 0.484375[0m
+[[2m[37m23:39:13[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=19) iteration=3 = 0.0[0m
+[[2m[37m23:39:13[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=19) iteration=7 = 0.2421875[0m
+[[2m[37m23:39:13[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=19) iteration=8 = 0.62109375[0m
+[[2m[37m23:39:13[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=19) = -7.804894248762142[0m
+[[2m[37m23:39:13[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=19) iteration=4 = 0.0[0m
+[[2m[37m23:39:13[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=19) iteration=5 = 0.5[0m
+[[2m[37m23:39:13[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=19) iteration=2 = 0.25[0m
+[[2m[37m23:39:14[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=19) iteration=6 = 0.75[0m
+[[2m[37m23:39:14[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=19) iteration=7 = 0.375[0m
+[[2m[37m23:39:14[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=20) iteration=1 = 0.5[0m
+[[2m[37m23:39:14[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=19) iteration=8 = 0.1875[0m
+[[2m[37m23:39:14[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=19) = -2.356194490192345[0m
+[[2m[37m23:39:14[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=19) iteration=3 = 0.625[0m
+[[2m[37m23:39:14[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=19) iteration=4 = 0.8125[0m
+[[2m[37m23:39:15[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=19) iteration=5 = 0.90625[0m
+[[2m[37m23:39:15[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=19) iteration=6 = 0.453125[0m
+[[2m[37m23:39:15[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=19) iteration=7 = 0.7265625[0m
+[[2m[37m23:39:15[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=19) iteration=8 = 0.36328125[0m
+[[2m[37m23:39:15[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=19) = -4.565126824747668[0m
+[[2m[37m23:39:15[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=20) iteration=2 = 0.75[0m
+[[2m[37m23:39:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=20) iteration=3 = 0.375[0m
+[[2m[37m23:39:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=20) iteration=4 = 0.1875[0m
+[[2m[37m23:39:16[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=20) iteration=5 = 0.59375[0m
+[[2m[37m23:39:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=20) iteration=6 = 0.296875[0m
+[[2m[37m23:39:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=20) iteration=7 = 0.6484375[0m
+[[2m[37m23:39:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=20) iteration=8 = 0.32421875[0m
+[[2m[37m23:39:17[0m[2m[0m] [2mIQPE [E] (h=0.5, rep=20) = -4.074252972624263[0m
+[[2m[37m23:39:19[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=20) iteration=1 = 0.0[0m
+[[2m[37m23:39:20[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=20) iteration=2 = 0.0[0m
+[[2m[37m23:39:21[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=20) iteration=3 = 0.0[0m
+[[2m[37m23:39:21[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=20) iteration=4 = 0.0[0m
+[[2m[37m23:39:21[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=20) iteration=5 = 0.5[0m
+[[2m[37m23:39:22[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=20) iteration=6 = 0.25[0m
+[[2m[37m23:39:22[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=20) iteration=7 = 0.125[0m
+[[2m[37m23:39:22[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=20) iteration=8 = 0.5625[0m
+[[2m[37m23:39:22[0m[2m[0m] [2mIQPE [E] (h=5.0, rep=20) = -7.0685834705770345[0m
+[[2m[37m23:39:25[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=20) iteration=1 = 0.0[0m
+[[2m[37m23:39:25[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=20) iteration=1 = 0.5[0m
+[[2m[37m23:39:26[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=20) iteration=1 = 0.0[0m
+[[2m[37m23:39:26[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=20) iteration=2 = 0.5[0m
+[[2m[37m23:39:26[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=20) iteration=2 = 0.75[0m
+[[2m[37m23:39:27[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=20) iteration=3 = 0.75[0m
+[[2m[37m23:39:27[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=20) iteration=3 = 0.875[0m
+[[2m[37m23:39:27[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=20) iteration=1 = 0.5[0m
+[[2m[37m23:39:27[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=20) iteration=4 = 0.375[0m
+[[2m[37m23:39:27[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=20) iteration=2 = 0.0[0m
+[[2m[37m23:39:27[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=20) iteration=4 = 0.9375[0m
+[[2m[37m23:39:27[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=20) iteration=5 = 0.6875[0m
+[[2m[37m23:39:28[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=20) iteration=6 = 0.84375[0m
+[[2m[37m23:39:28[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=20) iteration=5 = 0.96875[0m
+[[2m[37m23:39:28[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=20) iteration=7 = 0.921875[0m
+[[2m[37m23:39:28[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=20) iteration=6 = 0.484375[0m
+[[2m[37m23:39:28[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=20) iteration=8 = 0.4609375[0m
+[[2m[37m23:39:28[0m[2m[0m] [2mIQPE [E] (h=4.0, rep=20) = -5.792311455056181[0m
+[[2m[37m23:39:28[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=20) iteration=3 = 0.0[0m
+[[2m[37m23:39:28[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=20) iteration=7 = 0.2421875[0m
+[[2m[37m23:39:28[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=20) iteration=8 = 0.62109375[0m
+[[2m[37m23:39:28[0m[2m[0m] [2mIQPE [E] (h=3.0, rep=20) = -7.804894248762142[0m
+[[2m[37m23:39:28[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=20) iteration=4 = 0.0[0m
+[[2m[37m23:39:29[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=20) iteration=5 = 0.5[0m
+[[2m[37m23:39:29[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=20) iteration=2 = 0.25[0m
+[[2m[37m23:39:29[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=20) iteration=6 = 0.75[0m
+[[2m[37m23:39:29[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=20) iteration=7 = 0.375[0m
+[[2m[37m23:39:29[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=20) iteration=8 = 0.1875[0m
+[[2m[37m23:39:29[0m[2m[0m] [2mIQPE [E] (h=1.0, rep=20) = -2.356194490192345[0m
+[[2m[37m23:39:29[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=20) iteration=3 = 0.625[0m
+[[2m[37m23:39:29[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=20) iteration=4 = 0.8125[0m
+[[2m[37m23:39:30[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=20) iteration=5 = 0.90625[0m
+[[2m[37m23:39:30[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=20) iteration=6 = 0.453125[0m
+[[2m[37m23:39:30[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=20) iteration=7 = 0.7265625[0m
+[[2m[37m23:39:30[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=20) iteration=8 = 0.36328125[0m
+[[2m[37m23:39:30[0m[2m[0m] [2mIQPE [E] (h=0.0, rep=20) = -4.565126824747668[0m
+[[1m[32m23:39:52[0m[1m[0m] [37mIQPE (h=0.0) = -4.565126824747668[0m
+[[1m[32m23:39:52[0m[1m[0m] [37mIQPE (h=0.5) = -4.074252972624263[0m
+[[1m[32m23:39:52[0m[1m[0m] [37mIQPE (h=1.0) = -2.356194490192345[0m
+[[1m[32m23:39:52[0m[1m[0m] [37mIQPE (h=2.0) = -0.14726215563702155[0m
+[[1m[32m23:39:52[0m[1m[0m] [37mIQPE (h=3.0) = -7.804894248762142[0m
+[[1m[32m23:39:52[0m[1m[0m] [37mIQPE (h=4.0) = -5.890486225480862[0m
+[[1m[32m23:39:52[0m[1m[0m] [37mIQPE (h=5.0) = -7.0685834705770345[0m
+[[1m[32m23:39:52[0m[1m[0m] [37mIQPE (h=6.0) = -7.461282552275758[0m
+
+===================================================================
+Computation complete!
+  Finished: Thu Aug 13 11:39:54 PM PDT 2026
+Output saved to:
+  Data: /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/tfim/1d/ground-state-energy/h-sweep-Lx8/tfim-1d-pbc-Lx8-E-h-iqpe-t0.5.json
+  Plot: /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/plots/tfim/1d/ground-state-energy/h-sweep-Lx8/tfim-1d-pbc-Lx8-E-h-iqpe-t0.5.pdf
+===================================================================

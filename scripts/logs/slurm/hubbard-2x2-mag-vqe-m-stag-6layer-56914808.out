@@ -1,0 +1,85 @@
+===================================================================
+Hubbard 2x2 magnetization analytic+VQE (SHARDED) - M_stag [6 LAYERS]
+  observable:  M_stag
+  sweep:       n_occ [0 16 1] vs U [0.0 10.0 0.5]
+  methods:     analytic vqe
+  vqe-layers:  6
+  optimizer:   L_BFGS_B
+  plot format: heatmap
+  parallelism: distributed across 16 shards on multiple nodes
+===================================================================
+
+===================================================================
+[[2m[37m01:24:56[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=0, repetition=1) = -1.741236271986038e-33 (evals=851, final=-1.5361360176545653e-33)[0m
+[[2m[37m01:49:51[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=0, repetition=1) = -2.912635774885981 (evals=851, final=-2.912635774885981)[0m
+[[2m[37m02:29:44[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=0, repetition=1) = -4.809117521433048 (evals=851, final=-4.809117521433048)[0m
+[[2m[37m02:46:46[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=2.5, repetition=1) = -8.881784197001252e-16 (evals=851, final=6.661338147750939e-16)[0m
+[[2m[37m02:47:04[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=1.5, repetition=1) = -5.551115123125783e-16 (evals=851, final=1.1102230246251565e-16)[0m
+[[2m[37m02:47:35[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=0.5, repetition=1) = -2.220446049250313e-16 (evals=851, final=-1.3877787807814457e-16)[0m
+[[2m[37m02:47:45[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=3, repetition=1) = -1.1102230246251565e-15 (evals=851, final=0.0)[0m
+[[2m[37m02:48:50[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=7.5, repetition=1) = -2.6645352591003757e-15 (evals=851, final=-1.3322676295501878e-15)[0m
+[[2m[37m02:49:07[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=7, repetition=1) = -2.6645352591003757e-15 (evals=851, final=2.220446049250313e-15)[0m
+[[2m[37m02:49:07[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=8.5, repetition=1) = -3.552713678800501e-15 (evals=851, final=0.0)[0m
+[[2m[37m02:49:53[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=9.5, repetition=1) = -3.552713678800501e-15 (evals=851, final=-8.881784197001252e-16)[0m
+[[2m[37m02:54:29[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=4, repetition=1) = -1.7763568394002505e-15 (evals=851, final=-1.1102230246251565e-15)[0m
+[[2m[37m02:54:29[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=5, repetition=1) = -1.7763568394002505e-15 (evals=851, final=-8.881784197001252e-16)[0m
+[[2m[37m02:58:55[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=6.5, repetition=1) = -2.6645352591003757e-15 (evals=851, final=-1.3322676295501878e-15)[0m
+[[2m[37m02:59:26[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=3.5, repetition=1) = -1.3322676295501878e-15 (evals=851, final=0.0)[0m
+[[2m[37m02:59:54[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=3, t=1, boundary=periodic, U=0, repetition=1) = -5.768436215830166 (evals=851, final=-5.768436215830166)[0m
+[[2m[37m03:00:08[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=1, repetition=1) = -4.440892098500626e-16 (evals=851, final=-3.3306690738754696e-16)[0m
+[[2m[37m03:00:16[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=8, repetition=1) = -3.552713678800501e-15 (evals=851, final=0.0)[0m
+[[2m[37m03:00:32[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=5.5, repetition=1) = -2.220446049250313e-15 (evals=851, final=1.3322676295501878e-15)[0m
+[[2m[37m03:00:56[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=6, repetition=1) = -2.220446049250313e-15 (evals=851, final=-2.220446049250313e-15)[0m
+[[2m[37m03:01:01[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=9, repetition=1) = -3.552713678800501e-15 (evals=851, final=0.0)[0m
+[[2m[37m03:08:19[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=2, repetition=1) = -8.881784197001252e-16 (evals=851, final=3.3306690738754696e-16)[0m
+[[2m[37m03:08:42[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=10, repetition=1) = -3.552713678800501e-15 (evals=851, final=0.0)[0m
+[[2m[37m03:09:39[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=0, t=1, boundary=periodic, U=4.5, repetition=1) = -1.7763568394002505e-15 (evals=851, final=0.0)[0m
+[[2m[37m03:19:14[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=0.5, repetition=1) = -2.912792912362235 (evals=851, final=-2.912792912362235)[0m
+[[2m[37m03:19:18[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=8.5, repetition=1) = -2.8787290594075197 (evals=851, final=-2.8787290594075197)[0m
+[[2m[37m03:19:34[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=5, repetition=1) = -2.8906002503834465 (evals=851, final=-2.8906002503834465)[0m
+[[2m[37m03:20:22[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=8, repetition=1) = -2.5029567390764123 (evals=851, final=-2.487416025996426)[0m
+[[2m[37m03:21:34[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=6, repetition=1) = -2.947937045181938 (evals=851, final=-2.947937045181938)[0m
+[[2m[37m03:22:05[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=4.5, repetition=1) = -2.7357496829115027 (evals=851, final=-2.7357496829115027)[0m
+[[2m[37m03:22:17[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=7, repetition=1) = -2.8156528420638915 (evals=851, final=-2.8156528420638915)[0m
+[[2m[37m03:27:47[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=2.5, repetition=1) = -2.7983698085525655 (evals=851, final=-2.7983698085525655)[0m
+[[2m[37m03:28:46[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=1.5, repetition=1) = -2.9320431659777695 (evals=851, final=-2.9320431659777695)[0m
+[[2m[37m03:29:02[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=9.5, repetition=1) = -2.921726164513757 (evals=851, final=-2.921726164513757)[0m
+[[2m[37m03:31:12[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=12, t=1, boundary=periodic, U=0, repetition=1) = -7.509718651688108 (evals=851, final=-7.509718651688108)[0m
+[[2m[37m03:32:35[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=4, repetition=1) = -2.3458414488245056 (evals=851, final=-2.2849899933893973)[0m
+[[2m[37m03:33:14[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=3.5, repetition=1) = -2.9333873093220806 (evals=851, final=-2.9333873093220806)[0m
+[[2m[37m03:33:40[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=5.5, repetition=1) = -2.9582052298628074 (evals=851, final=-2.9582052298628074)[0m
+[[2m[37m03:34:09[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=9, repetition=1) = -2.8232982034212686 (evals=851, final=-2.8232982034212686)[0m
+[[2m[37m03:34:22[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=1, repetition=1) = -2.928718492903228 (evals=851, final=-2.928718492903228)[0m
+[[2m[37m03:35:55[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=6.5, repetition=1) = -2.830810069534375 (evals=851, final=-2.830810069534375)[0m
+[[2m[37m03:36:02[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=3, repetition=1) = -2.9702748621488007 (evals=851, final=-2.9702748621488007)[0m
+[[2m[37m03:44:22[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=6, t=1, boundary=periodic, U=0, repetition=1) = -6.7634731070338745 (evals=851, final=-6.7634731070338745)[0m
+[[2m[37m03:44:51[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=2, repetition=1) = -2.9672189361638415 (evals=851, final=-2.9672189361638415)[0m
+[[2m[37m03:45:38[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=10, repetition=1) = -2.79850457528244 (evals=851, final=-2.79850457528244)[0m
+[[2m[37m03:45:53[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=1, t=1, boundary=periodic, U=7.5, repetition=1) = -2.889081524957586 (evals=851, final=-2.889081524957586)[0m
+[[2m[37m03:46:47[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=4, t=1, boundary=periodic, U=0, repetition=1) = -6.881148888022328 (evals=851, final=-6.881148888022328)[0m
+[[2m[37m03:50:32[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=7, t=1, boundary=periodic, U=0, repetition=1) = -8.305403120206181 (evals=851, final=-8.305403120206181)[0m
+[[2m[37m03:52:35[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=5.5, repetition=1) = -4.68993084616178 (evals=851, final=-4.68993084616178)[0m
+[[2m[37m03:53:18[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=3.5, repetition=1) = -5.272066876930787 (evals=851, final=-5.272066876930787)[0m
+[[2m[37m03:53:33[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=6, repetition=1) = -4.430792539331571 (evals=851, final=-4.430792539331571)[0m
+[[2m[37m03:53:35[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=2.5, repetition=1) = -5.306399407249628 (evals=851, final=-5.306399407249628)[0m
+[[2m[37m03:54:29[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=4.5, repetition=1) = -4.514862575266916 (evals=851, final=-4.514862575266916)[0m
+[[2m[37m03:55:50[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=10, repetition=1) = -4.54684351843874 (evals=851, final=-4.54684351843874)[0m
+[[2m[37m03:55:56[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=2, repetition=1) = -4.779124736841522 (evals=851, final=-4.779124736841522)[0m
+[[2m[37m03:56:07[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=11, t=1, boundary=periodic, U=0, repetition=1) = -6.713586443129664 (evals=851, final=-6.713586443129664)[0m
+[[2m[37m04:01:02[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=8, repetition=1) = -3.999056800365579 (evals=851, final=-3.999056800365579)[0m
+[[2m[37m04:03:06[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=7, repetition=1) = -4.8824285684663415 (evals=851, final=-4.8824285684663415)[0m
+[[2m[37m04:06:19[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=9, t=1, boundary=periodic, U=0, repetition=1) = -8.573875927244336 (evals=851, final=-8.573875927244336)[0m
+[[2m[37m04:06:34[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=1.5, repetition=1) = -5.020959139054041 (evals=851, final=-5.020959139054041)[0m
+[[2m[37m04:07:12[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=3, repetition=1) = -4.8218807104895065 (evals=851, final=-4.8218807104895065)[0m
+[[2m[37m04:07:22[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=9, repetition=1) = -4.361036441196513 (evals=851, final=-4.361036441196513)[0m
+[[2m[37m04:08:40[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=5, t=1, boundary=periodic, U=0, repetition=1) = -7.95164061779899 (evals=851, final=-7.95164061779899)[0m
+[[2m[37m04:08:45[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=9.5, repetition=1) = -4.7170353970095755 (evals=851, final=-4.7170353970095755)[0m
+[[2m[37m04:08:53[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=6.5, repetition=1) = -3.9494443748310997 (evals=851, final=-3.9494443748310997)[0m
+[[2m[37m04:09:04[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=4, repetition=1) = -4.410864704463563 (evals=851, final=-4.254060702133669)[0m
+[[2m[37m04:09:07[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=8.5, repetition=1) = -3.572393143129345 (evals=851, final=-3.572393143129345)[0m
+[[2m[37m04:09:12[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=0.5, repetition=1) = -4.468414563356357 (evals=851, final=-4.468414563356357)[0m
+[[2m[37m04:09:26[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=1, repetition=1) = -4.599931828751782 (evals=851, final=-4.599931828751782)[0m
+[[2m[37m04:09:28[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=8, t=1, boundary=periodic, U=0, repetition=1) = -9.753223861066676 (evals=851, final=-9.753223861066676)[0m
+[[2m[37m04:16:14[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=10, t=1, boundary=periodic, U=0, repetition=1) = -7.23194081951079 (evals=851, final=-7.23194081951079)[0m
+[[2m[37m04:18:27[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=7.5, repetition=1) = -3.740587930523925 (evals=851, final=-3.740587930523925)[0m
+[[2m[37m04:19:47[0m[2m[0m] [2mVQE (lattice=(2, 2), n_occ=2, t=1, boundary=periodic, U=5, repetition=1) = -4.42009866811784 (evals=851, final=-4.42009866811784)[0m
