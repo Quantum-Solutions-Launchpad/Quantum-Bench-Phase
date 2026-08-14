@@ -1,0 +1,16 @@
+===================================================================
+TFIM 1D ground-state energy: h sweep (PBC, Lx=8, t=0.0)
+  Method: IQPE
+  Boundary: periodic
+  System size: Lx = 8
+  t value: 0.0
+  h range: 0.0 to 6.0 step 0.5
+  Data dir: /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/tfim/1d/ground-state-energy/h-sweep-Lx8
+  Started: Wed Aug 12 08:09:12 PM PDT 2026
+===================================================================
+Running computation...
+Command: qbp run --method iqpe --observable E --qubit-operator /pscratch/sd/m/mbao202/tfim.hdf5 --select 1D --select grid-pbc --select Lx=8 --x-param h --x-range 0.0 6.0 0.5 --iqpe-time 0.2 --iqpe-trot 5 --iqpe-iters 8 --iqpe-reps 20 --iqpe-initial-state vqe_informed --iqpe-initial-vqe-ansatz excitation_preserving --iqpe-initial-vqe-n-layers 2 --iqpe-initial-vqe-ansatz-kwarg reps=2 --iqpe-initial-vqe-max-iters 1000 --iqpe-time 0.0 --log-path /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/logs/tfim/1d/ground-state-energy/h-sweep-Lx8/tfim-1d-pbc-Lx8-E-h-iqpe-t0.0.json --plot-path /pscratch/sd/m/mbao202/NNL-P7/manuscript-plots/plots/tfim/1d/ground-state-energy/h-sweep-Lx8/tfim-1d-pbc-Lx8-E-h-iqpe-t0.0.pdf
+
+
+ERROR: Computation failed with status 2
+Failed at: Wed Aug 12 08:09:20 PM PDT 2026

@@ -1,0 +1,64 @@
+usage: qbp [-h] {list,plot,run,estimate} ...
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+qbp: error: unrecognized arguments: --n_occ 4
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+srun: error: nid005850: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.12
+srun: error: nid005850: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.6
+srun: error: nid005850: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.10
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+srun: error: nid005850: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.4
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+srun: error: nid006624: task 0: Exited with exit code 2
+srun: error: nid006624: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.13
+srun: Terminating StepId=56801742.5
+srun: error: nid005850: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.0
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+srun: error: nid006624: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.11
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+srun: error: nid005850: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.8
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+srun: error: nid006624: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.9
+srun: error: nid005850: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.14
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+srun: error: nid006624: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.15
+srun: error: nid005850: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.2
+usage: qbp [-h] {list,plot,run,estimate} ...
+qbp: error: unrecognized arguments: --n_occ 4
+srun: error: nid006624: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.3
+srun: error: nid006624: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.1
+srun: error: nid006624: task 0: Exited with exit code 2
+srun: Terminating StepId=56801742.7

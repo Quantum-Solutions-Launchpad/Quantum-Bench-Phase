@@ -1,0 +1,9 @@
+===================================================================
+Haldane 2x2 ground-state energy M vs U (SHARDED) - VQE + IQPE
+  sweep:       M [0 3 0.25] vs U [0.0 3.0 0.25]
+  pipeline:    noisy (backend: FakeSherbrooke)
+  methods:     iqpe vqe
+  parallelism: distributed across 16 shards on multiple nodes
+  output:      new-data
+===================================================================
+ERROR: Computation failed with status 1

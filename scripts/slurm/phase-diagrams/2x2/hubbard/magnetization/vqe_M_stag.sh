@@ -27,8 +27,8 @@ setup_visualizer_dmrg_env "${SLURM_CPUS_PER_TASK:-8}"
 
 export QBP_JOBS_PER_SHARD="${QBP_JOBS_PER_SHARD:-2}"
 
-LOG_DIR="${LOG_DIR:-${REPO_ROOT}/examples/logs}"
-PLOT_DIR="${PLOT_DIR:-${REPO_ROOT}/examples/plots}"
+LOG_DIR="${LOG_DIR:-${REPO_ROOT}/manuscript-plots/logs}"
+PLOT_DIR="${PLOT_DIR:-${REPO_ROOT}/manuscript-plots/plots}"
 mkdir -p "${LOG_DIR}" "${PLOT_DIR}"
 
 OUT_LOG_DIR="${LOG_DIR}/hubbard/2x2"
