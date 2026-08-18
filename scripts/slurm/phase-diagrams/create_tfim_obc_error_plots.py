@@ -61,7 +61,7 @@ def create_error_heatmap(x_vals, y_vals, Z_err, z_label, output_path):
 
     fig, ax = plt.subplots(figsize=(9, 6.5))
 
-    cmap = plt.cm.magma
+    cmap = plt.cm.YlOrRd
     norm = Normalize(vmin=np.nanmin(Z_err), vmax=np.nanmax(Z_err))
 
     mesh = ax.pcolormesh(
@@ -70,16 +70,17 @@ def create_error_heatmap(x_vals, y_vals, Z_err, z_label, output_path):
     )
 
     cbar = fig.colorbar(mesh, ax=ax, pad=0.02, fraction=0.045)
-    cbar.set_label(z_label, labelpad=10)
+    cbar.set_label(z_label, labelpad=10, fontsize=18)
+    cbar.ax.tick_params(labelsize=16)
     cbar.outline.set_edgecolor("#cccccc")
 
-    ax.set_xlabel(r"$L_x$", labelpad=8)
-    ax.set_ylabel(r"$h$", labelpad=8)
+    ax.set_xlabel(r"$L_x$", labelpad=8, fontsize=20)
+    ax.set_ylabel(r"$h$", labelpad=8, fontsize=20)
     ax.set_xlim(_pcolormesh_edges(x_arr)[0], _pcolormesh_edges(x_arr)[-1])
     ax.set_ylim(_pcolormesh_edges(y_arr)[0], _pcolormesh_edges(y_arr)[-1])
     for spine in ax.spines.values():
         spine.set_edgecolor("#cccccc")
-    ax.tick_params(direction="out", length=4, color="#888888")
+    ax.tick_params(direction="out", length=4, color="#888888", labelsize=16)
 
     plt.tight_layout()
     _save_and_show(fig, output_path, hide_plot=True)

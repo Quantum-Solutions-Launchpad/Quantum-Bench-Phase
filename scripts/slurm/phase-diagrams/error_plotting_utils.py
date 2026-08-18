@@ -11,11 +11,13 @@ from dataclasses import dataclass
 
 sys.path.insert(0, '/pscratch/sd/m/mbao202/NNL-P7')
 
-# Apply qbp-style rcParams
+# Apply qbp-style rcParams (with much larger fonts)
 plt.rcParams.update({
     "font.family": "sans-serif",
-    "font.size": 11,
-    "axes.labelsize": 13,
+    "font.size": 16,
+    "axes.labelsize": 22,
+    "xtick.labelsize": 18,
+    "ytick.labelsize": 18,
     "figure.dpi": 150,
 })
 
@@ -247,17 +249,17 @@ def plot_heatmap(
     # Set ticks and labels
     ax.set_xticks(np.arange(len(x_values)))
     ax.set_yticks(np.arange(len(y_values)))
-    ax.set_xticklabels([f"{x:.1f}" if isinstance(x, float) else str(x) for x in x_values], rotation=45, fontsize=11)
-    ax.set_yticklabels([f"{y:.2f}" if isinstance(y, float) else str(y) for y in y_values], fontsize=11)
+    ax.set_xticklabels([f"{x:.1f}" if isinstance(x, float) else str(x) for x in x_values], rotation=45, fontsize=18)
+    ax.set_yticklabels([f"{y:.2f}" if isinstance(y, float) else str(y) for y in y_values], fontsize=18)
 
-    ax.set_xlabel(x_label, fontsize=13)
-    ax.set_ylabel(y_label, fontsize=13)
-    ax.set_title(title, fontsize=13)
+    ax.set_xlabel(x_label, fontsize=24)
+    ax.set_ylabel(y_label, fontsize=24)
+    ax.set_title(title, fontsize=24)
 
     # Add colorbar with z-axis label
     cbar = plt.colorbar(im, ax=ax)
-    cbar.set_label(z_label, fontsize=13)
-    cbar.ax.tick_params(labelsize=11)
+    cbar.set_label(z_label, fontsize=20)
+    cbar.ax.tick_params(labelsize=18)
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
@@ -391,16 +393,16 @@ def plot_comparison_overlay(
 
         axes[idx].set_xticks(np.arange(len(x_values)))
         axes[idx].set_yticks(np.arange(len(y_values)))
-        axes[idx].set_xticklabels([f"{x:.1f}" if isinstance(x, float) else str(x) for x in x_values], rotation=45, fontsize=11)
-        axes[idx].set_yticklabels([f"{y:.2f}" if isinstance(y, float) else str(y) for y in y_values], fontsize=11)
+        axes[idx].set_xticklabels([f"{x:.1f}" if isinstance(x, float) else str(x) for x in x_values], rotation=45, fontsize=18)
+        axes[idx].set_yticklabels([f"{y:.2f}" if isinstance(y, float) else str(y) for y in y_values], fontsize=18)
 
-        axes[idx].set_xlabel(x_label, fontsize=13)
-        axes[idx].set_ylabel(y_label, fontsize=13)
-        axes[idx].set_title(f"{method_data.label}\nAbsolute Error", fontsize=13)
+        axes[idx].set_xlabel(x_label, fontsize=24)
+        axes[idx].set_ylabel(y_label, fontsize=24)
+        axes[idx].set_title(f"{method_data.label}\nAbsolute Error", fontsize=24)
 
         cbar = plt.colorbar(im, ax=axes[idx])
-        cbar.set_label("Absolute Error", fontsize=13)
-        cbar.ax.tick_params(labelsize=11)
+        cbar.set_label("Absolute Error", fontsize=20)
+        cbar.ax.tick_params(labelsize=18)
 
     plt.tight_layout()
     output_path = f"{output_dir}/{base_filename}_absolute_comparison.png"
@@ -426,11 +428,11 @@ def plot_comparison_overlay(
 
         axes[idx].set_xlabel(x_label, fontsize=13)
         axes[idx].set_ylabel(y_label, fontsize=13)
-        axes[idx].set_title(f"{method_data.label}\nRelative Error (%)", fontsize=13)
+        axes[idx].set_title(f"{method_data.label}\nRelative Error (%)", fontsize=24)
 
         cbar = plt.colorbar(im, ax=axes[idx])
-        cbar.set_label("Relative Error (%)", fontsize=13)
-        cbar.ax.tick_params(labelsize=11)
+        cbar.set_label("Relative Error (%)", fontsize=14)
+        cbar.ax.tick_params(labelsize=13)
 
     plt.tight_layout()
     output_path = f"{output_dir}/{base_filename}_relative_comparison.png"

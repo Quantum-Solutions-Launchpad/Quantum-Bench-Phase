@@ -2306,3 +2306,32 @@ ValueError: Cannot register /loky-856089-hzyd5eoc for automatic cleanup: unknown
   a = target_magnitude / avg_magnitudes
 /pscratch/sd/m/mbao202/NNL-P7/venv/lib/python3.13/site-packages/qiskit_algorithms/optimizers/spsa.py:571: RuntimeWarning: invalid value encountered in multiply
   update = update * next(eta)
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1818954-ngyshf8_ for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-1818965-vsss5x9k for automatic cleanup: unknown resource type semlock
+[2026-08-16T02:15:25.035] error: *** STEP 56914808.12 ON nid006437 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.036] error: *** STEP 56914808.8 ON nid006437 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.037] error: *** STEP 56914808.4 ON nid006437 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.037] error: *** STEP 56914808.10 ON nid006437 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.038] error: *** STEP 56914808.2 ON nid006437 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.038] error: *** STEP 56914808.6 ON nid006437 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.038] error: *** STEP 56914808.0 ON nid006437 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.039] error: *** STEP 56914808.7 ON nid006526 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.039] error: *** STEP 56914808.1 ON nid006526 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.039] error: *** STEP 56914808.15 ON nid006526 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.040] error: *** STEP 56914808.14 ON nid006437 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.040] error: *** JOB 56914808 ON nid006437 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.040] error: *** STEP 56914808.13 ON nid006526 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.041] error: *** STEP 56914808.3 ON nid006526 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.042] error: *** STEP 56914808.5 ON nid006526 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.042] error: *** STEP 56914808.9 ON nid006526 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***
+[2026-08-16T02:15:25.043] error: *** STEP 56914808.11 ON nid006526 CANCELLED AT 2026-08-16T02:15:25 DUE TO TIME LIMIT ***

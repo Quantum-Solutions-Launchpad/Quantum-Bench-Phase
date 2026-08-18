@@ -2306,3 +2306,48 @@ ValueError: Cannot register /loky-950050-1icnuxxy for automatic cleanup: unknown
   a = target_magnitude / avg_magnitudes
 /pscratch/sd/m/mbao202/NNL-P7/venv/lib/python3.13/site-packages/qiskit_algorithms/optimizers/spsa.py:571: RuntimeWarning: invalid value encountered in multiply
   update = update * next(eta)
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-950064-fuioxf6c for automatic cleanup: unknown resource type semlock
+Traceback (most recent call last):
+  File "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.13/nersc-python/lib/python3.13/multiprocessing/resource_tracker.py", line 371, in main
+    raise ValueError(
+        f'Cannot register {name} for automatic cleanup: '
+        f'unknown resource type {rtype}')
+ValueError: Cannot register /loky-2291-z3ddmx2n for automatic cleanup: unknown resource type semlock
+[2026-08-16T02:16:57.012] error: *** STEP 56914813.6 ON nid006380 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.012] error: *** STEP 56914813.0 ON nid006380 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.013] error: *** STEP 56914813.8 ON nid006380 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.014] error: *** STEP 56914813.4 ON nid006380 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.014] error: *** STEP 56914813.12 ON nid006380 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.014] error: *** STEP 56914813.14 ON nid006380 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.015] error: *** STEP 56914813.10 ON nid006380 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.015] error: *** STEP 56914813.11 ON nid006457 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.015] error: *** STEP 56914813.2 ON nid006380 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.016] error: *** STEP 56914813.15 ON nid006457 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.016] error: *** JOB 56914813 ON nid006380 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.016] error: *** STEP 56914813.13 ON nid006457 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.017] error: *** STEP 56914813.7 ON nid006457 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.017] error: *** STEP 56914813.5 ON nid006457 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.018] error: *** STEP 56914813.9 ON nid006457 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.018] error: *** STEP 56914813.3 ON nid006457 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+[2026-08-16T02:16:57.019] error: *** STEP 56914813.1 ON nid006457 CANCELLED AT 2026-08-16T02:16:57 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.

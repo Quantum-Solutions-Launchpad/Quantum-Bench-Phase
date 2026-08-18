@@ -1,8 +1,0 @@
-===================================================================
-Haldane 2x2 ground-state energy M vs U (SHARDED)
-  sweep:       M [0 3 0.25] vs U [0.0 3.0 0.25]
-  pipeline:    noisy (backend: FakeSherbrooke)
-  methods:     dmrg analytic
-  parallelism: distributed across 16 shards on multiple nodes
-===================================================================
-ERROR: Computation failed with status 1
