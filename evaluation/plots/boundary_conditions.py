@@ -18,12 +18,15 @@ Invoked from generate.py; can also be run directly.
 
 from __future__ import annotations
 
+import dataclasses
+
 from pathlib import Path
 
 import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib import font_manager
 import numpy as np
 from matplotlib.patches import Polygon
 
@@ -238,10 +241,17 @@ TICK_FS = 7.4
 LABEL_FS = 12.0
 PANEL_FS = 8.7
 
+_ttflist = font_manager.fontManager.ttflist
+for _i, _entry in enumerate(_ttflist):
+    if _entry.name.startswith("CMU ") and _entry.stretch != "normal":
+        _ttflist[_i] = dataclasses.replace(_entry, stretch="normal")
+
 plt.rcParams.update({
-    "font.family": "sans-serif",
-    "font.sans-serif": ["DejaVu Sans"],
-    "mathtext.fontset": "dejavusans",
+    "font.family": "serif",
+    "font.serif": ["CMU Serif", "cmr10", "DejaVu Serif"],
+    "font.sans-serif": ["CMU Sans Serif", "cmss10", "DejaVu Sans"],
+    "font.monospace": ["CMU Typewriter Text", "cmtt10", "DejaVu Sans Mono"],
+    "mathtext.fontset": "cm",
     "pdf.fonttype": 42,
 })
 
@@ -336,7 +346,7 @@ def main():
     hub = [solve(H, (12, 12), "hard_wall"), solve(H, (12, 12), "soft_wall", xi=0.5)]
     check("hubbard", "hard", hub[0])
     check("hubbard", "soft", hub[1])
-    p1 = build_figure(hub, ["(a) Hard wall", "(b) Soft wall"],
+    p1 = build_figure(hub, ["a. Hard wall", "b. Soft wall"],
                       positions(SQUARE), "hubbard-psi2-Lx-vs-Ly-flake.pdf", 2.7)
 
     print("Haldane-Hubbard (inner 8x8, soft-wall xi=0.1)")
@@ -344,7 +354,7 @@ def main():
     hh = [solve(H, (8, 8), "hard_wall"), solve(H, (8, 8), "soft_wall", xi=0.1)]
     check("haldane_hubbard", "hard", hh[0])
     check("haldane_hubbard", "soft", hh[1])
-    p2 = build_figure(hh, ["(a) Hard wall", "(b) Soft wall"],
+    p2 = build_figure(hh, ["a. Hard wall", "b. Soft wall"],
                       positions(HONEYCOMB), "haldane-hubbard-psi2-Lx-vs-Ly-flake.pdf", 5.5)
 
     for p in (p1, p2):

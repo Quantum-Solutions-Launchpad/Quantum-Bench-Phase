@@ -11,7 +11,7 @@ figure straight into ``evaluation/plots/``, named
     haldane-E-kx-vs-ky.pdf                  (was band-structure/E-kx-vs-ky)
     haldane-hubbard-psi2-Lx-vs-Ly-flake.pdf (was psi2-haldane-hubbard-flake)
     hubbard-E-vs-N_occ-hardware.pdf         (was hardware/hubbard/E-n_occ-hardware)
-    hubbard-M-N_occ-vs-U.pdf                (was Magnetization/M-n_occ-vs-U)
+    hubbard-S-N_occ-vs-U.pdf                (was Magnetization/M-n_occ-vs-U)
     hubbard-psi2-Lx-vs-Ly-flake.pdf         (was psi2-hubbard-flake)
     max3sat-n_viol-vs-alpha-hardware.pdf    (was hardware/max3sat/n_viol-ratio-hardware)
     tfim-E-Lx-vs-h.pdf                      (was tfim/E-Lx-vs-h)
@@ -51,6 +51,10 @@ OUT = EVAL / "plots"
 MPL_VERSION = "3.10.8"
 
 FIG_W = 490.176 / 72.0
+
+CM_SERIF = ["CMU Serif", "cmr10", "DejaVu Serif"]
+CM_SANS = ["CMU Sans Serif", "cmss10", "DejaVu Sans"]
+CM_MONO = ["CMU Typewriter Text", "cmtt10", "DejaVu Sans Mono"]
 
 SPINE = "0.6"
 SPINE_LW = 0.9
@@ -180,13 +184,27 @@ def momentum_ticks(ax, axis, vals):
     getattr(ax, "set_%sticklabels" % axis)([fmt(t) for t in ticks])
 
 
+def unstretch_cm_faces():
+    import dataclasses
+
+    from matplotlib import font_manager
+
+    fonts = font_manager.fontManager.ttflist
+    for i, entry in enumerate(fonts):
+        if entry.name.startswith("CMU ") and entry.stretch != "normal":
+            fonts[i] = dataclasses.replace(entry, stretch="normal")
+
+
 def rcparams():
+    unstretch_cm_faces()
     plt.rcParams.update({
         "pdf.fonttype": 42,
         "ps.fonttype": 42,
-        "font.family": "sans-serif",
-        "font.sans-serif": ["DejaVu Sans"],
-        "mathtext.fontset": "dejavusans",
+        "font.family": "serif",
+        "font.serif": CM_SERIF,
+        "font.sans-serif": CM_SANS,
+        "font.monospace": CM_MONO,
+        "mathtext.fontset": "cm",
         "axes.unicode_minus": True,
         "figure.dpi": 300,
     })
@@ -455,17 +473,31 @@ def fig_m_vs_phi():
 # magnetization
 # --------------------------------------------------------------------------
 
-def _magnetization_block(fig, rect, base, vqe_data, symbol):
-    n_occ = np.array(vqe_data["x_values"], dtype=float)
-    U = np.array(vqe_data["y_values"], dtype=float)
-    A = grid(vqe_data, "analytic")
+def resample_y(A, y_src, y_dst):
+    out = np.empty((A.shape[0], len(y_dst)))
+    for i in range(A.shape[0]):
+        out[i] = np.interp(y_dst, y_src, A[i])
+    return out
+
+
+def _magnetization_block(fig, rect, base, analytic_data, vqe_data, symbol,
+                         u_max=None):
+    n_occ = np.array(analytic_data["x_values"], dtype=float)
+    U_a = np.array(analytic_data["y_values"], dtype=float)
+    U_v = np.array(vqe_data["y_values"], dtype=float)
+    A = grid(analytic_data, "analytic")
     V = grid(vqe_data, "vqe")
-    err = np.abs(V - A)
+
+    err = np.abs(V - resample_y(A, U_a, U_v))
+
+    keep = U_a <= (U_v.max() if u_max is None else u_max)
+    U_a, A = U_a[keep], A[:, keep]
 
     ax = fig.add_axes(rect(41.76, base, 177.984, 177.984))
     cax = fig.add_axes(rect(224.784, base, CBAR_WIDTH, 177.984))
     style_heatmap_axes(ax, MAIN_LABEL_SIZE, MAIN_TICK_SIZE, HEATMAP_NBINS)
-    cbar = heatmap(ax, cax, n_occ, U, A, magma_dark(), np.nanmin(A), np.nanmax(A))
+    cbar = heatmap(ax, cax, n_occ, U_a, A, magma_dark(),
+                   np.nanmin(A), np.nanmax(A))
     ax.set_xlabel(r"$N_\mathrm{occ}$")
     ax.set_ylabel("$U$")
     style_colorbar(cbar, "Analytic " + symbol, MAIN_TICK_SIZE, ERR_TICK_SIZE,
@@ -477,7 +509,7 @@ def _magnetization_block(fig, rect, base, vqe_data, symbol):
         axe = fig.add_axes(rect(329.184, bottom, 84.672, 84.672))
         caxe = fig.add_axes(rect(418.896, bottom, CBAR_WIDTH, 84.672))
         style_heatmap_axes(axe, ERR_LABEL_SIZE, ERR_TICK_SIZE, ERR_NBINS)
-        cb = heatmap(axe, caxe, n_occ, U, Z, cmap, vmin, vmax)
+        cb = heatmap(axe, caxe, n_occ, U_v, Z, cmap, vmin, vmax)
         if bottom == base:
             axe.set_xlabel(r"$N_\mathrm{occ}$")
         else:
@@ -494,15 +526,18 @@ def fig_magnetization():
     def rect(x, y, w, h):
         return [x / W, y / H, w / W, h / H]
 
-    for base, folder, key, symbol in ((291.744, "M_stag", "M_stag",
-                                       r"$m_\mathrm{stag}$"),
-                                      (36.0, "M_total", "M_total",
-                                       r"$m_\mathrm{tot}$")):
-        vqe_data = load("magnetization", folder,
-                        "vqe-%s-heatmap-n_occ-vs-U.json" % key)
-        _magnetization_block(fig, rect, base, vqe_data, symbol)
+    blocks = ((291.744, "S_stag", "M_stag", r"$S_\mathrm{stag}$", None),
+              (36.0, "S_total", "M_total", r"$S_\mathrm{tot}$", 60.0))
+    for base, analytic_key, vqe_key, symbol, u_max in blocks:
+        analytic_data = load(
+            "magnetization", analytic_key,
+            "simulated-ideal-analytic-%s-n_occ-vs-U.json" % analytic_key)
+        vqe_data = load("magnetization", vqe_key,
+                        "vqe-%s-heatmap-n_occ-vs-U.json" % vqe_key)
+        _magnetization_block(fig, rect, base, analytic_data, vqe_data, symbol,
+                             u_max)
 
-    save(fig, "hubbard-M-N_occ-vs-U.pdf")
+    save(fig, "hubbard-S-N_occ-vs-U.pdf")
 
 
 # --------------------------------------------------------------------------
@@ -681,8 +716,8 @@ def _analytic_handle():
 
 def fig_tfim():
     blocks = []
-    for base, folder, title in ((352.704, "obc", "(a) Open boundaries"),
-                                (36.0, "pbc", "(b) Periodic boundaries")):
+    for base, folder, title in ((352.704, "obc", "a. Open boundaries"),
+                                (36.0, "pbc", "b. Periodic boundaries")):
         analytic = load("tfim", folder, "tfim-1d-%s-E-Lx-vs-h-analytic.json" % folder)
         vqe = load("tfim", folder, "tfim-1d-%s-E-Lx-vs-h-vqe.json" % folder)
         dmrg = load("tfim", folder, "tfim-1d-%s-E-Lx-vs-h-dmrg.json" % folder)
@@ -707,11 +742,11 @@ def fig_tfim():
 
 def fig_nocc_vs_t2():
     blocks = []
-    specs = ((380.592, "nocc-vs-t2", "(a) Periodic",
+    specs = ((380.592, "nocc-vs-t2", "a. Periodic",
               "simulated-ideal-analytic-E-nocc-vs-t2.json",
               "simulated-ideal-dmrg-E-nocc-vs-t2.json",
               "simulated-ideal-vqe-iqpe-E-nocc-vs-t2.json"),
-             (36.0, "nocc-vs-t2-hard-wall", "(b) Hard-wall flake",
+             (36.0, "nocc-vs-t2-hard-wall", "b. Hard-wall flake",
               "simulated-ideal-analytic-dmrg-E-nocc-vs-t2-hard-wall.json",
               "simulated-ideal-analytic-dmrg-E-nocc-vs-t2-hard-wall.json",
               "simulated-ideal-vqe-iqpe-E-nocc-vs-t2-hard-wall.json"))
@@ -746,9 +781,9 @@ def fig_nocc_vs_t2():
 
 def fig_appendix_m_vs_u():
     blocks = []
-    specs = ((333.5483, "M-vs-U", "(a) Periodic",
+    specs = ((333.5483, "M-vs-U", "a. Periodic",
               "simulated-noisy-dmrg-analytic-E-M-vs-U.json"),
-             (36.0, "M-vs-U-hard-wall", "(b) Hard wall",
+             (36.0, "M-vs-U-hard-wall", "b. Hard wall",
               "simulated-noisy-analytic-dmrg-E-M-vs-U-hard-wall.json"))
     for base, folder, title, name in specs:
         data = load("appendix-M-vs-U", folder, name)
