@@ -920,8 +920,19 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
     DEGENERACY_TOL = 1e-8
 
     def _ground_manifold(evs, vecs):
-        d = int(np.sum(np.abs(evs - evs[0]) < DEGENERACY_TOL))
-        return vecs[:, :max(1, d)]
+        """Orthonormal basis of the lowest-energy eigenspace.
+
+        ARPACK converges each Ritz vector of a degenerate cluster individually
+        and does not orthogonalise them against each other, so the raw columns
+        can be far from orthonormal (errors of order 1 are routine). Projecting
+        an observable onto a non-orthonormal basis gives eigenvalues that are
+        not even physical, so the span is re-orthonormalised here.
+        """
+        d = max(1, int(np.sum(np.abs(evs - evs[0]) < DEGENERACY_TOL)))
+        block = vecs[:, :d]
+        u, s, _ = np.linalg.svd(block, full_matrices=False)
+        keep = s > max(s[0], 1.0) * 1e-10
+        return u[:, keep]
 
     def _ground_state(H_sector):
         """Returns (eigenvalues, orthonormal basis of the ground manifold).
@@ -1053,93 +1064,20 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
     def _s_total(model, lattice, H, eigvals, eigvecs, n_occ, params):
         return _structure_factor(model, lattice, n_occ, params, "total")
 
-    def _n_sites_of(model, lattice):
-        return math.prod(tuple(lattice)) * model.sites_per_cell
-
-    def _free_fermion_s_stag(model, lattice, n_occ):
-        """S(pi,pi) of an uncorrelated state at this filling.
-
-        A Slater determinant has no inter-site spin correlation, so only the
-        i=j terms survive and each singly occupied site contributes 3/4. This
-        is the finite-size floor of the structure factor, 3 n_eff / (4 N^2),
-        and it is exactly what the U=0 ground state gives.
-        """
-        n_sites = _n_sites_of(model, lattice)
-        n_eff = min(int(n_occ), 2 * n_sites - int(n_occ))
-        return 0.75 * n_eff / float(n_sites) ** 2
-
-    def _saturation_spin(model, lattice, n_occ):
-        n_sites = _n_sites_of(model, lattice)
-        return 0.5 * min(int(n_occ), 2 * n_sites - int(n_occ))
-
-    def _spin_from_s_total(s_total, n_sites, *, snap=False):
-        """Total spin S from S(0,0) = <S^2> / N^2.
-
-        ``snap`` rounds to the nearest half integer, which is exact for a true
-        spin eigenstate and only removes Lanczos noise. A variational state is
-        not a spin eigenstate, so its <S^2> is a genuine average and is left
-        alone.
-        """
-        s_squared = max(0.0, s_total) * float(n_sites) ** 2
-        s = 0.5 * (math.sqrt(1.0 + 4.0 * s_squared) - 1.0)
-        return round(2.0 * s) / 2.0 if snap else s
-
-    def _r_stag(model, lattice, H, eigvals, eigvecs, n_occ, params):
-        floor = _free_fermion_s_stag(model, lattice, n_occ)
-        if floor <= 0.0:
-            return 0.0
-        return _structure_factor(model, lattice, n_occ, params, "stag") / floor
-
-    def _s_frac(model, lattice, H, eigvals, eigvecs, n_occ, params):
-        """Largest total spin in the ground manifold, over its saturated value.
-
-        Ferromagnetism in a finite cluster shows up as the ground manifold
-        containing a high-spin multiplet, so the manifold maximum -- not the
-        expectation value in one arbitrary manifold vector -- is the diagnostic.
-        """
-        s_sat = _saturation_spin(model, lattice, n_occ)
-        if s_sat <= 0.0:
-            return 0.0
-        _, manifold, idx = _mb_result_cached(model, lattice, n_occ, params)
-        if manifold.size == 0:
-            return 0.0
-        n_sites = _n_sites_of(model, lattice)
-        mat = _restricted_observable(model, lattice, n_occ, idx, "total")
-        block = _manifold_matrix(mat, manifold)
-        s_total_max = float(np.max(np.real(_eigh(block)[0])))
-        return _spin_from_s_total(s_total_max, n_sites, snap=True) / s_sat
-
     def _s_stag_quantum_op(model, lattice, **params):
         return _structure_fermionic_op(model, lattice, stagger=True)
 
     def _s_total_quantum_op(model, lattice, **params):
         return _structure_fermionic_op(model, lattice, stagger=False)
 
-    def _r_stag_composite(model, lattice, n_occ, params, mapper, n_orbitals, sub_eval):
-        floor = _free_fermion_s_stag(model, lattice, n_occ)
-        if floor <= 0.0:
-            return 0.0
-        op = mapper.map(_structure_fermionic_op(model, lattice, stagger=True))
-        _, vals = sub_eval(n_occ, observable_qubit_ops=[op])
-        return max(0.0, float(vals[0])) / floor
-
-    def _s_frac_composite(model, lattice, n_occ, params, mapper, n_orbitals, sub_eval):
-        s_sat = _saturation_spin(model, lattice, n_occ)
-        if s_sat <= 0.0:
-            return 0.0
-        op = mapper.map(_structure_fermionic_op(model, lattice, stagger=False))
-        _, vals = sub_eval(n_occ, observable_qubit_ops=[op])
-        n_sites = _n_sites_of(model, lattice)
-        return _spin_from_s_total(float(vals[0]), n_sites) / s_sat
-
     return {
         "S_stag": Observable(
-            name="S_stag", display_name=r"m_{\mathrm{stag}}^2 = S(\pi,\pi)",
+            name="S_stag", display_name=r"S_{\mathrm{stag}}",
             analytic=_s_stag,
             quantum_operator=_s_stag_quantum_op,
         ),
         "S_total": Observable(
-            name="S_total", display_name=r"S(0,0) = \langle S^2 \rangle / N^2",
+            name="S_total", display_name=r"S_{\mathrm{total}}",
             analytic=_s_total,
             quantum_operator=_s_total_quantum_op,
         ),
@@ -1151,16 +1089,6 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
         "gap": Observable(
             name="gap", display_name=r"\Delta_{\mathrm{gap}}",
             analytic=_gap_mb,
-        ),
-        "R_stag": Observable(
-            name="R_stag", display_name=r"S(\pi,\pi)/S_0(\pi,\pi)",
-            analytic=_r_stag,
-            quantum_composite=_r_stag_composite,
-        ),
-        "S_frac": Observable(
-            name="S_frac", display_name=r"S/S_{\mathrm{sat}}",
-            analytic=_s_frac,
-            quantum_composite=_s_frac_composite,
         ),
     }
 
