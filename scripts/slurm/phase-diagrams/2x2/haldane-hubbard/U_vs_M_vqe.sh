@@ -2,10 +2,10 @@
 #SBATCH -J hh-2x2-E-M-U-vqe
 #SBATCH -C cpu
 #SBATCH -q regular
-#SBATCH -N 2
-#SBATCH --ntasks-per-node=4
+#SBATCH -N 8
+#SBATCH --ntasks-per-node=2
 #SBATCH -c 16
-#SBATCH -t 20:00:00
+#SBATCH -t 48:00:00
 #SBATCH -A m5027
 #SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.out
 #SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.err
@@ -27,7 +27,7 @@ source "${REPO_ROOT}/scripts/slurm/phase-diagrams/common_visualizer.sh"
 SHARDS="${SHARDS:-${SLURM_NTASKS:-16}}"
 setup_visualizer_env
 
-export QBP_JOBS_PER_SHARD="${QBP_JOBS_PER_SHARD:-1}"
+export QBP_JOBS_PER_SHARD=1
 
 LOG_DIR="${LOG_DIR:-${REPO_ROOT}/manuscript-plots/logs/new-data}"
 PLOT_DIR="${PLOT_DIR:-${REPO_ROOT}/manuscript-plots/plots/new-data}"

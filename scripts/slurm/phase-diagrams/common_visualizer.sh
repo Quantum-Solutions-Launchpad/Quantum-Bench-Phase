@@ -7,6 +7,8 @@ setup_visualizer_env() {
     setup_qbp_slurm_env
 
     export LOKY_DISABLE_RESOURCE_TRACKER=1
+    export JOBLIB_START_METHOD=spawn
+    export LOKY_MAX_WORKERS=1
     export MPLBACKEND="${MPLBACKEND:-Agg}"
 
     OUTPUT_ROOT="${OUTPUT_ROOT:-${REPO_ROOT}/manuscript-plots}"

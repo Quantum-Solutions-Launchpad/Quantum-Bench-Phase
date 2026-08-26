@@ -60,8 +60,8 @@ cmd=(
     --iqpe-reps "${IQPE_REPS:-3}"
     --iqpe-initial-state vqe_informed
     --iqpe-initial-vqe-ansatz excitation_preserving
-    --iqpe-initial-vqe-n-layers "${IQPE_INITIAL_VQE_N_LAYERS:-3}"
-    --iqpe-initial-vqe-max-iters "${IQPE_INITIAL_VQE_MAX_ITERS:-3000}"
+    --iqpe-initial-vqe-n-layers "${IQPE_INITIAL_VQE_N_LAYERS:-5}"
+    --iqpe-initial-vqe-max-iters "${IQPE_INITIAL_VQE_MAX_ITERS:-10000}"
 )
 
 mkdir -p "${DATA_DIR}" "${PLOT_DIR}"

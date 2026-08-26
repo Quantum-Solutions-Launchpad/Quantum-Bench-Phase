@@ -2,8 +2,8 @@
 #SBATCH -J hubbard-2x2-mag-vqe-m-stag-6layer
 #SBATCH -C cpu
 #SBATCH -q regular
-#SBATCH -N 2
-#SBATCH --ntasks-per-node=8
+#SBATCH -N 32
+#SBATCH --ntasks-per-node=2
 #SBATCH -c 16
 #SBATCH -t 48:00:00
 #SBATCH -A m5027
@@ -24,7 +24,7 @@ export LOG_DIR="${LOG_DIR:-${REPO_ROOT}/vqe-6layer-runs/logs}"
 export PLOT_DIR="${PLOT_DIR:-${REPO_ROOT}/vqe-6layer-runs/plots}"
 
 source "${REPO_ROOT}/scripts/slurm/phase-diagrams/common_visualizer.sh"
-SHARDS=16
+SHARDS=64
 setup_visualizer_env
 setup_visualizer_dmrg_env "${SLURM_CPUS_PER_TASK:-8}"
 

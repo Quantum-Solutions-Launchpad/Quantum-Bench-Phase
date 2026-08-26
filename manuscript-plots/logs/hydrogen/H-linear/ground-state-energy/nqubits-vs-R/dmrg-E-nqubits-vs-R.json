@@ -1,0 +1,136 @@
+{
+    "type": "run",
+    "methods": [
+        "dmrg"
+    ],
+    "backend": "ideal",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "x_param": "nqubits",
+    "y_param": "R",
+    "x_values": [
+        4.0,
+        8.0,
+        12.0,
+        16.0
+    ],
+    "y_values": [
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+    ],
+    "parameters": {
+        "model": "ES_nqubits",
+        "lattice": null,
+        "qubit_operator": [
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.5_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.6_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.7_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.8_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.9_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R1.0_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.5_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.6_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.7_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.8_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.9_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R1.0_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.5_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.6_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.7_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.8_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.9_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R1.0_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.5_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.6_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.7_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.8_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.9_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R1.0_sto-6g_ham.hdf5"
+        ],
+        "keys": [
+            [
+                "ES-nqubits-4-linear-R-0.5-sto-6-g--ham_parity",
+                "ES-nqubits-4-linear-R-0.6-sto-6-g--ham_parity",
+                "ES-nqubits-4-linear-R-0.7-sto-6-g--ham_parity",
+                "ES-nqubits-4-linear-R-0.8-sto-6-g--ham_parity",
+                "ES-nqubits-4-linear-R-0.9-sto-6-g--ham_parity",
+                "ES-nqubits-4-linear-R-1.0-sto-6-g--ham_parity"
+            ],
+            [
+                "ES-nqubits-8-linear-R-0.5-sto-6-g-ham--ham_parity",
+                "ES-nqubits-8-linear-R-0.6-sto-6-g-ham--ham_parity",
+                "ES-nqubits-8-linear-R-0.7-sto-6-g-ham--ham_parity",
+                "ES-nqubits-8-linear-R-0.8-sto-6-g-ham--ham_parity",
+                "ES-nqubits-8-linear-R-0.9-sto-6-g-ham--ham_parity",
+                "ES-nqubits-8-linear-R-1.0-sto-6-g-ham--ham_parity"
+            ],
+            [
+                "ES-nqubits-12-linear-R-0.5-sto-6-g-ham--ham_parity",
+                "ES-nqubits-12-linear-R-0.6-sto-6-g-ham--ham_parity",
+                "ES-nqubits-12-linear-R-0.7-sto-6-g-ham--ham_parity",
+                "ES-nqubits-12-linear-R-0.8-sto-6-g-ham--ham_parity",
+                "ES-nqubits-12-linear-R-0.9-sto-6-g-ham--ham_parity",
+                "ES-nqubits-12-linear-R-1.0-sto-6-g-ham--ham_parity"
+            ],
+            [
+                "ES-nqubits-16-linear-R-0.5-sto-6-g-ham--ham_parity",
+                "ES-nqubits-16-linear-R-0.6-sto-6-g-ham--ham_parity",
+                "ES-nqubits-16-linear-R-0.7-sto-6-g-ham--ham_parity",
+                "ES-nqubits-16-linear-R-0.8-sto-6-g-ham--ham_parity",
+                "ES-nqubits-16-linear-R-0.9-sto-6-g-ham--ham_parity",
+                "ES-nqubits-16-linear-R-1.0-sto-6-g-ham--ham_parity"
+            ]
+        ],
+        "model_params": {},
+        "method_params": {
+            "dmrg": {
+                "nsweeps": 5,
+                "maxdims": "20,50,100,200,500",
+                "cutoff": 1e-09,
+                "seed": 1234,
+                "initial_state": "packed"
+            }
+        }
+    },
+    "result": {
+        "dmrg": {
+            "0": {
+                "0": 1.664471719878028,
+                "1": 1.2845197263269184,
+                "2": 1.0027026499202538,
+                "3": 0.786925890789079,
+                "4": 0.6180079901311526,
+                "5": 0.4835571100599998
+            },
+            "1": {
+                "0": 10.09260195760542,
+                "1": 7.3835501023585834,
+                "2": 5.609275470666702,
+                "3": 4.379143528014313,
+                "4": 3.490669441458978,
+                "5": 2.828666426730116
+            },
+            "2": {
+                "0": 21.038969503726243,
+                "1": 15.10407713816158,
+                "2": 11.37115417111017,
+                "3": 8.860448373395931,
+                "4": 7.087586118277068,
+                "5": 5.78860801596624
+            },
+            "3": {
+                "0": -2.2751621024686663,
+                "1": -3.6146002474598253,
+                "2": -4.091356806270779,
+                "3": -4.275764476773039,
+                "4": -4.339197444202288,
+                "5": -4.200696036912482
+            }
+        }
+    }
+}

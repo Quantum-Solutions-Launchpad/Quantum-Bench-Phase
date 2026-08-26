@@ -1,0 +1,136 @@
+{
+    "type": "run",
+    "methods": [
+        "dmrg"
+    ],
+    "backend": "ideal",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "x_param": "H",
+    "y_param": "R",
+    "x_values": [
+        2.0,
+        4.0,
+        6.0,
+        8.0
+    ],
+    "y_values": [
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+    ],
+    "parameters": {
+        "model": "ES_H",
+        "lattice": null,
+        "qubit_operator": [
+            "/pscratch/sd/m/mbao202/ES_H2_linear_R0.5_sto-6g.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H2_linear_R0.6_sto-6g.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H2_linear_R0.7_sto-6g.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H2_linear_R0.8_sto-6g.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H2_linear_R0.9_sto-6g.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H2_linear_R1.0_sto-6g.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H4_linear_R0.5_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H4_linear_R0.6_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H4_linear_R0.7_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H4_linear_R0.8_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H4_linear_R0.9_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H4_linear_R1.0_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H6_linear_R0.5_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H6_linear_R0.6_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H6_linear_R0.7_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H6_linear_R0.8_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H6_linear_R0.9_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H6_linear_R1.0_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H8_linear_R0.5_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H8_linear_R0.6_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H8_linear_R0.7_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H8_linear_R0.8_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H8_linear_R0.9_sto-6g_ham.hdf5",
+            "/pscratch/sd/m/mbao202/ES_H8_linear_R1.0_sto-6g_ham.hdf5"
+        ],
+        "keys": [
+            [
+                "ES-H-2-linear-R-0.5-sto-6-g--ham_JW",
+                "ES-H-2-linear-R-0.6-sto-6-g--ham_JW",
+                "ES-H-2-linear-R-0.7-sto-6-g--ham_JW",
+                "ES-H-2-linear-R-0.8-sto-6-g--ham_JW",
+                "ES-H-2-linear-R-0.9-sto-6-g--ham_JW",
+                "ES-H-2-linear-R-1.0-sto-6-g--ham_JW"
+            ],
+            [
+                "ES-H-4-linear-R-0.5-sto-6-g-ham--ham_JW",
+                "ES-H-4-linear-R-0.6-sto-6-g-ham--ham_JW",
+                "ES-H-4-linear-R-0.7-sto-6-g-ham--ham_JW",
+                "ES-H-4-linear-R-0.8-sto-6-g-ham--ham_JW",
+                "ES-H-4-linear-R-0.9-sto-6-g-ham--ham_JW",
+                "ES-H-4-linear-R-1.0-sto-6-g-ham--ham_JW"
+            ],
+            [
+                "ES-H-6-linear-R-0.5-sto-6-g-ham--ham_JW",
+                "ES-H-6-linear-R-0.6-sto-6-g-ham--ham_JW",
+                "ES-H-6-linear-R-0.7-sto-6-g-ham--ham_JW",
+                "ES-H-6-linear-R-0.8-sto-6-g-ham--ham_JW",
+                "ES-H-6-linear-R-0.9-sto-6-g-ham--ham_JW",
+                "ES-H-6-linear-R-1.0-sto-6-g-ham--ham_JW"
+            ],
+            [
+                "ES-H-8-linear-R-0.5-sto-6-g-ham--ham_JW",
+                "ES-H-8-linear-R-0.6-sto-6-g-ham--ham_JW",
+                "ES-H-8-linear-R-0.7-sto-6-g-ham--ham_JW",
+                "ES-H-8-linear-R-0.8-sto-6-g-ham--ham_JW",
+                "ES-H-8-linear-R-0.9-sto-6-g-ham--ham_JW",
+                "ES-H-8-linear-R-1.0-sto-6-g-ham--ham_JW"
+            ]
+        ],
+        "model_params": {},
+        "method_params": {
+            "dmrg": {
+                "nsweeps": 5,
+                "maxdims": "20,50,100,200,500",
+                "cutoff": 1e-09,
+                "seed": 1234,
+                "initial_state": "packed"
+            }
+        }
+    },
+    "result": {
+        "dmrg": {
+            "0": {
+                "0": -0.07984820956276184,
+                "1": -0.3201959251257668,
+                "2": -0.48669833531774986,
+                "3": -0.6055310045065272,
+                "4": -0.6919856041885434,
+                "5": -0.7556938311464101
+            },
+            "1": {
+                "0": 2.0494368615830743,
+                "1": 0.7338742396871336,
+                "2": -0.08508555055002065,
+                "3": -0.6212083342537127,
+                "4": -0.9844289184738487,
+                "5": -1.2365917726443838
+            },
+            "2": {
+                "0": 4.652308515576568,
+                "1": 1.9977911384631795,
+                "2": 0.41319344484504805,
+                "3": -0.5912615820524294,
+                "4": -1.2550688021158922,
+                "5": -1.707034524425067
+            },
+            "3": {
+                "0": 1.3562039568574384,
+                "1": 3.2735864533173595,
+                "2": -1.3227377918942653,
+                "3": -1.933102398380028,
+                "4": -2.4282583624659653,
+                "5": -2.605018630306272
+            }
+        }
+    }
+}
