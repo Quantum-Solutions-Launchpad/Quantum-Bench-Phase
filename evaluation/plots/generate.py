@@ -480,13 +480,53 @@ def resample_y(A, y_src, y_dst):
     return out
 
 
+def free_spin_correlation(n_occ, n_sites):
+    """Structure factor of a state with no inter-site spin correlation.
+
+    Only the on-site terms of the double sum survive, and each singly occupied
+    site contributes 3/4, so an uncorrelated state at this filling gives
+    3 n_eff / (4 N^2) in both the staggered and the uniform channel. This is
+    the U = 0 value at every filling, and it carries a strong filling
+    dependence that has nothing to do with magnetic order -- left in, it is
+    what the raw heatmaps are mostly showing.
+    """
+    n_eff = np.minimum(n_occ, 2 * n_sites - n_occ)
+    return 0.75 * n_eff / float(n_sites) ** 2
+
+
+def total_spin_transform(A, n_occ, n_sites):
+    """Total spin S recovered from S(0,0) = <S^2> / N^2.
+
+    Plotted in place of S(0,0) itself because <S^2> is quantised on a cluster
+    this small, so the raw factor is a shell-structure checkerboard whose one
+    interaction-driven feature -- the Nagaoka jump just off half filling --
+    sits in two cells and is squashed flat by the colour scale.
+    """
+    s_squared = np.clip(A, 0.0, None) * float(n_sites) ** 2
+    return 0.5 * (np.sqrt(1.0 + 4.0 * s_squared) - 1.0)
+
+
+def r_stag_transform(A, n_occ, n_sites):
+    """S(pi,pi) in units of its uncorrelated value: 1 is paramagnetic."""
+    floor = free_spin_correlation(n_occ, n_sites)
+    out = np.full_like(A, np.nan)
+    ok = floor > 0
+    out[ok] = A[ok] / floor[ok, None]
+    return out
+
+
 def _magnetization_block(fig, rect, base, analytic_data, vqe_data, symbol,
-                         u_max=None):
+                         u_max=None, transform=None):
     n_occ = np.array(analytic_data["x_values"], dtype=float)
     U_a = np.array(analytic_data["y_values"], dtype=float)
     U_v = np.array(vqe_data["y_values"], dtype=float)
     A = grid(analytic_data, "analytic")
     V = grid(vqe_data, "vqe")
+
+    if transform is not None:
+        n_sites = int(round(n_occ.max() / 2))
+        A = transform(A, n_occ, n_sites)
+        V = transform(V, n_occ, n_sites)
 
     err = np.abs(V - resample_y(A, U_a, U_v))
 
@@ -526,16 +566,16 @@ def fig_magnetization():
     def rect(x, y, w, h):
         return [x / W, y / H, w / W, h / H]
 
-    blocks = ((291.744, "S_stag", "M_stag", r"$S_\mathrm{stag}$", None),
-              (36.0, "S_total", "M_total", r"$S_\mathrm{tot}$", 60.0))
-    for base, analytic_key, vqe_key, symbol, u_max in blocks:
+    blocks = ((291.744, "S_stag", r"$R_\mathrm{stag}$", r_stag_transform),
+              (36.0, "S_total", r"$S_\mathrm{total}$", total_spin_transform))
+    for base, key, symbol, transform in blocks:
         analytic_data = load(
-            "magnetization", analytic_key,
-            "simulated-ideal-analytic-%s-n_occ-vs-U.json" % analytic_key)
-        vqe_data = load("magnetization", vqe_key,
-                        "vqe-%s-heatmap-n_occ-vs-U.json" % vqe_key)
+            "magnetization", key,
+            "simulated-ideal-analytic-%s-n_occ-vs-U.json" % key)
+        vqe_data = load("magnetization", key,
+                        "simulated-ideal-vqe-%s-n_occ-vs-U.json" % key)
         _magnetization_block(fig, rect, base, analytic_data, vqe_data, symbol,
-                             u_max)
+                             transform=transform)
 
     save(fig, "hubbard-S-N_occ-vs-U.pdf")
 

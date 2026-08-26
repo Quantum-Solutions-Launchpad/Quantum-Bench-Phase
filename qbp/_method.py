@@ -180,9 +180,17 @@ class SimulationMethod:
     def reduce(self, cell: dict, *, extremum: str = "min", analytic: float | None = None):
         """Collapse a raw cell dict to the scalar (or band list) plotted/stored.
 
-        When `analytic` is given, pick whichever repetition lands closest to
-        it rather than blindly taking min/max. Blind min/max biases the 
-        result toward whichever noisy repetition happened to swing
+        When the cell carries per-repetition `energies` the repetitions are not
+        energies themselves, so neither min/max nor closeness to the analytic
+        reference is meaningful on them: the value reported is the one measured
+        in the repetition that reached the best variational energy. Taking
+        min() over, say, five structure-factor measurements would report
+        whichever repetition converged worst, and picking the one nearest the
+        analytic value would let the reference choose the answer.
+
+        Without energies, when `analytic` is given, pick whichever repetition
+        lands closest to it rather than blindly taking min/max. Blind min/max
+        biases the result toward whichever noisy repetition happened to swing
         furthest in the "good" direction (most negative for extremum="min"),
         which isn't necessarily the most representative one and can distort
         raw vs mitigated comparisons that pair repetitions across runs.
@@ -195,6 +203,12 @@ class SimulationMethod:
         reps = cell.get("repetitions") or []
         if not reps:
             return float("nan")
+        energies = cell.get("energies") or []
+        if len(energies) == len(reps) and any(e != r for e, r in zip(energies, reps)):
+            finite = [i for i, e in enumerate(energies) if e == e]
+            if finite:
+                pick = max if extremum == "max" else min
+                return float(reps[pick(finite, key=lambda i: energies[i])])
         if analytic is not None:
             return float(min(reps, key=lambda r: abs(r - analytic)))
         if extremum == "max":
