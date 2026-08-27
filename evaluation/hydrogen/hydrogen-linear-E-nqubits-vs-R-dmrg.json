@@ -1,0 +1,140 @@
+{
+    "type": "run",
+    "methods": [
+        "dmrg"
+    ],
+    "backend": "ideal",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "x_param": "nqubits",
+    "y_param": "R",
+    "x_values": [
+        4.0,
+        8.0,
+        12.0,
+        16.0
+    ],
+    "y_values": [
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+    ],
+    "parameters": {
+        "model": "ES_nqubits",
+        "lattice": null,
+        "qubit_operator": [
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.5_sto-6g.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.6_sto-6g.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.7_sto-6g.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.8_sto-6g.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.9_sto-6g.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R1.0_sto-6g.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.5_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.6_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.7_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.8_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.9_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R1.0_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.5_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.6_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.7_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.8_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.9_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R1.0_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.5_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.6_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.7_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.8_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.9_sto-6g_ham.hdf5",
+            "/var/folders/bc/q3rfqcd50ms9dwtkcgwpcrrc0000gn/T//adamgodel-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R1.0_sto-6g_ham.hdf5"
+        ],
+        "keys": [
+            [
+                "ES-nqubits-4-linear-R-0.5-sto-6-g--ham_JW",
+                "ES-nqubits-4-linear-R-0.6-sto-6-g--ham_JW",
+                "ES-nqubits-4-linear-R-0.7-sto-6-g--ham_JW",
+                "ES-nqubits-4-linear-R-0.8-sto-6-g--ham_JW",
+                "ES-nqubits-4-linear-R-0.9-sto-6-g--ham_JW",
+                "ES-nqubits-4-linear-R-1.0-sto-6-g--ham_JW"
+            ],
+            [
+                "ES-nqubits-8-linear-R-0.5-sto-6-g-ham--ham_JW",
+                "ES-nqubits-8-linear-R-0.6-sto-6-g-ham--ham_JW",
+                "ES-nqubits-8-linear-R-0.7-sto-6-g-ham--ham_JW",
+                "ES-nqubits-8-linear-R-0.8-sto-6-g-ham--ham_JW",
+                "ES-nqubits-8-linear-R-0.9-sto-6-g-ham--ham_JW",
+                "ES-nqubits-8-linear-R-1.0-sto-6-g-ham--ham_JW"
+            ],
+            [
+                "ES-nqubits-12-linear-R-0.5-sto-6-g-ham--ham_JW",
+                "ES-nqubits-12-linear-R-0.6-sto-6-g-ham--ham_JW",
+                "ES-nqubits-12-linear-R-0.7-sto-6-g-ham--ham_JW",
+                "ES-nqubits-12-linear-R-0.8-sto-6-g-ham--ham_JW",
+                "ES-nqubits-12-linear-R-0.9-sto-6-g-ham--ham_JW",
+                "ES-nqubits-12-linear-R-1.0-sto-6-g-ham--ham_JW"
+            ],
+            [
+                "ES-nqubits-16-linear-R-0.5-sto-6-g-ham--ham_JW",
+                "ES-nqubits-16-linear-R-0.6-sto-6-g-ham--ham_JW",
+                "ES-nqubits-16-linear-R-0.7-sto-6-g-ham--ham_JW",
+                "ES-nqubits-16-linear-R-0.8-sto-6-g-ham--ham_JW",
+                "ES-nqubits-16-linear-R-0.9-sto-6-g-ham--ham_JW",
+                "ES-nqubits-16-linear-R-1.0-sto-6-g-ham--ham_JW"
+            ]
+        ],
+        "model_params": {},
+        "method_params": {
+            "dmrg": {
+                "nsweeps": 24,
+                "maxdims": "32,64,128,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256",
+                "cutoff": 1e-13,
+                "seed": 1234,
+                "initial_state": "random",
+                "initial_linkdim": 32,
+                "noise": "1e-5,1e-6,1e-7,1e-8,1e-9,1e-10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+                "mpo_cutoff": 1e-18,
+                "eigsolve_krylovdim": 0
+            }
+        }
+    },
+    "result": {
+        "dmrg": {
+            "0": {
+                "0": -1.0653851727714772,
+                "1": -1.1255968661617177,
+                "2": -1.1449790794982966,
+                "3": -1.1426131623046143,
+                "4": -1.1286542685216112,
+                "5": -1.1088730601684391
+            },
+            "1": {
+                "0": -1.6761701418554318,
+                "1": -1.981203107429085,
+                "2": -2.1257363196544334,
+                "3": -2.184511959094548,
+                "4": -2.195865858580702,
+                "5": -2.180966514679425
+            },
+            "2": {
+                "0": -2.2629939836812705,
+                "1": -2.8308508101402206,
+                "2": -3.107778370713237,
+                "3": -3.2304242689667553,
+                "4": -3.2678125593549123,
+                "5": -3.25760683224096
+            },
+            "3": {
+                "0": -2.841350103557142,
+                "1": -3.6796108251606423,
+                "2": -4.091379351565429,
+                "3": -4.278515746551911,
+                "4": -4.341879775072966,
+                "5": -4.336065652752073
+            }
+        }
+    }
+}

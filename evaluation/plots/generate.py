@@ -13,6 +13,7 @@ figure straight into ``evaluation/plots/``, named
     hubbard-E-vs-N_occ-hardware.pdf         (was hardware/hubbard/E-n_occ-hardware)
     hubbard-S-N_occ-vs-U.pdf                (was Magnetization/M-n_occ-vs-U)
     hubbard-psi2-Lx-vs-Ly-flake.pdf         (was psi2-hubbard-flake)
+    hydrogen-E-n_qubits-vs-R.pdf
     max3sat-n_viol-vs-alpha-hardware.pdf    (was hardware/max3sat/n_viol-ratio-hardware)
     tfim-E-Lx-vs-h.pdf                      (was tfim/E-Lx-vs-h)
 
@@ -107,6 +108,7 @@ SURFACE_ALPHA = 0.12
 SURFACE_LW = 0.9
 SURFACE_LINE_ALPHA = 0.95
 SURFACE_DOT = 20
+PICO = 1e-12
 AX3D_TICK_PAD = -1.0
 AX3D_NBINS = 4
 AX3D_STEPS = [1, 1.5, 2, 3, 4, 5, 6, 10]
@@ -748,7 +750,8 @@ def caption(fig, W, H, x, y, text):
 
 def stacked_figure(W, H, blocks, ax3d_rect, panel_rect, panel_pitch,
                    caption_dy, legend_handles, handler_map, relpath,
-                   labels3d, panel_labels, labelpad3d=None):
+                   labels3d, panel_labels, labelpad3d=None, err_unit="",
+                   panel_xticks=None, panel_yticks=None):
     fig = plt.figure(figsize=(W / 72, H / 72))
 
     def rect(x, y, w, h):
@@ -764,7 +767,8 @@ def stacked_figure(W, H, blocks, ax3d_rect, panel_rect, panel_pitch,
         ax.set_xlabel(labels3d[0], labelpad=pads[0])
         ax.set_ylabel(labels3d[1], labelpad=pads[1])
         ax.set_zlabel(labels3d[2], labelpad=pads[2])
-        caption(fig, W, H, ax3d_rect[0], base + caption_dy, title)
+        if title:
+            caption(fig, W, H, ax3d_rect[0], base + caption_dy, title)
 
         for row, (err, name) in enumerate(panels):
             bottom = base + panel_rect[1] + (len(panels) - 1 - row) * panel_pitch
@@ -780,7 +784,11 @@ def stacked_figure(W, H, blocks, ax3d_rect, panel_rect, panel_pitch,
             else:
                 axe.set_xticklabels([])
             axe.set_ylabel(panel_labels[1])
-            style_colorbar(cb, name + "\nabs. err.", LEGEND_SIZE,
+            if panel_xticks is not None:
+                axe.set_xticks(panel_xticks)
+            if panel_yticks is not None:
+                axe.set_yticks(panel_yticks)
+            style_colorbar(cb, name + "\nabs. err." + err_unit, LEGEND_SIZE,
                            ERR_TICK_SIZE, CBAR_ERR_NBINS)
 
     top_legend(fig, legend_handles, handler_map)
@@ -881,6 +889,29 @@ def fig_appendix_m_vs_u():
         "haldane-E-M-vs-U.pdf", ("$M$", "$U$", "$E$"), ("$M$", "$U$"))
 
 
+def fig_hydrogen():
+    analytic = load("hydrogen", "hydrogen-linear-E-nqubits-vs-R-analytic.json")
+    dmrg = load("hydrogen", "hydrogen-linear-E-nqubits-vs-R-dmrg.json")
+    n_qubits = np.array(analytic["x_values"], dtype=float)
+    R = np.array(analytic["y_values"], dtype=float)
+    A = grid(analytic, "analytic")
+    D = grid(dmrg, "dmrg")
+    blocks = [(36.0, "", n_qubits, R, A,
+               ((D, DMRG_COLOR, "s", DMRG_SIZE),),
+               ((np.abs(D - A) / PICO, "DMRG"),))]
+    handle, hmap = _analytic_handle()
+    stacked_figure(
+        490.176, 279.264, blocks,
+        (10.08, 0.0, 214.464, 214.464), (310.944, 51.232, 112.0, 112.0),
+        0.0, 0.0,
+        [handle, marker_handle(DMRG_COLOR, "s", "DMRG")], hmap,
+        "hydrogen-E-n_qubits-vs-R.pdf",
+        (r"$n_\mathrm{qubits}$", "$R$", "$E$"),
+        (r"$n_\mathrm{qubits}$", "$R$"),
+        err_unit=r" ($10^{-12}$)", labelpad3d=(3, 3, -4),
+        panel_xticks=n_qubits, panel_yticks=R[::2])
+
+
 def fig_boundary_conditions():
     import boundary_conditions
 
@@ -897,6 +928,7 @@ FIGURES = {
     "Magnetization": fig_magnetization,
     "hardware-hubbard": fig_hardware_hubbard,
     "hardware-max3sat": fig_hardware_max3sat,
+    "hydrogen": fig_hydrogen,
 }
 
 
