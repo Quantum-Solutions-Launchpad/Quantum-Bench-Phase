@@ -92,8 +92,8 @@ cmd+=(
     --x-range "${X_START}" "${X_END}" "${X_STEP}"
     --y-param "${Y_PARAM}"
     --y-range "${Y_START}" "${Y_END}" "${Y_STEP}"
-    --dmrg-nsweeps "${DMRG_NSWEEPS:-5}"
-    --dmrg-maxdims "${DMRG_MAXDIMS:-20,50,100,200,500}"
+    --dmrg-nsweeps "${DMRG_NSWEEPS:-4}"
+    --dmrg-maxdims "${DMRG_MAXDIMS:-20,50,100,200}"
     --dmrg-cutoff "${DMRG_CUTOFF:-1e-9}"
     --dmrg-seed "${DMRG_SEED:-1234}"
     --log-path "${OUT_LOG_DIR}/${PIPELINE}-E-${SWEEP_TAG}.json"
@@ -106,6 +106,12 @@ echo ""
 
 if "${cmd[@]}"; then
     echo "Completed at $(date)"
+    echo ""
+    echo "==================================================================="
+    echo "Output files:"
+    echo "  JSON: ${OUT_LOG_DIR}/${PIPELINE}-E-${SWEEP_TAG}.json"
+    echo "  PDF:  ${OUT_PLOT_DIR}/${PIPELINE}-E-${SWEEP_TAG}.pdf"
+    echo "==================================================================="
 else
     EXIT_STATUS=$?
     echo "ERROR: Computation failed with status ${EXIT_STATUS}"
