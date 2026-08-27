@@ -183,6 +183,10 @@ def _run_julia_dmrg(
     conserve_qns: bool,
     conserve_sz: bool,
     initial_state: str,
+    initial_linkdim: int,
+    noise: str,
+    mpo_cutoff: float,
+    eigsolve_krylovdim: int,
     script_path: str | None,
 ):
     script = str(Path(script_path) if script_path else _default_julia_script())
@@ -211,7 +215,15 @@ def _run_julia_dmrg(
         "true" if conserve_sz else "false",
         "--initial-state",
         initial_state,
+        "--initial-linkdim",
+        str(initial_linkdim),
     ]
+    if noise:
+        julia_args += ["--noise", noise]
+    if mpo_cutoff and mpo_cutoff > 0:
+        julia_args += ["--mpo-cutoff", str(mpo_cutoff)]
+    if eigsolve_krylovdim and eigsolve_krylovdim > 0:
+        julia_args += ["--eigsolve-krylovdim", str(eigsolve_krylovdim)]
     resolved_julia = shutil.which(julia)
     if resolved_julia is None and julia == "julia":
         resolved_julia = _nersc_julia_path()
@@ -246,9 +258,22 @@ class DMRGMethod(SimulationMethod):
         ParamSpec("conserve_sz", bool, True, "Conserve the spin-z sector", is_flag=True),
         ParamSpec(
             "initial_state", str, "packed",
-            "Product-state seed: packed or neel", choices=("packed", "neel"),
+            "Initial MPS: packed, neel, or random",
+            choices=("packed", "neel", "random"),
             metavar="NAME",
         ),
+        ParamSpec("initial_linkdim", int, 10,
+                  "Bond dimension of the random initial MPS", metavar="N"),
+        ParamSpec("noise", str, "",
+                  "Comma-separated DMRG noise term per sweep (empty disables)",
+                  metavar="LIST"),
+        ParamSpec("mpo_cutoff", float, 0.0,
+                  "SVD cutoff for MPO construction (0 keeps the ITensor default "
+                  "of 1e-15, which perturbs dense 16-qubit Hamiltonians at 1e-8)",
+                  metavar="F"),
+        ParamSpec("eigsolve_krylovdim", int, 0,
+                  "Krylov dimension of the local eigensolver (0 keeps the "
+                  "ITensor default of 3)", metavar="N"),
         ParamSpec("julia", str, "julia", "Julia executable", metavar="PATH"),
         ParamSpec("julia_module", str, "julia/1.11.7", "Env module to load if julia not on PATH", metavar="NAME"),
         ParamSpec("julia_project", str, None, "Julia project with ITensors/ITensorMPS/JSON", metavar="PATH"),
@@ -293,6 +318,10 @@ class DMRGMethod(SimulationMethod):
             conserve_qns=False,
             conserve_sz=False,
             initial_state=_pauli_initial_state(self.initial_state),
+            initial_linkdim=self.initial_linkdim,
+            noise=self.noise,
+            mpo_cutoff=self.mpo_cutoff,
+            eigsolve_krylovdim=self.eigsolve_krylovdim,
             script_path=self.script_path,
         )
 
@@ -328,6 +357,10 @@ class DMRGMethod(SimulationMethod):
             conserve_qns=self.conserve_qns,
             conserve_sz=self.conserve_sz,
             initial_state=self.initial_state,
+            initial_linkdim=self.initial_linkdim,
+            noise=self.noise,
+            mpo_cutoff=self.mpo_cutoff,
+            eigsolve_krylovdim=self.eigsolve_krylovdim,
             script_path=self.script_path,
         )
         with open(output_path) as f:
@@ -383,6 +416,10 @@ class DMRGMethod(SimulationMethod):
                 conserve_qns=False,
                 conserve_sz=False,
                 initial_state=_pauli_initial_state(self.initial_state),
+                initial_linkdim=self.initial_linkdim,
+                noise=self.noise,
+                mpo_cutoff=self.mpo_cutoff,
+                eigsolve_krylovdim=self.eigsolve_krylovdim,
                 script_path=self.script_path,
             )
 

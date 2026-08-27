@@ -47,4 +47,20 @@ run_cli([
     "--initial-state", "packed",
 ])
 
+run_cli([
+    "--hamiltonian", joinpath(HERE, "sample_hamiltonian_pauli.json"),
+    "--output", joinpath(tmp, "pauli_product.json"),
+    "--nsweeps", "2", "--maxdims", "10,20", "--seed", "1",
+    "--conserve-qns", "false", "--conserve-sz", "false",
+    "--initial-state", "neel",
+])
+run_cli([
+    "--hamiltonian", joinpath(HERE, "sample_hamiltonian_pauli.json"),
+    "--output", joinpath(tmp, "pauli_random_noise.json"),
+    "--nsweeps", "3", "--maxdims", "10,20,20", "--seed", "1",
+    "--conserve-qns", "false", "--conserve-sz", "false",
+    "--initial-state", "random", "--initial-linkdim", "8",
+    "--noise", "1e-5,1e-6,0",
+])
+
 println("precompile workload complete")

@@ -17,6 +17,10 @@ function parse_int_list(text::AbstractString)
     return [parse(Int, strip(part)) for part in split(text, ",") if !isempty(strip(part))]
 end
 
+function parse_float_list(text::AbstractString)
+    return [parse(Float64, strip(part)) for part in split(text, ",") if !isempty(strip(part))]
+end
+
 function parse_args(args::Vector{String})
     config = Dict{String, Any}(
         "hamiltonian" => nothing,
@@ -28,6 +32,10 @@ function parse_args(args::Vector{String})
         "conserve_qns" => true,
         "conserve_sz" => true,
         "initial_state" => "packed",
+        "initial_linkdim" => 10,
+        "noise" => Float64[],
+        "mpo_cutoff" => 0.0,
+        "eigsolve_krylovdim" => 0,
     )
     i = 1
     while i <= length(args)
@@ -59,6 +67,18 @@ function parse_args(args::Vector{String})
         elseif arg == "--initial-state"
             i += 1
             config["initial_state"] = lowercase(strip(args[i]))
+        elseif arg == "--initial-linkdim"
+            i += 1
+            config["initial_linkdim"] = parse(Int, args[i])
+        elseif arg == "--noise"
+            i += 1
+            config["noise"] = parse_float_list(args[i])
+        elseif arg == "--mpo-cutoff"
+            i += 1
+            config["mpo_cutoff"] = parse(Float64, args[i])
+        elseif arg == "--eigsolve-krylovdim"
+            i += 1
+            config["eigsolve_krylovdim"] = parse(Int, args[i])
         else
             error("Unknown argument: $arg")
         end
@@ -66,8 +86,8 @@ function parse_args(args::Vector{String})
     end
     isnothing(config["hamiltonian"]) && error("--hamiltonian is required")
     isnothing(config["output"]) && error("--output is required")
-    config["initial_state"] in ("packed", "neel") ||
-        error("--initial-state must be packed or neel")
+    config["initial_state"] in ("packed", "neel", "random") ||
+        error("--initial-state must be packed, neel or random")
     return config
 end
 
@@ -193,7 +213,9 @@ function build_initial_state(
         error("n_occ=$n_occ is outside the valid range 0:$(spin * n_sites)")
     rng = MersenneTwister(seed)
     if spin == 2
-        if strategy == "neel"
+        if strategy == "random"
+            return build_spinful_packed_state(n_sites, n_occ, rng)
+        elseif strategy == "neel"
             return build_spinful_neel_state(n_sites, n_occ, rng)
         elseif strategy == "packed"
             return build_spinful_packed_state(n_sites, n_occ, rng)
@@ -211,7 +233,7 @@ function build_initial_state(
 end
 
 function build_pauli_initial_state(n_sites::Int, strategy::AbstractString)
-    if strategy == "neel"
+    if strategy == "neel" || strategy == "random"
         return [isodd(i) ? "Up" : "Dn" for i in 1:n_sites]
     elseif strategy == "packed"
         return fill("Dn", n_sites)
@@ -271,7 +293,7 @@ function main()
         end
     end
 
-    H = MPO(os, sites)
+    H = config["mpo_cutoff"] > 0 ? MPO(os, sites; cutoff=config["mpo_cutoff"]) : MPO(os, sites)
 
     state = if operator_format == "qbp_pauli_op_v1"
         build_pauli_initial_state(n_sites, config["initial_state"])
@@ -285,16 +307,27 @@ function main()
         )
     end
 
-    psi0 = productMPS(sites, state)
+    psi0 = if config["initial_state"] == "random"
+        Random.seed!(config["seed"])
+        random_mps(sites, state; linkdims=config["initial_linkdim"])
+    else
+        productMPS(sites, state)
+    end
+
+    dmrg_kwargs = Dict{Symbol, Any}(
+        :nsweeps => config["nsweeps"],
+        :maxdim => config["maxdims"],
+        :cutoff => config["cutoff"],
+    )
+    if !isempty(config["noise"])
+        dmrg_kwargs[:noise] = config["noise"]
+    end
+    if config["eigsolve_krylovdim"] > 0
+        dmrg_kwargs[:eigsolve_krylovdim] = config["eigsolve_krylovdim"]
+    end
 
     dmrg_time_t0 = time_ns()
-    energy, psi = dmrg(
-        H,
-        psi0;
-        nsweeps=config["nsweeps"],
-        maxdim=config["maxdims"],
-        cutoff=config["cutoff"],
-    )
+    energy, psi = dmrg(H, psi0; dmrg_kwargs...)
     dmrg_elapsed_s = (time_ns() - dmrg_time_t0) / 1e9
     dmrg_result = (energy=energy + constant_shift, psi=psi)
 
@@ -332,6 +365,10 @@ function main()
         "cutoff" => config["cutoff"],
         "seed" => config["seed"],
         "initial_state" => config["initial_state"],
+        "initial_linkdim" => config["initial_linkdim"],
+        "noise" => config["noise"],
+        "mpo_cutoff" => config["mpo_cutoff"],
+        "eigsolve_krylovdim" => config["eigsolve_krylovdim"],
         "energy" => dmrg_result.energy,
         "observable" => get(spec, "observable", "E"),
         "profile" => Dict(

@@ -12,7 +12,9 @@ SYSIMAGE="${PROJECT}/dmrg_sysimage.so"
 
 JULIA="${JULIA:-/global/common/software/nersc9/julia/1.11.7/bin/julia}"
 [[ -x "${JULIA}" ]] || JULIA="$(command -v julia)"
-export JULIA_DEPOT_PATH="${JULIA_DEPOT_PATH:-/pscratch/sd/m/mbao202/julia_depot}"
+if [[ -z "${JULIA_DEPOT_PATH:-}" && -d /pscratch/sd/m/mbao202/julia_depot ]]; then
+    export JULIA_DEPOT_PATH=/pscratch/sd/m/mbao202/julia_depot
+fi
 export JULIA_NUM_THREADS="${JULIA_NUM_THREADS:-8}"
 
 echo "julia:     ${JULIA}"
