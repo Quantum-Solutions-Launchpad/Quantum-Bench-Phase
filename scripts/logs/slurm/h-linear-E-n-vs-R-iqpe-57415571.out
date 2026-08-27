@@ -1,0 +1,9 @@
+===================================================================
+Hydrogen linear ground-state energy n vs R - IQPE
+  sweep:       n [2 8 2] vs R [0.5 1.0 0.1]
+  hamlib:      /pscratch/sd/m/mbao202/H_linear_qbp.hdf5
+  methods:     iqpe
+  parallelism: distributed across 16 shards on multiple nodes
+  output:      new-data
+===================================================================
+ERROR: Computation failed with status 1

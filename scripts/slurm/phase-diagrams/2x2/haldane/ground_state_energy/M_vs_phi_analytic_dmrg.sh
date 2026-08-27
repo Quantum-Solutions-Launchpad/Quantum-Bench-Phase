@@ -48,10 +48,10 @@ cmd=(
     --method analytic dmrg
     --lattice 2 2
     --observable E
-    --x-param M
-    --x-range -6.0 6.0 1
-    --y-param phi
-    --y-range -3.141592653589793 3.141592653589793 0.78539816
+    --x-param phi
+    --x-range -3.141592653589793 3.141592653589793 0.78539816
+    --y-param M
+    --y-range -6.0 6.0 1
     --t1 1.0
     --t2 1.0
 )

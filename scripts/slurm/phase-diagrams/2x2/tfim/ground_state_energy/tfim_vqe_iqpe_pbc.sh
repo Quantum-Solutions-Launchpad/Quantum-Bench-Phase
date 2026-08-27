@@ -18,7 +18,7 @@
 #     sbatch /pscratch/sd/m/mbao202/NNL-P7/scripts/slurm/phase-diagrams/2x2/tfim/ground_state_energy/tfim_vqe_iqpe.sh
 #
 #   INTERACTIVE MODE (8 hours):
-#     salloc -C gpu -N 1 --ntasks-per-node=1 -c 32 -t 8:00:00 -A m5027 -q regular \
+#     salloc -C cpu -N 1 --ntasks-per-node=1 -c 32 -t 8:00:00 -A m5027 -q regular \
 #     bash /pscratch/sd/m/mbao202/NNL-P7/scripts/slurm/phase-diagrams/2x2/tfim/ground_state_energy/tfim_vqe_iqpe.sh
 
 set -euo pipefail

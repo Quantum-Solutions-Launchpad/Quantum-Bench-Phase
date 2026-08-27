@@ -76,7 +76,7 @@ cmd=(
     --y-range "${Y_START}" "${Y_END}" "${Y_STEP}"
     "${fixed_args[@]}"
     "${backend_args[@]}"
-    --vqe-layers "${VQE_LAYERS:-4}"
+    --vqe-layers "${VQE_LAYERS:-6}"
     --vqe-reps "${VQE_REPS:-5}"
     --vqe-iters "${VQE_ITERS:-400}"
 )
