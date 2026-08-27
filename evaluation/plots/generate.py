@@ -39,7 +39,7 @@ from matplotlib.image import BboxImage
 from matplotlib.legend_handler import HandlerBase
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox, TransformedBbox
-from matplotlib.ticker import MaxNLocator
+from matplotlib.ticker import FuncFormatter, MaxNLocator, MultipleLocator
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -495,24 +495,46 @@ def free_spin_correlation(n_occ, n_sites):
 
 
 def total_spin_transform(A, n_occ, n_sites):
-    """Total spin S recovered from S(0,0) = <S^2> / N^2.
+    """<S^2>, undoing the 1/N^2 the measured operator carries.
 
-    Plotted in place of S(0,0) itself because <S^2> is quantised on a cluster
-    this small, so the raw factor is a shell-structure checkerboard whose one
-    interaction-driven feature -- the Nagaoka jump just off half filling --
-    sits in two cells and is squashed flat by the colour scale.
+    This is the quantity the circuit actually estimates, up to that constant.
+    Solving <S^2> = S(S+1) for S would report a spin quantum number instead,
+    but that inverts an expectation value non-linearly, and the ansatz does not
+    conserve total spin, so its state has no single S to recover. <S^2> stays a
+    genuine expectation for any state and is still quantised, at S(S+1), for
+    the exact eigenstates.
     """
-    s_squared = np.clip(A, 0.0, None) * float(n_sites) ** 2
-    return 0.5 * (np.sqrt(1.0 + 4.0 * s_squared) - 1.0)
+    return np.clip(A, 0.0, None) * float(n_sites) ** 2
 
 
-def r_stag_transform(A, n_occ, n_sites):
+def s_stag_transform(A, n_occ, n_sites):
     """S(pi,pi) in units of its uncorrelated value: 1 is paramagnetic."""
     floor = free_spin_correlation(n_occ, n_sites)
     out = np.full_like(A, np.nan)
     ok = floor > 0
     out[ok] = A[ok] / floor[ok, None]
     return out
+
+
+MAG_X_STEP = 2
+MAG_Y_STEP = 20
+
+
+def _align_mag_axes(ax, xlim, ylim):
+    """Identical limits and ticks on every panel of a magnetization block.
+
+    The analytic sweep is on a finer U grid than the VQE one, so the two carry
+    different cell-edge extents and different automatic tick positions. Left
+    alone the panels cannot be read against each other, which is the only
+    reason they are side by side. N_occ is an electron count, so its ticks are
+    forced integer as well.
+    """
+    ax.set_xlim(*xlim)
+    ax.set_ylim(*ylim)
+    ax.xaxis.set_major_locator(MultipleLocator(MAG_X_STEP))
+    ax.yaxis.set_major_locator(MultipleLocator(MAG_Y_STEP))
+    for axis in (ax.xaxis, ax.yaxis):
+        axis.set_major_formatter(FuncFormatter(lambda v, _: f"{int(round(v))}"))
 
 
 def _magnetization_block(fig, rect, base, analytic_data, vqe_data, symbol,
@@ -533,30 +555,46 @@ def _magnetization_block(fig, rect, base, analytic_data, vqe_data, symbol,
     keep = U_a <= (U_v.max() if u_max is None else u_max)
     U_a, A = U_a[keep], A[:, keep]
 
+    # One scale across the pair: the question the panels answer is whether the
+    # VQE reaches the analytic value, which independent scales would hide.
+    vmin = float(min(np.nanmin(A), np.nanmin(V)))
+    vmax = float(max(np.nanmax(A), np.nanmax(V)))
+
+    xlim = (edges(n_occ)[0], edges(n_occ)[-1])
+    ylim = (min(edges(U_a)[0], edges(U_v)[0]),
+            max(edges(U_a)[-1], edges(U_v)[-1]))
+
     ax = fig.add_axes(rect(41.76, base, 177.984, 177.984))
     cax = fig.add_axes(rect(224.784, base, CBAR_WIDTH, 177.984))
-    style_heatmap_axes(ax, MAIN_LABEL_SIZE, MAIN_TICK_SIZE, HEATMAP_NBINS)
-    cbar = heatmap(ax, cax, n_occ, U_a, A, magma_dark(),
-                   np.nanmin(A), np.nanmax(A))
+    style_heatmap_axes(ax, MAIN_LABEL_SIZE, MAIN_TICK_SIZE)
+    ax.set_facecolor(magma_dark()(0.0))
+    cbar = heatmap(ax, cax, n_occ, U_v, V, magma_dark(), vmin, vmax)
+    _align_mag_axes(ax, xlim, ylim)
     ax.set_xlabel(r"$N_\mathrm{occ}$")
     ax.set_ylabel("$U$")
-    style_colorbar(cbar, "Analytic " + symbol, MAIN_TICK_SIZE, ERR_TICK_SIZE,
+    style_colorbar(cbar, "VQE " + symbol, MAIN_TICK_SIZE, ERR_TICK_SIZE,
                    CBAR_MAIN_NBINS)
 
-    panels = ((base + 93.312, V, magma_dark(), np.nanmin(V), np.nanmax(V), symbol),
-              (base, err, reds_dark(), 0.0, np.nanmax(err), "abs. err."))
-    for bottom, Z, cmap, vmin, vmax, name in panels:
+    # The analytic bar shares the VQE bar's range, so it also takes its tick
+    # count: same range and same locator is what makes the two read as one
+    # scale. The error bar is a different quantity and keeps its own.
+    panels = ((base + 93.312, U_a, A, magma_dark(), vmin, vmax,
+               "Analytic\n" + symbol, CBAR_MAIN_NBINS),
+              (base, U_v, err, reds_dark(), 0.0, np.nanmax(err),
+               "VQE\nabs. err.", CBAR_ERR_NBINS))
+    for bottom, U_p, Z, cmap, lo, hi, name, nbins in panels:
         axe = fig.add_axes(rect(329.184, bottom, 84.672, 84.672))
         caxe = fig.add_axes(rect(418.896, bottom, CBAR_WIDTH, 84.672))
-        style_heatmap_axes(axe, ERR_LABEL_SIZE, ERR_TICK_SIZE, ERR_NBINS)
-        cb = heatmap(axe, caxe, n_occ, U_v, Z, cmap, vmin, vmax)
+        style_heatmap_axes(axe, ERR_LABEL_SIZE, ERR_TICK_SIZE)
+        axe.set_facecolor(cmap(0.0))
+        cb = heatmap(axe, caxe, n_occ, U_p, Z, cmap, lo, hi)
+        _align_mag_axes(axe, xlim, ylim)
         if bottom == base:
             axe.set_xlabel(r"$N_\mathrm{occ}$")
         else:
             axe.set_xticklabels([])
         axe.set_ylabel("$U$")
-        style_colorbar(cb, "VQE\n" + name, LEGEND_SIZE, ERR_TICK_SIZE,
-                       CBAR_ERR_NBINS)
+        style_colorbar(cb, name, LEGEND_SIZE, ERR_TICK_SIZE, nbins)
 
 
 def fig_magnetization():
@@ -566,7 +604,7 @@ def fig_magnetization():
     def rect(x, y, w, h):
         return [x / W, y / H, w / W, h / H]
 
-    blocks = ((291.744, "S_stag", r"$R_\mathrm{stag}$", r_stag_transform),
+    blocks = ((291.744, "S_stag", r"$S_\mathrm{stag}$", s_stag_transform),
               (36.0, "S_total", r"$S_\mathrm{total}$", total_spin_transform))
     for base, key, symbol, transform in blocks:
         analytic_data = load(
