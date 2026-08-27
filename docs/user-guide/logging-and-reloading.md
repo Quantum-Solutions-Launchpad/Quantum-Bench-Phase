@@ -8,7 +8,7 @@ Since most runs will be expensive, QBP is built to compute a sweep once and relo
 
 ```{code-block} python
 qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC, Method.VQE, Method.DMRG],
     lattice=(2, 2),
     x_param="n_occ",
@@ -39,7 +39,7 @@ The log is a single JSON object—the run's complete state, not just the numbers
     "x_values": [0, 1, 2, 3, 4, 5, 6, 7, 8],
     "y_values": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
     "parameters": {
-        "model": "haldane",
+        "model": "haldane-honeycomb",
         "lattice": [2, 2],
         "model_params": {"t1": 1.0, "phi": 0.7853981633974483, "M": 0.0},
         "method_params": {

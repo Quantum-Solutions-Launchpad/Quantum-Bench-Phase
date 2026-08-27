@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-MODEL="haldane"
+MODEL="haldane-honeycomb"
 X_PARAM="kx"
 Y_PARAM="ky"
 

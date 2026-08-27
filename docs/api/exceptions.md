@@ -17,7 +17,7 @@ from qbp import Method
 
 try:
     result = qbp.run(
-        model="kane-mele",          # uses spin_channels, so no Bloch Hamiltonian
+        model="kane-mele-honeycomb",          # uses spin_channels, so no Bloch Hamiltonian
         method=[Method.ANALYTIC],
         x_param="k",
         x_range=(-3.14, 3.14, 0.05),

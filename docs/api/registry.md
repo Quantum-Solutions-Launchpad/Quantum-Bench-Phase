@@ -1,6 +1,6 @@
 # Registry
 
-QBP keeps a runtime registry mapping each model's `name` to its {py:class}`~qbp.Model`. {py:func}`~qbp.run` and the CLI look models up here by name, and these four functions add, fetch, and remove entries. The six built-in models are registered automatically at import; the functions below manage your own.
+QBP keeps a runtime registry mapping each model's `name` to its {py:class}`~qbp.Model`. {py:func}`~qbp.run` and the CLI look models up here by name, and these four functions add, fetch, and remove entries. The built-in models—six models across twelve lattice variants—are registered automatically at import, each under its `<model>-<lattice>` name; the functions below manage your own.
 
 ## Fetching a Model
 
@@ -11,7 +11,7 @@ QBP keeps a runtime registry mapping each model's `name` to its {py:class}`~qbp.
 ```{code-block} python
 import qbp
 
-haldane = qbp.get_model("haldane")
+haldane = qbp.get_model("haldane-honeycomb")
 print(haldane.display_name, haldane.n_dims)
 ```
 

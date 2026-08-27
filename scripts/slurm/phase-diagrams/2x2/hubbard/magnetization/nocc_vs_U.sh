@@ -68,7 +68,7 @@ echo "  plot format: $([[ "${HEATMAP}" == "1" ]] && echo heatmap || echo 3d)"
 echo "==================================================================="
 
 cmd=(
-    --model hubbard
+    --model hubbard-honeycomb
     --method analytic vqe dmrg
     --lattice 2 2
     --observable "${OBSERVABLE}"

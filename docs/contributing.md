@@ -10,7 +10,7 @@ The library lives under `qbp/`, with one concern per module (all private, re-exp
 | --- | --- |
 | `qbp/_model.py` | The `Model` and `Observable` classes. |
 | `qbp/_yaml_model.py` | The declarative YAML schema and `build_tight_binding_model`. |
-| `qbp/models/*.yaml` | The six built-in models. |
+| `qbp/models/*.yaml` | The built-in models: one YAML per model and lattice, named `<model>-<lattice>.yaml`. |
 | `qbp/_method.py` | The `Method` enum and the `SimulationMethod` framework. |
 | `qbp/_analytic.py`, `_vqe.py`, `_iqpe.py`, `_dmrg.py` | The four built-in methods, one per module. |
 | `qbp/_investigation.py` | The `Investigation` framework; concrete studies live alongside (e.g. `_semenoff_mass.py`). |
@@ -42,7 +42,7 @@ Docstrings use the [numpydoc](https://numpydoc.readthedocs.io/) convention (rend
 
 ## Adding a Built-In Model
 
-The fastest route is a declarative [YAML model](models/custom-yaml.md): drop a spec into `qbp/models/`, and it is discovered and registered automatically at import under its `name`. To contribute one, add the `.yaml` file there and the built-in list in `qbp/_registry.py`. For a Hamiltonian that isn't a sum of standard hopping/onsite/density–density terms, define it in Python instead (see [Defining a Model in Python](models/custom-python.md)). Either way, add a page under `docs/models/` documenting it.
+The fastest route is a declarative [YAML model](models/custom-yaml.md): drop a spec into `qbp/models/`, and it is discovered and registered automatically at import under its `name`. A new lattice for an existing model is the same job—copy the closest existing variant, change `lattice_vectors`, `sublattice_positions`, and the hopping `offsets`, and give it the name `<model>-<lattice>`. To contribute one, add the `.yaml` file there and the built-in list in `qbp/_registry.py`. For a Hamiltonian that isn't a sum of standard hopping/onsite/density–density terms, define it in Python instead (see [Defining a Model in Python](models/custom-python.md)). Either way, add a page under `docs/models/` documenting it.
 
 ## Adding an Observable
 

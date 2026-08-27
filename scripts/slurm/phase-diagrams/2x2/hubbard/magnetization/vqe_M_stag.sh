@@ -49,7 +49,7 @@ echo "  parallelism: distributed across ${SHARDS} shards on multiple nodes"
 echo "==================================================================="
 
 cmd=(
-    --model hubbard
+    --model hubbard-honeycomb
     --method vqe
     --lattice 2 2
     --observable "${OBSERVABLE}"

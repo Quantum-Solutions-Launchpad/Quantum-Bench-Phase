@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-MODEL="hubbard"
+MODEL="hubbard-honeycomb"
 LATTICE=(2 2)
 X_PARAM="n_occ"
 Y_PARAM="U"

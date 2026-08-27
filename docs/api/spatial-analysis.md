@@ -18,7 +18,7 @@ Under open boundary conditions, QBP works directly with the real-space site basi
 ```{code-block} python
 import qbp
 
-model = qbp.get_model("haldane")
+model = qbp.get_model("haldane-honeycomb")
 xy = qbp.real_space_positions(model, (6, 6))   # (n_sites, 2) coordinates
 ```
 

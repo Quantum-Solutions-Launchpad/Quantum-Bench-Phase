@@ -14,7 +14,7 @@ import os
 import qbp
 from qbp import Method
 
-MODEL = "hubbard"
+MODEL = "hubbard-honeycomb"
 LATTICE = (1, 2)
 X_PARAM = "n_occ"
 Y_PARAM = "U"

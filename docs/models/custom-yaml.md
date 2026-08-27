@@ -1,6 +1,6 @@
 # Defining a Model in YAML
 
-Most tight-binding models are a sum of standard hopping, onsite, and interaction terms, and for those the fastest route is a declarative YAML file. All six [built-in models](catalog.md) are defined this way under `qbp/models/`, and you can add your own by writing the same schema and registering it:
+Most tight-binding models are a sum of standard hopping, onsite, and interaction terms, and for those the fastest route is a declarative YAML file. All [built-in models](catalog.md) are defined this way under `qbp/models/`—one file per model and lattice—and you can add your own by writing the same schema and registering it:
 
 ```{code-block} python
 import qbp
@@ -105,6 +105,33 @@ A density–density term adds a two-body interaction (and makes the model intera
   coefficient: "U"
 ```
 
+## Lattice Geometry
+
+The lattice a model lives on is not a separate setting—it is `sites_per_cell`, `sublattices`, `lattice_vectors`, `sublattice_positions`, and the hopping `offsets` taken together. That is why the [built-in models](catalog.md) ship one YAML per model *and* lattice: `haldane-honeycomb.yaml` and `haldane-square.yaml` have identical parameters, terms, ansatz, and optimizer blocks, and differ only in the geometry.
+
+The three built-in 2D geometries, with the nearest-neighbor offsets that go with them:
+
+```{code-block} yaml
+# honeycomb: 2 sites per cell, 3 nearest neighbors
+lattice_vectors: [[-0.86602540378443865, -1.5], [0.86602540378443865, -1.5]]
+sublattice_positions: {A: [0, 0], B: [0, -1]}
+# nearest-neighbor A -> B offsets: [[0, 0], [-1, 0], [0, -1]]
+
+# square: 2 sites per cell (the two checkerboard sublattices), 4 nearest neighbors
+lattice_vectors: [[1, 0], [0, 1]]
+sublattice_positions: {A: [0, 0], B: [0.5, 0.5]}
+# nearest-neighbor A -> B offsets: [[0, 0], [-1, 0], [0, -1], [-1, -1]]
+
+# triangular: 1 site per cell, 6 nearest neighbors
+lattice_vectors: [[1, 0], [0.5, 0.86602540378443865]]
+sublattice_positions: {A: [0, 0]}
+# nearest-neighbor A -> A offsets: [[1, 0], [0, 1], [1, -1]], with hermitian_partner
+```
+
+Each list gives half of the bonds; `hermitian_partner: true` supplies the reverse direction. Offsets are always in *cell* coordinates, so `lattice=(Lx, Ly)` counts cells and the site count is `Lx * Ly * sites_per_cell`.
+
+`lattice_vectors` and `sublattice_positions` are optional and affect only momentum space: with them, the Bloch phase of a bond is $e^{i\mathbf{k}\cdot\mathbf{d}}$ with $\mathbf{d}$ the true Cartesian displacement; without them, the phase uses the raw cell offset. The real-space Hamiltonian is defined entirely by `offsets`.
+
 ## Runtime References
 
 Optimizer, mapper, and ansatz `kwargs` may reference values that are only known at run time using an `@<name>` string. QBP substitutes the live value when it builds the object:
@@ -128,7 +155,7 @@ The available runtime names depend on the section: the optimizer sees `max_iters
 
 ## Band Structure
 
-If a model has no `spin_channels` on any term, QBP automatically derives a Bloch Hamiltonian from the term list, so band-structure runs work out of the box (this is why `haldane` supports band structure but `kane-mele`, which uses `spin_channels`, does not). Supplying `lattice_vectors` and `sublattice_positions` makes those Bloch phases geometrically correct. To override the automatic derivation, give an explicit `bloch_hamiltonian` block with a `shape` of `[sites_per_cell, sites_per_cell]`, optional `let` intermediates, and `entries` keyed by `"row,col"` expressions in the momentum names (`k`, or `kx`/`ky`/`kz`).
+If a model has no `spin_channels` on any term, QBP automatically derives a Bloch Hamiltonian from the term list, so band-structure runs work out of the box (this is why `haldane-honeycomb` supports band structure but `kane-mele-honeycomb`, which uses `spin_channels`, does not). Supplying `lattice_vectors` and `sublattice_positions` makes those Bloch phases geometrically correct. To override the automatic derivation, give an explicit `bloch_hamiltonian` block with a `shape` of `[sites_per_cell, sites_per_cell]`, optional `let` intermediates, and `entries` keyed by `"row,col"` expressions in the momentum names (`k`, or `kx`/`ky`/`kz`).
 
 ## Annotated Example: `ssh.yaml`
 

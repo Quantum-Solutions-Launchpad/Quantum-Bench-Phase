@@ -1,6 +1,6 @@
 # Haldane–Hubbard
 
-The **Haldane–Hubbard model** combines the topological band structure of the [Haldane model](haldane.md) with the onsite interaction of the [Hubbard model](hubbard.md). On the honeycomb lattice it keeps the staggered mass $M$ and the complex next-nearest-neighbor hopping $t_2 e^{\pm i\phi}$ that break time-reversal symmetry, and adds a spin and an onsite Coulomb repulsion $U$:
+The **Haldane–Hubbard model** combines the topological band structure of the [Haldane model](haldane.md) with the onsite interaction of the [Hubbard model](hubbard.md). It keeps the staggered mass $M$ and the complex hopping $e^{\pm i\phi}$ that break time-reversal symmetry, and adds a spin and an onsite Coulomb repulsion $U$:
 
 $$
 H = -t_1 \sum_{\langle i,j\rangle,\sigma} c_{i,\sigma}^\dagger c_{j,\sigma}
@@ -11,23 +11,32 @@ $$
 
 The interplay of topology and interactions makes it a richer target than either parent: the interaction $U$ competes with the topological gap set by $t_2$ and $\phi$, and can drive magnetic order on top of the underlying band topology. Like the Hubbard model, it is genuinely interacting, so its ground-state energy requires the full many-body Hamiltonian.
 
+## Lattices
+
+| Registry name | Lattice | Geometry |
+| --- | --- | --- |
+| `haldane-hubbard-honeycomb` | honeycomb | Haldane flux on the next-nearest-neighbor hop, three nearest neighbors per site. |
+| `haldane-hubbard-square`    | square (checkerboard) | Staggered flux on the nearest-neighbor hop, real next-nearest-neighbor $t_2$ along $x$ on $A$ and $y$ on $B$; four nearest neighbors per site. |
+
+The non-interacting part of each is exactly the corresponding [Haldane](haldane.md) variant, so the topological region is $\lvert M\rvert < 3\sqrt{3}\,t_2\lvert\sin\phi\rvert$ on the honeycomb lattice and $\lvert M\rvert < 2t_2$ on the square lattice; the $U$ term is identical on both. The square lattice has one more bond per site, so at fixed $U/t_1$ it sits further toward the itinerant side than the honeycomb lattice does. There is no triangular variant: the staggered mass and the bond chirality both need a two-sublattice cell.
+
 ## Parameters
 
 | Parameter | Symbol | Meaning |
 | --- | --- | --- |
-| `t1`  | $t_1$  | Nearest-neighbor hopping ($A \leftrightarrow B$) |
-| `t2`  | $t_2$  | Next-nearest-neighbor hopping magnitude ($A \to A$, $B \to B$) |
-| `phi` | $\phi$ | Haldane flux phase on the next-nearest-neighbor hop |
+| `t1`  | $t_1$  | Nearest-neighbor hopping ($A \leftrightarrow B$); carries $e^{\pm i\phi}$ on the square lattice |
+| `t2`  | $t_2$  | Next-nearest-neighbor hopping magnitude ($A \to A$, $B \to B$); carries $e^{i\nu_{ij}\phi}$ on the honeycomb lattice |
+| `phi` | $\phi$ | Haldane flux phase |
 | `M`   | $M$    | Staggered sublattice mass ($+M$ on $A$, $-M$ on $B$) |
 | `U`   | $U$    | Onsite Coulomb repulsion (double-occupancy penalty) |
 
 ## Typical Sweep
 
-As with the Hubbard model, the interesting axes are interaction versus filling. The canonical sweep is $N_\text{occ}$ against $U$ at fixed hopping, flux, and mass, tracking the onset of magnetic order (read off the staggered magnetization `M_stag` or total magnetization `M_total`) as the repulsion grows. Sweeping $t_2$ or $\phi$ against $U$ instead probes how interactions reshape the topological gap.
+As with the Hubbard model, the interesting axes are interaction versus filling. The canonical sweep is $N_\text{occ}$ against $U$ at fixed hopping, flux, and mass, tracking the onset of magnetic order (read off the staggered spin structure factor `S_stag` or its total counterpart `S_total`) as the repulsion grows. Sweeping $t_2$ or $\phi$ against $U$ instead probes how interactions reshape the topological gap.
 
 ## Example
 
-The following sweeps the filling `n_occ` against $U$ on a $2\times 2$ lattice at a fixed topological point ($t_2 = 0.2$, $\phi = \pi/4$, $M = 0.1$) and reads off the ground-state energy, giving the interacting energy landscape across filling and interaction strength. The underlying specification lives in `qbp/models/haldane_hubbard.yaml`.
+The following sweeps the filling `n_occ` against $U$ on a $2\times 2$ lattice at a fixed topological point ($t_2 = 0.2$, $\phi = \pi/4$, $M = 0.1$) and reads off the ground-state energy, giving the interacting energy landscape across filling and interaction strength. The underlying specification lives in `qbp/models/haldane-hubbard-honeycomb.yaml`; swapping in `"haldane-hubbard-square"` runs the same sweep on the square lattice.
 
 ```{jupyter-execute}
 :hide-code:
@@ -70,7 +79,7 @@ import qbp
 from qbp import Method
 
 result = qbp.run(
-    model="haldane-hubbard",
+    model="haldane-hubbard-honeycomb",
     method=[Method.ANALYTIC],
     lattice=(2, 2),
     x_param="n_occ",
@@ -80,7 +89,7 @@ result = qbp.run(
 )
 ```
 
-The energy dips as the lower band fills toward half-filling and rises with $U$ as double occupancy is penalized. Swap `observable="M_stag"` (or `"M_total"`) to read the magnetization instead, or sweep $t_2$ or $\phi$ against $U$ to probe how interactions reshape the topological gap.
+The energy dips as the lower band fills toward half-filling and rises with $U$ as double occupancy is penalized. Swap `observable="S_stag"` (or `"S_total"`) to read the spin structure factor instead, or sweep $t_2$ or $\phi$ against $U$ to probe how interactions reshape the topological gap.
 
 ```{note}
 Analytic runs on an interacting model perform full many-body exact diagonalization, whose cost grows *exponentially* with the number of sites, so even the $2\times 2$ lattice above is already a sizeable computation. To push the magnetic phase diagram to larger lattices, drive the same sweep with simulation (`Method.VQE`, `Method.IQPE`, `Method.DMRG`; see [Performing Simulation](../user-guide/performing-simulation.md)).

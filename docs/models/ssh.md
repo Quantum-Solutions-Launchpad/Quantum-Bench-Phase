@@ -10,6 +10,14 @@ $$
 
 The ratio of the two hoppings drives a topological phase transition: the chain is trivial when $t_1 > t_2$ and topological when $t_2 > t_1$, with the bulk gap closing exactly on the line $|t_2/t_1| = 1$. It is the simplest model in the catalog and a natural first stop for learning the [`qbp.run`](../api/runners.md) workflow.
 
+## Lattices
+
+| Registry name | Lattice | Geometry |
+| --- | --- | --- |
+| `ssh` | chain | Two sites per cell, staggered intra-/inter-cell bonds |
+
+SSH is the one built-in model with a single lattice: it is one-dimensional by construction, so unlike the [2D models](catalog.md) it carries no lattice suffix in its registry name.
+
 ## Parameters
 
 | Parameter | Symbol | Meaning |

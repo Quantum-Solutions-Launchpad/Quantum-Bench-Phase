@@ -70,7 +70,7 @@ echo "==================================================================="
 
 # Build command
 cmd=(
-    --model haldane
+    --model haldane-honeycomb
     --method dmrg
     --observable E
     --heatmap

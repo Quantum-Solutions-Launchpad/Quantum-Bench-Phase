@@ -1,0 +1,42 @@
+name: hubbard-square
+display_name: "Hubbard (square)"
+spin: 2
+n_dims: 2
+lattice_shape: [Lx, Ly]
+sites_per_cell: 2
+sublattices: [A, B]
+lattice_vectors: [[1, 0], [0, 1]]
+sublattice_positions:
+  A: [0, 0]
+  B: [0.5, 0.5]
+parameters:
+  t: {label: "t"}
+  U: {label: "U"}
+
+terms:
+  - kind: hopping
+    from: A
+    to: B
+    offsets: [[0, 0], [-1, 0], [0, -1], [-1, -1]]
+    coefficient: "-t"
+    hermitian_partner: true
+
+  - kind: density_density
+    coefficient: "U"
+
+optimizer:
+  type: SPSA
+  kwargs:
+    maxiter: "@max_iters"
+
+mapper:
+  type: JordanWignerMapper
+  kwargs: {}
+
+ansatz:
+  type: excitation_preserving
+  kwargs:
+    mode: fsim
+    entanglement: linear
+    reps: "@n_layers"
+  initial_state_prefix: neel

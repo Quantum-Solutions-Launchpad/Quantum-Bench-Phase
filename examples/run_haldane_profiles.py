@@ -5,7 +5,7 @@ import qbp
 from qbp import Method, SemenoffMass
 
 
-MODEL = "haldane"
+MODEL = "haldane-honeycomb"
 PARENT_LATTICE = (18, 18)
 
 _HERE = os.path.dirname(os.path.abspath(__file__))

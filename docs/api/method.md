@@ -16,7 +16,7 @@ import qbp
 from qbp import Method
 
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC, Method.VQE, Method.IQPE],
     lattice=(2, 2),
     x_param="n_occ",

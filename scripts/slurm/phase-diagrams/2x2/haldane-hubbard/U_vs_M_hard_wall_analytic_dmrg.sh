@@ -49,7 +49,7 @@ echo "==================================================================="
 # Build command using helper functions
 cmd=(
     qbp run
-    --model haldane-hubbard
+    --model haldane-hubbard-honeycomb
     --method analytic dmrg
     --lattice 2 2
     --observable E

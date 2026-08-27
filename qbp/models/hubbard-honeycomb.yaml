@@ -1,5 +1,5 @@
-name: hubbard
-display_name: Hubbard
+name: hubbard-honeycomb
+display_name: "Hubbard (honeycomb)"
 spin: 2
 n_dims: 2
 lattice_shape: [Lx, Ly]

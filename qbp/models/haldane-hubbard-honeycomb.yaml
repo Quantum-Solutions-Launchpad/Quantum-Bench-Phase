@@ -1,0 +1,62 @@
+name: haldane-hubbard-honeycomb
+display_name: "Haldane–Hubbard (honeycomb)"
+spin: 2
+n_dims: 2
+lattice_shape: [Lx, Ly]
+sites_per_cell: 2
+sublattices: [A, B]
+parameters:
+  t1:  {label: "t_1"}
+  U:   {label: "U"}
+  t2:  {label: "t_2"}
+  phi: {label: "\\phi"}
+  M:   {label: "M"}
+
+terms:
+  - kind: onsite
+    sublattice: A
+    coefficient: "+M"
+  - kind: onsite
+    sublattice: B
+    coefficient: "-M"
+
+  - kind: hopping
+    from: A
+    to: B
+    offsets: [[0, 0], [-1, 0], [0, -1]]
+    coefficient: "-t1"
+    hermitian_partner: true
+
+  - kind: hopping
+    from: A
+    to: A
+    offsets: [[1, 0], [-1, 1], [0, -1]]
+    coefficient: "-t2 * exp(1j*phi)"
+    hermitian_partner: true
+
+  - kind: hopping
+    from: B
+    to: B
+    offsets: [[-1, 0], [1, -1], [0, 1]]
+    coefficient: "-t2 * exp(1j*phi)"
+    hermitian_partner: true
+
+  - kind: density_density
+    coefficient: "U"
+
+optimizer:
+  type: SPSA
+  kwargs:
+    maxiter: "@max_iters"
+
+mapper:
+  type: JordanWignerMapper
+  kwargs: {}
+
+ansatz:
+  type: excitation_preserving
+  kwargs:
+    mode: fsim
+    entanglement: linear
+    reps: "@n_layers"
+  initial_state_prefix: hartree_fock

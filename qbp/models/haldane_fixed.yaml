@@ -1,5 +1,5 @@
-name: haldane
-display_name: Haldane
+name: haldane-fixed
+display_name: "Haldane (honeycomb)"
 spin: 1
 n_dims: 2
 lattice_shape: [Lx, Ly]
@@ -44,7 +44,7 @@ terms:
     from: B
     to: B
     offsets: [[-1, 0], [1, -1], [0, 1]]
-    coefficient: "-t2 * exp(-1j*phi)"
+    coefficient: "-t2 * exp(1j*phi)"
     hermitian_partner: true
 
 optimizer:

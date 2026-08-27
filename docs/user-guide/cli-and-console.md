@@ -7,7 +7,7 @@ Everything you can do with the Python API you can also do from the command line.
 `qbp run` is the CLI face of `qbp.run`. The Python call from [Performing Simulation](performing-simulation.md) translates directly:
 
 ```{code-block} console
-$ qbp run --model haldane --method analytic vqe dmrg \
+$ qbp run --model haldane-honeycomb --method analytic vqe dmrg \
     --lattice 2 2 \
     --x-param n_occ \
     --y-param t2 --y-range 0.0 1.0 0.1 \
@@ -21,7 +21,7 @@ The mapping is mechanical:
 - **`--model`** and **`--method`** name the model and one or more methods, exactly as in Python.
 - **`--lattice`** takes one integer per dimension; omit it for a band-structure run.
 - **`--x-param` / `--x-range`** and **`--y-param` / `--y-range`** set the sweep axes. A range is `MIN MAX STEP` (the step may be dropped only on the `--qubit-operator` path).
-- **Model parameters get their own flags.** Because each model declares its own parameters, `qbp run --model haldane` grows `--t1`, `--t2`, `--phi`, and `--M` flags on the fly. Every parameter that isn't a sweep axis must be given a value.
+- **Model parameters get their own flags.** Because each model declares its own parameters, `qbp run --model haldane-honeycomb` grows `--t1`, `--t2`, `--phi`, and `--M` flags on the fly. Every parameter that isn't a sweep axis must be given a value.
 - **Method parameters are prefixed by method.** `--vqe-iters`, `--vqe-layers`, `--vqe-reps`, `--iqpe-time`, `--iqpe-trot`, `--iqpe-iters`, and so on—one flag per entry you'd put in `method_params`.
 - **`--observable`**, **`--heatmap`**, **`--backend`**, **`--log-path`**, and **`--plot-path`** carry the same meaning as their keyword counterparts. Add `--backend FakeSherbrooke` for local noise, or a device name for hardware (see [Incorporating Quantum Hardware](incorporating-quantum-hardware.md)).
 
@@ -44,7 +44,7 @@ Three commands cover the model registry:
 
 ```{code-block} console
 $ qbp list models                        # every registered model
-$ qbp list observables --model haldane    # observables a model exposes
+$ qbp list observables --model haldane-honeycomb    # observables a model exposes
 $ qbp register --from my-model.yaml       # register a model from a YAML spec
 $ qbp remove my-model                     # permanently remove a registered model
 ```

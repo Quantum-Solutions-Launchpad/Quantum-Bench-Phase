@@ -70,7 +70,7 @@ echo "  output:      new-data"
 echo "==================================================================="
 
 cmd=(
-    --model haldane
+    --model haldane-honeycomb
     --method iqpe vqe
     --lattice 2 2
     --observable E

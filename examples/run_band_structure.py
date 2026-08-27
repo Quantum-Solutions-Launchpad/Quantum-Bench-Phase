@@ -3,7 +3,7 @@ import math
 import qbp
 from qbp import Method
 
-MODEL = "haldane"
+MODEL = "haldane-honeycomb"
 X_PARAM = "kx"
 Y_PARAM = "ky"
 STEP = math.pi / 50

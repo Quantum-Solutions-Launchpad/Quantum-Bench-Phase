@@ -83,7 +83,7 @@ class MitigationConfig:
     -------
 
         quaph.run(
-            "haldane",
+            "haldane-honeycomb",
             method=[Method.VQE, Method.IQPE],
             method_params={
                 "vqe": {

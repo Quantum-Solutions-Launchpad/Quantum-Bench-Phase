@@ -1,7 +1,7 @@
 import os
 import qbp
 
-MODEL   = "haldane"
+MODEL   = "haldane-honeycomb"
 LATTICE = (2, 2)
 X_PARAM = "n_occ"
 Y_PARAM = "t2"

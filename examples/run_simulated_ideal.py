@@ -3,7 +3,7 @@ import math
 import qbp
 from qbp import Method
 
-MODEL = "haldane-hubbard"
+MODEL = "haldane-hubbard-honeycomb"
 LATTICE = (2, 2)
 X_PARAM = "t2"
 Y_PARAM = "U"

@@ -5,7 +5,7 @@ import qbp
 from qbp import Method
 
 
-MODEL = "haldane"
+MODEL = "haldane-honeycomb"
 LATTICE = (3, 3)
 
 _HERE = os.path.dirname(os.path.abspath(__file__))

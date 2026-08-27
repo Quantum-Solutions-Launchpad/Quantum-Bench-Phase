@@ -5,7 +5,7 @@ import qbp
 from qbp import Method
 
 
-MODEL = "haldane"
+MODEL = "haldane-honeycomb"
 PARENT_LATTICE = (14, 14)
 RADIUS = 5.5
 

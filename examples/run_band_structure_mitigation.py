@@ -16,7 +16,7 @@ from qbp import Method
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel, ReadoutError
 
-MODEL = "haldane"
+MODEL = "haldane-honeycomb"
 X_PARAM = "kx"
 Y_PARAM = "ky"
 STEP = math.pi / 4 

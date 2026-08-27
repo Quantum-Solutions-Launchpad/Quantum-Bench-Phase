@@ -32,7 +32,7 @@ BACKEND = AerSimulator(noise_model=_decoherence_only_noise_model())
 MODEL_PARAMS = {"t1": 1.0, "phi": math.pi / 4, "M": 0.1}
 
 SHARED = dict(
-    model="haldane",
+    model="haldane-honeycomb",
     lattice=(2, 2),
     x_param="n_occ",
     x_range=(2, 6, 2),       # n_occ = 2, 4, 6

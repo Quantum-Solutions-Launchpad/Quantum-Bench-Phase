@@ -1,0 +1,86 @@
+name: kane-mele-lc-square
+display_name: "Kane–Mele Liu–Chen (square)"
+spin: 2
+n_dims: 2
+lattice_shape: [Lx, Ly]
+sites_per_cell: 2
+sublattices: [A, B]
+lattice_vectors: [[1, 0], [0, 1]]
+sublattice_positions:
+  A: [0, 0]
+  B: [0.5, 0.5]
+parameters:
+  t:         {label: "t"}
+  t2:        {label: "t_2"}
+  lambda_SO: {label: "\\lambda_{SO}"}
+  M:         {label: "M"}
+  phi:       {label: "\\phi"}
+
+terms:
+  - kind: onsite
+    sublattice: A
+    coefficient: "+M"
+  - kind: onsite
+    sublattice: B
+    coefficient: "-M"
+
+  - kind: hopping
+    from: A
+    to: B
+    offsets: [[0, 0], [-1, -1]]
+    coefficient: "-t + lambda_SO*exp(1j*phi)"
+    hermitian_partner: true
+    spin_channels: [up]
+  - kind: hopping
+    from: A
+    to: B
+    offsets: [[0, 0], [-1, -1]]
+    coefficient: "-t + lambda_SO*exp(-1j*phi)"
+    hermitian_partner: true
+    spin_channels: [down]
+
+  - kind: hopping
+    from: A
+    to: B
+    offsets: [[-1, 0], [0, -1]]
+    coefficient: "-t + lambda_SO*exp(-1j*phi)"
+    hermitian_partner: true
+    spin_channels: [up]
+  - kind: hopping
+    from: A
+    to: B
+    offsets: [[-1, 0], [0, -1]]
+    coefficient: "-t + lambda_SO*exp(1j*phi)"
+    hermitian_partner: true
+    spin_channels: [down]
+
+  - kind: hopping
+    from: A
+    to: A
+    offsets: [[1, 0]]
+    coefficient: "-t2"
+    hermitian_partner: true
+
+  - kind: hopping
+    from: B
+    to: B
+    offsets: [[0, 1]]
+    coefficient: "-t2"
+    hermitian_partner: true
+
+optimizer:
+  type: SPSA
+  kwargs:
+    maxiter: "@max_iters"
+
+mapper:
+  type: JordanWignerMapper
+  kwargs: {}
+
+ansatz:
+  type: excitation_preserving
+  kwargs:
+    mode: fsim
+    entanglement: linear
+    reps: "@n_layers"
+  initial_state_prefix: hartree_fock

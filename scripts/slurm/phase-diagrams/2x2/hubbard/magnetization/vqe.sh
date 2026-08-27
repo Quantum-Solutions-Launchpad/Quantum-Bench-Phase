@@ -46,7 +46,7 @@ echo "  method:      vqe"
 echo "==================================================================="
 
 cmd=(
-    --model hubbard
+    --model hubbard-honeycomb
     --method vqe
     --lattice 2 2
     --observable "${OBSERVABLE}"

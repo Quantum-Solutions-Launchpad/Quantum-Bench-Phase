@@ -62,7 +62,7 @@ import qbp
 from qbp import Method
 
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC, Method.VQE, Method.IQPE],
     x_param="kx",
     y_param="ky",
@@ -85,7 +85,7 @@ Swapping the fake backend for a device name sends the circuits to physical qubit
 
 ```{code-block} python
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC, Method.VQE, Method.IQPE],
     lattice=(2, 2),
     x_param="n_occ",
@@ -126,7 +126,7 @@ With that installed, point `backend` at one of the Resonance devices:
 
 ```{code-block} python
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC, Method.VQE, Method.IQPE],
     lattice=(2, 2),
     x_param="n_occ",

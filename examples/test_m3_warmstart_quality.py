@@ -20,7 +20,7 @@ def _readout_only(p_error=0.08):
 
 
 BACKEND = AerSimulator(noise_model=_readout_only())
-MODEL = get_model("haldane")
+MODEL = get_model("haldane-honeycomb")
 LATTICE = (2, 2)
 N_SITES, SPIN, N_OCC = 4, 2, 2
 MODEL_PARAMS = {"t1": 1.0, "phi": math.pi / 4, "M": 0.1, "t2": 0.2}

@@ -36,7 +36,7 @@ Every model inherits these six observables, so they work on the built-ins and on
 List what a given model exposes—including any correlated-model magnetization observables—from the command line:
 
 ```{code-block} console
-$ qbp list observables --model haldane
+$ qbp list observables --model haldane-honeycomb
 ```
 
 ## Writing a Custom Observable

@@ -66,7 +66,7 @@ echo "  output:      new-data"
 echo "==================================================================="
 
 cmd=(
-    --model haldane
+    --model haldane-honeycomb
     --method vqe
     --observable E
     --heatmap

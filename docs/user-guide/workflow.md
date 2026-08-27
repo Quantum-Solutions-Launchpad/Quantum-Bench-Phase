@@ -143,7 +143,7 @@ import qbp
 from qbp import Method
 
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     lattice=(3, 3),
     x_param="phi",
@@ -165,7 +165,7 @@ import qbp
 from qbp import Method
 
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     lattice=(3, 3),
     x_param="phi",
@@ -192,7 +192,7 @@ import qbp
 from qbp import Method
 
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC, Method.VQE],
     lattice=(2, 2),
     x_param="n_occ",
@@ -225,7 +225,7 @@ def gate_noise():
     return nm
 
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC, Method.VQE],
     lattice=(2, 2),
     x_param="n_occ",

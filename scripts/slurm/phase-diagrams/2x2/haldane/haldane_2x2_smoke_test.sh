@@ -61,7 +61,7 @@ echo "  parallelism: distributed across ${SHARDS} shards on single node"
 echo "==================================================================="
 
 cmd=(
-    --model haldane
+    --model haldane-honeycomb
     --method vqe iqpe
     --lattice 2 2
     --observable E

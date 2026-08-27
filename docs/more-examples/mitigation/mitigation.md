@@ -91,7 +91,7 @@ def gate_noise():
     return nm
 
 shared = dict(
-    model="haldane", lattice=(2, 2),
+    model="haldane-honeycomb", lattice=(2, 2),
     x_param="n_occ", x_range=(2, 6, 2),
     y_param="t2", y_range=(0.2, 0.8, 0.3),
     model_params={"t1": 1.0, "phi": math.pi / 4, "M": 0.1},

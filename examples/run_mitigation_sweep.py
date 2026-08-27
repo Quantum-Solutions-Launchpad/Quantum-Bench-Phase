@@ -22,7 +22,7 @@ from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
 
 warnings.filterwarnings("ignore")
 
-MODEL    = "haldane"
+MODEL    = "haldane-honeycomb"
 LATTICE  = (2, 2)
 X_PARAM  = "n_occ"
 Y_PARAM  = "t2"

@@ -20,6 +20,8 @@ QBP treats the Haldane model as an $m \times n$ honeycomb lattice with **periodi
 
 Because the Haldane model is non-interacting, its ground-state energies can be found exactly by diagonalizing the single-particle Hamiltonian, so it is efficiently solvable classically. This makes it an ideal ground-truth reference and a natural segue to harder problems—its interacting cousin, the Hubbard model below, and its finite-geometry variants under open boundaries.
 
+The honeycomb geometry described here is the one used throughout the paper, and it is registered as `haldane-honeycomb`. QBP also ships the same model on the square (checkerboard) lattice as `haldane-square`, where the flux rides the nearest-neighbor bond and the topological region becomes $|M| < 2t_2$; see the [model catalog](../models/catalog.md) for every model's lattices.
+
 ### Open Boundary Conditions and Quantum-Dot Geometries
 
 Beyond the PBC phase diagrams, QBP also supports finite quantum-dot geometries for all models with **open boundary conditions (OBCs)**. Open boundaries break translational symmetry, so crystal momentum is no longer a good quantum number and the Bloch decomposition is unavailable; instead QBP builds and diagonalizes the full $N_s \times N_s$ single-particle Hamiltonian in the real-space site basis for a flake of $N_s$ retained sites. Two configurations are used in the main text:
@@ -41,6 +43,8 @@ $$
 where $t$ is the nearest-neighbor hopping (analogous to the Haldane $t_1$) and $U$ is the onsite Coulomb repulsion.
 
 The Hubbard model's **magnetic phases** are of particular interest: varying $U$, $t$, and $N_\text{occ}$ moves the ground state between paramagnetic, ferromagnetic, and antiferromagnetic order. These are identified by the staggered magnetization $M_\text{stag} = M_A - M_B$ and the total magnetization $M_\text{tot} = M_A + M_B$—both zero in the paramagnetic phase, only $M_\text{stag}$ zero in the ferromagnetic phase, and only $M_\text{tot}$ zero in the antiferromagnetic phase.
+
+The lattice matters here as much as the parameters: the honeycomb and square lattices (`hubbard-honeycomb`, `hubbard-square`) are bipartite and order antiferromagnetically, while the triangular lattice (`hubbard-triangular`) is frustrated and hosts no Néel order at all.
 
 Crucially, the interaction term means the energy can no longer be obtained by reducing to a single-particle Hamiltonian. The full many-body Hamiltonian—exponential in the number of sites, and hence in the number of qubits—must be used instead. This exponential cost is exactly what makes the Hubbard model a compelling target for demonstrating quantum advantage.
 

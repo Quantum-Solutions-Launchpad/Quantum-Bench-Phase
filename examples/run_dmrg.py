@@ -10,7 +10,7 @@ from qbp import Method
 # available. Selecting Method.ANALYTIC alongside Method.DMRG overlays the exact
 # ground-state energy as the reference surface.
 
-MODEL = "haldane"
+MODEL = "haldane-honeycomb"
 LATTICE = (2, 2)
 X_PARAM = "n_occ"
 Y_PARAM = "t2"

@@ -28,7 +28,7 @@ import qbp
 from qbp import Method
 
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     lattice=(12, 12),
     boundary="open",

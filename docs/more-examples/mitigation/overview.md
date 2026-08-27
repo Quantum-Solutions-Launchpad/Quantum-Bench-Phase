@@ -85,7 +85,7 @@ def gate_noise():
     return nm
 
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     lattice=(2, 2),
     method=[Method.ANALYTIC, Method.VQE],
     x_param="n_occ", x_range=(2, 6, 2),

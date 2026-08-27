@@ -4,7 +4,7 @@ A **band structure** plots a model's single-particle energies as a function of c
 
 ## The Bloch Hamiltonian Requirement
 
-Band structure needs a Bloch Hamiltonian $H(\mathbf{k})$. For the [built-in models](../models/catalog.md), QBP derives one automatically from the term list—*unless* the model uses per-spin hopping (`spin_channels`), which breaks the simple momentum decomposition. That is why `haldane` supports band structure out of the box but `kane-mele` does not. For a [custom model](../models/custom-python.md), supply the `bloch_hamiltonian` callback (or the `bloch_hamiltonian` block in [YAML](../models/custom-yaml.md)). Requesting a momentum sweep on a model without one raises [`ModelCapabilityError`](../api/exceptions.md).
+Band structure needs a Bloch Hamiltonian $H(\mathbf{k})$. For the [built-in models](../models/catalog.md), QBP derives one automatically from the term list—*unless* the model uses per-spin hopping (`spin_channels`), which breaks the simple momentum decomposition. That is why `haldane-honeycomb` supports band structure out of the box but `kane-mele-honeycomb` does not. For a [custom model](../models/custom-python.md), supply the `bloch_hamiltonian` callback (or the `bloch_hamiltonian` block in [YAML](../models/custom-yaml.md)). Requesting a momentum sweep on a model without one raises [`ModelCapabilityError`](../api/exceptions.md).
 
 ```{jupyter-execute}
 :hide-code:
@@ -43,7 +43,7 @@ For a two-dimensional model, sweep both momentum components to map the bands ove
 
 ```{jupyter-execute}
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     x_param="kx",
     y_param="ky",
@@ -57,7 +57,7 @@ The two surfaces are the Haldane bands over the Brillouin zone; the minimum sepa
 
 ```{jupyter-execute}
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     x_param="kx",
     y_param="ky",

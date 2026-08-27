@@ -1,14 +1,17 @@
-name: haldane-hubbard
-display_name: "Haldane–Hubbard"
-spin: 2
+name: haldane-honeycomb
+display_name: "Haldane (honeycomb)"
+spin: 1
 n_dims: 2
 lattice_shape: [Lx, Ly]
 sites_per_cell: 2
 sublattices: [A, B]
+lattice_vectors: [[-0.86602540378443864676, -1.5], [0.86602540378443864676, -1.5]]
+sublattice_positions:
+  A: [0, 0]
+  B: [0, -1]
 parameters:
-  t1:  {label: "t_1"}
-  U:   {label: "U"}
-  t2:  {label: "t_2"}
+  t1: {label: "t_1"}
+  t2: {label: "t_2"}
   phi: {label: "\\phi"}
   M:   {label: "M"}
 
@@ -20,6 +23,7 @@ terms:
     sublattice: B
     coefficient: "-M"
 
+  # NN A→B at offsets (0,0), (-1,0), (0,-1); add hermitian partner.
   - kind: hopping
     from: A
     to: B
@@ -27,6 +31,7 @@ terms:
     coefficient: "-t1"
     hermitian_partner: true
 
+  # NNN A→A with phase +phi at offsets (+1,0), (-1,+1), (0,-1).
   - kind: hopping
     from: A
     to: A
@@ -34,15 +39,15 @@ terms:
     coefficient: "-t2 * exp(1j*phi)"
     hermitian_partner: true
 
+  # NNN B→B at the reversed offsets (-1,0), (+1,-1), (0,+1) with the same
+  # +phi coefficient, so a hop along a given vector sees -phi on B where it
+  # sees +phi on A. This relative sign is the Haldane mass.
   - kind: hopping
     from: B
     to: B
     offsets: [[-1, 0], [1, -1], [0, 1]]
-    coefficient: "-t2 * exp(-1j*phi)"
+    coefficient: "-t2 * exp(1j*phi)"
     hermitian_partner: true
-
-  - kind: density_density
-    coefficient: "U"
 
 optimizer:
   type: SPSA

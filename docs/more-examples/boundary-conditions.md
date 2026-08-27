@@ -51,7 +51,7 @@ import qbp
 from qbp import Method
 
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     lattice=(3, 3),
     boundary="open",
@@ -65,7 +65,7 @@ The same run from the command line:
 
 ```{code-block} shell
 qbp run \
-  --model haldane \
+  --model haldane-honeycomb \
   --method analytic \
   --lattice 3 3 \
   --boundary open \
@@ -98,7 +98,7 @@ import qbp
 from qbp import Method
 
 density = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
     boundary="open",
@@ -117,7 +117,7 @@ import qbp
 from qbp import Method
 
 edge_spectrum = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
     boundary="open",
@@ -131,7 +131,7 @@ The matching density CLI command is:
 
 ```{code-block} shell
 qbp run \
-  --model haldane \
+  --model haldane-honeycomb \
   --method analytic \
   --lattice 8 8 \
   --boundary open \
@@ -151,7 +151,7 @@ The matching edge-spectrum CLI command is:
 
 ```{code-block} shell
 qbp run \
-  --model haldane \
+  --model haldane-honeycomb \
   --method analytic \
   --lattice 8 8 \
   --boundary open \
@@ -194,7 +194,7 @@ import qbp
 from qbp import Method
 
 soft_density = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
     boundary="open",
@@ -218,7 +218,7 @@ import qbp
 from qbp import Method
 
 soft_edge_spectrum = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
     boundary="open",
@@ -237,7 +237,7 @@ The matching density CLI command is:
 
 ```{code-block} shell
 qbp run \
-  --model haldane \
+  --model haldane-honeycomb \
   --method analytic \
   --lattice 8 8 \
   --boundary open \
@@ -259,7 +259,7 @@ The matching edge-spectrum CLI command is:
 
 ```{code-block} shell
 qbp run \
-  --model haldane \
+  --model haldane-honeycomb \
   --method analytic \
   --lattice 8 8 \
   --boundary open \
@@ -296,7 +296,7 @@ import qbp
 from qbp import Method, SemenoffMass
 
 interface_density = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
     boundary="open",
@@ -321,7 +321,7 @@ import qbp
 from qbp import Method, SemenoffMass
 
 interface_edge_spectrum = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC],
     lattice=(8, 8),
     boundary="open",
@@ -341,7 +341,7 @@ The density CLI selects the same investigation by name:
 
 ```{code-block} shell
 qbp run \
-  --model haldane \
+  --model haldane-honeycomb \
   --method analytic \
   --lattice 8 8 \
   --boundary open \
@@ -366,7 +366,7 @@ The edge-spectrum CLI uses the same investigation parameters with
 
 ```{code-block} shell
 qbp run \
-  --model haldane \
+  --model haldane-honeycomb \
   --method analytic \
   --lattice 8 8 \
   --boundary open \
@@ -437,7 +437,7 @@ import qbp
 from qbp import Method
 
 result = qbp.run(
-    model="haldane",
+    model="haldane-honeycomb",
     method=[Method.ANALYTIC, Method.VQE],
     lattice=(2, 2),
     boundary="open",
@@ -455,7 +455,7 @@ CLI equivalent:
 
 ```{code-block} shell
 qbp run \
-  --model haldane \
+  --model haldane-honeycomb \
   --method analytic vqe \
   --lattice 2 2 \
   --boundary open \

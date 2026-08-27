@@ -58,7 +58,7 @@ echo "  parallelism: distributed across ${SHARDS} shards on multiple nodes"
 echo "==================================================================="
 
 cmd=(
-    --model hubbard
+    --model hubbard-honeycomb
     --method analytic
     --lattice 2 2
     --observable "${OBSERVABLE}"

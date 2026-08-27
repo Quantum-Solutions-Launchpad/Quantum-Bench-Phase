@@ -6,7 +6,7 @@
 # qbp/julia-dmrg/), so this only runs end-to-end where Julia is available.
 # Selecting `analytic` alongside `dmrg` overlays the exact energy as reference.
 
-MODEL="haldane"
+MODEL="haldane-honeycomb"
 LATTICE=(2 2)
 X_PARAM="n_occ"
 Y_PARAM="t2"

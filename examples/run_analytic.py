@@ -3,7 +3,7 @@ import math
 import qbp
 from qbp import Method
 
-MODEL = "haldane"
+MODEL = "haldane-honeycomb"
 LATTICE = (3, 3)
 X_PARAM = "n_occ"
 Y_PARAM = "t2"

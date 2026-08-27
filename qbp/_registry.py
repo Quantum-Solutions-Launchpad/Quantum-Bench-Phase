@@ -8,8 +8,12 @@ from qbp._model import Model
 from qbp._yaml_model import load_yaml_model
 
 _BUILTIN_NAMES = frozenset({
-    "haldane", "hubbard", "haldane-hubbard",
-    "ssh", "kane-mele", "kane-mele-lc"
+    "ssh",
+    "haldane-honeycomb", "haldane-square",
+    "kane-mele-honeycomb", "kane-mele-square",
+    "kane-mele-lc-honeycomb", "kane-mele-lc-square",
+    "hubbard-honeycomb", "hubbard-square", "hubbard-triangular",
+    "haldane-hubbard-honeycomb", "haldane-hubbard-square",
 })
 
 _MODELS: dict[str, Model] = {}
@@ -40,14 +44,15 @@ def _discover_models() -> None:
 def get_model(name: str) -> Model:
     """Fetch a registered :class:`Model` by name.
 
-    The six built-in models are registered automatically at import (their YAML
-    specs under ``qbp/models/`` are discovered on load); custom models appear
+    The built-in models are registered automatically at import (their YAML
+    specs under ``qbp/models/`` are discovered on load); each 2D model is
+    registered once per lattice, as ``<model>-<lattice>``. Custom models appear
     once you call :func:`register_model` or :func:`register_model_from_file`.
 
     Parameters
     ----------
     name : str
-        Registry key, e.g. ``"ssh"`` or ``"haldane"``.
+        Registry key, e.g. ``"ssh"`` or ``"haldane-honeycomb"``.
 
     Returns
     -------
@@ -136,7 +141,7 @@ def register_model_from_file(path: str | Path) -> Model:
 def remove_model(name: str) -> None:
     """Unregister a custom model and delete its YAML file if present.
 
-    The six built-in models are protected and cannot be removed. Removal drops
+    The built-in models are protected and cannot be removed. Removal drops
     the in-memory registration and deletes the persisted YAML (if any); it
     raises if the name is unknown, so a successful call confirms the model is
     gone.

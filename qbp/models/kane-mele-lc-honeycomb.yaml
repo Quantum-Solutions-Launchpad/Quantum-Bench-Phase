@@ -1,5 +1,5 @@
-name: kane-mele
-display_name: Kane–Mele
+name: kane-mele-lc-honeycomb
+display_name: "Kane–Mele Liu–Chen (honeycomb)"
 spin: 2
 n_dims: 2
 lattice_shape: [Lx, Ly]
@@ -13,10 +13,11 @@ parameters:
   t:         {label: "t"}
   lambda_SO: {label: "\\lambda_{SO}"}
   M:         {label: "M"}
+  phi:       {label: "\\phi"}
 
-# Kane–Mele on the honeycomb lattice. Sublattice mass M plus spin-dependent
-# next-nearest-neighbor hopping i λ_SO ν_ij σz. Z₂ TI ↔ trivial transition
-# at M = 3√3 λ_SO.
+# Kane–Mele with a generalized Haldane phase φ on the NNN hopping:
+# spin-up gets λ_SO e^{+iφ ν_ij}, spin-down gets the conjugate. Recovers the
+# standard Kane–Mele model at φ = π/2.
 terms:
   - kind: onsite
     sublattice: A
@@ -34,35 +35,36 @@ terms:
     hermitian_partner: true
 
   # NNN A→A with chirality +1 (offsets (+1,0), (-1,+1), (0,-1)):
-  #   spin-up gets +i λ, spin-down gets -i λ.
+  #   spin-up gets λ e^{+iφ}, spin-down gets λ e^{-iφ}.
   - kind: hopping
     from: A
     to: A
     offsets: [[1, 0], [-1, 1], [0, -1]]
-    coefficient: "+1j*lambda_SO"
+    coefficient: "lambda_SO*exp(1j*phi)"
     hermitian_partner: true
     spin_channels: [up]
   - kind: hopping
     from: A
     to: A
     offsets: [[1, 0], [-1, 1], [0, -1]]
-    coefficient: "-1j*lambda_SO"
+    coefficient: "lambda_SO*exp(-1j*phi)"
     hermitian_partner: true
     spin_channels: [down]
 
-  # NNN B→B with chirality −1 (offsets (-1,0), (+1,-1), (0,+1)): opposite signs.
+  # NNN B→B at the reversed offsets (-1,0), (+1,-1), (0,+1), keeping each
+  # spin's phase, so a hop along a given vector sees the opposite phase on B.
   - kind: hopping
     from: B
     to: B
     offsets: [[-1, 0], [1, -1], [0, 1]]
-    coefficient: "-1j*lambda_SO"
+    coefficient: "lambda_SO*exp(1j*phi)"
     hermitian_partner: true
     spin_channels: [up]
   - kind: hopping
     from: B
     to: B
     offsets: [[-1, 0], [1, -1], [0, 1]]
-    coefficient: "+1j*lambda_SO"
+    coefficient: "lambda_SO*exp(-1j*phi)"
     hermitian_partner: true
     spin_channels: [down]
 

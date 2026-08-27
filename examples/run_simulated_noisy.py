@@ -3,7 +3,7 @@ import qbp
 from qbp import Method
 from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
 
-MODEL = "hubbard"
+MODEL = "hubbard-honeycomb"
 LATTICE = (2, 2)
 X_PARAM = "n_occ"
 Y_PARAM = "U"

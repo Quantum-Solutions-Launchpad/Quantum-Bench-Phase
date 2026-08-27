@@ -36,7 +36,7 @@ result = qbp.run(
 
 The keyword arguments break down as follows:
 
-- **`model`.** A registered model name (`"ssh"`, `"haldane"`, `"hubbard"`, …) or a [`Model`](../api/model.md) instance. Run `qbp list models` to see what's available.
+- **`model`.** A registered model name (`"ssh"`, `"haldane-honeycomb"`, `"hubbard-triangular"`, …) or a [`Model`](../api/model.md) instance. Built-in 2D models are registered once per lattice, as `<model>-<lattice>`; see the [model catalog](../models/catalog.md). Run `qbp list models` to see what's available.
 - **`method`.** A [`Method`](../api/method.md) or list of them. For an analytic run this is `[Method.ANALYTIC]`; adding quantum methods overlays them on the same axes (see [Performing Simulation](performing-simulation.md)).
 - **`lattice`.** The lattice extents, one integer per spatial dimension. The SSH chain is one-dimensional, so `lattice=(8,)` is an eight-cell chain; a two-dimensional model like Haldane takes `lattice=(3, 3)`.
 - **`x_param` / `x_range`.** The horizontal sweep axis and its `(min, max, step)` range. Any model parameter, `n_occ` (filling), or a momentum axis is fair game.
@@ -112,5 +112,5 @@ The spectral gap collapses to zero along the diagonal $t_1 = t_2$, tracing the p
 By default QBP computes the ground-state energy `"E"`. Every built-in model also exposes a handful of other observables—the spectral gap `"gap"`, the charge gap `"charge_gap"`, the kinetic and interaction energies `"kinetic_energy"` / `"interaction_energy"`, and the density variance `"density_variance"`—and correlated models add magnetization observables on top. List what a given model supports with:
 
 ```{code-block} console
-$ qbp list observables --model haldane
+$ qbp list observables --model haldane-honeycomb
 ```

@@ -67,7 +67,7 @@ echo "  parallelism: distributed across ${SHARDS} shards on multiple nodes"
 echo "==================================================================="
 
 cmd=(
-    --model haldane-hubbard
+    --model haldane-hubbard-honeycomb
     --method dmrg analytic
     --lattice 2 2
     --observable E
