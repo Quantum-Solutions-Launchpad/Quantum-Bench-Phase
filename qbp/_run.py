@@ -360,7 +360,13 @@ def _plot_run_result(rr: RunResult, *, output_path, hide_plot, hide_legend):
             Z = rr.analytic_bands
         else:
             Z = rr.grids[m.value]
-        z_label = obs_label if m == Method.ANALYTIC else f"${get_method_class(m).LABEL}$"
+            if is_band and np.asarray(Z).ndim == 2:
+                Z = np.asarray(Z, dtype=float)[..., np.newaxis]
+        z_label = (
+            obs_label
+            if rr.observable != "E" or m == Method.ANALYTIC
+            else f"${get_method_class(m).LABEL}$"
+        )
         return plot_analytic(
             rr.x_values, rr.y_values, x_label, y_label if rr.y_param else z_label, Z,
             plot_format=plot_format, output_path=output_path, hide_plot=hide_plot,
@@ -573,9 +579,12 @@ def load_result(path: str) -> RunResult:
     analytic_bands = None
     for m in methods:
         block = data["result"][m]
-        if band_structure and m == "analytic":
-            analytic_bands = _bands_grid(block)
-            grids[m] = analytic_bands[..., 0]
+        probe = block["0"] if is_1d else block["0"]["0"]
+        if band_structure and isinstance(probe, list):
+            bands = _bands_grid(block)
+            if m == "analytic":
+                analytic_bands = bands
+            grids[m] = bands
         else:
             grids[m] = _scalar_grid(block)
 
@@ -1021,8 +1030,10 @@ def _run_model_methods(
 
     if heatmap and is_1d:
         raise ValueError("heatmap=True requires both x and y sweep axes; provide y_param/y_range.")
-    if heatmap and len(methods) != 1:
-        raise ValueError("heatmap=True requires exactly one simulation method.")
+    if heatmap and len(methods) != 1 and Method.ANALYTIC not in methods:
+        raise ValueError(
+            "multi-method heatmap=True requires the analytic method as the reference surface."
+        )
 
     plot_format = "2d" if is_1d else ("heatmap" if heatmap else "3d")
 
@@ -1037,9 +1048,10 @@ def _run_model_methods(
     progress_path = None
     if log_path is not None:
         os.makedirs(os.path.dirname(os.path.abspath(log_path)), exist_ok=True)
-        # Raw sidecar + progress journal only matter for expensive parallel runs
-        # (benchmarks, resume, sharding); analytic-only runs need just the summary.
-        if use_parallel:
+        # Raw sidecar + progress journal for expensive parallel runs, and for
+        # any sharded/aggregated run (even cheap analytic-only ones): the
+        # journal is the only channel between shards and aggregation.
+        if use_parallel or prepare_only or aggregate_only or task_index is not None:
             raw_data_path, progress_path = _derived_paths(log_path)
 
     raw_cells = {m.value: {str(ix): {} for ix in range(nx)} for m in methods}
@@ -1112,7 +1124,9 @@ def _run_model_methods(
                 if not line.strip():
                     continue
                 record = json.loads(line)
-                apply(tuple(record["tag"]), record["cell"])
+                tag = tuple(record["tag"])
+                if tag[0] in raw_cells:  # ignore entries for methods not in this run
+                    apply(tag, record["cell"])
 
     def validate_complete():
         missing = []
@@ -1124,7 +1138,17 @@ def _run_model_methods(
         if missing:
             raise RuntimeError("Missing results before aggregation: " + ", ".join(missing[:20]))
 
-    method_params_summary = {m.value: method_objs[m].parameter_summary() for m in methods}
+    # Build method_params with per-method extremum (only for VQE and IQPE)
+    method_params_summary = {}
+    for m in methods:
+        summary = method_objs[m].parameter_summary()
+        if m == Method.VQE:
+            summary_with_extremum = {**summary, "extremum": "min"}
+        elif m == Method.IQPE:
+            summary_with_extremum = {**summary, "extremum": "median"}
+        else:
+            summary_with_extremum = summary
+        method_params_summary[m.value] = summary_with_extremum
 
     def build_raw():
         return {
@@ -1134,7 +1158,6 @@ def _run_model_methods(
             "plot_format": plot_format,
             "band_structure": is_band,
             "observable": observable,
-            "extremum": "min",
             "x_param": x_param, "y_param": y_param,
             "x_values": x_vals, "y_values": y_vals,
             "parameters": {
@@ -1151,11 +1174,30 @@ def _run_model_methods(
             "cells": raw_cells,
         }
 
-    if raw_data_path is not None and not no_progress_log and (
-        prepare_only or (task_index is None and not aggregate_only)
-    ):
+    # Only prepare-only resets the journal; compute runs resume from it, so a
+    # resubmitted job skips cells that were already logged.
+    if raw_data_path is not None and not no_progress_log and prepare_only:
         with open(progress_path, "w") as f:
             f.write("")
+
+    def load_completed_tags():
+        """Read already-computed cells from the progress journal for resume."""
+        done = set()
+        if no_progress_log or progress_path is None or not os.path.exists(progress_path):
+            return done
+        with open(progress_path) as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    continue  # tolerate a partially written trailing line
+                tag = tuple(record["tag"])
+                if tag[0] in raw_cells:
+                    done.add(tag)
+                    apply(tag, record["cell"])
+        return done
 
     def empty_result():
         grids = {m.value: _squeeze_scalar(np.full((nx, ny), np.nan), is_1d) for m in methods}
@@ -1201,11 +1243,22 @@ def _run_model_methods(
     else:
         if task_index is None:
             selected = all_tags
-            n_jobs = -1
+            n_jobs = jobs_per_shard()
         else:
             init_worker_logging()
             selected = [t for i, t in enumerate(all_tags) if i % task_count == task_index]
             n_jobs = jobs_per_shard()
+
+        completed = load_completed_tags()
+        if completed:
+            before = len(selected)
+            selected = [t for t in selected if t not in completed]
+            skipped = before - len(selected)
+            if skipped:
+                print(
+                    f"Resuming from progress log: skipping {skipped} already-computed "
+                    f"cell(s), {len(selected)} remaining."
+                )
 
         with tempfile.TemporaryDirectory(prefix="qbp-run-") as tmp_dir:
             if use_parallel:
@@ -1216,7 +1269,7 @@ def _run_model_methods(
             else:
                 results = (run_job(t, tmp_dir) for t in selected)
             for tag_tuple, cell in results:
-                if use_parallel:
+                if progress_path is not None:
                     append_progress(tag_tuple, cell)
                 apply(tag_tuple, cell)
                 # Incremental snapshots only for expensive parallel runs; for
@@ -1239,17 +1292,22 @@ def _run_model_methods(
     ordered_methods = sorted(methods, key=lambda m: 0 if m == Method.ANALYTIC else 1)
     for m in ordered_methods:
         m_obj = method_objs[m]
-        if is_band and m == Method.ANALYTIC:
-            probe = raw_cells["analytic"]["0"]["0"]["bands"]
-            n_bands = len(probe)
+        probe_cell = raw_cells[m.value]["0"]["0"] if is_band else None
+        if is_band and probe_cell is not None and "bands" in probe_cell:
+            probe = probe_cell["bands"]
+            n_bands = max(n_bands, len(probe))
             arr = np.full((nx, ny, n_bands), np.nan)
             for ix in range(nx):
                 for iy in range(ny):
-                    arr[ix, iy, :] = m_obj.reduce(raw_cells["analytic"][str(ix)][str(iy)])
-            analytic_bands = arr
-            grids_full[m.value] = arr[..., 0]
+                    bands = m_obj.reduce(raw_cells[m.value][str(ix)][str(iy)])
+                    arr[ix, iy, :len(bands)] = bands
+            if m == Method.ANALYTIC:
+                analytic_bands = arr
+            grids_full[m.value] = arr
         else:
             arr = np.full((nx, ny), np.nan)
+            # Use median for IQPE, min for other methods
+            reduce_extremum = "median" if m == Method.IQPE else "min"
             for ix in range(nx):
                 for iy in range(ny):
                     if is_band and analytic_bands is not None:
@@ -1258,8 +1316,9 @@ def _run_model_methods(
                         analytic_ref = float(grids_full["analytic"][ix, iy])
                     else:
                         analytic_ref = None
-                    val = m_obj.reduce(raw_cells[m.value][str(ix)][str(iy)], extremum="min",
-                                        analytic=analytic_ref)
+                    val = m_obj.reduce(raw_cells[m.value][str(ix)][str(iy)],
+                                       extremum=reduce_extremum,
+                                       analytic=analytic_ref)
                     arr[ix, iy] = val
             grids_full[m.value] = arr
             for ix in range(nx):
@@ -1280,8 +1339,8 @@ def _run_model_methods(
 
     result_block = {}
     for m in methods:
-        if is_band and m == Method.ANALYTIC:
-            result_block[m.value] = bands_block(analytic_bands)
+        if is_band and np.asarray(grids_full[m.value]).ndim == 3:
+            result_block[m.value] = bands_block(grids_full[m.value])
         else:
             result_block[m.value] = scalar_block(grids_full[m.value])
 
@@ -1292,7 +1351,6 @@ def _run_model_methods(
         "plot_format": plot_format,
         "band_structure": is_band,
         "observable": observable,
-        "extremum": "min",
         "x_param": x_param, "y_param": y_param,
         "x_values": x_vals, "y_values": y_vals,
         "parameters": {
@@ -1323,18 +1381,19 @@ def _run_model_methods(
     # squeeze grids for the result object
     grids_out = {}
     for m in methods:
-        if is_band and m == Method.ANALYTIC:
-            grids_out[m.value] = _squeeze_bands(analytic_bands, is_1d)[..., 0] if is_1d else analytic_bands[..., 0]
+        if is_band and np.asarray(grids_full[m.value]).ndim == 3:
+            grids_out[m.value] = _squeeze_bands(grids_full[m.value], is_1d)
         else:
             grids_out[m.value] = _squeeze_scalar(grids_full[m.value], is_1d)
     analytic_bands_out = _squeeze_bands(analytic_bands, is_1d) if analytic_bands is not None else None
 
+    summary_extremum = "median" if Method.IQPE in methods else "min"
     result = RunResult(
         model_name=model.name, lattice=lattice, x_param=x_param, y_param=y_param,
         x_values=x_vals, y_values=y_vals if not is_1d else [],
         methods=[m.value for m in methods], grids=grids_out,
         band_structure=is_band, analytic_bands=analytic_bands_out,
-        plot_format=plot_format, observable=observable, extremum="min",
+        plot_format=plot_format, observable=observable, extremum=summary_extremum,
         backend_label=backend_label, log_path=log_path, raw_log_path=raw_data_path,
         plot_path=plot_path, raw=summary, _model_params=params,
     )
@@ -1539,13 +1598,14 @@ def _run_operator_methods(
     for m in sorted(methods, key=lambda m: 0 if m == Method.ANALYTIC else 1):
         m_obj = method_objs[m]
         arr = np.full((nx, ny), np.nan)
+        reduce_extremum = "median" if m == Method.IQPE else extremum
         for ix in range(nx):
             for iy in range(ny):
                 cell = raw_cells[m.value].get(str(ix), {}).get(str(iy))
                 if cell is None:
                     continue
                 analytic_ref = float(grids_full["analytic"][ix, iy]) if "analytic" in grids_full else None
-                arr[ix, iy] = m_obj.reduce(cell, extremum=extremum, analytic=analytic_ref)
+                arr[ix, iy] = m_obj.reduce(cell, extremum=reduce_extremum, analytic=analytic_ref)
                 logger.info(f"{m_obj.LABEL} ({cell_label(ix, iy)}) = {arr[ix, iy]}")
         grids_full[m.value] = arr
 
@@ -1554,6 +1614,18 @@ def _run_operator_methods(
             return {ix: float(arr[ix, 0]) for ix in range(nx)}
         return {ix: {iy: float(arr[ix, iy]) for iy in range(ny)} for ix in range(nx)}
 
+    # Build method_params with per-method extremum for qubit-operator path (only for VQE and IQPE)
+    qubit_method_params = {}
+    for m in methods:
+        summary = method_objs[m].parameter_summary()
+        if m == Method.VQE:
+            summary_with_extremum = {**summary, "extremum": extremum}
+        elif m == Method.IQPE:
+            summary_with_extremum = {**summary, "extremum": "median"}
+        else:
+            summary_with_extremum = summary
+        qubit_method_params[m.value] = summary_with_extremum
+
     summary = {
         "type": "run",
         "methods": [m.value for m in methods],
@@ -1561,7 +1633,6 @@ def _run_operator_methods(
         "plot_format": plot_format,
         "band_structure": False,
         "observable": observable,
-        "extremum": extremum,
         "x_param": x_param, "y_param": y_param,
         "x_values": x_vals, "y_values": y_vals,
         "parameters": {
@@ -1569,9 +1640,8 @@ def _run_operator_methods(
             "lattice": None,
             "qubit_operator": source_repr,
             "keys": key_grid,
-            "extremum": extremum,
             "model_params": {},
-            "method_params": {m.value: method_objs[m].parameter_summary() for m in methods},
+            "method_params": qubit_method_params,
         },
         "result": {m.value: scalar_block(grids_full[m.value]) for m in methods},
     }
@@ -1582,12 +1652,13 @@ def _run_operator_methods(
             json.dump(summary, f, indent=4)
 
     grids_out = {m.value: _squeeze_scalar(grids_full[m.value], is_1d) for m in methods}
+    summary_extremum = "median" if Method.IQPE in methods else extremum
     result = RunResult(
         model_name=model_name, lattice=None, x_param=x_param, y_param=y_param,
         x_values=x_vals, y_values=y_vals if not is_1d else [],
         methods=[m.value for m in methods], grids=grids_out,
         band_structure=False, plot_format=plot_format, observable="E",
-        extremum=extremum, backend_label=backend_label,
+        extremum=summary_extremum, backend_label=backend_label,
         log_path=log_path, plot_path=plot_path, raw=summary, _model_params={},
     )
 

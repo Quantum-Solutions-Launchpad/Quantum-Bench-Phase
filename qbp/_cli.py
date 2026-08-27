@@ -202,7 +202,7 @@ def _add_operator_dict_flags(parser):
                         metavar="KEY=VALUE",
                         help="Ansatz kwarg; repeatable. Values may be numbers or @n_layers bindings.")
     parser.add_argument("--vqe-ansatz-prefix", dest="vqe_ansatz_prefix",
-                        choices=["hartree_fock", "none"], default="none",
+                        choices=["hartree_fock", "neel", "none"], default="none",
                         help="Initial-state prefix for the ansatz (default: none).")
     parser.add_argument("--vqe-optimizer", default=None, choices=list(_QISKIT_OPTIMIZERS),
                         help="Classical optimizer for the --qubit-operator path (default: SPSA).")
@@ -596,3 +596,7 @@ def main(argv=None):
         except (ValueError, FileNotFoundError, KeyError) as e:
             parser.error(str(e))
         return
+
+
+if __name__ == "__main__":
+    main()

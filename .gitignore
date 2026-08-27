@@ -13,4 +13,4 @@ docs/_build/
 # Python virtual environments
 .venv/
 venv/
-venv7/
+qbp/julia-dmrg/dmrg_sysimage.so

@@ -1,0 +1,9 @@
+===================================================================
+Haldane-Hubbard 2x2 ground-state energy M vs U (hard wall) - IQPE
+  sweep:       M [0 3 0.25] vs U [0.0 3.0 0.25]
+  boundary:    open (hard wall)
+  pipeline:    noisy (backend: FakeSherbrooke)
+  methods:     iqpe
+  parallelism: distributed across 32 shards on multiple nodes
+  output:      new-data
+===================================================================

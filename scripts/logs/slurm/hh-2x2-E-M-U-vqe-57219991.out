@@ -1,0 +1,8 @@
+===================================================================
+Haldane-Hubbard 2x2 ground-state energy M vs U (SHARDED) - VQE
+  sweep:       M [0 3 0.25] vs U [0.0 3.0 0.25]
+  pipeline:    noisy (backend: FakeSherbrooke)
+  methods:     vqe
+  parallelism: distributed across 8 shards on multiple nodes
+  output:      new-data
+===================================================================

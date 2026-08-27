@@ -1,0 +1,130 @@
+{
+    "type": "run",
+    "methods": [
+        "analytic"
+    ],
+    "backend": "ideal",
+    "plot_format": "3d",
+    "band_structure": false,
+    "observable": "E",
+    "x_param": "nqubits",
+    "y_param": "R",
+    "x_values": [
+        4.0,
+        8.0,
+        12.0,
+        16.0
+    ],
+    "y_values": [
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+    ],
+    "parameters": {
+        "model": "ES_nqubits",
+        "lattice": null,
+        "qubit_operator": [
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.5_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.6_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.7_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.8_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R0.9_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits4_linear_R1.0_sto-6g.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.5_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.6_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.7_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.8_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R0.9_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits8_linear_R1.0_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.5_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.6_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.7_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.8_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R0.9_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits12_linear_R1.0_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.5_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.6_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.7_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.8_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R0.9_sto-6g_ham.hdf5",
+            "/tmp/mbao202-hydrogen-hamlib-nqubits/ES_nqubits16_linear_R1.0_sto-6g_ham.hdf5"
+        ],
+        "keys": [
+            [
+                "ES-nqubits-4-linear-R-0.5-sto-6-g--ham_JW",
+                "ES-nqubits-4-linear-R-0.6-sto-6-g--ham_JW",
+                "ES-nqubits-4-linear-R-0.7-sto-6-g--ham_JW",
+                "ES-nqubits-4-linear-R-0.8-sto-6-g--ham_JW",
+                "ES-nqubits-4-linear-R-0.9-sto-6-g--ham_JW",
+                "ES-nqubits-4-linear-R-1.0-sto-6-g--ham_JW"
+            ],
+            [
+                "ES-nqubits-8-linear-R-0.5-sto-6-g-ham--ham_JW",
+                "ES-nqubits-8-linear-R-0.6-sto-6-g-ham--ham_JW",
+                "ES-nqubits-8-linear-R-0.7-sto-6-g-ham--ham_JW",
+                "ES-nqubits-8-linear-R-0.8-sto-6-g-ham--ham_JW",
+                "ES-nqubits-8-linear-R-0.9-sto-6-g-ham--ham_JW",
+                "ES-nqubits-8-linear-R-1.0-sto-6-g-ham--ham_JW"
+            ],
+            [
+                "ES-nqubits-12-linear-R-0.5-sto-6-g-ham--ham_JW",
+                "ES-nqubits-12-linear-R-0.6-sto-6-g-ham--ham_JW",
+                "ES-nqubits-12-linear-R-0.7-sto-6-g-ham--ham_JW",
+                "ES-nqubits-12-linear-R-0.8-sto-6-g-ham--ham_JW",
+                "ES-nqubits-12-linear-R-0.9-sto-6-g-ham--ham_JW",
+                "ES-nqubits-12-linear-R-1.0-sto-6-g-ham--ham_JW"
+            ],
+            [
+                "ES-nqubits-16-linear-R-0.5-sto-6-g-ham--ham_JW",
+                "ES-nqubits-16-linear-R-0.6-sto-6-g-ham--ham_JW",
+                "ES-nqubits-16-linear-R-0.7-sto-6-g-ham--ham_JW",
+                "ES-nqubits-16-linear-R-0.8-sto-6-g-ham--ham_JW",
+                "ES-nqubits-16-linear-R-0.9-sto-6-g-ham--ham_JW",
+                "ES-nqubits-16-linear-R-1.0-sto-6-g-ham--ham_JW"
+            ]
+        ],
+        "model_params": {},
+        "method_params": {
+            "analytic": {}
+        }
+    },
+    "result": {
+        "analytic": {
+            "0": {
+                "0": -1.0653851727714787,
+                "1": -1.1255968661617206,
+                "2": -1.1449790794982975,
+                "3": -1.1426131623046132,
+                "4": -1.128654268521612,
+                "5": -1.1088730601684396
+            },
+            "1": {
+                "0": -1.6761701418554442,
+                "1": -1.9812031074290823,
+                "2": -2.1257363196544325,
+                "3": -2.1845119590945465,
+                "4": -2.195865858580697,
+                "5": -2.180966514679431
+            },
+            "2": {
+                "0": -2.262993983681262,
+                "1": -2.8308508101402152,
+                "2": -3.1077783707132642,
+                "3": -3.2304242689667757,
+                "4": -3.2678125593549203,
+                "5": -3.2576068322409673
+            },
+            "3": {
+                "0": -2.841350103558732,
+                "1": -3.679610825161383,
+                "2": -4.091379351565431,
+                "3": -4.278515746551942,
+                "4": -4.341879775072973,
+                "5": -4.336065652752065
+            }
+        }
+    }
+}

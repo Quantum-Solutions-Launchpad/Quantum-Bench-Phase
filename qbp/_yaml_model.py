@@ -148,7 +148,7 @@ class AnsatzSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
     type: str
     kwargs: dict[str, Any] = Field(default_factory=dict)
-    initial_state_prefix: Literal["hartree_fock", "none"] = "hartree_fock"
+    initial_state_prefix: Literal["hartree_fock", "neel", "none"] = "hartree_fock"
 
     @field_validator("type")
     @classmethod
@@ -586,6 +586,32 @@ def _build_mapper_factory(spec: YamlModelSpec):
     return get_mapper
 
 
+def _initial_state_prefix_qubits(kind, n_qubits, n_occ, spin, n_sites):
+    """Qubit indices to flip for the ansatz's product-state prefix.
+
+    ``hartree_fock`` fills the lowest spin orbitals. With the interleaved
+    ``(site, spin)`` ordering used by the fermionic builders that doubly
+    occupies the first ``n_occ // 2`` sites, which is the highest-energy
+    reference for a repulsive Hubbard term and carries no spin correlation.
+
+    ``neel`` instead puts one electron on each site with the spin alternating
+    by sublattice, matching the staggering used by the spin structure factor,
+    and only doubly occupies sites once every site holds one electron.
+    """
+    n_occ = int(n_occ)
+    if kind == "none":
+        return None
+    if kind == "neel" and spin == 2 and n_sites * spin == n_qubits:
+        qubits = []
+        singles = min(n_occ, n_sites)
+        for s in range(singles):
+            qubits.append(2 * s + (s % 2))
+        for s in range(n_occ - singles):
+            qubits.append(2 * s + 1 - (s % 2))
+        return qubits
+    return list(range(n_occ))
+
+
 def _build_ansatz_factory(spec: YamlModelSpec):
     if spec.ansatz is None:
         return None
@@ -614,13 +640,16 @@ def build_ansatz_factory(ansatz_spec: AnsatzSpec, *, name: str):
         }
         resolved = _resolve_runtime_kwargs(raw_kwargs, runtime, context="ansatz")
         body = func(n_qubits, **resolved)
-        if prefix_kind == "hartree_fock":
-            qc = QuantumCircuit(n_qubits)
-            for i in range(n_occ):
-                qc.x(i)
-            qc.compose(body, inplace=True)
-            return qc
-        return body
+        prefix_qubits = _initial_state_prefix_qubits(
+            prefix_kind, n_qubits, n_occ, spin, n_sites,
+        )
+        if prefix_qubits is None:
+            return body
+        qc = QuantumCircuit(n_qubits)
+        for i in prefix_qubits:
+            qc.x(i)
+        qc.compose(body, inplace=True)
+        return qc
 
     get_vqe_ansatz.__name__ = f"_ansatz_{name.replace('-', '_')}"
     return get_vqe_ansatz
@@ -896,24 +925,53 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
     def _restrict(qubit_op, idx):
         return qubit_op.to_matrix(sparse=True).tocsr()[idx][:, idx]
 
+    DEGENERACY_TOL = 1e-8
+
+    def _ground_manifold(evs, vecs):
+        """Orthonormal basis of the lowest-energy eigenspace.
+
+        ARPACK converges each Ritz vector of a degenerate cluster individually
+        and does not orthogonalise them against each other, so the raw columns
+        can be far from orthonormal (errors of order 1 are routine). Projecting
+        an observable onto a non-orthonormal basis gives eigenvalues that are
+        not even physical, so the span is re-orthonormalised here.
+        """
+        d = max(1, int(np.sum(np.abs(evs - evs[0]) < DEGENERACY_TOL)))
+        block = vecs[:, :d]
+        u, s, _ = np.linalg.svd(block, full_matrices=False)
+        keep = s > max(s[0], 1.0) * 1e-10
+        return u[:, keep]
+
     def _ground_state(H_sector):
+        """Returns (eigenvalues, orthonormal basis of the ground manifold).
+
+        The ground state of a Hubbard cluster is routinely degenerate -- a spin
+        multiplet, or several multiplets at U=0 -- and any single Lanczos vector
+        out of that manifold is an arbitrary basis choice. Observables are
+        averaged over the manifold instead, which is basis independent.
+        """
         dim = H_sector.shape[0]
         if dim <= 512:
             evs, vecs = _eigh(H_sector.toarray())
-            return evs, vecs[:, 0]
-        k = min(6, dim - 1)
+            return evs, _ground_manifold(evs, vecs)
         try:
             from scipy.sparse.linalg import eigsh
-            evs, vecs = eigsh(H_sector, k=k, which="SA")
-            order = np.argsort(evs)
-            evs, vecs = evs[order], vecs[:, order]
-            return evs, vecs[:, 0]
+            k = min(16, dim - 1)
+            while True:
+                evs, vecs = eigsh(H_sector, k=k, which="SA")
+                order = np.argsort(evs)
+                evs, vecs = evs[order], vecs[:, order]
+                degenerate = int(np.sum(np.abs(evs - evs[0]) < DEGENERACY_TOL))
+                if degenerate < k or k >= min(128, dim - 1):
+                    break
+                k = min(2 * k, dim - 1)
+            return evs, _ground_manifold(evs, vecs)
         except Exception:
             evs, vecs = _eigh(H_sector.toarray())
-            return evs, vecs[:, 0]
+            return evs, _ground_manifold(evs, vecs)
 
     def _mb_result_cached(model, lattice, n_occ, params):
-        """Returns (eigvals, ground_state_vec_in_sector, sector_indices)."""
+        """Returns (eigvals, ground_manifold_basis_in_sector, sector_indices)."""
         ferm_fn = getattr(model, "_analytic_fermionic_fn", None) or model.fermionic_hamiltonian
         proj_sig = getattr(model, "_analytic_projection_sig", None)
         key = (tuple(lattice), int(n_occ), tuple(sorted(params.items())), proj_sig)
@@ -939,23 +997,10 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
             result = (np.empty(0), np.empty(0), idx)
             cache[key] = result
             return result
-        evs, psi = _ground_state(_restrict(qubit_op, idx))
-        result = (evs, psi, idx)
+        evs, manifold = _ground_state(_restrict(qubit_op, idx))
+        result = (evs, manifold, idx)
         cache[key] = result
         return result
-
-    def _spin_fermionic_op(model, lattice, *, stagger: bool):
-        from qiskit_nature.second_q.operators import FermionicOp
-        lat = tuple(lattice)
-        n_sites = math.prod(lat) * model.sites_per_cell
-        num_so = n_sites * model.spin
-        terms_dict: dict[str, complex] = {}
-        for s in range(n_sites):
-            sign = (+1.0 if (s % sites_per_cell) % 2 == 0 else -1.0) if stagger else +1.0
-            up, dn = s * 2, s * 2 + 1
-            terms_dict[f"+_{up} -_{up}"] = terms_dict.get(f"+_{up} -_{up}", 0.0) + sign / n_sites
-            terms_dict[f"+_{dn} -_{dn}"] = terms_dict.get(f"+_{dn} -_{dn}", 0.0) - sign / n_sites
-        return FermionicOp(terms_dict, num_spin_orbitals=num_so)
 
     def _structure_fermionic_op(model, lattice, *, stagger: bool):
         from qiskit_nature.second_q.operators import FermionicOp
@@ -997,12 +1042,19 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
         cache[key] = mat
         return mat
 
+    def _manifold_matrix(mat, manifold):
+        # numpy 2.2 raises spurious divide/overflow/invalid flags from complex
+        # matmul even when every input and output entry is finite.
+        with np.errstate(divide="ignore", over="ignore", invalid="ignore"):
+            return manifold.conj().T @ np.asarray(mat @ manifold)
+
     def _structure_factor(model, lattice, n_occ, params, kind):
-        _, psi, idx = _mb_result_cached(model, lattice, n_occ, params)
-        if psi.size == 0:
+        _, manifold, idx = _mb_result_cached(model, lattice, n_occ, params)
+        if manifold.size == 0:
             return 0.0
         mat = _restricted_observable(model, lattice, n_occ, idx, kind)
-        return max(0.0, float(np.real(psi.conj() @ (mat @ psi))))
+        block = _manifold_matrix(mat, manifold)
+        return max(0.0, float(np.real(np.trace(block))) / manifold.shape[1])
 
     def _e_mb(model, lattice, H, eigvals, eigvecs, n_occ, params):
         evs, _, _ = _mb_result_cached(model, lattice, n_occ, params)
@@ -1020,44 +1072,20 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
     def _s_total(model, lattice, H, eigvals, eigvecs, n_occ, params):
         return _structure_factor(model, lattice, n_occ, params, "total")
 
-    def _noninteracting_baseline(model, lattice, n_occ):
-        n_sites = math.prod(tuple(lattice)) * model.sites_per_cell
-        n_eff = min(int(n_occ), 2 * n_sites - int(n_occ))
-        if n_eff <= 0:
-            return 0.0
-        return math.sqrt(0.75 * n_eff) / n_sites
-
-    def _m_stag(model, lattice, H, eigvals, eigvecs, n_occ, params):
-        m = math.sqrt(_structure_factor(model, lattice, n_occ, params, "stag"))
-        return m - _noninteracting_baseline(model, lattice, n_occ)
-
-    def _m_total(model, lattice, H, eigvals, eigvecs, n_occ, params):
-        return math.sqrt(_structure_factor(model, lattice, n_occ, params, "total"))
-
     def _s_stag_quantum_op(model, lattice, **params):
         return _structure_fermionic_op(model, lattice, stagger=True)
 
     def _s_total_quantum_op(model, lattice, **params):
         return _structure_fermionic_op(model, lattice, stagger=False)
 
-    def _sqrt_composite(stagger: bool):
-        def _composite(model, lattice, n_occ, params, mapper, n_orbitals, sub_eval):
-            op = mapper.map(_structure_fermionic_op(model, lattice, stagger=stagger))
-            _, vals = sub_eval(n_occ, observable_qubit_ops=[op])
-            m = math.sqrt(max(0.0, float(vals[0])))
-            if stagger:
-                m -= _noninteracting_baseline(model, lattice, n_occ)
-            return m
-        return _composite
-
     return {
         "S_stag": Observable(
-            name="S_stag", display_name=r"S(\pi,\pi)",
+            name="S_stag", display_name=r"S_{\mathrm{stag}}",
             analytic=_s_stag,
             quantum_operator=_s_stag_quantum_op,
         ),
         "S_total": Observable(
-            name="S_total", display_name=r"S(0,0)",
+            name="S_total", display_name=r"S_{\mathrm{total}}",
             analytic=_s_total,
             quantum_operator=_s_total_quantum_op,
         ),
@@ -1069,16 +1097,6 @@ def _build_interacting_analytic_observables(spec: YamlModelSpec) -> dict[str, Ob
         "gap": Observable(
             name="gap", display_name=r"\Delta_{\mathrm{gap}}",
             analytic=_gap_mb,
-        ),
-        "M_stag": Observable(
-            name="M_stag", display_name=r"|m_{\mathrm{stag}}|",
-            analytic=_m_stag,
-            quantum_composite=_sqrt_composite(True),
-        ),
-        "M_total": Observable(
-            name="M_total", display_name=r"|m_{\mathrm{total}}|",
-            analytic=_m_total,
-            quantum_composite=_sqrt_composite(False),
         ),
     }
 

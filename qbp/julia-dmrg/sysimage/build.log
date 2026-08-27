@@ -1,0 +1,135 @@
+julia:     /global/common/software/nersc9/julia/1.11.7/bin/julia
+project:   /pscratch/sd/m/mbao202/NNL-P7/qbp/julia-dmrg/sysimage/..
+depot:     /pscratch/sd/m/mbao202/julia_depot
+sysimage:  /pscratch/sd/m/mbao202/NNL-P7/qbp/julia-dmrg/sysimage/../dmrg_sysimage.so
+    Updating registry at `/pscratch/sd/m/mbao202/julia_depot/registries/General.toml`
+   Resolving package versions...
+   Installed Glob ──────────── v1.5.0
+   Installed PackageCompiler ─ v2.4.0
+    Updating `/pscratch/sd/m/mbao202/julia_depot/environments/v1.11/Project.toml`
+  [9b87118b] + PackageCompiler v2.4.0
+    Updating `/pscratch/sd/m/mbao202/julia_depot/environments/v1.11/Manifest.toml`
+  [c27321d9] + Glob v1.5.0
+  [9b87118b] + PackageCompiler v2.4.0
+  [05181044] + RelocatableFolders v1.0.1
+  [6c6a2e73] + Scratch v1.3.0
+  [0dad84c5] + ArgTools v1.1.2
+  [56f22d72] + Artifacts v1.11.0
+  [2a0f44e3] + Base64 v1.11.0
+  [ade2ca70] + Dates v1.11.0
+  [f43a241f] + Downloads v1.6.0
+  [7b1f6079] + FileWatching v1.11.0
+  [4af54fe1] + LazyArtifacts v1.11.0
+  [b27032c2] + LibCURL v0.6.4
+  [76f85450] + LibGit2 v1.11.0
+  [8f399da3] + Libdl v1.11.0
+  [56ddb016] + Logging v1.11.0
+  [d6f4376e] + Markdown v1.11.0
+  [ca575930] + NetworkOptions v1.2.0
+  [44cfe95a] + Pkg v1.11.0
+  [de0858da] + Printf v1.11.0
+  [9a3f8284] + Random v1.11.0
+  [ea8e919c] + SHA v0.7.0
+  [fa267f1f] + TOML v1.0.3
+  [a4e569a6] + Tar v1.10.0
+  [cf7118a7] + UUIDs v1.11.0
+  [4ec0a83e] + Unicode v1.11.0
+  [deac9b47] + LibCURL_jll v8.6.0+0
+  [e37daf67] + LibGit2_jll v1.7.2+0
+  [29816b5a] + LibSSH2_jll v1.11.0+1
+  [c8ffd9c3] + MbedTLS_jll v2.28.6+0
+  [14a3606d] + MozillaCACerts_jll v2023.12.12
+  [83775a58] + Zlib_jll v1.2.13+1
+  [8e850ede] + nghttp2_jll v1.59.0+0
+  [3f19e933] + p7zip_jll v17.4.0+2
+Precompiling project...
+    769.8 ms  ✓ Glob
+   2174.3 ms  ✓ PackageCompiler
+  2 dependencies successfully precompiled in 3 seconds. 26 already precompiled.
+Precompiling project...
+    478.5 ms  ✓ StridedViews
+    836.2 ms  ✓ Zeros
+    490.6 ms  ✓ Adapt
+    539.1 ms  ✓ Preferences
+    771.0 ms  ✓ StructUtils
+    554.6 ms  ✓ Strided
+    490.2 ms  ✓ Referenceables
+    568.0 ms  ✓ ArrayInterface
+    488.8 ms  ✓ PrecompileTools
+   1419.2 ms  ✓ ChainRulesCore
+   1045.3 ms  ✓ Adapt → AdaptSparseArraysExt
+    781.3 ms  ✓ StructUtils → StructUtilsTablesExt
+    465.1 ms  ✓ ArrayInterface → ArrayInterfaceStaticArraysCoreExt
+    709.1 ms  ✓ ArrayInterface → ArrayInterfaceSparseArraysExt
+    453.0 ms  ✓ ArrayInterface → ArrayInterfaceChainRulesCoreExt
+   1041.3 ms  ✓ Static
+   2217.8 ms  ✓ Accessors
+    749.5 ms  ✓ ChainRulesCore → ChainRulesCoreSparseArraysExt
+    871.3 ms  ✓ KrylovKit → KrylovKitChainRulesCoreExt
+    721.7 ms  ✓ Accessors → TestExt
+   1052.8 ms  ✓ Accessors → LinearAlgebraExt
+   1486.5 ms  ✓ StaticArrayInterface
+    907.5 ms  ✓ BangBang
+    576.9 ms  ✓ BangBang → BangBangTablesExt
+    595.4 ms  ✓ BangBang → BangBangChainRulesCoreExt
+   1072.0 ms  ✓ MicroCollections
+   1865.1 ms  ✓ EllipsisNotation
+   6327.3 ms  ✓ StaticArrays
+    669.8 ms  ✓ ConstructionBase → ConstructionBaseStaticArraysExt
+    690.3 ms  ✓ StaticArrays → StaticArraysChainRulesCoreExt
+    701.9 ms  ✓ FillArrays → FillArraysStaticArraysExt
+   2959.9 ms  ✓ Transducers
+    810.8 ms  ✓ Adapt → AdaptStaticArraysExt
+    803.9 ms  ✓ Accessors → StaticArraysExt
+    795.6 ms  ✓ StaticArrayInterface → StaticArrayInterfaceStaticArraysExt
+    790.8 ms  ✓ BangBang → BangBangStaticArraysExt
+   7758.9 ms  ✓ Parsers
+    775.9 ms  ✓ Transducers → TransducersReferenceablesExt
+    796.8 ms  ✓ Transducers → TransducersAdaptExt
+    563.6 ms  ✓ InlineStrings → ParsersExt
+   8757.6 ms  ✓ IsApprox
+   2969.9 ms  ✓ JSON
+   2927.7 ms  ✓ Folds
+  13159.3 ms  ✓ ArrayLayouts
+   1298.9 ms  ✓ ArrayLayouts → ArrayLayoutsSparseArraysExt
+   2045.8 ms  ✓ BlockArrays
+   1157.7 ms  ✓ BlockArrays → BlockArraysAdaptExt
+   1803.2 ms  ✓ Transducers → TransducersBlockArraysExt
+   4300.2 ms  ✓ NDTensors
+   5600.6 ms  ✓ ITensors
+   2643.9 ms  ✓ ITensors → ITensorsVectorInterfaceExt
+   4873.4 ms  ✓ ITensorMPS
+   2782.8 ms  ✓ ITensorMPS → ITensorMPSChainRulesCoreExt
+  53 dependencies successfully precompiled in 46 seconds. 78 already precompiled.
+After sweep 1 energy=-1.8185982158136988  maxlinkdim=4 maxerr=1.14E-15 time=46.727
+After sweep 2 energy=-1.818598239564603  maxlinkdim=4 maxerr=8.33E-16 time=0.059
+DMRG energy: -1.818598239564603
+Wrote /tmp/jl_m9qXWB/spinless_qns.json
+After sweep 1 energy=-1.8185982158136993  maxlinkdim=4 maxerr=4.44E-16 time=19.129
+After sweep 2 energy=-1.8185982395646034  maxlinkdim=4 maxerr=1.35E-17 time=0.002
+DMRG energy: -1.8185982395646034
+Wrote /tmp/jl_m9qXWB/spinless_noqns.json
+After sweep 1 energy=-0.8284271247461901  maxlinkdim=4 maxerr=0.00E+00 time=4.741
+After sweep 2 energy=-0.8284271247461901  maxlinkdim=4 maxerr=0.00E+00 time=0.001
+DMRG energy: -0.8284271247461901
+DMRG E: 2.7755575615628914e-16
+Wrote /tmp/jl_m9qXWB/spinful_sz.json
+After sweep 1 energy=-0.82842712474619  maxlinkdim=4 maxerr=0.00E+00 time=2.207
+After sweep 2 energy=-0.82842712474619  maxlinkdim=4 maxerr=0.00E+00 time=0.001
+DMRG energy: -0.82842712474619
+DMRG E: 0.0
+Wrote /tmp/jl_m9qXWB/spinful_nosz.json
+precompile workload complete
+[ Info: PackageCompiler: Executing /pscratch/sd/m/mbao202/NNL-P7/qbp/julia-dmrg/sysimage/precompile_workload.jl => /tmp/jl_packagecompiler_MlJ1HE/jl_PwkniG
+[ Info: PackageCompiler: Done
+- PackageCompiler: compiling incremental system image
+Sysimage built: /pscratch/sd/m/mbao202/NNL-P7/qbp/julia-dmrg/sysimage/../dmrg_sysimage.so
+Sanity check (should print energy almost instantly):
+After sweep 1 energy=-1.8185982158136988  maxlinkdim=4 maxerr=1.14E-15 time=0.014
+After sweep 2 energy=-1.818598239564603  maxlinkdim=4 maxerr=8.33E-16 time=0.008
+DMRG energy: -1.818598239564603
+Wrote /tmp/tmp.K5C3XvNx3F/check.json
+
+real	0m5.015s
+user	0m12.294s
+sys	0m0.880s

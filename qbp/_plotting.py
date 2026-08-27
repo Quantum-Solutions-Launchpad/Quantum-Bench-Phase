@@ -278,6 +278,16 @@ def plot_simulated(
             surface_label=surface_label,
             extra_series=extra_series,
         )
+    if plot_format == "heatmap" and Z_exact.ndim != 3:
+        return _plot_simulated_heatmap(
+            x_vals, y_vals, x_label, y_label, Z_exact, Z_vqe, Z_iqpe,
+            x_is_momentum=x_is_momentum, y_is_momentum=y_is_momentum,
+            hide_legend=hide_legend,
+            output_path=output_path, hide_plot=hide_plot,
+            vqe_label=vqe_label, iqpe_label=iqpe_label,
+            surface_label=surface_label,
+            extra_series=extra_series,
+        )
     if Z_exact.ndim == 3:
         return _plot_band_structure_3d(
             x_vals, y_vals, x_label, y_label, Z_exact,
@@ -555,6 +565,88 @@ def _plot_analytic_2d(
     ax.tick_params(direction="out", length=4, color="#888888")
     if x_is_momentum:
         _format_momentum_ticks(ax, "x", x_vals)
+
+    plt.tight_layout()
+    return _save_and_show(fig, output_path, hide_plot)
+
+
+def _plot_simulated_heatmap(
+    x_vals,
+    y_vals,
+    x_label: str,
+    y_label: str,
+    Z_exact: np.ndarray,
+    Z_vqe: np.ndarray | None,
+    Z_iqpe: np.ndarray | None,
+    *,
+    output_path=None,
+    hide_plot: bool = False,
+    hide_legend: bool = False,
+    x_is_momentum: bool = False,
+    y_is_momentum: bool = False,
+    vqe_label: str = "VQE",
+    iqpe_label: str = "IQPE",
+    surface_label: str = "Analytic",
+    extra_series: list[dict] | None = None,
+):
+    _apply_rcparams()
+
+    fig, ax = plt.subplots(figsize=(9, 6.5))
+    cmap_obj = LinearSegmentedColormap.from_list("magma_dark", plt.cm.magma(np.linspace(0.05, 0.82, 256)))
+    x_arr = np.asarray(x_vals, dtype=float)
+    y_arr = np.asarray(y_vals, dtype=float)
+
+    def _edges(a):
+        if len(a) == 1:
+            d = 0.5
+            return np.array([a[0] - d, a[0] + d])
+        d = np.diff(a) / 2.0
+        return np.concatenate([[a[0] - d[0]], a[:-1] + d, [a[-1] + d[-1]]])
+
+    x_edges = _edges(x_arr)
+    y_edges = _edges(y_arr)
+    mesh = ax.pcolormesh(x_edges, y_edges, Z_exact.T, cmap=cmap_obj, shading="auto", rasterized=True)
+    cbar = fig.colorbar(mesh, ax=ax, pad=0.02, fraction=0.045)
+    cbar.set_label(surface_label, labelpad=10)
+    cbar.outline.set_edgecolor("#cccccc")
+
+    X_grid, Y_grid = np.meshgrid(x_arr, y_arr, indexing="ij")
+    handles = []
+    if Z_vqe is not None:
+        handles.append(ax.scatter(
+            X_grid.ravel(), Y_grid.ravel(), c="#0072B2", marker="o", s=35,
+            edgecolors="white", linewidths=0.35, label=vqe_label,
+        ))
+    if Z_iqpe is not None:
+        handles.append(ax.scatter(
+            X_grid.ravel(), Y_grid.ravel(), c="#6DBF82", marker="^", s=35,
+            edgecolors="white", linewidths=0.35, label=iqpe_label,
+        ))
+    for series in extra_series or []:
+        values = np.asarray(series["values"], dtype=float)
+        mask = np.isfinite(values)
+        handles.append(ax.scatter(
+            X_grid[mask], Y_grid[mask],
+            c=series.get("color", "#D55E00"),
+            marker=series.get("marker", "D"),
+            s=series.get("size", 35),
+            edgecolors="white", linewidths=0.35,
+            label=series.get("label", "Series"),
+        ))
+
+    ax.set_xlabel(x_label, labelpad=8)
+    ax.set_ylabel(y_label, labelpad=8)
+    ax.set_xlim(x_edges[0], x_edges[-1])
+    ax.set_ylim(y_edges[0], y_edges[-1])
+    for spine in ax.spines.values():
+        spine.set_edgecolor("#cccccc")
+    ax.tick_params(direction="out", length=4, color="#888888")
+    if x_is_momentum:
+        _format_momentum_ticks(ax, "x", x_vals)
+    if y_is_momentum:
+        _format_momentum_ticks(ax, "y", y_vals)
+    if handles and not hide_legend:
+        ax.legend(loc="best", frameon=False)
 
     plt.tight_layout()
     return _save_and_show(fig, output_path, hide_plot)

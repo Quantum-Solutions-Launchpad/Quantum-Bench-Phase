@@ -6,13 +6,17 @@ setup_visualizer_env() {
     source "${REPO_ROOT}/scripts/slurm/phase-diagrams/qbp_sharded.sh"
     setup_qbp_slurm_env
 
+    export LOKY_DISABLE_RESOURCE_TRACKER=1
+    export JOBLIB_START_METHOD=spawn
+    export LOKY_MAX_WORKERS=1
     export MPLBACKEND="${MPLBACKEND:-Agg}"
 
-    LOG_DIR="${LOG_DIR:-${REPO_ROOT}/examples/logs}"
-    PLOT_DIR="${PLOT_DIR:-${REPO_ROOT}/examples/plots}"
+    OUTPUT_ROOT="${OUTPUT_ROOT:-${REPO_ROOT}/manuscript-plots}"
+    LOG_DIR="${LOG_DIR:-${OUTPUT_ROOT}/logs}"
+    PLOT_DIR="${PLOT_DIR:-${OUTPUT_ROOT}/plots}"
     PHI="${PHI:-0.7853981633974483}"
 
-    mkdir -p "${LOG_DIR}" "${PLOT_DIR}" "${REPO_ROOT}/scripts/logs/slurm"
+    mkdir -p "${OUTPUT_ROOT}" "${LOG_DIR}" "${PLOT_DIR}" "${REPO_ROOT}/scripts/logs/slurm"
 }
 
 setup_visualizer_dmrg_env() {
@@ -28,89 +32,46 @@ setup_visualizer_dmrg_env() {
     export NUMEXPR_NUM_THREADS="${NUMEXPR_NUM_THREADS:-1}"
 }
 
-print_visualizer_header() {
-    local title="$1"
-
-    echo "${title}"
-    echo "  job id:      ${SLURM_JOB_ID:-manual}"
-    echo "  nodes:       ${SLURM_JOB_NUM_NODES:-local}"
-    echo "  shards:      ${SHARDS}"
-    echo "  log dir:     ${LOG_DIR}"
-    echo "  plot dir:    ${PLOT_DIR}"
-}
-
-append_haldane_2x2_phase_args() {
+append_qbp_output_paths() {
     local -n cmd_ref="$1"
+    local log_path="$2"
+    local plot_path="$3"
 
+    mkdir -p "$(dirname "${log_path}")" "$(dirname "${plot_path}")"
     cmd_ref+=(
-        --model haldane
-        --lattice 2 2
-        --x-param n_occ
-        --y-param t2
-        --y-range "${HALDANE_T2_START:-0.0}" "${HALDANE_T2_END:-1.0}" "${HALDANE_T2_STEP:-0.1}"
-        --t1 "${HALDANE_T1:-1.0}"
-        --phi "${HALDANE_PHI:-${PHI}}"
-        --M "${HALDANE_M:-0.0}"
-    )
-}
-
-append_output_args() {
-    local -n cmd_ref="$1"
-
-    cmd_ref+=(
-        --log-dir "${LOG_DIR}"
-        --plot-dir "${PLOT_DIR}"
+        --log-path "${log_path}"
+        --plot-path "${plot_path}"
         --hide-plot
     )
 }
 
-append_vqe_iqpe_args() {
+append_vqe_args() {
     local -n cmd_ref="$1"
 
     cmd_ref+=(
         --vqe-iters "${VQE_ITERS:-10000}"
         --vqe-layers "${VQE_LAYERS:-5}"
         --vqe-reps "${VQE_REPS:-10}"
+    )
+}
+
+append_iqpe_args() {
+    local -n cmd_ref="$1"
+
+    cmd_ref+=(
         --iqpe-time "${IQPE_TIME:-0.2}"
         --iqpe-trot "${IQPE_TROT:-5}"
         --iqpe-iters "${IQPE_ITERS:-8}"
         --iqpe-reps "${IQPE_REPS:-20}"
+        --iqpe-initial-state vqe_informed
+        --iqpe-initial-vqe-ansatz excitation_preserving
+        --iqpe-initial-vqe-n-layers "${IQPE_INITIAL_VQE_N_LAYERS:-2}"
+        --iqpe-initial-vqe-ansatz-kwarg "reps=${IQPE_INITIAL_VQE_REPS:-2}"
+        --iqpe-initial-vqe-max-iters "${IQPE_INITIAL_VQE_MAX_ITERS:-1000}"
     )
 }
 
-append_optional_vqe_iqpe_args() {
-    local -n cmd_ref="$1"
-
-    if (( ${VQE_REPS:-10} > 0 )); then
-        cmd_ref+=(--vqe-iters "${VQE_ITERS:-10000}")
-        cmd_ref+=(--vqe-layers "${VQE_LAYERS:-5}")
-        cmd_ref+=(--vqe-reps "${VQE_REPS:-10}")
-    else
-        cmd_ref+=(--vqe-reps 0)
-    fi
-
-    if (( ${IQPE_REPS:-20} > 0 )); then
-        cmd_ref+=(--iqpe-time "${IQPE_TIME:-0.2}")
-        cmd_ref+=(--iqpe-trot "${IQPE_TROT:-5}")
-        cmd_ref+=(--iqpe-iters "${IQPE_ITERS:-8}")
-        cmd_ref+=(--iqpe-reps "${IQPE_REPS:-20}")
-    else
-        cmd_ref+=(--iqpe-reps 0)
-    fi
-}
-
-append_dmrg_run_args() {
-    local -n cmd_ref="$1"
-
-    cmd_ref+=(
-        --nsweeps "${DMRG_NSWEEPS:-4}"
-        --maxdims "${DMRG_MAXDIMS:-20,50,100,200}"
-        --cutoff "${DMRG_CUTOFF:-1e-9}"
-        --seed "${DMRG_SEED:-1234}"
-    )
-}
-
-append_compare_dmrg_args() {
+append_dmrg_args() {
     local -n cmd_ref="$1"
 
     cmd_ref+=(

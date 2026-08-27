@@ -11,8 +11,8 @@ from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import efficient_su2
 from qiskit.quantum_info import SparsePauliOp
 
+from qbp._core import _fmt_params, _make_simulator, run_reps_parallel, logger
 from qbp._backend import make_vqe_estimator
-from qbp._core import _fmt_params, _make_simulator, logger
 from qbp._mitigation import chain_measure, transform_circuit_chain
 from qbp._method import Method, ParamSpec, SimulationMethod, register_method
 
@@ -248,32 +248,52 @@ def vqe_fermionic(lattice, n_sites, spin, n_occ, model_params, fermionic_hamilto
     )
 
 
-def vqe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, max_iters, n_layers, rep, observable, backend=None, fermionic_hamiltonian_fn=None, strategies=None, seed: int | None = None, warm_start: bool = False):
+def vqe_observable(model, lattice, n_sites, spin, n_occ, model_params, mapper, max_iters, n_layers, rep, observable, backend=None, fermionic_hamiltonian_fn=None, strategies=None, seed: int | None = None, warm_start: bool = False, get_optimizer_fn=None, get_ansatz_fn=None):
+    """Returns (observable_value, variational_energy).
+
+    ``get_optimizer_fn`` / ``get_ansatz_fn`` carry the ``--vqe-optimizer`` and
+    ``--vqe-ansatz`` overrides. They default to the model's own factories, but
+    they must be threaded through: taking ``model.get_optimizer``
+    unconditionally silently discards a CLI override for every observable other
+    than the energy.
+
+    The energy is returned alongside the value because a repetition is only
+    comparable to another through the energy it reached -- picking the smallest
+    of several structure-factor measurements is not variational, it just
+    selects whichever run converged worst.
+    """
     obs = model.get_observable(observable)
     fermionic_hamiltonian_fn = fermionic_hamiltonian_fn or model.fermionic_hamiltonian
+    get_optimizer_fn = get_optimizer_fn or model.get_optimizer
+    get_ansatz_fn = get_ansatz_fn or model.get_vqe_ansatz
+    energies = []
 
     def sub_eval(sub_n_occ, observable_qubit_ops=None):
-        return vqe_fermionic(
+        result = vqe_fermionic(
             lattice, n_sites, spin, sub_n_occ, model_params,
-            fermionic_hamiltonian_fn, model.get_optimizer,
-            model.get_vqe_ansatz, mapper, max_iters, n_layers, rep,
+            fermionic_hamiltonian_fn, get_optimizer_fn,
+            get_ansatz_fn, mapper, max_iters, n_layers, rep,
             backend=backend, observable_qubit_ops=observable_qubit_ops,
             strategies=strategies, seed=seed, warm_start=warm_start,
         )
+        energies.append(float(result[0] if observable_qubit_ops is not None else result))
+        return result
 
     if obs.quantum_composite is not None:
         n_orbitals = n_sites * spin
-        return float(obs.quantum_composite(
+        value = float(obs.quantum_composite(
             model, lattice, n_occ, model_params, mapper, n_orbitals, sub_eval,
         ))
+        return value, (min(energies) if energies else float("nan"))
     if observable == "E" or obs.quantum_operator is None:
-        return float(sub_eval(n_occ))
+        energy = float(sub_eval(n_occ))
+        return energy, energy
     op_fermionic = obs.quantum_operator(model, lattice, **model_params)
     if op_fermionic is None:
-        return 0.0
+        return 0.0, float("nan")
     op_qubit = mapper.map(op_fermionic)
-    _, vals = sub_eval(n_occ, observable_qubit_ops=[op_qubit])
-    return float(vals[0])
+    energy, vals = sub_eval(n_occ, observable_qubit_ops=[op_qubit])
+    return float(vals[0]), float(energy)
 
 
 def vqe_bloch(k_tuple, model_params, bloch_hamiltonian_fn, get_optimizer_fn, max_iters, n_layers, rep, backend=None, strategies=None, seed: int | None = None):
@@ -419,8 +439,8 @@ class VQEMethod(SimulationMethod):
         ferm_fn = ctx.fermionic_hamiltonian_fn or model.fermionic_hamiltonian
         get_ansatz = self._ansatz_fn(model)
         get_optimizer = self._optimizer_fn(model)
-        reps = []
-        for rep in range(1, self.reps + 1):
+
+        def run_one_rep(rep):
             if observable == "E":
                 energy = vqe_fermionic(
                     lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
@@ -430,16 +450,20 @@ class VQEMethod(SimulationMethod):
                     seed=ctx.cell_index * 1000 + rep,
                     warm_start=self.warm_start,
                 )
-            else:
-                energy = vqe_observable(
-                    model, lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
-                    ctx.mapper, self.iters, self.layers, rep, observable,
-                    backend=backend, fermionic_hamiltonian_fn=ferm_fn,
-                    strategies=self.mitigation_strategies,
-                    seed=ctx.cell_index * 1000 + rep,
-                    warm_start=self.warm_start,
-                )
-            reps.append(float(energy))
+                return float(energy), float(energy)
+            return vqe_observable(
+                model, lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
+                ctx.mapper, self.iters, self.layers, rep, observable,
+                backend=backend, fermionic_hamiltonian_fn=ferm_fn,
+                strategies=self.mitigation_strategies,
+                seed=ctx.cell_index * 1000 + rep,
+                warm_start=self.warm_start,
+                get_optimizer_fn=get_optimizer, get_ansatz_fn=get_ansatz,
+            )
+
+        rep_results = run_reps_parallel(self.reps, run_one_rep)
+        reps = [float(v) for v, _ in rep_results]
+        energies = [float(e) for _, e in rep_results]
         num_queries, (total, two_q) = vqe_other_benchmarks(
             lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
             ferm_fn, get_ansatz, ctx.mapper,
@@ -448,6 +472,7 @@ class VQEMethod(SimulationMethod):
         )
         return {
             "repetitions": reps,
+            "energies": energies,
             "num_queries": num_queries,
             "circuit_depth": {"total": total, "two_qubit": two_q},
         }
@@ -455,14 +480,17 @@ class VQEMethod(SimulationMethod):
     # -------------------------------------------------------------- band structure
     def compute_bloch_cell(self, model, k_tuple, cell_params, observable, *,
                            backend, ctx):
-        reps = []
-        for rep in range(1, self.reps + 1):
+        get_optimizer = self._optimizer_fn(model)
+
+        def run_one_rep(rep):
             energy = vqe_bloch(
-                k_tuple, cell_params, model.bloch_hamiltonian, model.get_optimizer,
+                k_tuple, cell_params, model.bloch_hamiltonian, get_optimizer,
                 self.iters, self.layers, rep, backend=backend,
                 strategies=self.mitigation_strategies, seed=ctx.cell_index * 1000 + rep,
             )
-            reps.append(float(energy))
+            return float(energy)
+
+        reps = run_reps_parallel(self.reps, run_one_rep)
         num_queries, (total, two_q) = vqe_bloch_other_benchmarks(
             k_tuple, cell_params, model.bloch_hamiltonian,
             self.iters, self.layers, self.reps, backend=backend,
@@ -490,14 +518,16 @@ class VQEMethod(SimulationMethod):
             else OptimizerSpec(type="SPSA", kwargs={"maxiter": "@max_iters"})
         )
         get_optimizer = build_optimizer_factory(optimizer_spec, name="operator")
-        reps = []
-        for rep in range(1, self.reps + 1):
+
+        def run_one_rep(rep):
             energy = vqe_operator(
                 op, get_vqe_ansatz, get_optimizer, self.iters, self.layers, rep,
                 extremum, backend, label, observable,
                 strategies=self.mitigation_strategies,
             )
-            reps.append(float(energy))
+            return float(energy)
+
+        reps = run_reps_parallel(self.reps, run_one_rep)
         return {"repetitions": reps}
 
     def _estimate_shots(self, shots):

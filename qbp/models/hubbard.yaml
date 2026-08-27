@@ -35,4 +35,4 @@ ansatz:
     mode: fsim
     entanglement: linear
     reps: "@n_layers"
-  initial_state_prefix: hartree_fock
+  initial_state_prefix: neel

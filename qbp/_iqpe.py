@@ -12,7 +12,7 @@ from qiskit.quantum_info import SparsePauliOp
 
 from qbp._backend import make_iqpe_sampler
 from qbp._core import (
-    _fmt_params, _hf_initial_state, _make_simulator, _uniform_initial, logger,
+    _fmt_params, _hf_initial_state, _make_simulator, _uniform_initial, run_reps_parallel, logger,
 )
 from qbp._mitigation import chain_correct_counts
 from qbp._method import Method, ParamSpec, SimulationMethod, register_method
@@ -374,9 +374,6 @@ class IQPEMethod(SimulationMethod):
     def compute_cell(self, model, lattice, n_occ, cell_params, observable, *,
                      backend, ctx):
         ferm_fn = ctx.fermionic_hamiltonian_fn or model.fermionic_hamiltonian
-        reps = []
-        iteration_energies = []
-
         warm_start_circuit = None
         if self.warm_start_vqe and observable == "E":
             from qbp._vqe import vqe_fermionic
@@ -388,7 +385,7 @@ class IQPEMethod(SimulationMethod):
                 backend=backend, return_state=True, seed=ctx.cell_index,
             )
 
-        for rep in range(1, self.reps + 1):
+        def run_one_rep(rep):
             if observable == "E":
                 energy, iter_energies = iqpe_fermionic(
                     lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
@@ -404,8 +401,11 @@ class IQPEMethod(SimulationMethod):
                     backend=backend, get_initial_state_fn=model.get_iqpe_initial_state,
                     fermionic_hamiltonian_fn=ferm_fn,
                 )
-            reps.append(float(energy))
-            iteration_energies.append(iter_energies)
+            return (float(energy), iter_energies)
+
+        rep_results = run_reps_parallel(self.reps, run_one_rep)
+        reps = [energy for energy, _ in rep_results]
+        iteration_energies = [iter_energies for _, iter_energies in rep_results]
         num_queries, (total, two_q) = iqpe_other_benchmarks(
             lattice, ctx.n_sites, ctx.spin, n_occ, cell_params,
             ferm_fn, ctx.mapper,
@@ -420,16 +420,17 @@ class IQPEMethod(SimulationMethod):
 
     def compute_bloch_cell(self, model, k_tuple, cell_params, observable, *,
                            backend, ctx):
-        reps = []
-        iteration_energies = []
-        for rep in range(1, self.reps + 1):
+        def run_one_rep(rep):
             energy, iter_energies = iqpe_bloch(
                 k_tuple, cell_params, model.bloch_hamiltonian,
                 self.time, self.trot, self.iters, rep, backend=backend,
                 strategies=self.mitigation_strategies, extremum="min",
             )
-            reps.append(float(energy))
-            iteration_energies.append(iter_energies)
+            return (float(energy), iter_energies)
+
+        rep_results = run_reps_parallel(self.reps, run_one_rep)
+        reps = [energy for energy, _ in rep_results]
+        iteration_energies = [iter_energies for _, iter_energies in rep_results]
         num_queries, (total, two_q) = iqpe_bloch_other_benchmarks(
             k_tuple, cell_params, model.bloch_hamiltonian,
             self.time, self.trot, self.iters, self.reps, backend=backend,
@@ -448,15 +449,17 @@ class IQPEMethod(SimulationMethod):
             else InitialStateSpec(type="uniform")
         )
         get_initial_state = build_initial_state_factory(spec, name="operator")
-        reps = []
-        iteration_energies = []
-        for rep in range(1, self.reps + 1):
+
+        def run_one_rep(rep):
             energy, iter_energies = iqpe_operator(
                 op, self.time, self.trot, self.iters, rep, extremum, backend, label,
                 get_initial_state, observable,
             )
-            reps.append(float(energy))
-            iteration_energies.append(iter_energies)
+            return (float(energy), iter_energies)
+
+        rep_results = run_reps_parallel(self.reps, run_one_rep)
+        reps = [energy for energy, _ in rep_results]
+        iteration_energies = [iter_energies for _, iter_energies in rep_results]
         return {"repetitions": reps, "iteration_energies": iteration_energies}
 
     def _estimate_shots(self, backend, shots):
