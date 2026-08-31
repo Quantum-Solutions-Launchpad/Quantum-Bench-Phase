@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "python3 -m venv .venv && .venv/bin/pip install --upgrade pip && .venv/bin/pip install -r requirements.txt",
-  "buildCommand": "SPHINXBUILD=.venv/bin/sphinx-build make html",
+  "buildCommand": "LC_ALL=C LANG=C PYTHONUTF8=1 SPHINXBUILD=.venv/bin/sphinx-build make html",
   "outputDirectory": "_build/html"
 }
