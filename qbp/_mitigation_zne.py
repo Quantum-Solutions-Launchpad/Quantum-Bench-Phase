@@ -5,7 +5,7 @@ a fail when the backend is a local AerSimulator rather than a real queued
 IBM Runtime service since BackendEstimatorV2 never reads that option for local
 backends, so a "ZNE-mitigated" run using it is identical to a raw run. This
 implements ZNE manually instead: global unitary folding at several noise
-scales, followed by linear (Richardson) extrapolation to the zero-noise
+scales, followed by a least-squares linear extrapolation to the zero-noise
 limit.
 """
 
@@ -34,7 +34,11 @@ def _fold_global(qc: QuantumCircuit, scale_factor: int) -> QuantumCircuit:
 
 
 def _zne_extrapolate(scale_factors, values) -> float:
-    """Richardson (linear) extrapolation of noise scaled values to the zero noise limit."""
+    """Least-squares linear extrapolation of noise scaled values to the zero noise limit.
+
+    With exactly two scale factors this coincides with first-order Richardson
+    extrapolation; with more, it is a fit rather than a Richardson estimate.
+    """
     coeffs = np.polyfit(scale_factors, values, deg=1)
     return float(np.polyval(coeffs, 0.0))
 
