@@ -5,7 +5,7 @@
 #SBATCH -N 32
 #SBATCH --ntasks-per-node=2
 #SBATCH -c 16
-#SBATCH -t 30:00:00
+#SBATCH -t 15:00:00
 #SBATCH -A m5027
 #SBATCH -o /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.out
 #SBATCH -e /pscratch/sd/m/mbao202/NNL-P7/scripts/logs/slurm/%x-%j.err
