@@ -63,7 +63,7 @@ You can use QBP to run far more powerful workloads, particularly ones that invol
 
 ## Documentation
 
-The full documentation is available at **[documentation URL]**.
+The full documentation is available at **<placeholder_url>**.
 
 It walks through the physics QBP is built around — the Haldane and Hubbard models, occupation number and phase-diagram sweeps, Bloch versus real-space modes, fermion-to-qubit mappings — and the algorithms behind each run: VQE, IQPE, and a DMRG tensor-network benchmark, each executable analytically, on an ideal statevector simulator, or under noise. From there it covers the full workflow: choosing an observable and sweeping it in one or two dimensions, tuning per-method parameters, running against a local noise model or real IBM and IQM hardware, inspecting and plotting a `RunResult`, and writing runs to disk to reload instead of recomputing.
 
