@@ -84,7 +84,7 @@ intersphinx_mapping = {
 # -- HTML output -------------------------------------------------------------
 
 html_theme = "shibuya"
-html_title = "QBP"
+html_title = "QuantumBenchPhase"
 html_static_path = ["_static"]
 html_favicon = "_static/favicon.svg"
 html_css_files = ["custom.css"]
