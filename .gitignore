@@ -14,3 +14,6 @@ docs/_build/
 .venv/
 venv/
 qbp/julia-dmrg/dmrg_sysimage.so
+
+# setuptools build artifacts (from pip install of the local package)
+build/

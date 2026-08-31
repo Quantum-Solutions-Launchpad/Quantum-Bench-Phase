@@ -43,7 +43,7 @@ source_suffix = {
 }
 
 master_doc = "index"
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".venv", "venv"]
 
 # -- Autodoc / autosummary ---------------------------------------------------
 
