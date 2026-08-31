@@ -155,7 +155,7 @@ result = qbp.run(
 )
 ```
 
-As you can see, we can clearly see the phase boundary as lower-energy states tracing sinusoidal waves that peak at $\pm 3\sqrt{3} \cdot 0.1 \approx 0.5$. 
+The phase boundary is clearly visible as lower-energy states tracing sinusoidal waves that peak at $\pm 3\sqrt{3} \cdot 0.1 \approx 0.5$. 
 
 You can use the `observable` parameter to plot different observables. By default, ground-state energy ($E$) is used, but you can set a handful of different parameters. Let's try plotting the spectral gap ($\Delta_\text{gap}$) instead.
 
