@@ -1,4 +1,4 @@
-# QuantumBenchPhase (QBP)
+# ![QuantumBenchPhase (QBP)](_static/qbp-logo-full.svg){.qbp-hero .qbp-hero-light}![](_static/qbp-logo-full-dark.svg){.qbp-hero .qbp-hero-dark}
 
 QBP is a library for the generation and benchmarking of quantum phase diagrams of topological and correlated lattice models as well as [HamLib](https://quantum-journal.org/papers/q-2024-12-11-1559/) problem Hamiltonians.
 

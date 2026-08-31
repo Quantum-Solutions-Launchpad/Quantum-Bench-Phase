@@ -23,8 +23,8 @@ The library lives under `qbp/`, with one concern per module (all private, re-exp
 Install the package in editable mode so your changes are picked up without reinstalling:
 
 ```{code-block} console
-$ git clone *****<github link>*****
-$ cd qbp
+$ git clone https://github.com/Quantum-Solutions-Launchpad/Quantum-Bench-Phase.git
+$ cd Quantum-Bench-Phase
 $ pip install -e .
 ```
 

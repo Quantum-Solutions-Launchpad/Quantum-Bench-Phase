@@ -1,9 +1,107 @@
+:root {
+    --qbp-magenta: #C2489B;
+    --qbp-charcoal: #3A3A3C;
+    --qbp-cyan: #41C1F1;
+    --qbp-cyan-deep: #0D80AB;
+    --qbp-periwinkle: #7B9ED4;
+    --qbp-mauve: #A583B0;
+    --qbp-rose: #CC6BAA;
+    --qbp-gradient: linear-gradient(
+        90deg,
+        #41C1F1 0%,
+        #7B9ED4 30%,
+        #A583B0 50%,
+        #CC6BAA 80%,
+        #C1499B 100%
+    );
+}
+
+:root,
+html.light {
+    --accent-9: #C2489B;
+    --accent-10: #B23B8C;
+    --accent-11: #A73883;
+    --accent-12: #3E1531;
+    --accent-a11: #A73883;
+    --accent-a12: #3E1531;
+    --sy-c-heading: var(--qbp-charcoal);
+    --sy-c-bold: var(--qbp-charcoal);
+    --qbp-cyan-mode: var(--qbp-cyan-deep);
+}
+
+html.dark {
+    --accent-9: #CC67AC;
+    --accent-10: #D37AB6;
+    --accent-11: #DC94C5;
+    --accent-12: #F8E9F3;
+    --accent-a11: #DC94C5;
+    --accent-a12: #F8E9F3;
+    --sy-c-heading: var(--sage-12);
+    --sy-c-bold: var(--slate-12);
+    --qbp-cyan-mode: var(--qbp-cyan);
+}
+
+::selection {
+    background: color-mix(in srgb, var(--qbp-magenta) 26%, transparent);
+}
+
+.sy-head-brand img {
+    height: 32px;
+}
+
+.sy-head-blur {
+    --sy-c-divider: transparent;
+}
+
+.sy-head-blur::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 2px;
+    background: var(--qbp-gradient);
+    opacity: 0.85;
+}
+
+html.dark .sy-head-blur::after {
+    opacity: 0.7;
+}
+
+h1 .qbp-hero {
+    width: 80%;
+    height: auto;
+    margin: 0;
+}
+
+h1:has(.qbp-hero) {
+    margin: 1rem 0 2.5rem;
+}
+
+h1:has(.qbp-hero) a.headerlink {
+    display: none;
+}
+
+h1 .qbp-hero-light {
+    display: block;
+}
+
+h1 .qbp-hero-dark {
+    display: none;
+}
+
+html.dark h1 .qbp-hero-light {
+    display: none;
+}
+
+html.dark h1 .qbp-hero-dark {
+    display: block;
+}
+
 /* QBP pipeline diagram (used on docs/user-guide/workflow.md) */
 
 .qbp-pipeline {
-    --pipeline-fill: var(--accent-3, #ebe4ff);
-    --pipeline-stroke: var(--accent-9, #6e56cf);
-    --pipeline-text: var(--accent-12, #2b1c5c);
+    --pipeline-fill: var(--accent-3, #FEE9F5);
+    --pipeline-stroke: var(--accent-9, #C2489B);
+    --pipeline-text: var(--accent-12, #3E1531);
     display: grid;
     grid-template-columns: 1fr 4.5rem 1fr;
     grid-template-rows: 3.6rem 3rem 3.6rem 3rem 3.6rem;
@@ -55,9 +153,9 @@
 }
 
 html.dark .qbp-pipeline {
-    --pipeline-fill: var(--accent-3, #2b1c5c);
-    --pipeline-stroke: var(--accent-9, #aa99ec);
-    --pipeline-text: var(--accent-12, #ebe4ff);
+    --pipeline-fill: var(--accent-3, #3B0F2F);
+    --pipeline-stroke: var(--accent-9, #CC67AC);
+    --pipeline-text: var(--accent-12, #F8E9F3);
 }
 
 /* Lattice diagrams (SSH chain, Haldane honeycomb) */
@@ -91,8 +189,8 @@ html.dark .qbp-pipeline {
 }
 
 .qbp-diagram {
-    --dg-t1: var(--accent-11, #644fc1);
-    --dg-t2: var(--teal-11, #008573);
+    --dg-t1: var(--accent-11, #A73883);
+    --dg-t2: var(--qbp-cyan-mode, #0D80AB);
     --dg-ink: var(--gray-12, #1c1c1f);
     --dg-paper: var(--sy-c-background, #ffffff);
     --dg-guide: var(--gray-8, #b9bbc6);
@@ -217,12 +315,12 @@ html.dark .qbp-pipeline {
 
 .qbp-legend .sw-t1 {
     width: 1.6rem;
-    border-top: 3px solid var(--accent-11, #644fc1);
+    border-top: 3px solid var(--accent-11, #A73883);
 }
 
 .qbp-legend .sw-t2 {
     width: 1.6rem;
-    border-top: 3px dashed var(--teal-11, #008573);
+    border-top: 3px dashed var(--qbp-cyan-mode, #0D80AB);
 }
 
 .qbp-legend .sw-a,

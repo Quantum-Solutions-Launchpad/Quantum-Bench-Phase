@@ -43,6 +43,7 @@ source_suffix = {
 }
 
 master_doc = "index"
+templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".venv", "venv"]
 
 # -- Autodoc / autosummary ---------------------------------------------------
@@ -62,6 +63,7 @@ todo_include_todos = True
 # -- MyST --------------------------------------------------------------------
 
 myst_enable_extensions = [
+    "attrs_inline",
     "colon_fence",
     "deflist",
     "dollarmath",
@@ -84,12 +86,14 @@ intersphinx_mapping = {
 html_theme = "shibuya"
 html_title = "QBP"
 html_static_path = ["_static"]
-html_favicon = "_static/favicon-dark.svg"
+html_favicon = "_static/favicon.svg"
 html_css_files = ["custom.css"]
 
 html_theme_options = {
-    "accent_color": "violet",
-    "github_url": "https://github.com/Quantum-Solutions-Launchpad/QSL-NNL-P7",
+    "accent_color": "pink",
+    "light_logo": "_static/qbp-wordmark.svg",
+    "dark_logo": "_static/qbp-wordmark-dark.svg",
+    "github_url": "https://github.com/Quantum-Solutions-Launchpad/Quantum-Bench-Phase",
     "nav_links": [
         {"title": "Getting Started", "url": "getting-started/quickstart"},
         {"title": "User Guide", "url": "user-guide/workflow"},
