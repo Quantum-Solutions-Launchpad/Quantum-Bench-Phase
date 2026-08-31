@@ -4,7 +4,7 @@ Real and noisy-simulated backends corrupt a circuit's output through gate
 error, decoherence, and readout error. **Error mitigation** is a family of
 classical and circuit-level techniques that reduce the impact of that noise
 on a computed observable *without* the extra physical qubits that full
-error correction would require, whcih is aa necessity on today's NISQ-era hardware,
+error correction would require, which is a necessity on today's NISQ-era hardware,
 where error-corrected logical qubits are not yet available.
 
 QBP ships three built-in strategies, each targeting a different noise
