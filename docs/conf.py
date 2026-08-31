@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "QBP"
-author = "WISER/NNL"
+author = "WISER"
 copyright = f"{datetime.now().year}, {author}"
 
 try:
